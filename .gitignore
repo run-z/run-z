@@ -1,0 +1,31 @@
+# Node.js modules
+node_modules
+
+# IntelliJ IDEA files
+.idea
+*.iml
+
+# Logs
+*.log
+
+# Yarn cache
+/.yarn
+!.yarn/releases
+!.yarn/plugins
+.pnp.*
+
+# Lock files as this is part of Yarn worktree
+yarn.lock
+package-lock.json
+
+# Package archive
+*.tgz
+
+# Intermediate files
+/target
+
+# Distribution directory
+/dist
+
+# Type definitions
+/d.ts

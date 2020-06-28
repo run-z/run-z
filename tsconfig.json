@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "module": "es2015",
+    "target": "es2018",
+    "strict": true,
+    "experimentalDecorators": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "forceConsistentCasingInFileNames": true,
+    "importHelpers": true,
+    "noEmitHelpers": true,
+    "lib": [
+      "dom",
+      "es2018"
+    ],
+    "types": [
+      "node",
+      "jest"
+    ],
+    "outDir": "target/js",
+    "sourceMap": true,
+    "newLine": "LF"
+  },
+  "include": [
+    "src/**/*"
+  ]
+}

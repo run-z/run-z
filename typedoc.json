@@ -1,0 +1,16 @@
+{
+  "disableAutoModuleName": true,
+  "exclude": [
+    "**/index.ts",
+    "**/*.impl.ts",
+    "**/cli/**/*.ts",
+    "**/impl/**/*.ts",
+    "**/spec/**/*.ts",
+    "**/*.spec.ts"
+  ],
+  "excludeNotExported": true,
+  "mode": "file",
+  "name": "Run Z",
+  "out": "./target/typedoc",
+  "tsconfig": "tsconfig.main.json"
+}
