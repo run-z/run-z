@@ -3,11 +3,8 @@
  * @module run-z
  */
 import { itsFirst, mapIt } from '@proc7ts/a-iterable';
-import { valueProvider } from '@proc7ts/primitives';
-import * as fs from 'fs';
-import * as path from 'path';
-import { fileURLToPath, pathToFileURL, URL } from 'url';
 import { ZPackage } from './package';
+import type { ZPackageLocation } from './package-location';
 import { ZPackageSet } from './package-set';
 import { UnknownPackageError } from './unknown-package-error';
 
@@ -22,28 +19,23 @@ export class ZPackageResolver {
   /**
    * Constructs NPM package resolver.
    *
-   * @param currentURL  URL of current working directory.
-   * @param rootURL  File system root all packages should be located within.
+   * @param currentLocation  Current location to start package discovery from.
    */
-  constructor(
-      readonly currentURL: URL = pathToFileURL(process.cwd()),
-      readonly rootURL: URL = new URL('file:///'),
-  ) {
+  constructor(readonly currentLocation: ZPackageLocation) {
   }
 
   /**
-   * Resolves package by its filesystem URL.
+   * Resolves package by its location.
    *
-   * @param url  Package URL.
+   * @param location  Package location.
    *
    * @returns A promise resolved to package.
    */
-  async get(url: URL): Promise<ZPackage> {
+  async get(location: ZPackageLocation): Promise<ZPackage> {
 
     const packages = await this.packages;
 
-    return packages.get(url.pathname) || Promise.reject(new UnknownPackageError(url.pathname));
-
+    return packages.get(location.path) || Promise.reject(new UnknownPackageError(location.path));
   }
 
   /**
@@ -56,11 +48,11 @@ export class ZPackageResolver {
   async resolve(name: string): Promise<ZPackageSet> {
 
     const sets = await this.sets;
-    const target = name.startsWith('./') || name.startsWith('../')
-        ? new URL(name, this.currentURL).pathname // Package path
+    const target = name.startsWith('./') || name.startsWith('../') // Relative package path?
+        ? this.currentLocation.relative(name)?.path
         : name;
 
-    return sets.get(target) || Promise.reject(new UnknownPackageError(name));
+    return target && sets.get(target) || Promise.reject(new UnknownPackageError(name));
   }
 
   private get packages(): Promise<Map<string, ZPackage>> {
@@ -74,41 +66,30 @@ export class ZPackageResolver {
   private async _discoverPackages(): Promise<Map<string, ZPackage>> {
 
     const packages = new Map<string, ZPackage>();
-    const discoverPackage = async (url: URL): Promise<ZPackage | undefined> => {
-      if (!url.pathname.startsWith(this.rootURL.pathname)) {
-        return;
-      }
+    const discoverPackage = async (location: ZPackageLocation): Promise<ZPackage | undefined> => {
 
-      const existing = packages.get(url.pathname);
+      const existing = packages.get(location.path);
 
       if (existing) {
         return existing;
       }
 
-      const dir = fileURLToPath(url);
-      const parent = await discoverPackage(pathToFileURL(path.dirname(dir)));
-      const packageJsonPath = path.join(dir, 'package.json');
-      const packageJsonExists = await fs.promises.access(
-          packageJsonPath,
-          fs.constants.R_OK,
-      ).then(
-          valueProvider(true),
-          valueProvider(false),
-      );
+      const parentLocation = location.parent;
+      const parent = parentLocation && await discoverPackage(parentLocation);
+      const packageJson = await location.load();
 
-      if (!packageJsonExists) {
+      if (!packageJson) {
         return parent;
       }
 
-      const packageJson = JSON.parse((await fs.promises.readFile(packageJsonPath)).toString());
-      const pkg = new ZPackage(url, packageJson, parent);
+      const pkg = new ZPackage(location, packageJson, parent);
 
-      packages.set(url.pathname, pkg);
+      packages.set(location.path, pkg);
 
       return pkg;
     };
 
-    await discoverPackage(this.currentURL);
+    await discoverPackage(this.currentLocation);
 
     return packages;
   }

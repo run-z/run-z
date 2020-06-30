@@ -2,9 +2,9 @@
  * @packageDocumentation
  * @module run-z
  */
-import * as path from 'path';
-import type { URL } from 'url';
+import type { ZPackageLocation } from './package-location';
 import type { ZPackageSet } from './package-set';
+import type { ZPackageJson } from './package.json';
 
 /**
  * NPM package containing tasks and rules.
@@ -20,13 +20,13 @@ export class ZPackage implements ZPackageSet {
   /**
    * Constructs a package.
    *
-   * @param url  Absolute filesystem URL to package directory without trailing `/`.
-   * @param packageJson  `package.json` content.
+   * @param location  Package location.
+   * @param packageJson  `package.json` contents.
    * @param parent  Parent NPM package.
    */
   constructor(
-      readonly url: URL,
-      readonly packageJson: any,
+      readonly location: ZPackageLocation,
+      readonly packageJson: ZPackageJson,
       readonly parent?: ZPackage,
   ) {
   }
@@ -127,11 +127,11 @@ export class ZPackage implements ZPackageSet {
       addPackageAliases(packageName, aliases);
     } else if (this.parent) {
 
-      const dirName = this.url.pathname.substr(this.parent.url.pathname.length);
+      const dirName = this.location.path.substr(this.parent.location.path.length);
 
       addPackageAliases(`${this.parent.name}${dirName}`, aliases);
     } else {
-      aliases.add(path.posix.basename(this.url.pathname));
+      aliases.add(this.location.baseName);
     }
 
     return this._aliases = Array.from(aliases) as [string, ...string[]];
