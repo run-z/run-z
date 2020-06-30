@@ -4,7 +4,7 @@ import { pathToFileURL, URL } from 'url';
 import { ZPackageDirectory } from '../../fs';
 import type { ZPackage } from './package';
 import { ZPackageResolver } from './package-resolver';
-import { UnknownPackageError } from './unknown-package-error';
+import { UnknownZPackageError } from './unknown-package-error';
 
 describe('ZPackageResolver', () => {
 
@@ -97,13 +97,13 @@ describe('ZPackageResolver', () => {
       expect(await packages('named-nested/deeply-nested')).toContain(deeplyNested);
     });
     it('is not available under short directory name', async () => {
-      expect(await packages('deeply-nested').catch(asis)).toBeInstanceOf(UnknownPackageError);
+      expect(await packages('deeply-nested').catch(asis)).toBeInstanceOf(UnknownZPackageError);
     });
     it('is available under explicit name', async () => {
       expect(await packages('named-nested')).toContain(nested);
     });
     it('is not available under directory name when explicitly named', async () => {
-      expect(await packages('nested').catch(asis)).toBeInstanceOf(UnknownPackageError);
+      expect(await packages('nested').catch(asis)).toBeInstanceOf(UnknownZPackageError);
     });
 
     describe('parent', () => {
@@ -172,9 +172,9 @@ describe('ZPackageResolver', () => {
       expect(await packages('@scope-name/package-name/nested/deeper')).toContain(deeplyNested);
     });
     it('is not available under short directory name', async () => {
-      expect(await packages('nested/deeper').catch(asis)).toBeInstanceOf(UnknownPackageError);
-      expect(await packages('nested').catch(asis)).toBeInstanceOf(UnknownPackageError);
-      expect(await packages('deeper').catch(asis)).toBeInstanceOf(UnknownPackageError);
+      expect(await packages('nested/deeper').catch(asis)).toBeInstanceOf(UnknownZPackageError);
+      expect(await packages('nested').catch(asis)).toBeInstanceOf(UnknownZPackageError);
+      expect(await packages('deeper').catch(asis)).toBeInstanceOf(UnknownZPackageError);
     });
     it('is available under scope name', async () => {
 

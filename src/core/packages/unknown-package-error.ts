@@ -6,7 +6,7 @@
 /**
  * An error thrown when the package can not be resolved.
  */
-export class UnknownPackageError extends Error {
+export class UnknownZPackageError extends Error {
 
   /**
    * Constructs unknown package error.

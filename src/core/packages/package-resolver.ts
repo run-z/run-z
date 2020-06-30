@@ -6,7 +6,7 @@ import { itsFirst, mapIt } from '@proc7ts/a-iterable';
 import { ZPackage } from './package';
 import type { ZPackageLocation } from './package-location';
 import { ZPackageSet } from './package-set';
-import { UnknownPackageError } from './unknown-package-error';
+import { UnknownZPackageError } from './unknown-package-error';
 
 /**
  * A resolver of all discovered {@link ZPackage NPM packages}.
@@ -35,7 +35,7 @@ export class ZPackageResolver {
 
     const packages = await this.packages;
 
-    return packages.get(location.path) || Promise.reject(new UnknownPackageError(location.path));
+    return packages.get(location.path) || Promise.reject(new UnknownZPackageError(location.path));
   }
 
   /**
@@ -52,7 +52,7 @@ export class ZPackageResolver {
         ? this.currentLocation.relative(name)?.path
         : name;
 
-    return target && sets.get(target) || Promise.reject(new UnknownPackageError(name));
+    return target && sets.get(target) || Promise.reject(new UnknownZPackageError(name));
   }
 
   private get packages(): Promise<Map<string, ZPackage>> {
