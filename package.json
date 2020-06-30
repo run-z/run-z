@@ -36,7 +36,8 @@
   "dependencies": {
     "@proc7ts/a-iterable": "^2.7.0",
     "@proc7ts/call-thru": "^4.0.0",
-    "@proc7ts/primitives": "^1.0.3"
+    "@proc7ts/primitives": "^1.0.3",
+    "shell-quote": "^1.7.2"
   },
   "devDependencies": {
     "@proc7ts/eslint-config": "^2.0.0",
@@ -45,6 +46,7 @@
     "@rollup/plugin-node-resolve": "^8.1.0",
     "@types/jest": "^26.0.3",
     "@types/node": "^12.12.47",
+    "@types/shell-quote": "^1.7.0",
     "@typescript-eslint/eslint-plugin": "^3.5.0",
     "@typescript-eslint/parser": "^3.5.0",
     "codecov": "^3.7.0",
