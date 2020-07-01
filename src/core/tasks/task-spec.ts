@@ -5,12 +5,10 @@
 import { parse } from 'shell-quote';
 import { InvalidZTaskError } from './invalid-task-error';
 
-const DEP_ARGS_SEP = /\.\.\./;
-
 /**
  * Task specifier.
  */
-export class ZTaskSpec {
+export interface ZTaskSpec {
 
   /**
    * Whether this is a native task.
@@ -19,24 +17,75 @@ export class ZTaskSpec {
    */
   readonly isNative: boolean;
 
+  /**
+   * Task dependencies.
+   *
+   * I.e. other tasks to run before this one.
+   */
   readonly deps: readonly ZTaskSpec.TaskRef[];
 
+  /**
+   * Command line arguments to the script this task executes.
+   */
   readonly args: readonly string[];
 
+}
+
+export namespace ZTaskSpec {
+
   /**
-   * Constructs task specifier by its command line.
+   * Task reference.
+   */
+  export interface TaskRef {
+
+    /**
+     * Task name.
+     */
+    readonly task: string;
+
+    /**
+     * Whether this task can be executed in parallel with preceding one.
+     */
+    readonly parallel: boolean;
+
+    /**
+     * Command line arguments.
+     */
+    readonly args: readonly string[];
+
+  }
+
+}
+
+/**
+ * @internal
+ */
+const nativeZTask: ZTaskSpec = {
+  isNative: true,
+  deps: [],
+  args: [],
+};
+
+/**
+ * @internal
+ */
+const zTaskArgsSep = /\.\.\./;
+
+export const ZTaskSpec = {
+
+  /**
+   * Builds task specifier by its command line.
    *
    * @param commandLine  Task command line.
+   *
+   * @returns Parsed task specifier.
    */
-  constructor(commandLine: string) {
+  parse(commandLine: string): ZTaskSpec {
 
     const entries = parseZTaskEntries(commandLine);
 
     if (!entries) {
-      this.isNative = true;
-      this.deps = [];
-      this.args = [];
-      return;
+      return nativeZTask;
     }
 
     let e = 0;
@@ -94,7 +143,7 @@ export class ZTaskSpec {
         break;
       }
 
-      const parts = entry.split(DEP_ARGS_SEP);
+      const parts = entry.split(zTaskArgsSep);
 
       for (let p = 0; p < parts.length; ++p) {
 
@@ -133,38 +182,14 @@ export class ZTaskSpec {
     }
 
     appendTask();
-    this.isNative = false;
-    this.deps = deps;
-    this.args = entries.slice(e);
-  }
+    return {
+      isNative: false,
+      deps,
+      args: entries.slice(e),
+    };
+  },
 
-}
-
-export namespace ZTaskSpec {
-
-  /**
-   * Task reference.
-   */
-  export interface TaskRef {
-
-    /**
-     * Task name.
-     */
-    readonly task: string;
-
-    /**
-     * Whether this task can be executed in parallel with preceding one.
-     */
-    readonly parallel: boolean;
-
-    /**
-     * Command line arguments.
-     */
-    readonly args: readonly string[];
-
-  }
-
-}
+};
 
 /**
  * @internal
