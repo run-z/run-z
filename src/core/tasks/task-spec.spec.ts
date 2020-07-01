@@ -26,6 +26,14 @@ describe('ZTaskSpec', () => {
     expect(spec.deps).toHaveLength(0);
     expect(spec.args).toHaveLength(0);
   });
+  it('treats task with environment variable substitution as native', () => {
+
+    const spec = new ZTaskSpec('run-z comm${some_env}');
+
+    expect(spec.isNative).toBe(true);
+    expect(spec.deps).toHaveLength(0);
+    expect(spec.args).toHaveLength(0);
+  });
   it('recognizes dependencies', () => {
 
     const spec = new ZTaskSpec('run-z dep1 dep2 dep3');

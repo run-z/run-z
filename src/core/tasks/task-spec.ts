@@ -171,14 +171,22 @@ export namespace ZTaskSpec {
  */
 function parseZTaskEntries(commandLine: string): string[] | undefined {
 
-  const entries = parse(commandLine);
+  let withEnv = false;
+  const detectEnv = (): undefined => {
+    withEnv = true;
+    return;
+  };
+  const entries = parse(commandLine, detectEnv);
 
   if (entries[0] !== 'run-z') {
-    return; // Not a run-z script
+    return; // Not a run-z script.
+  }
+  if (withEnv) {
+    return; // Environment variable substitution supported in native scripts only.
   }
   if (entries.every(entry => typeof entry === 'string')) {
     return entries.slice(1) as string[];
   }
 
-  return; // Special command present
+  return; // Special shell command present.
 }
