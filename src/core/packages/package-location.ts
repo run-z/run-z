@@ -42,16 +42,16 @@ export interface ZPackageLocation {
   /**
    * Lists nested package locations.
    *
-   * @returns Async iterable of all package locations immediately nested in this one one.
+   * @returns Possibly async iterable of all package locations immediately nested in this one one.
    */
-  nested(): AsyncIterable<ZPackageLocation>
+  nested(): Iterable<ZPackageLocation> | AsyncIterable<ZPackageLocation>;
 
   /**
    * Lists deeply nested package locations.
    *
-   * @returns Async iterable of all package locations nested in this one or deeper.
+   * @returns Possibly async iterable of all package locations nested in this one or deeper.
    */
-  deeplyNested(): AsyncIterable<ZPackageLocation>;
+  deeplyNested(): Iterable<ZPackageLocation> | AsyncIterable<ZPackageLocation>;
 
   /**
    * Tries to load `package.json` from this location.

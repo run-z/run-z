@@ -20,7 +20,7 @@ export class ZPackage implements ZPackageSet {
   /**
    * Tasks hosted by this package.
    */
-  readonly tasks: readonly ZTask[];
+  readonly tasks: ReadonlyMap<string, ZTask>;
 
   /**
    * Rules hosted by this package.
@@ -48,7 +48,7 @@ export class ZPackage implements ZPackageSet {
 
     const { scripts = {} } = packageJson;
     const rules: ZRule[] = [];
-    const tasks: ZTask[] = [];
+    const tasks = new Map<string, ZTask>();
 
     for (const [key, value] of Object.entries(scripts)) {
 
@@ -57,7 +57,7 @@ export class ZPackage implements ZPackageSet {
       if (!spec.isNative && zRulePattern.test(key)) {
         rules.push(new ZRule(this, key, spec));
       } else {
-        tasks.push(new ZTask(this, key, spec));
+        tasks.set(key, new ZTask(this, key, spec));
       }
     }
 
