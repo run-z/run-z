@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module run-z
  */
-import { valueProvider } from '@proc7ts/primitives';
+import { isPresent, valueProvider } from '@proc7ts/primitives';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath, pathToFileURL, URL } from 'url';
@@ -84,26 +84,72 @@ export class ZPackageDirectory implements ZPackageLocation {
     return isRootURL(this.rootURL, url) ? new ZPackageDirectory(url, this.rootURL) : undefined;
   }
 
+  nested(): AsyncIterable<ZPackageDirectory> {
+    return nestedZPackageDirs(this, dir => zPackageJsonPath(dir).then(isPresent));
+  }
+
+  async *deeplyNested(): AsyncIterable<ZPackageDirectory> {
+    for await (const nested of nestedZPackageDirs(this)) {
+      if (await zPackageJsonPath(nested)) {
+        yield nested;
+      }
+      yield* nested.deeplyNested();
+    }
+  }
+
   async load(): Promise<ZPackageJson | undefined> {
 
-    const packageJsonPath = path.join(fileURLToPath(this.url), 'package.json');
-    const packageJsonExists = await fs.promises.access(
-        packageJsonPath,
-        fs.constants.R_OK,
-    ).then(
-        valueProvider(true),
-        valueProvider(false),
-    );
+    const packageJsonPath = await zPackageJsonPath(this);
 
-    if (!packageJsonExists) {
-      return;
-    }
-
-    return JSON.parse((await fs.promises.readFile(packageJsonPath)).toString());
+    return packageJsonPath && JSON.parse((await fs.promises.readFile(packageJsonPath)).toString());
   }
 
   toString(): string {
     return this.url.toString();
   }
 
+}
+
+/**
+ * @internal
+ */
+async function *nestedZPackageDirs(
+    dir: ZPackageDirectory,
+    test: (dir: ZPackageDirectory) => PromiseLike<boolean> | boolean = valueProvider(true),
+): AsyncIterable<ZPackageDirectory> {
+
+  const entries = await fs.promises.readdir(fileURLToPath(dir.url), { withFileTypes: true });
+
+  for (const entry of entries) {
+
+    const { name } = entry;
+
+    if (!entry.isDirectory() || name === 'node_modules' || name.startsWith('.')) {
+      // Skip hidden directories and `node_modules`
+      continue;
+    }
+
+    const nested = dir.relative(encodeURIComponent(name))!;
+
+    if (await test(nested)) {
+      yield nested;
+    }
+  }
+}
+
+/**
+ * @internal
+ */
+async function zPackageJsonPath(dir: ZPackageDirectory): Promise<string | undefined> {
+
+  const packageJsonPath = path.join(fileURLToPath(dir.url), 'package.json');
+  const packageJsonExists = await fs.promises.access(
+      packageJsonPath,
+      fs.constants.R_OK,
+  ).then(
+      valueProvider(true),
+      valueProvider(false),
+  );
+
+  return packageJsonExists ? packageJsonPath : undefined;
 }

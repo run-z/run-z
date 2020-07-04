@@ -1,9 +1,14 @@
+import * as path from 'path';
 import { pathToFileURL, URL } from 'url';
 import { ZPackageDirectory } from './package-directory';
 
 describe('ZPackageDirectory', () => {
 
-  const rootURL = new URL('file:///root/');
+  let rootURL: URL;
+
+  beforeEach(() => {
+    rootURL = new URL('file:///root/');
+  });
 
   describe('create', () => {
     it('throws when not inside root URL', () => {
@@ -71,7 +76,11 @@ describe('ZPackageDirectory', () => {
 
   describe('relative', () => {
 
-    const dir = ZPackageDirectory.create(new URL('dir', rootURL), rootURL);
+    let dir: ZPackageDirectory;
+
+    beforeEach(() => {
+      dir = ZPackageDirectory.create(new URL('dir', rootURL), rootURL);
+    });
 
     it('resolves to nested', () => {
       expect(dir.relative('./nested')?.toString()).toBe('file:///root/dir/nested');
@@ -85,6 +94,52 @@ describe('ZPackageDirectory', () => {
     it('does not resolve outside root', () => {
       expect(dir.relative('../..')).toBeUndefined();
       expect(dir.relative('../../other')).toBeUndefined();
+    });
+  });
+
+  describe('nested', () => {
+    beforeEach(() => {
+      rootURL = new URL(
+          'nesting/',
+          pathToFileURL(path.join(process.cwd(), 'src', 'core', 'packages', 'spec', 'nesting')),
+      );
+    });
+
+    it('lists immediately nested dirs', async () => {
+
+      const dir = ZPackageDirectory.create(new URL('nested', rootURL));
+      const packages: string[] = [];
+
+      for await (const nested of dir.nested()) {
+        packages.push(nested.path);
+      }
+
+      expect(packages).toEqual([new URL('nested/deeply-nested', rootURL).pathname]);
+    });
+  });
+
+  describe('deeplyNested', () => {
+    beforeEach(() => {
+      rootURL = new URL(
+          'nesting/',
+          pathToFileURL(path.join(process.cwd(), 'src', 'core', 'packages', 'spec', 'nesting')),
+      );
+    });
+
+    it('lists deeply nested dirs', async () => {
+
+      const dir = ZPackageDirectory.create(rootURL);
+      const packages: string[] = [];
+
+      for await (const nested of dir.deeplyNested()) {
+        packages.push(nested.path);
+      }
+
+      expect(packages).toEqual([
+        new URL('nested', rootURL).pathname,
+        new URL('nested/deeply-nested', rootURL).pathname,
+        new URL('nested/nested2/nested3', rootURL).pathname,
+      ]);
     });
   });
 });

@@ -40,6 +40,20 @@ export interface ZPackageLocation {
   relative(path: string): ZPackageLocation | undefined;
 
   /**
+   * Lists nested package locations.
+   *
+   * @returns Async iterable of all package locations immediately nested in this one one.
+   */
+  nested(): AsyncIterable<ZPackageLocation>
+
+  /**
+   * Lists deeply nested package locations.
+   *
+   * @returns Async iterable of all package locations nested in this one or deeper.
+   */
+  deeplyNested(): AsyncIterable<ZPackageLocation>;
+
+  /**
    * Tries to load `package.json` from this location.
    *
    * @returns A promise resolved to either `package.json` file, or to `undefined` if this location does not contain
