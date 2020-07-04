@@ -2,20 +2,36 @@
  * @packageDocumentation
  * @module run-z
  */
+import { ZRule, ZTask, ZTaskSpec } from '../tasks';
 import type { ZPackageLocation } from './package-location';
 import type { ZPackageSet } from './package-set';
 import type { ZPackageJson } from './package.json';
+
+/**
+ * @internal
+ */
+const zRulePattern = /^(\*|@?[\w-_.]+)\/((\*|[\w-_.]+)\/)*[^/?&\s]+(\?\S*)?(\s+--[\w-_.]+)?$/;
 
 /**
  * NPM package containing tasks and rules.
  */
 export class ZPackage implements ZPackageSet {
 
+  /**
+   * Tasks hosted by this package.
+   */
+  readonly tasks: readonly ZTask[];
+
+  /**
+   * Rules hosted by this package.
+   */
+  readonly rules: readonly ZRule[];
+
   private _scopeName: string | null | undefined = null;
   private _unscopedName?: string;
   private _hostPackage?: ZPackage;
   private _subPackageName: string | null | undefined = null;
-  private _aliases?: [string, ...string[]];
+  private _aliases?: readonly [string, ...string[]];
 
   /**
    * Constructs a package.
@@ -29,6 +45,24 @@ export class ZPackage implements ZPackageSet {
       readonly packageJson: ZPackageJson,
       readonly parent?: ZPackage,
   ) {
+
+    const { scripts = {} } = packageJson;
+    const rules: ZRule[] = [];
+    const tasks: ZTask[] = [];
+
+    for (const [key, value] of Object.entries(scripts)) {
+
+      const spec = ZTaskSpec.parse(value);
+
+      if (!spec.isNative && zRulePattern.test(key)) {
+        rules.push(new ZRule(this, key, spec));
+      } else {
+        tasks.push(new ZTask(this, key, spec));
+      }
+    }
+
+    this.tasks = tasks;
+    this.rules = rules;
   }
 
   /**
