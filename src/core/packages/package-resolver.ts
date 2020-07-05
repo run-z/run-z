@@ -41,7 +41,7 @@ export class ZPackageResolver {
   /**
    * Resolves a package set known under the given name.
    *
-   * @param name  Either package set name or relative package path starting with `./` or '../'.
+   * @param name  Either package set name or relative {@link ZTaskSpec.isPackagePath path to package}.
    *
    * @returns A promise resolved to package set.
    */

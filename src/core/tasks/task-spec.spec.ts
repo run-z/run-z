@@ -167,6 +167,18 @@ describe('ZTaskSpec', () => {
     ]);
     expect(spec.args).toHaveLength(0);
   });
+  it('recognizes package path', () => {
+
+    const spec = ZTaskSpec.parse('run-z dep1 ./path/to/package dep2');
+
+    expect(spec.isNative).toBe(false);
+    expect(spec.deps).toEqual([
+      { task: 'dep1', parallel: false, args: [] },
+      { host: './path/to/package' },
+      { task: 'dep2', parallel: false, args: [] },
+    ]);
+    expect(spec.args).toHaveLength(0);
+  });
   it('throws on arguments without dependency', () => {
 
     let error!: InvalidZTaskError;

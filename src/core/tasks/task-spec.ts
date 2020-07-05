@@ -22,7 +22,7 @@ export interface ZTaskSpec {
    *
    * I.e. other tasks to run before this one.
    */
-  readonly deps: readonly ZTaskSpec.TaskRef[];
+  readonly deps: readonly ZTaskSpec.Dep[];
 
   /**
    * Command line arguments to the script this task executes.
@@ -34,6 +34,29 @@ export interface ZTaskSpec {
 export namespace ZTaskSpec {
 
   /**
+   * Task dependency.
+   *
+   * Either task or scope reference.
+   */
+  export type Dep = HostRef | TaskRef;
+
+  /**
+   * Task host reference.
+   *
+   * When present among {@link ZTaskSpec.deps task dependencies} the subsequent tasks are form the given host package.
+   */
+  export interface HostRef {
+
+    readonly task?: undefined;
+
+    /**
+     * Relative {@link ZTaskSpec.isPackagePath path to package}.
+     */
+    readonly host: string;
+
+  }
+
+  /**
    * Task reference.
    */
   export interface TaskRef {
@@ -42,6 +65,8 @@ export namespace ZTaskSpec {
      * Task name.
      */
     readonly task: string;
+
+    readonly host?: undefined;
 
     /**
      * Whether this task can be executed in parallel with preceding one.
@@ -74,13 +99,24 @@ const zTaskArgsSep = /\/\//;
 export const ZTaskSpec = {
 
   /**
+   * Checks whether the given name is relative package path.
+   *
+   * @param name  The name to check.
+   *
+   * @returns `true` is the given `name` is either `.` or `..`, or starts with either `./` or `.//`. `false` otherwise.
+   */
+  isPackagePath(this: void, name: string): boolean {
+    return name === '.' || name === '..' || name.startsWith('./') || name.startsWith('../');
+  },
+
+  /**
    * Builds task specifier by its command line.
    *
    * @param commandLine  Task command line.
    *
    * @returns Parsed task specifier.
    */
-  parse(commandLine: string): ZTaskSpec {
+  parse(this: void, commandLine: string): ZTaskSpec {
 
     const entries = parseZTaskEntries(commandLine);
 
@@ -91,7 +127,7 @@ export const ZTaskSpec = {
     let e = 0;
     let entryIndex = 0;
     let entryPosition = 0;
-    const deps: ZTaskSpec.TaskRef[] = [];
+    const deps: ZTaskSpec.Dep[] = [];
     let depTask: string | undefined;
     let depParallel = false;
     let depArgs: string[] = [];
@@ -141,6 +177,12 @@ export const ZTaskSpec = {
 
       if (entry.startsWith('-')) {
         break;
+      }
+      if (ZTaskSpec.isPackagePath(entry)) {
+        appendTask();
+        entryIndex = e + 1;
+        deps.push({ host: entry });
+        continue;
       }
 
       const parts = entry.split(zTaskArgsSep);
