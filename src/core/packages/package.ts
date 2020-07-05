@@ -14,6 +14,11 @@ import type { ZPackageJson } from './package.json';
 export class ZPackage implements ZPackageSet {
 
   /**
+   * Full package name.
+   */
+  readonly name: string;
+
+  /**
    * Tasks hosted by this package.
    */
   readonly tasks: ReadonlyMap<string, ZTask>;
@@ -22,7 +27,6 @@ export class ZPackage implements ZPackageSet {
   private _unscopedName?: string;
   private _hostPackage?: ZPackage;
   private _subPackageName: string | null | undefined = null;
-  private _aliases?: readonly [string, ...string[]];
 
   /**
    * Constructs a package.
@@ -39,6 +43,19 @@ export class ZPackage implements ZPackageSet {
       readonly parent?: ZPackage,
   ) {
 
+    const packageName = this.packageJson.name;
+
+    if (packageName) {
+      this.name = packageName;
+    } else if (parent) {
+
+      const dirName = location.path.substr(parent.location.path.length);
+
+      this.name = `${parent.name}${dirName}`;
+    } else {
+      this.name = location.baseName;
+    }
+
     const { scripts = {} } = packageJson;
     const tasks = new Map<string, ZTask>();
 
@@ -50,13 +67,6 @@ export class ZPackage implements ZPackageSet {
     }
 
     this.tasks = tasks;
-  }
-
-  /**
-   * Full package name.
-   */
-  get name(): string {
-    return this.aliases[0];
   }
 
   /**
@@ -125,33 +135,6 @@ export class ZPackage implements ZPackageSet {
   }
 
   /**
-   * Available package aliases.
-   *
-   * The first alias is always a {@link name full package name}.
-   */
-  get aliases(): readonly [string, ...string[]] {
-    if (this._aliases) {
-      return this._aliases;
-    }
-
-    const packageName = this.packageJson.name;
-    const aliases = new Set<string>();
-
-    if (packageName) {
-      addPackageAliases(packageName, aliases);
-    } else if (this.parent) {
-
-      const dirName = this.location.path.substr(this.parent.location.path.length);
-
-      addPackageAliases(`${this.parent.name}${dirName}`, aliases);
-    } else {
-      aliases.add(this.location.baseName);
-    }
-
-    return this._aliases = Array.from(aliases) as [string, ...string[]];
-  }
-
-  /**
    * An iterable consisting of this package.
    */
   packages(): Iterable<this> {
@@ -195,19 +178,4 @@ class ResolvedZPackages extends ZPackageSet {
     }
   }
 
-}
-
-/**
- * @internal
- */
-function addPackageAliases(name: string, aliases: Set<string>): void {
-  aliases.add(name);
-  if (name.startsWith('@')) {
-
-    const slashIdx = name.indexOf('/');
-
-    if (slashIdx > 0) {
-      aliases.add(name.substr(slashIdx + 1));
-    }
-  }
 }
