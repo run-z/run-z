@@ -2,6 +2,7 @@ import { asis } from '@proc7ts/primitives';
 import * as path from 'path';
 import { pathToFileURL, URL } from 'url';
 import { ZPackageDirectory } from '../../fs';
+import { ZTaskParser } from '../tasks';
 import type { ZPackage } from './package';
 import { ZPackageResolver } from './package-resolver';
 import { UnknownZPackageError } from './unknown-package-error';
@@ -20,7 +21,7 @@ describe('ZPackageResolver', () => {
   }
 
   function newResolver(path: string): ZPackageResolver {
-    return new ZPackageResolver(packageLocation(path));
+    return new ZPackageResolver(packageLocation(path), { taskParser: new ZTaskParser() });
   }
 
   async function packages(name: string): Promise<ZPackage[]> {

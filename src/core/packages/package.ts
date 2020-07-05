@@ -2,8 +2,9 @@
  * @packageDocumentation
  * @module run-z
  */
-import { ZRule, ZTask, ZTaskSpec } from '../tasks';
+import { ZRule, ZTask } from '../tasks';
 import type { ZPackageLocation } from './package-location';
+import type { ZPackageResolver } from './package-resolver';
 import type { ZPackageSet } from './package-set';
 import type { ZPackageJson } from './package.json';
 
@@ -36,11 +37,13 @@ export class ZPackage implements ZPackageSet {
   /**
    * Constructs a package.
    *
+   * @param resolver  Package resolver.
    * @param location  Package location.
    * @param packageJson  `package.json` contents.
    * @param parent  Parent NPM package.
    */
   constructor(
+      readonly resolver: ZPackageResolver,
       readonly location: ZPackageLocation,
       readonly packageJson: ZPackageJson,
       readonly parent?: ZPackage,
@@ -52,7 +55,7 @@ export class ZPackage implements ZPackageSet {
 
     for (const [key, value] of Object.entries(scripts)) {
 
-      const spec = ZTaskSpec.parse(value);
+      const spec = this.resolver.taskParser.parse(value);
 
       if (!spec.isNative && zRulePattern.test(key)) {
         rules.push(new ZRule(this, key, spec));

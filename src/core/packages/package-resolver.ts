@@ -3,6 +3,7 @@
  * @module run-z
  */
 import { itsFirst, mapIt } from '@proc7ts/a-iterable';
+import { ZTaskParser } from '../tasks';
 import { ZPackage } from './package';
 import type { ZPackageLocation } from './package-location';
 import { ZPackageSet } from './package-set';
@@ -13,6 +14,10 @@ import { UnknownZPackageError } from './unknown-package-error';
  */
 export class ZPackageResolver {
 
+  /**
+   * Task parser used.
+   */
+  readonly taskParser: ZTaskParser;
   private _packages?: Promise<Map<string, ZPackage>>;
   private _sets?: Promise<Map<string, ZPackageSet>>;
 
@@ -20,8 +25,17 @@ export class ZPackageResolver {
    * Constructs NPM package resolver.
    *
    * @param currentLocation  Current location to start package discovery from.
+   * @param taskParser  Task parser to use.
    */
-  constructor(readonly currentLocation: ZPackageLocation) {
+  constructor(
+      readonly currentLocation: ZPackageLocation,
+      {
+        taskParser = new ZTaskParser(),
+      }: {
+        readonly taskParser?: ZTaskParser;
+      } = {},
+  ) {
+    this.taskParser = taskParser;
   }
 
   /**
@@ -41,14 +55,14 @@ export class ZPackageResolver {
   /**
    * Resolves a package set known under the given name.
    *
-   * @param name  Either package set name or relative {@link ZTaskSpec.isPackagePath path to package}.
+   * @param name  Either package set name or relative {@link ZTaskParser.isPackagePath path to package}.
    *
    * @returns A promise resolved to package set.
    */
   async resolve(name: string): Promise<ZPackageSet> {
 
     const sets = await this.sets;
-    const target = name.startsWith('./') || name.startsWith('../') // Relative package path?
+    const target = this.taskParser.isPackagePath(name) // Relative package path?
         ? this.currentLocation.relative(name)?.path
         : name;
 
@@ -82,7 +96,7 @@ export class ZPackageResolver {
         return parent;
       }
 
-      const pkg = new ZPackage(location, packageJson, parent);
+      const pkg = new ZPackage(this, location, packageJson, parent);
 
       packages.set(location.path, pkg);
 

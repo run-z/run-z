@@ -1,4 +1,5 @@
 import { ZPackage } from './package';
+import { ZPackageResolver } from './package-resolver';
 import { ZPackageTree } from './package-tree';
 
 describe('ZPackage', () => {
@@ -18,7 +19,7 @@ describe('ZPackage', () => {
         },
     );
 
-    pkg = new ZPackage(tree, await tree.load());
+    pkg = new ZPackage(new ZPackageResolver(tree), tree, await tree.load());
   });
 
   describe('tasks', () => {
