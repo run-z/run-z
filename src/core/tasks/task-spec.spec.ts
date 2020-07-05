@@ -60,7 +60,7 @@ describe('ZTaskSpec', () => {
   });
   it('recognizes dependency argument', () => {
 
-    const spec = ZTaskSpec.parse('run-z dep1 dep2...-a ...dep3 --then command');
+    const spec = ZTaskSpec.parse('run-z dep1 dep2//-a //dep3 --then command');
 
     expect(spec.isNative).toBe(false);
     expect(spec.deps).toEqual([
@@ -72,7 +72,7 @@ describe('ZTaskSpec', () => {
   });
   it('recognizes multiple dependency arguments', () => {
 
-    const spec = ZTaskSpec.parse('run-z dep1 dep2...-a... ...-b... ...-c...dep3 --then command');
+    const spec = ZTaskSpec.parse('run-z dep1 dep2//-a// //-b// //-c//dep3 --then command');
 
     expect(spec.isNative).toBe(false);
     expect(spec.deps).toEqual([
@@ -84,7 +84,7 @@ describe('ZTaskSpec', () => {
   });
   it('ignores empty dependency arguments', () => {
 
-    const spec = ZTaskSpec.parse('run-z dep1 dep2 ...... dep3 --then command');
+    const spec = ZTaskSpec.parse('run-z dep1 dep2 //// dep3 --then command');
 
     expect(spec.isNative).toBe(false);
     expect(spec.deps).toEqual([
@@ -109,7 +109,7 @@ describe('ZTaskSpec', () => {
   });
   it('recognizes parallel dependency arguments', () => {
 
-    const spec = ZTaskSpec.parse('run-z dep1...-a...,dep2 ...-b..., dep3');
+    const spec = ZTaskSpec.parse('run-z dep1//-a//,dep2 //-b//, dep3');
 
     expect(spec.isNative).toBe(false);
     expect(spec.deps).toEqual([
@@ -124,13 +124,13 @@ describe('ZTaskSpec', () => {
     let error!: InvalidZTaskError;
 
     try {
-      ZTaskSpec.parse('run-z   ...-a...   task');
+      ZTaskSpec.parse('run-z   //-a//   task');
     } catch (e) {
       error = e;
     }
 
     expect(error).toBeInstanceOf(InvalidZTaskError);
-    expect(error.commandLine).toBe('...-a... task');
+    expect(error.commandLine).toBe('//-a// task');
     expect(error.position).toBe(0);
   });
   it('throws on arguments after comma', () => {
@@ -138,13 +138,13 @@ describe('ZTaskSpec', () => {
     let error!: InvalidZTaskError;
 
     try {
-      ZTaskSpec.parse('run-z  task1,  ...-a...   task2');
+      ZTaskSpec.parse('run-z  task1,  //-a//   task2');
     } catch (e) {
       error = e;
     }
 
     expect(error).toBeInstanceOf(InvalidZTaskError);
-    expect(error.commandLine).toBe('task1, ...-a... task2');
+    expect(error.commandLine).toBe('task1, //-a// task2');
     expect(error.position).toBe(7);
   });
   it('throws on arguments after comma within the same entry', () => {
@@ -152,13 +152,13 @@ describe('ZTaskSpec', () => {
     let error!: InvalidZTaskError;
 
     try {
-      ZTaskSpec.parse('run-z  task1,...-a...   task2');
+      ZTaskSpec.parse('run-z  task1,//-a//   task2');
     } catch (e) {
       error = e;
     }
 
     expect(error).toBeInstanceOf(InvalidZTaskError);
-    expect(error.commandLine).toBe('task1,...-a... task2');
+    expect(error.commandLine).toBe('task1,//-a// task2');
     expect(error.position).toBe(6);
   });
   it('throws on arguments after comma inside entry', () => {
@@ -166,13 +166,13 @@ describe('ZTaskSpec', () => {
     let error!: InvalidZTaskError;
 
     try {
-      ZTaskSpec.parse('run-z  task1,...-a...task2');
+      ZTaskSpec.parse('run-z  task1,//-a//task2');
     } catch (e) {
       error = e;
     }
 
     expect(error).toBeInstanceOf(InvalidZTaskError);
-    expect(error.commandLine).toBe('task1,...-a...task2');
+    expect(error.commandLine).toBe('task1,//-a//task2');
     expect(error.position).toBe(6);
   });
 });

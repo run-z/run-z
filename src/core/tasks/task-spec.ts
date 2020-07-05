@@ -69,7 +69,7 @@ const nativeZTask: ZTaskSpec = {
 /**
  * @internal
  */
-const zTaskArgsSep = /\.\.\./;
+const zTaskArgsSep = /\/\//;
 
 export const ZTaskSpec = {
 
