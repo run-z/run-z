@@ -2,11 +2,9 @@
  * @packageDocumentation
  * @module run-z
  */
-import { itsFirst, mapIt } from '@proc7ts/a-iterable';
 import { ZTaskParser } from '../tasks';
 import { ZPackage } from './package';
 import type { ZPackageLocation } from './package-location';
-import { ZPackageSet } from './package-set';
 import { UnknownZPackageError } from './unknown-package-error';
 
 /**
@@ -18,8 +16,7 @@ export class ZPackageResolver {
    * Task parser used.
    */
   readonly taskParser: ZTaskParser;
-  private _packages?: Promise<Map<string, ZPackage>>;
-  private _sets?: Promise<Map<string, ZPackageSet>>;
+  private readonly _packages = new Map<string, Promise<ZPackage | undefined>>();
 
   /**
    * Constructs NPM package resolver.
@@ -47,112 +44,40 @@ export class ZPackageResolver {
    */
   async get(location: ZPackageLocation): Promise<ZPackage> {
 
-    const packages = await this.packages;
+    const found = await this.find(location);
 
-    return packages.get(location.path) || Promise.reject(new UnknownZPackageError(location.path));
+    return found || Promise.reject(new UnknownZPackageError(location.path));
   }
 
   /**
-   * Resolves a package set known under the given name.
+   * Searches for package by its location.
    *
-   * @param name  Either package set name or relative {@link ZTaskParser.isPackagePath path to package}.
+   * @param location  Package location.
    *
-   * @returns A promise resolved to package set.
+   * @returns A promise resolved to package or `undefined` if there is no such package.
    */
-  async resolve(name: string): Promise<ZPackageSet> {
+  async find(location: ZPackageLocation): Promise<ZPackage | undefined> {
 
-    const sets = await this.sets;
-    const target = this.taskParser.isPackagePath(name) // Relative package path?
-        ? this.currentLocation.relative(name)?.path
-        : name;
+    const existing = this._packages.get(location.path);
 
-    return target && sets.get(target) || Promise.reject(new UnknownZPackageError(name));
-  }
-
-  private get packages(): Promise<Map<string, ZPackage>> {
-    return this._packages || (this._packages = this._discoverPackages());
-  }
-
-  private get sets(): Promise<Map<string, ZPackageSet>> {
-    return this._sets || (this._sets = this._discoverSets());
-  }
-
-  private async _discoverPackages(): Promise<Map<string, ZPackage>> {
-
-    const packages = new Map<string, ZPackage>();
-    const discoverPackage = async (location: ZPackageLocation): Promise<ZPackage | undefined> => {
-
-      const existing = packages.get(location.path);
-
-      if (existing) {
-        return existing;
-      }
-
-      const parentLocation = location.parent;
-      const parent = parentLocation && await discoverPackage(parentLocation);
-      const packageJson = await location.load();
-
-      if (!packageJson) {
-        return parent;
-      }
-
-      const pkg = new ZPackage(this, location, packageJson, parent);
-
-      packages.set(location.path, pkg);
-
-      return pkg;
-    };
-
-    await discoverPackage(this.currentLocation);
-
-    return packages;
-  }
-
-  private async _discoverSets(): Promise<Map<string, ZPackageSet>> {
-
-    const packages = await this.packages;
-    const sets = new Map<string, Set<ZPackage>>();
-    const addPackage = (name: string, pkg: ZPackage): void => {
-
-      const pkgSet = sets.get(name);
-
-      if (pkgSet) {
-        pkgSet.add(pkg);
-      } else {
-        sets.set(name, new Set<ZPackage>().add(pkg));
-      }
-    };
-
-    for (const [url, pkg] of packages.entries()) {
-      addPackage(url, pkg);
-
-      // Add aliases
-      for (const alias of pkg.aliases) {
-        addPackage(alias, pkg);
-      }
-
-      const { scopeName } = pkg;
-
-      if (scopeName) {
-        // Add scoped package to @scope set
-        addPackage(scopeName, pkg);
-      }
-
-      // Add sub-package to host package set
-      addPackage(pkg.hostPackage.name, pkg);
+    if (existing) {
+      return existing;
     }
 
-    return new Map<string, ZPackageSet>(
-        mapIt(
-            sets.entries(),
-            ([name, packages]) => [
-              name,
-              packages.size === 1
-                  ? itsFirst(packages.values())!
-                  : new ZPackageSet(name, Array.from(packages)),
-            ],
-        ),
-    );
+    const discoverPackage = async (): Promise<ZPackage | undefined> => {
+
+      const parentLocation = location.parent;
+      const parent = parentLocation && await this.find(parentLocation);
+      const packageJson = await location.load();
+
+      return packageJson ? new ZPackage(this, location, packageJson, parent) : undefined;
+    };
+
+    const discovered = discoverPackage();
+
+    this._packages.set(location.path, discovered);
+
+    return discovered;
   }
 
 }

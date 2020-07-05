@@ -74,8 +74,8 @@ describe('ZPackageTree', () => {
     });
   });
 
-  describe('deepNested', () => {
-    it('lists nested packages', () => {
+  describe('deeplyNested', () => {
+    it('lists deeply nested packages', () => {
       expect(Array.from(root.deeplyNested()).map(n => n.path)).toEqual([
         'root/nested1',
         'root/nested1/nested1.1',
@@ -84,4 +84,67 @@ describe('ZPackageTree', () => {
       ]);
     });
   });
+
+  describe('resolve', () => {
+    describe('.//', () => {
+      it('lists nested packages', async () => {
+        expect(await resolve('.//')).toEqual([
+          'root/nested1',
+          'root/nested2',
+        ]);
+      });
+    });
+
+    describe('.//nested1.1', () => {
+      it('lists nested packages', async () => {
+        root.put('nested2/nested1.1');
+        expect(await resolve('.//nested1.1')).toEqual([
+          'root/nested1/nested1.1',
+          'root/nested2/nested1.1',
+        ]);
+      });
+    });
+
+    describe('.///', () => {
+      it('lists deeply nested packages', async () => {
+        expect(await resolve('.///')).toEqual([
+          'root',
+          'root/nested1',
+          'root/nested1/nested1.1',
+          'root/nested2',
+          'root/nested2/nested2.1',
+        ]);
+      });
+    });
+
+    describe('.///nested1.1', () => {
+      it('lists deeply nested packages', async () => {
+        root.put('nested2/nested1.1/nested1.1');
+        expect(await resolve('.///nested1.1')).toEqual([
+          'root/nested1/nested1.1',
+          'root/nested2/nested1.1',
+          'root/nested2/nested1.1/nested1.1',
+        ]);
+      });
+    });
+
+    describe('..//', () => {
+      it('does not list any locations', async () => {
+        expect(await resolve('..//')).toHaveLength(0);
+      });
+    });
+
+    async function resolve(pattern: string): Promise<string[]> {
+
+      const result: string[] = [];
+
+      for await (const resolved of root.resolve(pattern)) {
+        result.push(resolved.path);
+      }
+
+      return result;
+    }
+
+  });
+
 });

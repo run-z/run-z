@@ -5,7 +5,7 @@
 import { ZTask } from '../tasks';
 import type { ZPackageLocation } from './package-location';
 import type { ZPackageResolver } from './package-resolver';
-import type { ZPackageSet } from './package-set';
+import { ZPackageSet } from './package-set';
 import type { ZPackageJson } from './package.json';
 
 /**
@@ -50,13 +50,6 @@ export class ZPackage implements ZPackageSet {
     }
 
     this.tasks = tasks;
-  }
-
-  /**
-   * An iterable consisting of this package.
-   */
-  get packages(): Iterable<this> {
-    return [this];
   }
 
   /**
@@ -156,6 +149,50 @@ export class ZPackage implements ZPackageSet {
     }
 
     return this._aliases = Array.from(aliases) as [string, ...string[]];
+  }
+
+  /**
+   * An iterable consisting of this package.
+   */
+  packages(): Iterable<this> {
+    return [this];
+  }
+
+  /**
+   * Resolves packages located accordingly to the given pattern relatively to this package.
+   *
+   * Path pattern uses `/` symbols as path separator.
+   *
+   * It may include `//` to include all immediately nested packages, or `///` to include all deeply nested packages.
+   *
+   * @param pattern  Path pattern.
+   *
+   * @returns Resolved package set.
+   */
+  resolve(pattern: string): ZPackageSet {
+    return new ResolvedZPackages(this, pattern);
+  }
+
+}
+
+/**
+ * @internal
+ */
+class ResolvedZPackages extends ZPackageSet {
+
+  constructor(readonly pkg: ZPackage, readonly pattern: string) {
+    super();
+  }
+
+  async *packages(): AsyncIterable<ZPackage> {
+    for await (const l of this.pkg.location.resolve(this.pattern)) {
+
+      const resolved = await this.pkg.resolver.find(l);
+
+      if (resolved) {
+        yield resolved;
+      }
+    }
   }
 
 }

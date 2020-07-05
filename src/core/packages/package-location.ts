@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module run-z
  */
+import { overNone } from '@proc7ts/a-iterable';
 import type { ZPackageJson } from './package.json';
 
 /**
@@ -9,26 +10,26 @@ import type { ZPackageJson } from './package.json';
  *
  * E.g. a directory containing `package.json` file.
  */
-export interface ZPackageLocation {
+export abstract class ZPackageLocation {
 
   /**
    * Parent package location or `undefined` if there is no parent location.
    */
-  readonly parent: ZPackageLocation | undefined;
+  readonly abstract parent: ZPackageLocation | undefined;
 
   /**
    * A path specific to this location.
    *
    * Two locations with the same paths considered equal.
    */
-  readonly path: string;
+  readonly abstract path: string;
 
   /**
    * Base name of the package path.
    *
    * I.e. the last segment of the [[path]].
    */
-  readonly baseName: string;
+  readonly abstract baseName: string;
 
   /**
    * Constructs location relatively to this one.
@@ -37,21 +38,21 @@ export interface ZPackageLocation {
    *
    * @returns Either relative location, or `undefined` if the given `path` does not lead to package location.
    */
-  relative(path: string): ZPackageLocation | undefined;
+  abstract relative(path: string): ZPackageLocation | undefined;
 
   /**
    * Lists nested package locations.
    *
    * @returns Possibly async iterable of all package locations immediately nested in this one one.
    */
-  nested(): Iterable<ZPackageLocation> | AsyncIterable<ZPackageLocation>;
+  abstract nested(): Iterable<ZPackageLocation> | AsyncIterable<ZPackageLocation>;
 
   /**
    * Lists deeply nested package locations.
    *
    * @returns Possibly async iterable of all package locations nested in this one or deeper.
    */
-  deeplyNested(): Iterable<ZPackageLocation> | AsyncIterable<ZPackageLocation>;
+  abstract deeplyNested(): Iterable<ZPackageLocation> | AsyncIterable<ZPackageLocation>;
 
   /**
    * Tries to load `package.json` from this location.
@@ -59,6 +60,56 @@ export interface ZPackageLocation {
    * @returns A promise resolved to either `package.json` file, or to `undefined` if this location does not contain
    * NPM package.
    */
-  load(): Promise<ZPackageJson | undefined>;
+  abstract load(): Promise<ZPackageJson | undefined>;
+
+  /**
+   * Resolves package locations matching the given location pattern relatively to this one.
+   *
+   * The pattern uses `/` symbols as path separator.
+   *
+   * It may include `//` to include all immediately nested packages, or `///` to include all deeply nested packages.
+   *
+   * @param pattern  Location pattern.
+   *
+   * @returns Possibly async iterable of matching package locations.
+   */
+  resolve(pattern: string): Iterable<ZPackageLocation> | AsyncIterable<ZPackageLocation> {
+
+    const index = pattern.indexOf('//');
+
+    if (index < 0) {
+
+      const relative = this.relative(pattern);
+
+      return relative ? [relative] : overNone();
+    }
+
+    const prefix = pattern.substr(0, index);
+    const deep = pattern.substr(index, 3) === '///';
+    const suffix = pattern.substr(deep ? index + 3 : index + 2);
+    const root = this.relative(prefix);
+
+    if (!root) {
+      return overNone();
+    }
+
+    return iterate();
+
+    async function *iterate(): AsyncIterable<ZPackageLocation> {
+
+      const allNested = deep ? root!.deeplyNested() : root!.nested();
+
+      if (suffix) {
+        for await (const nested of allNested) {
+          yield* nested.resolve(suffix);
+        }
+      } else {
+        if (deep) {
+          yield root!;
+        }
+        yield* allNested;
+      }
+    }
+  }
 
 }

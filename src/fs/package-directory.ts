@@ -6,13 +6,14 @@ import { isPresent, valueProvider } from '@proc7ts/primitives';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath, pathToFileURL, URL } from 'url';
-import type { ZPackageJson, ZPackageLocation } from '../core';
+import type { ZPackageJson } from '../core';
+import { ZPackageLocation } from '../core';
 import { isRootURL, urlBaseName, urlOfFile } from './url.impl';
 
 /**
  * A file system directory potentially containing NPM package.
  */
-export class ZPackageDirectory implements ZPackageLocation {
+export class ZPackageDirectory extends ZPackageLocation {
 
   /**
    * Constructs NPM package directory.
@@ -50,6 +51,7 @@ export class ZPackageDirectory implements ZPackageLocation {
   private _parent?: ZPackageDirectory | null | undefined = null;
 
   private constructor(url: URL, rootURL: URL) {
+    super();
     this.url = urlOfFile(url);
     this.dirURL = new URL(this.url.pathname + '/', url);
     this.rootURL = rootURL;

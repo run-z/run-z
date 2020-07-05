@@ -3,7 +3,7 @@
  * @module run-z
  */
 import { valueProvider } from '@proc7ts/primitives';
-import type { ZPackageLocation } from './package-location';
+import { ZPackageLocation } from './package-location';
 import type { ZPackageJson } from './package.json';
 
 /**
@@ -11,7 +11,7 @@ import type { ZPackageJson } from './package.json';
  *
  * This is a package location implementation that can be filled with package and sub-package data.
  */
-export class ZPackageTree implements ZPackageLocation {
+export class ZPackageTree extends ZPackageLocation {
 
   readonly parent: ZPackageTree | undefined;
   readonly path: string;
@@ -30,6 +30,7 @@ export class ZPackageTree implements ZPackageLocation {
       packageJson?: PromiseLike<ZPackageJson | undefined> | ZPackageJson,
       parent?: ZPackageTree,
   ) {
+    super();
     this.parent = parent;
     this.path = parent ? `${parent.path}/${baseName}` : baseName;
 

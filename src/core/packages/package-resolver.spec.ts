@@ -1,11 +1,9 @@
-import { asis } from '@proc7ts/primitives';
 import * as path from 'path';
 import { pathToFileURL, URL } from 'url';
 import { ZPackageDirectory } from '../../fs';
 import { ZTaskParser } from '../tasks';
 import type { ZPackage } from './package';
 import { ZPackageResolver } from './package-resolver';
-import { UnknownZPackageError } from './unknown-package-error';
 
 describe('ZPackageResolver', () => {
 
@@ -24,10 +22,6 @@ describe('ZPackageResolver', () => {
     return new ZPackageResolver(packageLocation(path), { taskParser: new ZTaskParser() });
   }
 
-  async function packages(name: string): Promise<ZPackage[]> {
-    return [...(await resolver.resolve(name)).packages];
-  }
-
   describe('anonymous package', () => {
 
     let pkg: ZPackage;
@@ -39,9 +33,6 @@ describe('ZPackageResolver', () => {
 
     it('is resolved', () => {
       expect(pkg.name).toBe('anonymous');
-    });
-    it('is available under directory name', async () => {
-      expect(await packages('anonymous')).toContain(pkg);
     });
 
     describe('parent', () => {
@@ -93,18 +84,6 @@ describe('ZPackageResolver', () => {
     it('is resolved', () => {
       expect(nested.name).toBe('named-nested');
       expect(deeplyNested.name).toBe('named-nested/deeply-nested');
-    });
-    it('is available under directory name', async () => {
-      expect(await packages('named-nested/deeply-nested')).toContain(deeplyNested);
-    });
-    it('is not available under short directory name', async () => {
-      expect(await packages('deeply-nested').catch(asis)).toBeInstanceOf(UnknownZPackageError);
-    });
-    it('is available under explicit name', async () => {
-      expect(await packages('named-nested')).toContain(nested);
-    });
-    it('is not available under directory name when explicitly named', async () => {
-      expect(await packages('nested').catch(asis)).toBeInstanceOf(UnknownZPackageError);
     });
 
     describe('parent', () => {
@@ -168,23 +147,6 @@ describe('ZPackageResolver', () => {
       expect(nested.name).toBe('@scope-name/package-name/nested');
       expect(deeplyNested.name).toBe('@scope-name/package-name/nested/deeper');
     });
-    it('is available under directory name', async () => {
-      expect(await packages('@scope-name/package-name/nested')).toContain(nested);
-      expect(await packages('@scope-name/package-name/nested/deeper')).toContain(deeplyNested);
-    });
-    it('is not available under short directory name', async () => {
-      expect(await packages('nested/deeper').catch(asis)).toBeInstanceOf(UnknownZPackageError);
-      expect(await packages('nested').catch(asis)).toBeInstanceOf(UnknownZPackageError);
-      expect(await packages('deeper').catch(asis)).toBeInstanceOf(UnknownZPackageError);
-    });
-    it('is available under scope name', async () => {
-
-      const pkgList = await packages('@scope-name');
-
-      expect(pkgList).toContain(pkg);
-      expect(pkgList).toContain(nested);
-      expect(pkgList).toContain(deeplyNested);
-    });
 
     describe('parent', () => {
       it('is present', () => {
@@ -238,9 +200,6 @@ describe('ZPackageResolver', () => {
 
     it('is resolved', () => {
       expect(pkg.name).toBe('@not-scope');
-    });
-    it('is available under package name', async () => {
-      expect(await packages('@not-scope')).toContain(pkg);
     });
 
     describe('scopeName', () => {
