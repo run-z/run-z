@@ -23,7 +23,12 @@ export interface ZTaskSpec {
   readonly deps: readonly ZTaskSpec.Dep[];
 
   /**
-   * Command line arguments to the script this task executes.
+   * Task attributes.
+   */
+  readonly attrs: ZTaskSpec.Attrs;
+
+  /**
+   * Additional command line arguments.
    */
   readonly args: readonly string[];
 
@@ -72,9 +77,26 @@ export namespace ZTaskSpec {
     readonly parallel: boolean;
 
     /**
+     * Referenced task attributes.
+     */
+    readonly attrs: Attrs;
+
+    /**
      * Command line arguments.
      */
     readonly args: readonly string[];
+
+  }
+
+  /**
+   * Task attributes specifier.
+   */
+  export interface Attrs {
+
+    /**
+     * A map of attribute values by their names.
+     */
+    readonly [name: string]: readonly string[];
 
   }
 

@@ -12,6 +12,7 @@ import type { ZTaskSpec } from './task-spec';
 const nativeZTask: ZTaskSpec = {
   isNative: true,
   deps: [],
+  attrs: {},
   args: [],
 };
 
@@ -55,6 +56,7 @@ export class ZTaskParser {
     let entryIndex = 0;
     let entryPosition = 0;
     const deps: ZTaskSpec.Dep[] = [];
+    const attrs: Record<string, string[]> = {};
     let depTask: string | undefined;
     let depParallel = false;
     let depArgs: string[] = [];
@@ -89,7 +91,7 @@ export class ZTaskParser {
     const appendTask = (): void => {
       if (depTask) {
         // Finish the task.
-        deps.push({ task: depTask, parallel: depParallel, args: depArgs });
+        deps.push(createZTaskRef(depTask, depParallel, depArgs));
         depArgs = [];
         depParallel = false;
         depTask = undefined;
@@ -106,10 +108,25 @@ export class ZTaskParser {
         break;
       }
       if (this.isPackagePath(entry)) {
+        // Package reference
         appendTask();
         entryIndex = e + 1;
         deps.push({ host: entry });
         continue;
+      }
+      const eqIdx = entry.indexOf('=');
+
+      if (eqIdx >= 0) {
+
+        const slashIdx = entry.indexOf('/');
+
+        if (slashIdx < 0 || eqIdx < slashIdx) {
+          // Attribute specifier.
+          appendTask();
+          entryIndex = e + 1;
+          addZTaskAttr(attrs, entry, eqIdx);
+          continue;
+        }
       }
 
       const parts = entry.split(zTaskArgsSep);
@@ -169,6 +186,7 @@ export class ZTaskParser {
     return {
       isNative: false,
       deps,
+      attrs,
       args: entries.slice(e),
     };
   }
@@ -198,4 +216,57 @@ function parseZTaskEntries(commandLine: string): string[] | undefined {
   }
 
   return; // Special shell command present.
+}
+
+/**
+ * @internal
+ */
+function createZTaskRef(task: string, parallel: boolean, allArgs: string[]): ZTaskSpec.TaskRef {
+
+  const attrs: Record<string, string[]> = {};
+  const args: string[] = [];
+
+  for (const arg of allArgs) {
+    if (!arg.startsWith('-')) {
+
+      const eqIdx = arg.indexOf('=');
+
+      if (eqIdx >= 0) {
+        addZTaskAttr(attrs, arg, eqIdx);
+        continue;
+      }
+    }
+
+    args.push(arg);
+  }
+
+  return {
+    task,
+    parallel,
+    attrs,
+    args,
+  };
+}
+
+/**
+ * @internal
+ */
+function addZTaskAttr(attrs: Record<string, string[]>, arg: string, eqIdx: number): void {
+
+  let name: string;
+  let value: string;
+
+  if (eqIdx) {
+    name = arg.substr(0, eqIdx);
+    value = arg.substr(eqIdx + 1);
+  } else {
+    name = arg.substr(1);
+    value = '';
+  }
+
+  if (attrs[name]) {
+    attrs[name].push(value);
+  } else {
+    attrs[name] = [value];
+  }
 }

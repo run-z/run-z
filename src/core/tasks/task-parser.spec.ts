@@ -47,9 +47,9 @@ describe('ZTaskParser', () => {
 
     expect(spec.isNative).toBe(false);
     expect(spec.deps).toEqual([
-        { task: 'dep1', parallel: false, args: [] },
-        { task: 'dep2', parallel: false, args: [] },
-        { task: 'dep3', parallel: false, args: [] },
+        { task: 'dep1', parallel: false, attrs: {}, args: [] },
+        { task: 'dep2', parallel: false, attrs: {}, args: [] },
+        { task: 'dep3', parallel: false, attrs: {}, args: [] },
     ]);
     expect(spec.args).toHaveLength(0);
   });
@@ -59,9 +59,9 @@ describe('ZTaskParser', () => {
 
     expect(spec.isNative).toBe(false);
     expect(spec.deps).toEqual([
-      { task: 'dep1', parallel: false, args: [] },
-      { task: 'dep2', parallel: false, args: [] },
-      { task: 'dep3', parallel: false, args: [] },
+      { task: 'dep1', parallel: false, attrs: {}, args: [] },
+      { task: 'dep2', parallel: false, attrs: {}, args: [] },
+      { task: 'dep3', parallel: false, attrs: {}, args: [] },
     ]);
     expect(spec.args).toEqual(['--then', 'command']);
   });
@@ -71,9 +71,9 @@ describe('ZTaskParser', () => {
 
     expect(spec.isNative).toBe(false);
     expect(spec.deps).toEqual([
-      { task: 'dep1', parallel: false, args: [] },
-      { task: 'dep2', parallel: false, args: ['-a'] },
-      { task: 'dep3', parallel: false, args: [] },
+      { task: 'dep1', parallel: false, attrs: {}, args: [] },
+      { task: 'dep2', parallel: false, attrs: {}, args: ['-a'] },
+      { task: 'dep3', parallel: false, attrs: {}, args: [] },
     ]);
     expect(spec.args).toEqual(['--then', 'command']);
   });
@@ -83,9 +83,9 @@ describe('ZTaskParser', () => {
 
     expect(spec.isNative).toBe(false);
     expect(spec.deps).toEqual([
-      { task: 'dep1', parallel: false, args: [] },
-      { task: 'dep2', parallel: false, args: ['-a'] },
-      { task: 'dep3', parallel: false, args: [] },
+      { task: 'dep1', parallel: false, attrs: {}, args: [] },
+      { task: 'dep2', parallel: false, attrs: {}, args: ['-a'] },
+      { task: 'dep3', parallel: false, attrs: {}, args: [] },
     ]);
     expect(spec.args).toEqual(['--then', 'command']);
   });
@@ -95,9 +95,9 @@ describe('ZTaskParser', () => {
 
     expect(spec.isNative).toBe(false);
     expect(spec.deps).toEqual([
-      { task: 'dep1', parallel: false, args: [] },
-      { task: 'dep2', parallel: false, args: ['-a', '-b', '-c'] },
-      { task: 'dep3', parallel: false, args: [] },
+      { task: 'dep1', parallel: false, attrs: {}, args: [] },
+      { task: 'dep2', parallel: false, attrs: {}, args: ['-a', '-b', '-c'] },
+      { task: 'dep3', parallel: false, attrs: {}, args: [] },
     ]);
     expect(spec.args).toEqual(['--then', 'command']);
   });
@@ -107,9 +107,9 @@ describe('ZTaskParser', () => {
 
     expect(spec.isNative).toBe(false);
     expect(spec.deps).toEqual([
-      { task: 'dep1', parallel: false, args: [] },
-      { task: 'dep2', parallel: false, args: ['-a', '-b', '-c', '-d'] },
-      { task: 'dep3', parallel: false, args: [] },
+      { task: 'dep1', parallel: false, attrs: {}, args: [] },
+      { task: 'dep2', parallel: false, attrs: {}, args: ['-a', '-b', '-c', '-d'] },
+      { task: 'dep3', parallel: false, attrs: {}, args: [] },
     ]);
     expect(spec.args).toEqual(['--then', 'command']);
   });
@@ -119,9 +119,9 @@ describe('ZTaskParser', () => {
 
     expect(spec.isNative).toBe(false);
     expect(spec.deps).toEqual([
-      { task: 'dep1', parallel: false, args: [] },
-      { task: 'dep2', parallel: false, args: [] },
-      { task: 'dep3', parallel: false, args: [] },
+      { task: 'dep1', parallel: false, attrs: {}, args: [] },
+      { task: 'dep2', parallel: false, attrs: {}, args: [] },
+      { task: 'dep3', parallel: false, attrs: {}, args: [] },
     ]);
     expect(spec.args).toEqual(['--then', 'command']);
   });
@@ -131,9 +131,9 @@ describe('ZTaskParser', () => {
 
     expect(spec.isNative).toBe(false);
     expect(spec.deps).toEqual([
-      { task: 'dep1', parallel: false, args: [] },
-      { task: 'dep2', parallel: false, args: [] },
-      { task: 'dep3', parallel: false, args: [] },
+      { task: 'dep1', parallel: false, attrs: {}, args: [] },
+      { task: 'dep2', parallel: false, attrs: {}, args: [] },
+      { task: 'dep3', parallel: false, attrs: {}, args: [] },
     ]);
     expect(spec.args).toEqual(['--then', 'command']);
   });
@@ -143,10 +143,10 @@ describe('ZTaskParser', () => {
 
     expect(spec.isNative).toBe(false);
     expect(spec.deps).toEqual([
-      { task: 'dep1', parallel: false, args: [] },
-      { task: 'dep2', parallel: true, args: [] },
-      { task: 'dep3', parallel: true, args: [] },
-      { task: 'dep4', parallel: false, args: [] },
+      { task: 'dep1', parallel: false, attrs: {}, args: [] },
+      { task: 'dep2', parallel: true, attrs: {}, args: [] },
+      { task: 'dep3', parallel: true, attrs: {}, args: [] },
+      { task: 'dep4', parallel: false, attrs: {}, args: [] },
     ]);
     expect(spec.args).toHaveLength(0);
   });
@@ -156,9 +156,9 @@ describe('ZTaskParser', () => {
 
     expect(spec.isNative).toBe(false);
     expect(spec.deps).toEqual([
-      { task: 'dep1', parallel: false, args: ['-a'] },
-      { task: 'dep2', parallel: true, args: ['-b'] },
-      { task: 'dep3', parallel: true, args: [] },
+      { task: 'dep1', parallel: false, attrs: {}, args: ['-a'] },
+      { task: 'dep2', parallel: true, attrs: {}, args: ['-b'] },
+      { task: 'dep3', parallel: true, attrs: {}, args: [] },
     ]);
     expect(spec.args).toHaveLength(0);
   });
@@ -168,9 +168,9 @@ describe('ZTaskParser', () => {
 
     expect(spec.isNative).toBe(false);
     expect(spec.deps).toEqual([
-      { task: 'dep1', parallel: false, args: ['-a', '-b', '-c'] },
-      { task: 'dep2', parallel: true, args: ['-d'] },
-      { task: 'dep3', parallel: true, args: [] },
+      { task: 'dep1', parallel: false, attrs: {}, args: ['-a', '-b', '-c'] },
+      { task: 'dep2', parallel: true, attrs: {}, args: ['-d'] },
+      { task: 'dep3', parallel: true, attrs: {}, args: [] },
     ]);
     expect(spec.args).toHaveLength(0);
   });
@@ -180,11 +180,36 @@ describe('ZTaskParser', () => {
 
     expect(spec.isNative).toBe(false);
     expect(spec.deps).toEqual([
-      { task: 'dep1', parallel: false, args: [] },
+      { task: 'dep1', parallel: false, attrs: {}, args: [] },
       { host: './path/to/package' },
-      { task: 'dep2', parallel: false, args: [] },
+      { task: 'dep2', parallel: false, attrs: {}, args: [] },
     ]);
     expect(spec.args).toHaveLength(0);
+  });
+  it('recognizes attributes', () => {
+
+    const spec = parser.parse('run-z attr1=val1 attr2= =attr3 attr3=val3');
+
+    expect(spec.isNative).toBe(false);
+    expect(spec.attrs).toEqual({
+      attr1: ['val1'],
+      attr2: [''],
+      attr3: ['', 'val3'],
+    });
+  });
+  it('recognizes dependency attributes', () => {
+
+    const spec = parser.parse('run-z attr1=val1 dep/attr2=/=attr3/arg1/--arg2=2/attr3=val3');
+
+    expect(spec.deps).toEqual([
+      {
+        task: 'dep',
+        parallel: false,
+        attrs: { attr2: [''], attr3: ['', 'val3'] },
+        args: ['arg1', '--arg2=2'],
+      },
+    ]);
+    expect(spec.attrs).toEqual({ attr1: ['val1'] });
   });
   it('throws on arguments without dependency', () => {
 
