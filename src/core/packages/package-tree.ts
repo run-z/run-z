@@ -15,7 +15,7 @@ export class ZPackageTree extends ZPackageLocation {
 
   readonly parent: ZPackageTree | undefined;
   readonly path: string;
-  readonly load: () => Promise<ZPackageJson>;
+  readonly load: () => Promise<ZPackageJson | undefined>;
   private readonly _nested = new Map<string, ZPackageTree>();
 
   /**
@@ -33,10 +33,7 @@ export class ZPackageTree extends ZPackageLocation {
     super();
     this.parent = parent;
     this.path = parent ? `${parent.path}/${baseName}` : baseName;
-
-    const load = Promise.resolve(packageJson).then((json = {}) => json);
-
-    this.load = valueProvider(load);
+    this.load = valueProvider(Promise.resolve(packageJson));
   }
 
   relative(path: string): ZPackageTree | undefined {

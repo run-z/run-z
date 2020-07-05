@@ -1,14 +1,15 @@
-import { ZPackage } from './package';
+import type { ZPackage } from './package';
 import { ZPackageResolver } from './package-resolver';
 import { ZPackageTree } from './package-tree';
 
 describe('ZPackage', () => {
 
+  let resolver: ZPackageResolver;
+  let tree: ZPackageTree;
   let pkg: ZPackage;
 
   beforeEach(async () => {
-
-    const tree = new ZPackageTree(
+    tree = new ZPackageTree(
         'test',
         {
           scripts: {
@@ -17,8 +18,8 @@ describe('ZPackage', () => {
           },
         },
     );
-
-    pkg = new ZPackage(new ZPackageResolver(tree), tree, await tree.load());
+    resolver = new ZPackageResolver(tree);
+    pkg = await resolver.get(tree);
   });
 
   describe('tasks', () => {
@@ -28,4 +29,32 @@ describe('ZPackage', () => {
       expect(pkg.tasks.get('task2')?.name).toBe('task2');
     });
   });
+
+  describe('packages', () => {
+    it('contains the package itself', () => {
+      expect(Array.from(pkg.packages())).toEqual([pkg]);
+    });
+  });
+
+  describe('resolve', () => {
+    it('resolves packages', async () => {
+      tree.put('nested', { name: 'nested' });
+      expect(await resolve('.///')).toEqual(['test', 'nested']);
+    });
+    it('excludes packages without `package.json`', async () => {
+      tree.put('nested');
+      expect(await resolve('.///')).toEqual(['test']);
+    });
+  });
+
+  async function resolve(pattern: string): Promise<string[]> {
+
+    const result: string[] = [];
+
+    for await (const resolved of pkg.resolve(pattern).packages()) {
+      result.push(resolved.name);
+    }
+
+    return result;
+  }
 });

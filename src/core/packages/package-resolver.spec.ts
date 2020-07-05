@@ -1,9 +1,11 @@
+import { asis } from '@proc7ts/primitives';
 import * as path from 'path';
 import { pathToFileURL, URL } from 'url';
 import { ZPackageDirectory } from '../../fs';
 import { ZTaskParser } from '../tasks';
 import type { ZPackage } from './package';
 import { ZPackageResolver } from './package-resolver';
+import { UnknownZPackageError } from './unknown-package-error';
 
 describe('ZPackageResolver', () => {
 
@@ -21,6 +23,22 @@ describe('ZPackageResolver', () => {
   function newResolver(path: string): ZPackageResolver {
     return new ZPackageResolver(packageLocation(path), { taskParser: new ZTaskParser() });
   }
+
+  describe('get', () => {
+    beforeEach(() => {
+      resolver = newResolver('anonymous');
+    });
+
+    it('throws when package not found', async () => {
+      expect(await resolver.get(packageLocation('non-existing')).catch(asis)).toBeInstanceOf(UnknownZPackageError);
+    });
+    it('caches resolved package', async () => {
+
+      const pkg = await resolver.get(packageLocation('anonymous'));
+
+      expect(await resolver.get(packageLocation('anonymous'))).toBe(pkg);
+    });
+  });
 
   describe('anonymous package', () => {
 
