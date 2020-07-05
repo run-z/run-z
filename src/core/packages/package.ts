@@ -2,16 +2,11 @@
  * @packageDocumentation
  * @module run-z
  */
-import { ZRule, ZTask } from '../tasks';
+import { ZTask } from '../tasks';
 import type { ZPackageLocation } from './package-location';
 import type { ZPackageResolver } from './package-resolver';
 import type { ZPackageSet } from './package-set';
 import type { ZPackageJson } from './package.json';
-
-/**
- * @internal
- */
-const zRulePattern = /^(\*|@?[\w-_.]+)\/((\*|[\w-_.]+)\/)*[^/?&\s]+(\?\S*)?(\s+--[\w-_.]+)?$/;
 
 /**
  * NPM package containing tasks and rules.
@@ -22,11 +17,6 @@ export class ZPackage implements ZPackageSet {
    * Tasks hosted by this package.
    */
   readonly tasks: ReadonlyMap<string, ZTask>;
-
-  /**
-   * Rules hosted by this package.
-   */
-  readonly rules: readonly ZRule[];
 
   private _scopeName: string | null | undefined = null;
   private _unscopedName?: string;
@@ -50,22 +40,16 @@ export class ZPackage implements ZPackageSet {
   ) {
 
     const { scripts = {} } = packageJson;
-    const rules: ZRule[] = [];
     const tasks = new Map<string, ZTask>();
 
     for (const [key, value] of Object.entries(scripts)) {
 
       const spec = this.resolver.taskParser.parse(value);
 
-      if (!spec.isNative && zRulePattern.test(key)) {
-        rules.push(new ZRule(this, key, spec));
-      } else {
-        tasks.set(key, new ZTask(this, key, spec));
-      }
+      tasks.set(key, new ZTask(this, key, spec));
     }
 
     this.tasks = tasks;
-    this.rules = rules;
   }
 
   /**
