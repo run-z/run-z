@@ -157,13 +157,28 @@ export const ZTaskSpec = {
             const tasks = part.split(',');
 
             for (let t = 0; t < tasks.length; ++t) {
+
+              const [task, ...rest] = tasks[t].split('/');
+              const args = rest.filter(arg => !!arg);
+
+              if (!task) {
+                // Just arg(s)
+                if (args.length && t) {
+                  ++entryPosition; // Comma
+                  parseError('Task argument specified, but not the task');
+                }
+                depArgs.push(...args);
+                if (tasks.length === 1) {
+                  continue;
+                }
+              }
+
               appendTask();
               entryIndex = e;
 
-              const task = tasks[t];
-
               if (task) {
                 depTask = task;
+                depArgs = args;
               }
 
               if (t) {
