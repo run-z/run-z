@@ -36,22 +36,22 @@ describe('ZPackage', () => {
     });
   });
 
-  describe('resolve', () => {
-    it('resolves packages', async () => {
+  describe('select', () => {
+    it('selects packages', async () => {
       tree.put('nested', { name: 'nested' });
-      expect(await resolve('.///')).toEqual(['test', 'nested']);
+      expect(await select('.///')).toEqual(['test', 'nested']);
     });
     it('excludes packages without `package.json`', async () => {
       tree.put('nested');
-      expect(await resolve('.///')).toEqual(['test']);
+      expect(await select('.///')).toEqual(['test']);
     });
   });
 
-  async function resolve(pattern: string): Promise<string[]> {
+  async function select(pattern: string): Promise<string[]> {
 
     const result: string[] = [];
 
-    for await (const resolved of pkg.resolve(pattern).packages()) {
+    for await (const resolved of pkg.select(pattern).packages()) {
       result.push(resolved.name);
     }
 

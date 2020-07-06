@@ -85,10 +85,10 @@ describe('ZPackageTree', () => {
     });
   });
 
-  describe('resolve', () => {
+  describe('select', () => {
     describe('.//', () => {
       it('lists nested packages', async () => {
-        expect(await resolve('.//')).toEqual([
+        expect(await select('.//')).toEqual([
           'root/nested1',
           'root/nested2',
         ]);
@@ -98,7 +98,7 @@ describe('ZPackageTree', () => {
     describe('.//nested1.1', () => {
       it('lists nested packages', async () => {
         root.put('nested2/nested1.1');
-        expect(await resolve('.//nested1.1')).toEqual([
+        expect(await select('.//nested1.1')).toEqual([
           'root/nested1/nested1.1',
           'root/nested2/nested1.1',
         ]);
@@ -107,7 +107,7 @@ describe('ZPackageTree', () => {
 
     describe('.///', () => {
       it('lists deeply nested packages', async () => {
-        expect(await resolve('.///')).toEqual([
+        expect(await select('.///')).toEqual([
           'root',
           'root/nested1',
           'root/nested1/nested1.1',
@@ -120,7 +120,7 @@ describe('ZPackageTree', () => {
     describe('.///nested1.1', () => {
       it('lists deeply nested packages', async () => {
         root.put('nested2/nested1.1/nested1.1');
-        expect(await resolve('.///nested1.1')).toEqual([
+        expect(await select('.///nested1.1')).toEqual([
           'root/nested1/nested1.1',
           'root/nested2/nested1.1',
           'root/nested2/nested1.1/nested1.1',
@@ -130,15 +130,15 @@ describe('ZPackageTree', () => {
 
     describe('..//', () => {
       it('does not list any locations', async () => {
-        expect(await resolve('..//')).toHaveLength(0);
+        expect(await select('..//')).toHaveLength(0);
       });
     });
 
-    async function resolve(pattern: string): Promise<string[]> {
+    async function select(pattern: string): Promise<string[]> {
 
       const result: string[] = [];
 
-      for await (const resolved of root.resolve(pattern)) {
+      for await (const resolved of root.select(pattern)) {
         result.push(resolved.path);
       }
 

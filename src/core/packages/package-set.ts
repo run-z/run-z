@@ -10,7 +10,7 @@ import type { ZPackage } from './package';
 export abstract class ZPackageSet {
 
   /**
-   * Builds a packages set.
+   * Lists packages of this set.
    *
    * @returns A possibly async iterable of packages this set consists of.
    */

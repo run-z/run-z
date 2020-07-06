@@ -27,14 +27,14 @@ const zTaskArgsSep = /\/\//;
 export class ZTaskParser {
 
   /**
-   * Checks whether the given name is relative package path.
+   * Checks whether the given string is package selector.
    *
-   * @param name  The name to check.
+   * @param value  A string value to check.
    *
-   * @returns `true` is the given `name` is either `.` or `..`, or starts with either `./` or `.//`. `false` otherwise.
+   * @returns `true` is the given `value` is either `.` or `..`, or starts with either `./` or `.//`. `false` otherwise.
    */
-  isPackagePath(name: string): boolean {
-    return name === '.' || name === '..' || name.startsWith('./') || name.startsWith('../');
+  isPackageSelector(value: string): boolean {
+    return value === '.' || value === '..' || value.startsWith('./') || value.startsWith('../');
   }
 
   /**
@@ -107,11 +107,11 @@ export class ZTaskParser {
       if (entry.startsWith('-')) {
         break;
       }
-      if (this.isPackagePath(entry)) {
+      if (this.isPackageSelector(entry)) {
         // Package reference
         appendTask();
         entryIndex = e + 1;
-        deps.push({ host: entry });
+        deps.push({ selector: entry });
         continue;
       }
       const eqIdx = entry.indexOf('=');

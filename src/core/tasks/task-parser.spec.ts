@@ -174,14 +174,14 @@ describe('ZTaskParser', () => {
     ]);
     expect(spec.args).toHaveLength(0);
   });
-  it('recognizes package path', () => {
+  it('recognizes package reference', () => {
 
-    const spec = parser.parse('run-z dep1 ./path/to/package dep2');
+    const spec = parser.parse('run-z dep1 ./path//selector dep2');
 
     expect(spec.isNative).toBe(false);
     expect(spec.deps).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
-      { host: './path/to/package' },
+      { selector: './path//selector' },
       { task: 'dep2', parallel: false, attrs: {}, args: [] },
     ]);
     expect(spec.args).toHaveLength(0);

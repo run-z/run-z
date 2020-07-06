@@ -63,30 +63,30 @@ export abstract class ZPackageLocation {
   abstract load(): Promise<ZPackageJson | undefined>;
 
   /**
-   * Resolves package locations matching the given location pattern relatively to this one.
+   * Selects package locations matching the given selector relatively to this one.
    *
-   * The pattern uses `/` symbols as path separator.
+   * The selector uses `/` symbols as path separator.
    *
    * It may include `//` to include all immediately nested packages, or `///` to include all deeply nested packages.
    *
-   * @param pattern  Location pattern.
+   * @param selector  Package selector.
    *
    * @returns Possibly async iterable of matching package locations.
    */
-  resolve(pattern: string): Iterable<ZPackageLocation> | AsyncIterable<ZPackageLocation> {
+  select(selector: string): Iterable<ZPackageLocation> | AsyncIterable<ZPackageLocation> {
 
-    const index = pattern.indexOf('//');
+    const index = selector.indexOf('//');
 
     if (index < 0) {
 
-      const relative = this.relative(pattern);
+      const relative = this.relative(selector);
 
       return relative ? [relative] : overNone();
     }
 
-    const prefix = pattern.substr(0, index);
-    const deep = pattern.substr(index, 3) === '///';
-    const suffix = pattern.substr(deep ? index + 3 : index + 2);
+    const prefix = selector.substr(0, index);
+    const deep = selector.substr(index, 3) === '///';
+    const suffix = selector.substr(deep ? index + 3 : index + 2);
     const root = this.relative(prefix);
 
     if (!root) {
@@ -101,7 +101,7 @@ export abstract class ZPackageLocation {
 
       if (suffix) {
         for await (const nested of allNested) {
-          yield* nested.resolve(suffix);
+          yield* nested.select(suffix);
         }
       } else {
         if (deep) {

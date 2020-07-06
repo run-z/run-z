@@ -39,23 +39,23 @@ export namespace ZTaskSpec {
   /**
    * Task dependency.
    *
-   * Either task or scope reference.
+   * Either task or package reference.
    */
-  export type Dep = HostRef | TaskRef;
+  export type Dep = PackageRef | TaskRef;
 
   /**
-   * Task host reference.
+   * Package reference.
    *
-   * When present among {@link ZTaskSpec.deps task dependencies} the subsequent tasks are form the given host package.
+   * When present among {@link ZTaskSpec.deps task dependencies} the subsequent tasks are searched in selected packages.
    */
-  export interface HostRef {
+  export interface PackageRef {
 
     readonly task?: undefined;
 
     /**
-     * Relative {@link ZTaskParser.isPackagePath path to package}.
+     * Relative {@link ZTaskParser.isPackageSelector path to package}.
      */
-    readonly host: string;
+    readonly selector: string;
 
   }
 
@@ -69,7 +69,7 @@ export namespace ZTaskSpec {
      */
     readonly task: string;
 
-    readonly host?: undefined;
+    readonly selector?: undefined;
 
     /**
      * Whether this task can be executed in parallel with preceding one.

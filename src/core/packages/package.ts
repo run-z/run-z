@@ -142,18 +142,18 @@ export class ZPackage implements ZPackageSet {
   }
 
   /**
-   * Resolves packages located accordingly to the given pattern relatively to this package.
+   * Selects packages matching the given selector relatively to this one.
    *
-   * Path pattern uses `/` symbols as path separator.
+   * The selector uses `/` symbols as path separator.
    *
    * It may include `//` to include all immediately nested packages, or `///` to include all deeply nested packages.
    *
-   * @param pattern  Path pattern.
+   * @param selector  Package selector.
    *
-   * @returns Resolved package set.
+   * @returns Selected package set.
    */
-  resolve(pattern: string): ZPackageSet {
-    return new ResolvedZPackages(this, pattern);
+  select(selector: string): ZPackageSet {
+    return new ResolvedZPackages(this, selector);
   }
 
 }
@@ -163,12 +163,12 @@ export class ZPackage implements ZPackageSet {
  */
 class ResolvedZPackages extends ZPackageSet {
 
-  constructor(readonly pkg: ZPackage, readonly pattern: string) {
+  constructor(readonly pkg: ZPackage, readonly selector: string) {
     super();
   }
 
   async *packages(): AsyncIterable<ZPackage> {
-    for await (const l of this.pkg.location.resolve(this.pattern)) {
+    for await (const l of this.pkg.location.select(this.selector)) {
 
       const resolved = await this.pkg.resolver.find(l);
 
