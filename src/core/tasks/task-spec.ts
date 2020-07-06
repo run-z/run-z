@@ -32,6 +32,11 @@ export interface ZTaskSpec {
    */
   readonly args: readonly string[];
 
+  /**
+   * Task action.
+   */
+  readonly action?: ZTaskSpec.Action;
+
 }
 
 export namespace ZTaskSpec {
@@ -97,6 +102,33 @@ export namespace ZTaskSpec {
      * A map of attribute values by their names.
      */
     readonly [name: string]: readonly string[];
+
+  }
+
+  /**
+   * Task action.
+   */
+  export type Action = Command | undefined;
+
+  /**
+   * Command execution action of the task.
+   */
+  export interface Command {
+
+    /**
+     * Command to execute.
+     */
+    readonly command: string;
+
+    /**
+     * Whether the command can be executed in parallel with preceding dependency task.
+     */
+    readonly parallel: boolean;
+
+    /**
+     * Command line arguments.
+     */
+    readonly args: readonly string[]
 
   }
 

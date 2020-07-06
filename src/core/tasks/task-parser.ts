@@ -22,6 +22,14 @@ const nativeZTask: ZTaskSpec = {
 const zTaskArgsSep = /\/\//;
 
 /**
+ * @internal
+ */
+const zTaskActionMap: { [name: string]: (args: readonly string[]) => ZTaskSpec.Action; } = {
+  '--then': args => zTaskCommand(args, false),
+  '--and': args => zTaskCommand(args, true),
+};
+
+/**
  * A parser of {@link ZTaskSpec task specifier} by command line.
  */
 export class ZTaskParser {
@@ -183,11 +191,24 @@ export class ZTaskParser {
     }
 
     appendTask();
+
+    const actionIdx = entries.findIndex(arg => zTaskActionMap[arg], e);
+    let args: readonly string[];
+    let action: ZTaskSpec.Action;
+
+    if (actionIdx >= 0) {
+      action = zTaskActionMap[entries[actionIdx]](entries.slice(actionIdx + 1));
+      args = entries.slice(e, actionIdx);
+    } else {
+      args = entries.slice(e);
+    }
+
     return {
       isNative: false,
       deps,
       attrs,
-      args: entries.slice(e),
+      args,
+      action,
     };
   }
 
@@ -269,4 +290,18 @@ function addZTaskAttr(attrs: Record<string, string[]>, arg: string, eqIdx: numbe
   } else {
     attrs[name] = [value];
   }
+}
+
+/**
+ * @internal
+ */
+function zTaskCommand([command, ...args]: readonly string[], parallel: boolean): ZTaskSpec.Command | undefined {
+  if (!command) {
+    return;
+  }
+  return {
+    command,
+    parallel,
+    args,
+  };
 }

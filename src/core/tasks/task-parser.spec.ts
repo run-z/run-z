@@ -55,7 +55,7 @@ describe('ZTaskParser', () => {
   });
   it('recognizes arguments', () => {
 
-    const spec = parser.parse('run-z dep1 dep2 dep3 --then command');
+    const spec = parser.parse('run-z dep1 dep2 dep3 --some test');
 
     expect(spec.isNative).toBe(false);
     expect(spec.deps).toEqual([
@@ -63,11 +63,59 @@ describe('ZTaskParser', () => {
       { task: 'dep2', parallel: false, attrs: {}, args: [] },
       { task: 'dep3', parallel: false, attrs: {}, args: [] },
     ]);
-    expect(spec.args).toEqual(['--then', 'command']);
+    expect(spec.args).toEqual(['--some', 'test']);
+    expect(spec.action).toBeUndefined();
+  });
+  it('recognizes command', () => {
+
+    const spec = parser.parse('run-z dep1 dep2 dep3 --some --then cmd --arg');
+
+    expect(spec.isNative).toBe(false);
+    expect(spec.deps).toEqual([
+      { task: 'dep1', parallel: false, attrs: {}, args: [] },
+      { task: 'dep2', parallel: false, attrs: {}, args: [] },
+      { task: 'dep3', parallel: false, attrs: {}, args: [] },
+    ]);
+    expect(spec.args).toEqual(['--some']);
+    expect(spec.action).toEqual({
+      command: 'cmd',
+      parallel: false,
+      args: ['--arg'],
+    });
+  });
+  it('recognizes parallel command', () => {
+
+    const spec = parser.parse('run-z dep1 dep2 dep3 --some --and cmd --arg');
+
+    expect(spec.isNative).toBe(false);
+    expect(spec.deps).toEqual([
+      { task: 'dep1', parallel: false, attrs: {}, args: [] },
+      { task: 'dep2', parallel: false, attrs: {}, args: [] },
+      { task: 'dep3', parallel: false, attrs: {}, args: [] },
+    ]);
+    expect(spec.args).toEqual(['--some']);
+    expect(spec.action).toEqual({
+      command: 'cmd',
+      parallel: true,
+      args: ['--arg'],
+    });
+  });
+  it('ignores incomplete command', () => {
+
+    const spec = parser.parse('run-z dep1 dep2 dep3 --some --then');
+
+    expect(spec.isNative).toBe(false);
+    expect(spec.deps).toEqual([
+      { task: 'dep1', parallel: false, attrs: {}, args: [] },
+      { task: 'dep2', parallel: false, attrs: {}, args: [] },
+      { task: 'dep3', parallel: false, attrs: {}, args: [] },
+    ]);
+    expect(spec.args).toEqual(['--some']);
+    expect(spec.action).toBeUndefined();
   });
   it('recognizes dependency argument', () => {
 
-    const spec = parser.parse('run-z dep1 dep2//-a //dep3 --then command');
+    const spec = parser.parse('run-z dep1 dep2//-a //dep3 --some test');
 
     expect(spec.isNative).toBe(false);
     expect(spec.deps).toEqual([
@@ -75,11 +123,11 @@ describe('ZTaskParser', () => {
       { task: 'dep2', parallel: false, attrs: {}, args: ['-a'] },
       { task: 'dep3', parallel: false, attrs: {}, args: [] },
     ]);
-    expect(spec.args).toEqual(['--then', 'command']);
+    expect(spec.args).toEqual(['--some', 'test']);
   });
   it('recognizes shorthand dependency argument', () => {
 
-    const spec = parser.parse('run-z dep1 dep2/-a dep3 --then command');
+    const spec = parser.parse('run-z dep1 dep2/-a dep3 --some test');
 
     expect(spec.isNative).toBe(false);
     expect(spec.deps).toEqual([
@@ -87,11 +135,11 @@ describe('ZTaskParser', () => {
       { task: 'dep2', parallel: false, attrs: {}, args: ['-a'] },
       { task: 'dep3', parallel: false, attrs: {}, args: [] },
     ]);
-    expect(spec.args).toEqual(['--then', 'command']);
+    expect(spec.args).toEqual(['--some', 'test']);
   });
   it('recognizes multiple dependency arguments', () => {
 
-    const spec = parser.parse('run-z dep1 dep2//-a// //-b// //-c//dep3 --then command');
+    const spec = parser.parse('run-z dep1 dep2//-a// //-b// //-c//dep3 --some test');
 
     expect(spec.isNative).toBe(false);
     expect(spec.deps).toEqual([
@@ -99,11 +147,11 @@ describe('ZTaskParser', () => {
       { task: 'dep2', parallel: false, attrs: {}, args: ['-a', '-b', '-c'] },
       { task: 'dep3', parallel: false, attrs: {}, args: [] },
     ]);
-    expect(spec.args).toEqual(['--then', 'command']);
+    expect(spec.args).toEqual(['--some', 'test']);
   });
   it('recognizes multiple shorthand dependency arguments', () => {
 
-    const spec = parser.parse('run-z dep1 dep2/-a /-b //-c///-d dep3 --then command');
+    const spec = parser.parse('run-z dep1 dep2/-a /-b //-c///-d dep3 --some test');
 
     expect(spec.isNative).toBe(false);
     expect(spec.deps).toEqual([
@@ -111,11 +159,11 @@ describe('ZTaskParser', () => {
       { task: 'dep2', parallel: false, attrs: {}, args: ['-a', '-b', '-c', '-d'] },
       { task: 'dep3', parallel: false, attrs: {}, args: [] },
     ]);
-    expect(spec.args).toEqual(['--then', 'command']);
+    expect(spec.args).toEqual(['--some', 'test']);
   });
   it('ignores empty dependency arguments', () => {
 
-    const spec = parser.parse('run-z dep1 dep2 //// dep3 --then command');
+    const spec = parser.parse('run-z dep1 dep2 //// dep3 --some test');
 
     expect(spec.isNative).toBe(false);
     expect(spec.deps).toEqual([
@@ -123,11 +171,11 @@ describe('ZTaskParser', () => {
       { task: 'dep2', parallel: false, attrs: {}, args: [] },
       { task: 'dep3', parallel: false, attrs: {}, args: [] },
     ]);
-    expect(spec.args).toEqual(['--then', 'command']);
+    expect(spec.args).toEqual(['--some', 'test']);
   });
   it('ignores empty shorthand dependency arguments', () => {
 
-    const spec = parser.parse('run-z dep1 dep2/ / dep3 --then command');
+    const spec = parser.parse('run-z dep1 dep2/ / dep3 --some test');
 
     expect(spec.isNative).toBe(false);
     expect(spec.deps).toEqual([
@@ -135,7 +183,7 @@ describe('ZTaskParser', () => {
       { task: 'dep2', parallel: false, attrs: {}, args: [] },
       { task: 'dep3', parallel: false, attrs: {}, args: [] },
     ]);
-    expect(spec.args).toEqual(['--then', 'command']);
+    expect(spec.args).toEqual(['--some', 'test']);
   });
   it('recognizes parallel dependencies', () => {
 
