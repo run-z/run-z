@@ -24,9 +24,8 @@ describe('ZPackage', () => {
 
   describe('tasks', () => {
     it('contains tasks', () => {
-      expect(pkg.tasks.size).toBe(2);
-      expect(pkg.tasks.get('task1')?.name).toBe('task1');
-      expect(pkg.tasks.get('task2')?.name).toBe('task2');
+      expect(pkg.task('task1').spec.action?.command).toBe('exec1');
+      expect(pkg.task('task2').spec.action?.command).toBe('exec2');
     });
   });
 

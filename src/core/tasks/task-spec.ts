@@ -128,7 +128,7 @@ export namespace ZTaskSpec {
     /**
      * Command line arguments.
      */
-    readonly args: readonly string[]
+    readonly args: readonly string[];
 
   }
 

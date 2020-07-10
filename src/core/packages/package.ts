@@ -2,31 +2,34 @@
  * @packageDocumentation
  * @module run-z
  */
-import { ZTask } from '../tasks';
+import { ZTask, ZTaskSpec } from '../tasks';
 import type { ZPackageLocation } from './package-location';
 import type { ZPackageResolver } from './package-resolver';
 import { ZPackageSet } from './package-set';
 import type { ZPackageJson } from './package.json';
 
+const absentZTask: ZTaskSpec = {
+  isNative: false,
+  deps: [],
+  attrs: {},
+  args: [],
+};
+
 /**
  * NPM package containing tasks and rules.
  */
-export class ZPackage implements ZPackageSet {
+export class ZPackage extends ZPackageSet {
 
   /**
    * Full package name.
    */
   readonly name: string;
 
-  /**
-   * Tasks hosted by this package.
-   */
-  readonly tasks: ReadonlyMap<string, ZTask>;
-
   private _scopeName: string | null | undefined = null;
   private _unscopedName?: string;
   private _hostPackage?: ZPackage;
   private _subPackageName: string | null | undefined = null;
+  private readonly _tasks = new Map<string, ZTask>();
 
   /**
    * Constructs a package.
@@ -42,6 +45,7 @@ export class ZPackage implements ZPackageSet {
       readonly packageJson: ZPackageJson,
       readonly parent?: ZPackage,
   ) {
+    super();
 
     const packageName = this.packageJson.name;
 
@@ -57,16 +61,13 @@ export class ZPackage implements ZPackageSet {
     }
 
     const { scripts = {} } = packageJson;
-    const tasks = new Map<string, ZTask>();
 
     for (const [key, value] of Object.entries(scripts)) {
 
       const spec = this.resolver.taskParser.parse(value);
 
-      tasks.set(key, new ZTask(this, key, spec));
+      this._tasks.set(key, new ZTask(this, key, spec));
     }
-
-    this.tasks = tasks;
   }
 
   /**
@@ -154,6 +155,21 @@ export class ZPackage implements ZPackageSet {
    */
   select(selector: string): ZPackageSet {
     return new ResolvedZPackages(this, selector);
+  }
+
+  task(name: string): ZTask {
+
+    const existing = this._tasks.get(name);
+
+    if (existing) {
+      return existing;
+    }
+
+    const absent = new ZTask(this, name, absentZTask);
+
+    this._tasks.set(name, absent);
+
+    return absent;
   }
 
 }

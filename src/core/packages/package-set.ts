@@ -16,4 +16,29 @@ export abstract class ZPackageSet {
    */
   abstract packages(): Iterable<ZPackage> | AsyncIterable<ZPackage>;
 
+  andPackages(other: ZPackageSet): ZPackageSet {
+    return new CombinedZPackageSet([this, other]);
+  }
+
+}
+
+/**
+ * @internal
+ */
+class CombinedZPackageSet extends ZPackageSet {
+
+  constructor(readonly sets: readonly ZPackageSet[]) {
+    super();
+  }
+
+  *packages(): Iterable<ZPackage> | AsyncIterable<ZPackage> {
+    for (const set of this.sets) {
+      yield* set.packages();
+    }
+  }
+
+  andPackages(other: ZPackageSet): ZPackageSet {
+    return new CombinedZPackageSet([...this.sets, other]);
+  }
+
 }
