@@ -17,6 +17,6 @@ export interface ZInstructionRecorder {
   fulfil(
       task: ZTask,
       details?: (this: void) => Partial<ZTaskDetails>,
-  ): (this: void) => ZTaskDetails;
+  ): Promise<(this: void) => ZTaskDetails>;
 
 }

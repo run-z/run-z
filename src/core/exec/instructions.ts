@@ -54,13 +54,13 @@ class ZInstructionRecords {
     }
   }
 
-  run(
+  async fulfil(
       task: ZTask,
       by: ZInstructionRecord,
       details: (this: void) => Partial<ZTaskDetails> = valueProvider({}),
-  ): (this: void) => ZTaskDetails {
+  ): Promise<(this: void) => ZTaskDetails> {
 
-    const depth: (this: void) => number = task === by.of
+    const depth: (this: void) => number = task.instruction === by.of
         ? valueProvider(Number.POSITIVE_INFINITY)
         : by.depth.bind(by);
     let record = this._tasks.get(task);
@@ -68,7 +68,7 @@ class ZInstructionRecords {
     if (record) {
       record.refine(depth, details);
     } else {
-      this._tasks.set(task, record = new ZTaskRecord(task, depth, details));
+      this._tasks.set(task, record = await new ZTaskRecord(task, depth, details).instruct(by.recorder));
     }
 
     return record.details.bind(details);
@@ -89,6 +89,7 @@ class ZInstructionRecords {
 class ZInstructionRecord {
 
   private _depth: (this: void) => number;
+  readonly recorder: ZInstructionRecorder;
 
   constructor(
       private readonly records: ZInstructionRecords,
@@ -96,6 +97,12 @@ class ZInstructionRecord {
       depth: (this: void) => number,
   ) {
     this._depth = depth;
+    this.recorder = {
+      resolver: this.records.resolver,
+      depth: () => this._depth(),
+      follow: instruction => this.records.follow(instruction, () => this._depth() + 1),
+      fulfil: (task, details) => this.records.fulfil(task, this, details),
+    };
   }
 
   depth(): number {
@@ -103,16 +110,7 @@ class ZInstructionRecord {
   }
 
   async as(instruction: ZInstruction): Promise<this> {
-
-    const recorder: ZInstructionRecorder = {
-      resolver: this.records.resolver,
-      depth: () => this._depth(),
-      follow: instruction => this.records.follow(instruction, () => this._depth() + 1),
-      fulfil: (task, details) => this.records.run(task, this, details),
-    };
-
-    await instruction.instruct(recorder);
-
+    await instruction(this.recorder);
     return this;
   }
 
@@ -138,6 +136,11 @@ class ZTaskRecord {
       details: (this: void) => Partial<ZTaskDetails>,
   ) {
     this._details = [[depth, details]];
+  }
+
+  async instruct(recorder: ZInstructionRecorder): Promise<this> {
+    await recorder.follow(this.task.instruction);
+    return this;
   }
 
   details(): ZTaskDetails {

@@ -4,8 +4,4 @@
  */
 import type { ZInstructionRecorder } from './instruction-recorder';
 
-export interface ZInstruction {
-
-  instruct(recorder: ZInstructionRecorder): void | PromiseLike<unknown>;
-
-}
+export type ZInstruction = (this: void, recorder: ZInstructionRecorder) => void | PromiseLike<unknown>;

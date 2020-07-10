@@ -11,7 +11,9 @@ import type { ZTaskSpec } from './task-spec';
 /**
  * Execution task.
  */
-export class ZTask implements ZInstruction {
+export class ZTask {
+
+  readonly instruction: ZInstruction;
 
   /**
    * Constructs a task.
@@ -25,17 +27,43 @@ export class ZTask implements ZInstruction {
       readonly name: string,
       readonly spec: ZTaskSpec,
   ) {
+    this.instruction = async (recorder: ZInstructionRecorder): Promise<void> => {
+
+      const { target, spec } = this;
+      const taskDetails = await recorder.fulfil(
+          this,
+          valueProvider({
+            attrs: spec.attrs,
+            args: spec.args,
+          }),
+      );
+
+      return instructOnZTaskDeps(target, recorder, taskDetails, spec);
+    };
   }
 
-  instruct(recorder: ZInstructionRecorder): Promise<void> {
+  trailingTargets(): ZPackageSet {
 
-    const { target, spec } = this;
-    const taskDetails = recorder.fulfil(this, valueProvider({
-      attrs: spec.attrs,
-      args: spec.args,
-    }));
+    const { target } = this;
+    const { args } = this.spec;
+    const parser = target.resolver.taskParser;
+    let result: ZPackageSet | undefined;
 
-    return instructOnZTaskDeps(target, recorder, taskDetails, spec);
+    for (let i = args.length - 1; i >= 0; --i) {
+
+      const arg = args[i];
+
+      if (parser.isPackageSelector(arg)) {
+
+        const selected = target.select(arg);
+
+        result = result ? result.andPackages(selected) : selected;
+      } else if (result) {
+        break;
+      }
+    }
+
+    return result || target;
   }
 
 }
@@ -93,56 +121,26 @@ function zTaskDepInstruction(
 
   const depDetails: ZTaskDetails = { attrs, args, actionArgs: [] };
 
-  return {
-    async instruct(recorded:ZInstructionRecorder) {
-      for await (const target of targets.packages()) {
+  return async (recorder: ZInstructionRecorder) => {
+    for await (const target of targets.packages()) {
 
-        const depTask = target.task(dep.task);
+      const depTask = target.task(dep.task);
 
-        if (subTaskNames.length) {
+      if (subTaskNames.length) {
 
-          const subTargets = trailingZTaskPackages(target, depTask.spec);
+        const subTargets = depTask.trailingTargets();
 
-          for await (const subTarget of subTargets.packages()) {
-            for (const subTaskName of subTaskNames) {
-              recorded.fulfil(subTarget.task(subTaskName));
-            }
+        for await (const subTarget of subTargets.packages()) {
+          for (const subTaskName of subTaskNames) {
+            await recorder.fulfil(subTarget.task(subTaskName));
           }
         }
-
-        recorded.fulfil(
-            depTask,
-            () => ZTaskDetails.extend(depDetails, taskDetails()),
-        );
       }
-    },
-  };
-}
 
-/**
- * @internal
- */
-function trailingZTaskPackages(
-    target: ZPackage,
-    { args }: ZTaskSpec,
-): ZPackageSet {
-
-  const parser = target.resolver.taskParser;
-  let result: ZPackageSet | undefined;
-
-  for (let i = args.length - 1; i >= 0; --i) {
-
-    const arg = args[i];
-
-    if (parser.isPackageSelector(arg)) {
-
-      const selected = target.select(arg);
-
-      result = result ? result.andPackages(selected) : selected;
-    } else if (result) {
-      break;
+      await recorder.fulfil(
+          depTask,
+          () => ZTaskDetails.extend(depDetails, taskDetails()),
+      );
     }
-  }
-
-  return result || target;
+  };
 }
