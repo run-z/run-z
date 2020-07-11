@@ -4,17 +4,7 @@
  */
 import { parse } from 'shell-quote';
 import { InvalidZTaskError } from './invalid-task-error';
-import type { ZTaskSpec } from './task-spec';
-
-/**
- * @internal
- */
-const nativeZTask: ZTaskSpec = {
-  isNative: true,
-  deps: [],
-  attrs: {},
-  args: [],
-};
+import { ZTaskSpec } from './task-spec';
 
 /**
  * @internal
@@ -57,7 +47,7 @@ export class ZTaskParser {
     const entries = parseZTaskEntries(commandLine);
 
     if (!entries) {
-      return nativeZTask;
+      return ZTaskSpec.script;
     }
 
     let e = 0;
@@ -197,14 +187,14 @@ export class ZTaskParser {
     let action: ZTaskSpec.Action;
 
     if (actionIdx >= 0) {
-      action = zTaskActionMap[entries[actionIdx]](entries.slice(actionIdx + 1));
       args = entries.slice(e, actionIdx);
+      action = zTaskActionMap[entries[actionIdx]](entries.slice(actionIdx + 1));
     } else {
       args = entries.slice(e);
+      action = ZTaskSpec.noop.action;
     }
 
     return {
-      isNative: false,
       deps,
       attrs,
       args,
@@ -230,7 +220,7 @@ function parseZTaskEntries(commandLine: string): string[] | undefined {
     return; // Not a run-z script.
   }
   if (withEnv) {
-    return; // Environment variable substitution supported in native scripts only.
+    return; // Environment variable substitution supported in NPM scripts only.
   }
   if (entries.every(entry => typeof entry === 'string')) {
     return entries.slice(1) as string[];
@@ -295,9 +285,9 @@ function addZTaskAttr(attrs: Record<string, string[]>, arg: string, eqIdx: numbe
 /**
  * @internal
  */
-function zTaskCommand([command, ...args]: readonly string[], parallel: boolean): ZTaskSpec.Command | undefined {
+function zTaskCommand([command, ...args]: readonly string[], parallel: boolean): ZTaskSpec.Command | ZTaskSpec.NoOp {
   if (!command) {
-    return;
+    return ZTaskSpec.noop.action;
   }
   return {
     command,

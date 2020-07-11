@@ -6,14 +6,7 @@
 /**
  * Task specifier.
  */
-export interface ZTaskSpec {
-
-  /**
-   * Whether this is a native task.
-   *
-   * `true` when this is no a `run-z` command
-   */
-  readonly isNative: boolean;
+export interface ZTaskSpec<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
 
   /**
    * Task dependencies.
@@ -35,7 +28,7 @@ export interface ZTaskSpec {
   /**
    * Task action.
    */
-  readonly action?: ZTaskSpec.Action;
+  readonly action: TAction;
 
 }
 
@@ -108,7 +101,7 @@ export namespace ZTaskSpec {
   /**
    * Task action.
    */
-  export type Action = Command | undefined;
+  export type Action = Command | Script | NoOp;
 
   /**
    * Command execution action of the task.
@@ -119,6 +112,8 @@ export namespace ZTaskSpec {
      * Command to execute.
      */
     readonly command: string;
+
+    readonly script?: undefined;
 
     /**
      * Whether the command can be executed in parallel with preceding dependency task.
@@ -132,4 +127,63 @@ export namespace ZTaskSpec {
 
   }
 
+  /**
+   * NPM script execution action.
+   */
+  export interface Script {
+
+    readonly command?: string;
+
+    readonly script: true;
+
+  }
+
+  /**
+   * No-op action.
+   */
+  export interface NoOp {
+    readonly command?: undefined;
+    readonly script?: undefined;
+  }
+
 }
+
+/**
+ * @internal
+ */
+const noopZTaskSpec: ZTaskSpec<ZTaskSpec.NoOp> = {
+  deps: [],
+  attrs: {},
+  args: [],
+  action: {},
+};
+
+/**
+ * @internal
+ */
+const scriptZTaskSpec: ZTaskSpec<ZTaskSpec.Script> = {
+  deps: [],
+  attrs: {},
+  args: [],
+  action: {
+    script: true,
+  },
+};
+
+export const ZTaskSpec = {
+
+  /**
+   * No-op task specifier.
+   */
+  get noop(): ZTaskSpec<ZTaskSpec.NoOp> {
+    return noopZTaskSpec;
+  },
+
+  /**
+   * NPM script execution task specifier.
+   */
+  get script(): ZTaskSpec<ZTaskSpec.Script> {
+    return scriptZTaskSpec;
+  },
+
+};

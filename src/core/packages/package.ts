@@ -8,13 +8,6 @@ import type { ZPackageLocation } from './package-location';
 import { ZPackageSet } from './package-set';
 import type { ZPackageJson } from './package.json';
 
-const absentZTask: ZTaskSpec = {
-  isNative: false,
-  deps: [],
-  attrs: {},
-  args: [],
-};
-
 /**
  * NPM package containing tasks and rules.
  */
@@ -165,7 +158,7 @@ export class ZPackage extends ZPackageSet {
       return existing;
     }
 
-    const absent = new ZTask(this, name, absentZTask);
+    const absent = new ZTask(this, name, ZTaskSpec.noop);
 
     this._tasks.set(name, absent);
 

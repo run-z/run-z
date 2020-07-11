@@ -11,7 +11,7 @@ import type { ZTaskSpec } from './task-spec';
 /**
  * Execution task.
  */
-export class ZTask {
+export class ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
 
   readonly instruction: ZInstruction;
 
@@ -25,7 +25,7 @@ export class ZTask {
   constructor(
       readonly target: ZPackage,
       readonly name: string,
-      readonly spec: ZTaskSpec,
+      readonly spec: ZTaskSpec<TAction>,
   ) {
     this.instruction = async (recorder: ZInstructionRecorder): Promise<void> => {
 
@@ -119,17 +119,18 @@ function zTaskDepInstruction(
     }
   }
 
-  const depDetailsBase: ZTaskDetails = { attrs, args, actionArgs: [] };
-  const depDetails = (): ZTaskDetails => ZTaskDetails.extend(depDetailsBase, taskDetails());
-  const nativeDepDetailsBase = { attrs, args: dep.args, actionArgs: [] };
-  const nativeDepDetails = (): ZTaskDetails => ZTaskDetails.extend(nativeDepDetailsBase, taskDetails());
+  const commandDepDetailsBase: ZTaskDetails = { attrs, args, actionArgs: [] };
+  const commandDepDetails = (): ZTaskDetails => ZTaskDetails.extend(commandDepDetailsBase, taskDetails());
+  const scriptDepDetailsBase = { attrs, args: dep.args, actionArgs: [] };
+  const scriptDepDetails = (): ZTaskDetails => ZTaskDetails.extend(scriptDepDetailsBase, taskDetails());
 
   return async (recorder: ZInstructionRecorder) => {
     for await (const target of targets.packages()) {
 
       const depTask = target.task(dep.task);
+      const isScript = depTask.spec.action.script;
 
-      if (subTaskNames.length && !depTask.spec.isNative) {
+      if (!isScript && subTaskNames.length) {
 
         const subTargets = depTask.trailingTargets();
 
@@ -142,7 +143,7 @@ function zTaskDepInstruction(
 
       await recorder.fulfil(
           depTask,
-          depTask.spec.isNative ? nativeDepDetails : depDetails,
+          isScript ? scriptDepDetails : commandDepDetails,
       );
     }
   };
