@@ -40,17 +40,14 @@ class ZInstructionRecords {
 
   async follow(instruction: ZInstruction, depth: (this: void) => number): Promise<void> {
 
-    const record = this._instructions.get(instruction);
+    let record = this._instructions.get(instruction);
 
     if (record) {
       record.reuse(depth);
     } else {
-
-      const newRecord = new ZInstructionRecord(this, instruction, depth);
-
-      this._instructions.set(instruction, newRecord);
-
-      await newRecord.as(instruction);
+      record = new ZInstructionRecord(this, instruction, depth);
+      this._instructions.set(instruction, record);
+      await record.init(instruction);
     }
   }
 
@@ -68,7 +65,9 @@ class ZInstructionRecords {
     if (record) {
       record.refine(depth, details);
     } else {
-      this._tasks.set(task, record = await new ZTaskRecord(task, depth, details).instruct(by.recorder));
+      record = new ZTaskRecord(task, depth, details);
+      this._tasks.set(task, record);
+      await record.init(by.recorder);
     }
 
     return record.details.bind(details);
@@ -109,9 +108,8 @@ class ZInstructionRecord {
     return this._depth();
   }
 
-  async as(instruction: ZInstruction): Promise<this> {
+  async init(instruction: ZInstruction): Promise<void> {
     await instruction(this.recorder);
-    return this;
   }
 
   reuse(depth: (this: void) => number): void {
@@ -138,9 +136,8 @@ class ZTaskRecord {
     this._details = [[depth, details]];
   }
 
-  async instruct(recorder: ZInstructionRecorder): Promise<this> {
+  async init(recorder: ZInstructionRecorder): Promise<void> {
     await recorder.follow(this.task.instruction);
-    return this;
   }
 
   details(): ZTaskDetails {
