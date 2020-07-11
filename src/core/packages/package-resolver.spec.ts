@@ -4,7 +4,7 @@ import { pathToFileURL, URL } from 'url';
 import { ZPackageDirectory } from '../../fs';
 import { ZSetup } from '../setup';
 import type { ZPackage } from './package';
-import { ZPackageResolver } from './package-resolver';
+import type { ZPackageResolver } from './package-resolver';
 import { UnknownZPackageError } from './unknown-package-error';
 
 describe('ZPackageResolver', () => {
@@ -21,7 +21,7 @@ describe('ZPackageResolver', () => {
   }
 
   function newResolver(path: string): ZPackageResolver {
-    return new ZPackageResolver(new ZSetup({ currentLocation: packageLocation(path) }));
+    return new ZSetup({ currentLocation: packageLocation(path) }).packageResolver;
   }
 
   describe('get', () => {
