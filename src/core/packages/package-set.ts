@@ -16,6 +16,13 @@ export abstract class ZPackageSet {
    */
   abstract packages(): Iterable<ZPackage> | AsyncIterable<ZPackage>;
 
+  /**
+   * Combines package sets.
+   *
+   * @param other  A package set co combine with this one.
+   *
+   * @returns A set of all packages from `this` and `other` package sets.
+   */
   andPackages(other: ZPackageSet): ZPackageSet {
     return new CombinedZPackageSet([this, other]);
   }
