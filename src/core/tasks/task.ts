@@ -46,7 +46,7 @@ export class ZTask {
 
     const { target } = this;
     const { args } = this.spec;
-    const parser = target.resolver.taskParser;
+    const parser = target.setup.taskParser;
     let result: ZPackageSet | undefined;
 
     for (let i = args.length - 1; i >= 0; --i) {

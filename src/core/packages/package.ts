@@ -2,9 +2,9 @@
  * @packageDocumentation
  * @module run-z
  */
+import type { ZSetup } from '../setup';
 import { ZTask, ZTaskSpec } from '../tasks';
 import type { ZPackageLocation } from './package-location';
-import type { ZPackageResolver } from './package-resolver';
 import { ZPackageSet } from './package-set';
 import type { ZPackageJson } from './package.json';
 
@@ -34,13 +34,13 @@ export class ZPackage extends ZPackageSet {
   /**
    * Constructs a package.
    *
-   * @param resolver  Package resolver.
+   * @param setup  `run-z` setup.
    * @param location  Package location.
    * @param packageJson  `package.json` contents.
    * @param parent  Parent NPM package.
    */
   constructor(
-      readonly resolver: ZPackageResolver,
+      readonly setup: ZSetup,
       readonly location: ZPackageLocation,
       readonly packageJson: ZPackageJson,
       readonly parent?: ZPackage,
@@ -64,7 +64,7 @@ export class ZPackage extends ZPackageSet {
 
     for (const [key, value] of Object.entries(scripts)) {
 
-      const spec = this.resolver.taskParser.parse(value);
+      const spec = this.setup.taskParser.parse(value);
 
       this._tasks.set(key, new ZTask(this, key, spec));
     }
@@ -186,7 +186,7 @@ class ResolvedZPackages extends ZPackageSet {
   async *packages(): AsyncIterable<ZPackage> {
     for await (const l of this.pkg.location.select(this.selector)) {
 
-      const resolved = await this.pkg.resolver.find(l);
+      const resolved = await this.pkg.setup.packageResolver.find(l);
 
       if (resolved) {
         yield resolved;

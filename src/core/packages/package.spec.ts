@@ -1,3 +1,4 @@
+import { ZSetup } from '../setup';
 import type { ZPackage } from './package';
 import { ZPackageResolver } from './package-resolver';
 import { ZPackageTree } from './package-tree';
@@ -18,7 +19,7 @@ describe('ZPackage', () => {
           },
         },
     );
-    resolver = new ZPackageResolver(tree);
+    resolver = new ZPackageResolver(new ZSetup({ currentLocation: tree }));
     pkg = await resolver.get(tree);
   });
 

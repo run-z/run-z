@@ -30,7 +30,7 @@ const zTaskActionMap: { [name: string]: (args: readonly string[]) => ZTaskSpec.A
 };
 
 /**
- * A parser of {@link ZTaskSpec task specifier} by command line.
+ * A parser of command line containing {@link ZTaskSpec task specifier}.
  */
 export class ZTaskParser {
 

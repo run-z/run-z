@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module run-z
  */
-import { ZTaskParser } from '../tasks';
+import type { ZSetup } from '../setup';
 import { ZPackage } from './package';
 import type { ZPackageLocation } from './package-location';
 import { UnknownZPackageError } from './unknown-package-error';
@@ -12,27 +12,14 @@ import { UnknownZPackageError } from './unknown-package-error';
  */
 export class ZPackageResolver {
 
-  /**
-   * Task parser used.
-   */
-  readonly taskParser: ZTaskParser;
   private readonly _packages = new Map<string, Promise<ZPackage | undefined>>();
 
   /**
    * Constructs NPM package resolver.
    *
-   * @param currentLocation  Current location to start package discovery from.
-   * @param taskParser  Task parser to use.
+   * @param setup  `run-z` setup.
    */
-  constructor(
-      readonly currentLocation: ZPackageLocation,
-      {
-        taskParser = new ZTaskParser(),
-      }: {
-        readonly taskParser?: ZTaskParser;
-      } = {},
-  ) {
-    this.taskParser = taskParser;
+  constructor(readonly setup: ZSetup) {
   }
 
   /**
@@ -70,7 +57,7 @@ export class ZPackageResolver {
       const parent = parentLocation && await this.find(parentLocation);
       const packageJson = await location.load();
 
-      return packageJson ? new ZPackage(this, location, packageJson, parent) : undefined;
+      return packageJson ? new ZPackage(this.setup, location, packageJson, parent) : undefined;
     };
 
     const discovered = discoverPackage();
