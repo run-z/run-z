@@ -16,11 +16,11 @@ export interface ZTaskDetails {
 
 export const ZTaskDetails = {
 
-  extend(instruction: ZTaskDetails, extension: ZTaskDetails): ZTaskDetails {
+  extend(base: ZTaskDetails, extension: ZTaskDetails): ZTaskDetails {
     return {
-      attrs: { ...instruction.attrs, ...extension.attrs },
-      args: { ...instruction.args, ...extension.args },
-      actionArgs: { ...instruction.args, ...extension.args },
+      attrs: { ...base.attrs, ...extension.attrs },
+      args: base.args.concat(extension.args),
+      actionArgs: base.args.concat(extension.args),
     };
   },
 

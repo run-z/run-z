@@ -119,27 +119,30 @@ function zTaskDepInstruction(
     }
   }
 
-  const depDetails: ZTaskDetails = { attrs, args, actionArgs: [] };
+  const depDetailsBase: ZTaskDetails = { attrs, args, actionArgs: [] };
+  const depDetails = (): ZTaskDetails => ZTaskDetails.extend(depDetailsBase, taskDetails());
+  const nativeDepDetailsBase = { attrs, args: dep.args, actionArgs: [] };
+  const nativeDepDetails = (): ZTaskDetails => ZTaskDetails.extend(nativeDepDetailsBase, taskDetails());
 
   return async (recorder: ZInstructionRecorder) => {
     for await (const target of targets.packages()) {
 
       const depTask = target.task(dep.task);
 
-      if (subTaskNames.length) {
+      if (subTaskNames.length && !depTask.spec.isNative) {
 
         const subTargets = depTask.trailingTargets();
 
         for await (const subTarget of subTargets.packages()) {
           for (const subTaskName of subTaskNames) {
-            await recorder.fulfil(subTarget.task(subTaskName));
+            await recorder.fulfil(subTarget.task(subTaskName), taskDetails);
           }
         }
       }
 
       await recorder.fulfil(
           depTask,
-          () => ZTaskDetails.extend(depDetails, taskDetails()),
+          depTask.spec.isNative ? nativeDepDetails : depDetails,
       );
     }
   };
