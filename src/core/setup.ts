@@ -3,7 +3,7 @@
  * @module run-z
  */
 import { valueByRecipe } from '@proc7ts/primitives';
-import { ZPackageLocation, ZPackageResolver } from './packages';
+import { ZPackageResolver } from './packages';
 import { ZTaskFactory, ZTaskParser } from './tasks';
 
 /**
@@ -38,15 +38,8 @@ export class ZSetup {
    *
    * @param config  `run-z` configuration.
    */
-  constructor(config: ZConfig) {
+  constructor(config: ZConfig = {}) {
     this._config = config;
-  }
-
-  /**
-   * Current location to start package discovery from.
-   */
-  get currentLocation(): ZPackageLocation {
-    return this._config.currentLocation;
   }
 
   /**
@@ -87,11 +80,6 @@ export class ZSetup {
  * Configures {@link ZSetup setup} by providing services to use.
  */
 export interface ZConfig {
-
-  /**
-   * Current location to start package discovery from.
-   */
-  readonly currentLocation: ZPackageLocation;
 
   /**
    * Task specifier parser to use.

@@ -20,7 +20,7 @@ describe('ZPackage', () => {
           },
         },
     );
-    resolver = new ZSetup({ currentLocation: tree }).packageResolver;
+    resolver = new ZSetup({}).packageResolver;
     pkg = await resolver.get(tree);
   });
 
