@@ -165,13 +165,8 @@ export namespace ZTaskSpec {
 /**
  * @internal
  */
-const noopZTaskSpec: ZTaskSpec<ZTaskSpec.NoOp> = {
-  deps: [],
-  attrs: {},
-  args: [],
-  action: {
-    type: 'noop',
-  },
+const noopZTaskAction: ZTaskSpec.NoOp = {
+  type: 'noop',
 };
 
 /**
@@ -203,8 +198,8 @@ export const ZTaskSpec = {
   /**
    * No-op task specifier.
    */
-  get noop(): ZTaskSpec<ZTaskSpec.NoOp> {
-    return noopZTaskSpec;
+  get noopAction(): ZTaskSpec.NoOp {
+    return noopZTaskAction;
   },
 
   /**

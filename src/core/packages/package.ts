@@ -59,7 +59,7 @@ export class ZPackage extends ZPackageSet {
 
       const spec = this.setup.taskParser.parse(value);
 
-      this._tasks.set(key, new ZTask(this, key, spec));
+      this._tasks.set(key, this.setup.taskFactory.createTask(this, key, spec));
     }
   }
 
@@ -158,7 +158,7 @@ export class ZPackage extends ZPackageSet {
       return existing;
     }
 
-    const absent = new ZTask(this, name, ZTaskSpec.unknown);
+    const absent = this.setup.taskFactory.createTask(this, name, ZTaskSpec.unknown);
 
     this._tasks.set(name, absent);
 

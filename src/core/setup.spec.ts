@@ -2,7 +2,7 @@ import { valueProvider } from '@proc7ts/primitives';
 import type { ZPackageLocation } from './packages';
 import { ZPackageResolver, ZPackageTree } from './packages';
 import { ZSetup } from './setup';
-import { ZTaskParser } from './tasks';
+import { ZTaskFactory, ZTaskParser } from './tasks';
 
 describe('ZSetup', () => {
 
@@ -35,6 +35,32 @@ describe('ZSetup', () => {
 
       expect(setup.taskParser).toBe(taskParser);
       expect(setup.taskParser).toBe(taskParser);
+    });
+  });
+
+  describe('taskFactory', () => {
+    it('is constructed by default', () => {
+
+      const setup = new ZSetup({ currentLocation });
+
+      expect(setup.taskFactory).toBeInstanceOf(ZTaskFactory);
+      expect(setup.taskFactory).toBe(setup.taskFactory);
+    });
+    it('is taken from config', () => {
+
+      const taskFactory = new ZTaskFactory();
+      const setup = new ZSetup({ currentLocation, taskFactory });
+
+      expect(setup.taskFactory).toBe(taskFactory);
+      expect(setup.taskFactory).toBe(taskFactory);
+    });
+    it('is built by config', () => {
+
+      const taskFactory = new ZTaskFactory();
+      const setup = new ZSetup({ currentLocation, taskFactory: valueProvider(taskFactory) });
+
+      expect(setup.taskFactory).toBe(taskFactory);
+      expect(setup.taskFactory).toBe(taskFactory);
     });
   });
 

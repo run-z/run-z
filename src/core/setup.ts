@@ -4,7 +4,7 @@
  */
 import { valueByRecipe } from '@proc7ts/primitives';
 import { ZPackageLocation, ZPackageResolver } from './packages';
-import { ZTaskParser } from './tasks';
+import { ZTaskFactory, ZTaskParser } from './tasks';
 
 /**
  * `run-z` setup.
@@ -22,6 +22,11 @@ export class ZSetup {
    * @internal
    */
   private _taskParser?: ZTaskParser;
+
+  /**
+   * @internal
+   */
+  private _taskFactory?: ZTaskFactory;
 
   /**
    * @internal
@@ -52,6 +57,14 @@ export class ZSetup {
         this._taskParser = this._config.taskParser
             ? valueByRecipe(this._config.taskParser, this)
             : new ZTaskParser()
+    );
+  }
+
+  get taskFactory(): ZTaskFactory {
+    return this._taskFactory || (
+        this._taskFactory = this._config.taskFactory
+            ? valueByRecipe(this._config.taskFactory, this)
+            : new ZTaskFactory()
     );
   }
 
@@ -86,6 +99,13 @@ export interface ZConfig {
    * @default New {@link ZTaskParser} instance.
    */
   readonly taskParser?: ZTaskParser | ((this: void, setup: ZSetup) => ZTaskParser);
+
+  /**
+   * Task factory to use.
+   *
+   * @default New {@link ZTaskFactory} instance.
+   */
+  readonly taskFactory?: ZTaskFactory | ((this: void, setup: ZSetup) => ZTaskFactory);
 
   /**
    * A resolver of all discovered {@link ZPackage NPM packages} to use.

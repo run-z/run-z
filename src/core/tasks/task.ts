@@ -2,18 +2,29 @@
  * @packageDocumentation
  * @module run-z
  */
-import { valueProvider } from '@proc7ts/primitives';
-import type { ZInstruction, ZInstructionRecorder } from '../exec';
-import type { ZPackage, ZPackageSet } from '../packages';
-import { ZTaskDetails } from './task-details';
+import type { ZInstruction } from '../exec';
+import type { ZPackage } from '../packages';
 import type { ZTaskSpec } from './task-spec';
 
 /**
  * Execution task.
+ *
+ * @typeparam TAction  Task action type.
  */
-export class ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
+export abstract class ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
 
-  readonly instruction: ZInstruction;
+  /**
+   * Task fulfilment instruction.
+   */
+  abstract readonly instruction: ZInstruction;
+
+  /**
+   * Whether this task accepts sub-task names as arguments.
+   *
+   * This is `true` for {@link ZTaskSpec.Command commands} and {@link ZTaskSpec.NoOp no-ops}, and `false`
+   * for everything else.
+   */
+  abstract readonly acceptsSubTasks: boolean;
 
   /**
    * Constructs a task.
@@ -27,124 +38,6 @@ export class ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
       readonly name: string,
       readonly spec: ZTaskSpec<TAction>,
   ) {
-    this.instruction = async (recorder: ZInstructionRecorder): Promise<void> => {
-
-      const { target, spec } = this;
-      const taskDetails = await recorder.fulfil(
-          this,
-          valueProvider({
-            attrs: spec.attrs,
-            args: spec.args,
-          }),
-      );
-
-      return instructOnZTaskDeps(target, recorder, taskDetails, spec);
-    };
   }
 
-  trailingTargets(): ZPackageSet {
-
-    const { target } = this;
-    const { args } = this.spec;
-    const parser = target.setup.taskParser;
-    let result: ZPackageSet | undefined;
-
-    for (let i = args.length - 1; i >= 0; --i) {
-
-      const arg = args[i];
-
-      if (parser.isPackageSelector(arg)) {
-
-        const selected = target.select(arg);
-
-        result = result ? result.andPackages(selected) : selected;
-      } else if (result) {
-        break;
-      }
-    }
-
-    return result || target;
-  }
-
-}
-
-/**
- * @internal
- */
-async function instructOnZTaskDeps(
-    target: ZPackage,
-    recorder: ZInstructionRecorder,
-    taskDetails: (this: void) => ZTaskDetails,
-    spec: ZTaskSpec,
-): Promise<void> {
-
-  let targets: ZPackageSet | undefined;
-
-  for (const dep of spec.deps) {
-    if (dep.selector != null) {
-
-      const selected = target.select(dep.selector);
-
-      if (!targets) {
-        targets = selected;
-      } else {
-        targets = targets.andPackages(selected);
-      }
-      continue;
-    }
-
-    await recorder.follow(zTaskDepInstruction(targets || target, dep, taskDetails));
-    targets = undefined;
-  }
-}
-
-/**
- * @internal
- */
-function zTaskDepInstruction(
-    targets: ZPackageSet,
-    dep: ZTaskSpec.TaskRef,
-    taskDetails: (this: void) => ZTaskDetails,
-): ZInstruction {
-
-  const { attrs } = dep;
-  const args: string[] = [];
-  const subTaskNames: string[] = [];
-
-  for (const arg of dep.args) {
-    if (arg.startsWith('-')) {
-      args.push(arg);
-    } else {
-      subTaskNames.push(arg);
-    }
-  }
-
-  const commandDepDetailsBase: ZTaskDetails = { attrs, args, actionArgs: [] };
-  const commandDepDetails = (): ZTaskDetails => ZTaskDetails.extend(commandDepDetailsBase, taskDetails());
-  const scriptDepDetailsBase = { attrs, args: dep.args, actionArgs: [] };
-  const scriptDepDetails = (): ZTaskDetails => ZTaskDetails.extend(scriptDepDetailsBase, taskDetails());
-
-  return async (recorder: ZInstructionRecorder) => {
-    for await (const target of targets.packages()) {
-
-      const depTask = target.task(dep.task);
-      const isScript = depTask.spec.action.type === 'script';
-
-      if (!isScript && subTaskNames.length) {
-
-        const subTargets = depTask.trailingTargets();
-
-        for await (const subTarget of subTargets.packages()) {
-          for (const subTaskName of subTaskNames) {
-            await recorder.fulfil(subTarget.task(subTaskName), taskDetails);
-          }
-        }
-      }
-
-      await recorder.fulfil(
-          depTask,
-          isScript ? scriptDepDetails : commandDepDetails,
-      );
-    }
-  };
 }

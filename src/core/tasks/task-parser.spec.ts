@@ -44,7 +44,7 @@ describe('ZTaskParser', () => {
         { task: 'dep3', parallel: false, attrs: {}, args: [] },
     ]);
     expect(spec.args).toHaveLength(0);
-    expect(spec.action).toBe(ZTaskSpec.noop.action);
+    expect(spec.action).toBe(ZTaskSpec.noopAction);
   });
   it('recognizes arguments', () => {
 
@@ -56,7 +56,7 @@ describe('ZTaskParser', () => {
       { task: 'dep3', parallel: false, attrs: {}, args: [] },
     ]);
     expect(spec.args).toEqual(['--some', 'test']);
-    expect(spec.action).toBe(ZTaskSpec.noop.action);
+    expect(spec.action).toBe(ZTaskSpec.noopAction);
   });
   it('recognizes command', () => {
 
@@ -102,7 +102,7 @@ describe('ZTaskParser', () => {
       { task: 'dep3', parallel: false, attrs: {}, args: [] },
     ]);
     expect(spec.args).toEqual(['--some']);
-    expect(spec.action).toBe(ZTaskSpec.noop.action);
+    expect(spec.action).toBe(ZTaskSpec.noopAction);
   });
   it('recognizes dependency argument', () => {
 
@@ -114,7 +114,7 @@ describe('ZTaskParser', () => {
       { task: 'dep3', parallel: false, attrs: {}, args: [] },
     ]);
     expect(spec.args).toEqual(['--some', 'test']);
-    expect(spec.action).toBe(ZTaskSpec.noop.action);
+    expect(spec.action).toBe(ZTaskSpec.noopAction);
   });
   it('recognizes shorthand dependency argument', () => {
 
@@ -126,7 +126,7 @@ describe('ZTaskParser', () => {
       { task: 'dep3', parallel: false, attrs: {}, args: [] },
     ]);
     expect(spec.args).toEqual(['--some', 'test']);
-    expect(spec.action).toBe(ZTaskSpec.noop.action);
+    expect(spec.action).toBe(ZTaskSpec.noopAction);
   });
   it('recognizes multiple dependency arguments', () => {
 
@@ -138,7 +138,7 @@ describe('ZTaskParser', () => {
       { task: 'dep3', parallel: false, attrs: {}, args: [] },
     ]);
     expect(spec.args).toEqual(['--some', 'test']);
-    expect(spec.action).toBe(ZTaskSpec.noop.action);
+    expect(spec.action).toBe(ZTaskSpec.noopAction);
   });
   it('recognizes multiple shorthand dependency arguments', () => {
 
@@ -150,7 +150,7 @@ describe('ZTaskParser', () => {
       { task: 'dep3', parallel: false, attrs: {}, args: [] },
     ]);
     expect(spec.args).toEqual(['--some', 'test']);
-    expect(spec.action).toBe(ZTaskSpec.noop.action);
+    expect(spec.action).toBe(ZTaskSpec.noopAction);
   });
   it('ignores empty dependency arguments', () => {
 
@@ -162,7 +162,7 @@ describe('ZTaskParser', () => {
       { task: 'dep3', parallel: false, attrs: {}, args: [] },
     ]);
     expect(spec.args).toEqual(['--some', 'test']);
-    expect(spec.action).toBe(ZTaskSpec.noop.action);
+    expect(spec.action).toBe(ZTaskSpec.noopAction);
   });
   it('ignores empty shorthand dependency arguments', () => {
 
@@ -174,7 +174,7 @@ describe('ZTaskParser', () => {
       { task: 'dep3', parallel: false, attrs: {}, args: [] },
     ]);
     expect(spec.args).toEqual(['--some', 'test']);
-    expect(spec.action).toBe(ZTaskSpec.noop.action);
+    expect(spec.action).toBe(ZTaskSpec.noopAction);
   });
   it('recognizes parallel dependencies', () => {
 
@@ -187,7 +187,7 @@ describe('ZTaskParser', () => {
       { task: 'dep4', parallel: false, attrs: {}, args: [] },
     ]);
     expect(spec.args).toHaveLength(0);
-    expect(spec.action).toBe(ZTaskSpec.noop.action);
+    expect(spec.action).toBe(ZTaskSpec.noopAction);
   });
   it('recognizes parallel dependency arguments', () => {
 
@@ -199,7 +199,7 @@ describe('ZTaskParser', () => {
       { task: 'dep3', parallel: true, attrs: {}, args: [] },
     ]);
     expect(spec.args).toHaveLength(0);
-    expect(spec.action).toBe(ZTaskSpec.noop.action);
+    expect(spec.action).toBe(ZTaskSpec.noopAction);
   });
   it('recognizes parallel dependency shorthand arguments', () => {
 
@@ -211,7 +211,7 @@ describe('ZTaskParser', () => {
       { task: 'dep3', parallel: true, attrs: {}, args: [] },
     ]);
     expect(spec.args).toHaveLength(0);
-    expect(spec.action).toBe(ZTaskSpec.noop.action);
+    expect(spec.action).toBe(ZTaskSpec.noopAction);
   });
   it('recognizes package reference', () => {
 
@@ -223,7 +223,7 @@ describe('ZTaskParser', () => {
       { task: 'dep2', parallel: false, attrs: {}, args: [] },
     ]);
     expect(spec.args).toHaveLength(0);
-    expect(spec.action).toBe(ZTaskSpec.noop.action);
+    expect(spec.action).toBe(ZTaskSpec.noopAction);
   });
   it('recognizes attributes', () => {
 
@@ -234,7 +234,7 @@ describe('ZTaskParser', () => {
       attr2: [''],
       attr3: ['', 'val3'],
     });
-    expect(spec.action).toBe(ZTaskSpec.noop.action);
+    expect(spec.action).toBe(ZTaskSpec.noopAction);
   });
   it('recognizes dependency attributes', () => {
 
@@ -249,7 +249,7 @@ describe('ZTaskParser', () => {
       },
     ]);
     expect(spec.attrs).toEqual({ attr1: ['val1'] });
-    expect(spec.action).toBe(ZTaskSpec.noop.action);
+    expect(spec.action).toBe(ZTaskSpec.noopAction);
   });
   it('throws on arguments without dependency', () => {
 
