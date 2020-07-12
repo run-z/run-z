@@ -101,19 +101,19 @@ export namespace ZTaskSpec {
   /**
    * Task action.
    */
-  export type Action = Command | Script | NoOp;
+  export type Action = Command | Script | NoOp | Unknown;
 
   /**
    * Command execution action of the task.
    */
   export interface Command {
 
+    readonly type: 'command';
+
     /**
      * Command to execute.
      */
     readonly command: string;
-
-    readonly script?: undefined;
 
     /**
      * Whether the command can be executed in parallel with preceding dependency task.
@@ -132,9 +132,9 @@ export namespace ZTaskSpec {
    */
   export interface Script {
 
-    readonly command?: string;
+    readonly type: 'script';
 
-    readonly script: true;
+    readonly command?: string;
 
   }
 
@@ -142,8 +142,22 @@ export namespace ZTaskSpec {
    * No-op action.
    */
   export interface NoOp {
+
+    readonly type: 'noop';
+
     readonly command?: undefined;
-    readonly script?: undefined;
+
+  }
+
+  /**
+   * Unknown action.
+   */
+  export interface Unknown {
+
+    readonly type: 'unknown';
+
+    readonly command?: undefined;
+
   }
 
 }
@@ -155,7 +169,21 @@ const noopZTaskSpec: ZTaskSpec<ZTaskSpec.NoOp> = {
   deps: [],
   attrs: {},
   args: [],
-  action: {},
+  action: {
+    type: 'noop',
+  },
+};
+
+/**
+ * @internal
+ */
+const unknownZTaskSpec: ZTaskSpec<ZTaskSpec.Unknown> = {
+  deps: [],
+  attrs: {},
+  args: [],
+  action: {
+    type: 'unknown',
+  },
 };
 
 /**
@@ -166,7 +194,7 @@ const scriptZTaskSpec: ZTaskSpec<ZTaskSpec.Script> = {
   attrs: {},
   args: [],
   action: {
-    script: true,
+    type: 'script',
   },
 };
 
@@ -177,6 +205,13 @@ export const ZTaskSpec = {
    */
   get noop(): ZTaskSpec<ZTaskSpec.NoOp> {
     return noopZTaskSpec;
+  },
+
+  /**
+   * Unknown task specifier.
+   */
+  get unknown(): ZTaskSpec<ZTaskSpec.Unknown> {
+    return unknownZTaskSpec;
   },
 
   /**

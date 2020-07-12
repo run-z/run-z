@@ -128,7 +128,7 @@ function zTaskDepInstruction(
     for await (const target of targets.packages()) {
 
       const depTask = target.task(dep.task);
-      const isScript = depTask.spec.action.script;
+      const isScript = depTask.spec.action.type === 'script';
 
       if (!isScript && subTaskNames.length) {
 

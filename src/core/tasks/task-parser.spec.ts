@@ -14,33 +14,25 @@ describe('ZTaskParser', () => {
 
     const spec = parser.parse('some command');
 
-    expect(spec.action.script).toBe(true);
-    expect(spec.deps).toHaveLength(0);
-    expect(spec.args).toHaveLength(0);
+    expect(spec).toBe(ZTaskSpec.script);
   });
   it('treats task with comment as NPM script', () => {
 
     const spec = parser.parse('run-z command #comment');
 
-    expect(spec.action.script).toBe(true);
-    expect(spec.deps).toHaveLength(0);
-    expect(spec.args).toHaveLength(0);
+    expect(spec).toBe(ZTaskSpec.script);
   });
   it('treats task with shell commands as NPM script', () => {
 
     const spec = parser.parse('run-z command > out');
 
-    expect(spec.action.script).toBe(true);
-    expect(spec.deps).toHaveLength(0);
-    expect(spec.args).toHaveLength(0);
+    expect(spec).toBe(ZTaskSpec.script);
   });
   it('treats task with environment variable substitution as NPM script', () => {
 
     const spec = parser.parse('run-z comm${some_env}');
 
-    expect(spec.action.script).toBe(true);
-    expect(spec.deps).toHaveLength(0);
-    expect(spec.args).toHaveLength(0);
+    expect(spec).toBe(ZTaskSpec.script);
   });
   it('recognizes dependencies', () => {
 
@@ -77,6 +69,7 @@ describe('ZTaskParser', () => {
     ]);
     expect(spec.args).toEqual(['--some']);
     expect(spec.action).toEqual({
+      type: 'command',
       command: 'cmd',
       parallel: false,
       args: ['--arg'],
@@ -93,6 +86,7 @@ describe('ZTaskParser', () => {
     ]);
     expect(spec.args).toEqual(['--some']);
     expect(spec.action).toEqual({
+      type: 'command',
       command: 'cmd',
       parallel: true,
       args: ['--arg'],

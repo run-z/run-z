@@ -290,6 +290,7 @@ function zTaskCommand([command, ...args]: readonly string[], parallel: boolean):
     return ZTaskSpec.noop.action;
   }
   return {
+    type: 'command',
     command,
     parallel,
     args,

@@ -158,7 +158,7 @@ export class ZPackage extends ZPackageSet {
       return existing;
     }
 
-    const absent = new ZTask(this, name, ZTaskSpec.noop);
+    const absent = new ZTask(this, name, ZTaskSpec.unknown);
 
     this._tasks.set(name, absent);
 
