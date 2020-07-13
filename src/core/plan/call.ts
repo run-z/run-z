@@ -41,9 +41,9 @@ export class ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
   /**
    * Evaluates task execution parameters.
    *
-   * @returns Task execution parameters.
+   * @returns Mutable task execution parameters instance.
    */
-  params(): ZTaskParams {
+  params(): ZTaskParams.Mutable {
 
     // Sort the calls from deepest to closest.
     const allParams = this._params.map(
@@ -53,24 +53,13 @@ export class ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
     );
 
     // Evaluate parameters.
-    const attrs: Record<string, string[]> = {};
-    const args: string[] = [];
-    const actionArgs: string[] = [];
+    const result: ZTaskParams.Mutable = { attrs: {}, args: [], actionArgs: [] };
 
     for (const [, params] of allParams) {
-
-      const { attrs: newAttrs = {}, args: newArgs = [], actionArgs: newActionArgs = [] } = params();
-
-      Object.assign(attrs, newAttrs);
-      args.push(...newArgs);
-      actionArgs.push(...newActionArgs);
+      extendZTaskParams(result, params());
     }
 
-    return {
-      attrs,
-      args,
-      actionArgs,
-    };
+    return result;
   }
 
   /**
@@ -78,22 +67,10 @@ export class ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
    *
    * @param extension  Task parameters extension.
    *
-   * @returns Extended task parameters evaluator function.
+   * @returns Evaluator of extended mutable task parameters.
    */
-  extendParams(extension: Partial<ZTaskParams>): (this: void) => ZTaskParams {
-
-    const { attrs = {}, args = [], actionArgs = [] } = extension;
-
-    return () => {
-
-      const base = this.params();
-
-      return ({
-        attrs: { ...base.attrs, ...attrs },
-        args: base.args.concat(args),
-        actionArgs: base.args.concat(actionArgs),
-      });
-    };
+  extendParams(extension: Partial<ZTaskParams>): (this: void) => ZTaskParams.Mutable {
+    return () => extendZTaskParams(this.params(), extension);
   }
 
 }
@@ -118,3 +95,26 @@ export type ZCallDepth =
  * @returns The depth of the call.
  */
     (this: void) => number;
+
+/**
+ * @internal
+ */
+function extendZTaskParams(
+    params: ZTaskParams.Mutable,
+    { attrs = {}, args = [], actionArgs = [] }: Partial<ZTaskParams>,
+): ZTaskParams.Mutable {
+  for (const [k, v] of Object.entries(attrs)) {
+
+    const values = params.attrs[k];
+
+    if (values) {
+      values.push(...v);
+    } else {
+      params.attrs[k] = Array.from(v);
+    }
+  }
+  params.args.push(...args);
+  params.actionArgs.push(...actionArgs);
+
+  return params;
+}
