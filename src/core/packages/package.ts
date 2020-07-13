@@ -3,7 +3,7 @@
  * @module run-z
  */
 import type { ZSetup } from '../setup';
-import { ZTask, ZTaskSpec } from '../tasks';
+import type { ZTask } from '../tasks';
 import type { ZPackageLocation } from './package-location';
 import { ZPackageSet } from './package-set';
 import type { ZPackageJson } from './package.json';
@@ -158,7 +158,7 @@ export class ZPackage extends ZPackageSet {
       return existing;
     }
 
-    const absent = this.setup.taskFactory.createTask(this, name, ZTaskSpec.unknown);
+    const absent = this.setup.taskFactory.createUnknown(this, name);
 
     this._tasks.set(name, absent);
 
