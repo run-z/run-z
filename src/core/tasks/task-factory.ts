@@ -3,10 +3,10 @@
  * @module run-z
  */
 import { valueProvider } from '@proc7ts/primitives';
-import type { ZInstruction, ZInstructionRecorder } from '../exec';
 import type { ZPackage, ZPackageSet } from '../packages';
+import type { ZInstruction, ZPlanRecorder } from '../plan';
+import { ZCall, ZTaskParams } from '../plan';
 import { ZTask } from './task';
-import { ZTaskDetails } from './task-details';
 import { ZTaskSpec } from './task-spec';
 
 /**
@@ -51,10 +51,10 @@ abstract class AbstractZTask<TAction extends ZTaskSpec.Action> extends ZTask<TAc
 
   constructor(target: ZPackage, name: string, spec: ZTaskSpec<TAction>) {
     super(target, name, spec);
-    this.instruction = async (recorder: ZInstructionRecorder): Promise<void> => {
+    this.instruction = async (recorder: ZPlanRecorder): Promise<void> => {
 
       const { target, spec } = this;
-      const taskDetails = await recorder.fulfil(
+      const call = await recorder.call(
           this,
           valueProvider({
             attrs: spec.attrs,
@@ -62,7 +62,7 @@ abstract class AbstractZTask<TAction extends ZTaskSpec.Action> extends ZTask<TAc
           }),
       );
 
-      return instructOnZTaskDeps(target, recorder, taskDetails, spec);
+      return instructOnZTaskDeps(target, recorder, call, spec);
     };
   }
 
@@ -121,8 +121,8 @@ class UnknownZTask extends AbstractZTask<ZTaskSpec.Unknown> {
  */
 async function instructOnZTaskDeps(
     target: ZPackage,
-    recorder: ZInstructionRecorder,
-    taskDetails: (this: void) => ZTaskDetails,
+    recorder: ZPlanRecorder,
+    taskCall: ZCall,
     spec: ZTaskSpec,
 ): Promise<void> {
 
@@ -141,7 +141,7 @@ async function instructOnZTaskDeps(
       continue;
     }
 
-    await recorder.follow(zTaskDepInstruction(targets || target, dep, taskDetails));
+    await recorder.follow(zTaskDepInstruction(targets || target, dep, taskCall));
     targets = undefined;
   }
 }
@@ -152,7 +152,7 @@ async function instructOnZTaskDeps(
 function zTaskDepInstruction(
     targets: ZPackageSet,
     dep: ZTaskSpec.TaskRef,
-    taskDetails: (this: void) => ZTaskDetails,
+    taskCall: ZCall,
 ): ZInstruction {
 
   const { attrs } = dep;
@@ -167,12 +167,13 @@ function zTaskDepInstruction(
     }
   }
 
-  const commandDepDetailsBase: ZTaskDetails = { attrs, args, actionArgs: [] };
-  const commandDepDetails = (): ZTaskDetails => ZTaskDetails.extend(commandDepDetailsBase, taskDetails());
-  const scriptDepDetailsBase = { attrs, args: dep.args, actionArgs: [] };
-  const scriptDepDetails = (): ZTaskDetails => ZTaskDetails.extend(scriptDepDetailsBase, taskDetails());
+  const commandDepParamsBase: ZTaskParams = { attrs, args, actionArgs: [] };
+  const commandDepParams = (): ZTaskParams => ZTaskParams.extend(commandDepParamsBase, taskCall.params());
+  const scriptDepParamsBase = { attrs, args: dep.args, actionArgs: [] };
+  const scriptDepParams = (): ZTaskParams => ZTaskParams.extend(scriptDepParamsBase, taskCall.params());
+  const callParams = taskCall.params.bind(taskCall);
 
-  return async (recorder: ZInstructionRecorder) => {
+  return async (recorder: ZPlanRecorder) => {
     for await (const target of targets.packages()) {
 
       const depTask = target.task(dep.task);
@@ -184,14 +185,14 @@ function zTaskDepInstruction(
 
         for await (const subTarget of subTargets.packages()) {
           for (const subTaskName of subTaskNames) {
-            await recorder.fulfil(subTarget.task(subTaskName), taskDetails);
+            await recorder.call(subTarget.task(subTaskName), callParams);
           }
         }
       }
 
-      await recorder.fulfil(
+      await recorder.call(
           depTask,
-          acceptsSubTasks ? scriptDepDetails : commandDepDetails,
+          acceptsSubTasks ? scriptDepParams : commandDepParams,
       );
     }
   };

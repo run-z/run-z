@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module run-z
  */
-import type { ZInstruction } from '../exec';
 import type { ZPackage } from '../packages';
+import type { ZInstruction } from '../plan';
 import type { ZTaskSpec } from './task-spec';
 
 /**

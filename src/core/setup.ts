@@ -4,12 +4,13 @@
  */
 import { valueByRecipe } from '@proc7ts/primitives';
 import { ZPackageResolver } from './packages';
+import { ZPlanner } from './plan';
 import { ZTaskFactory, ZTaskParser } from './tasks';
 
 /**
- * `run-z` setup.
+ * Task execution setup.
  *
- * Provides access to other services.
+ * Provides access to all task execution services.
  */
 export class ZSetup {
 
@@ -34,9 +35,14 @@ export class ZSetup {
   private _packageResolver?: ZPackageResolver;
 
   /**
+   * @internal
+   */
+  private _planner?: ZPlanner;
+
+  /**
    * Constructs setup instance.
    *
-   * @param config  `run-z` configuration.
+   * @param config  Task execution configuration.
    */
   constructor(config: ZConfig = {}) {
     this._config = config;
@@ -53,6 +59,9 @@ export class ZSetup {
     );
   }
 
+  /**
+   * Task factory.
+   */
   get taskFactory(): ZTaskFactory {
     return this._taskFactory || (
         this._taskFactory = this._config.taskFactory
@@ -72,12 +81,23 @@ export class ZSetup {
     );
   }
 
+  /**
+   * Task execution planner.
+   */
+  get planner(): ZPlanner {
+    return this._planner || (
+        this._planner = this._config.planner
+            ? valueByRecipe(this._config.planner, this)
+            : new ZPlanner(this)
+    );
+  }
+
 }
 
 /**
- * `run-z` configuration.
+ * Task execution configuration.
  *
- * Configures {@link ZSetup setup} by providing services to use.
+ * Configures {@link ZSetup task execution setup} by providing services to use.
  */
 export interface ZConfig {
 
@@ -101,5 +121,12 @@ export interface ZConfig {
    * @default New {@link ZPackageResolver} instance.
    */
   readonly packageResolver?: ZPackageResolver | ((this: void, setup: ZSetup) => ZPackageResolver);
+
+  /**
+   * Task execution planner to use.
+   *
+   * @default New {@lin ZPlanner} instance.
+   */
+  readonly planner?: ZPlanner | ((this: void, setup: ZSetup) => ZPlanner);
 
 }

@@ -27,7 +27,7 @@ export class ZPackage extends ZPackageSet {
   /**
    * Constructs a package.
    *
-   * @param setup  `run-z` setup.
+   * @param setup  Task execution setup.
    * @param location  Package location.
    * @param packageJson  `package.json` contents.
    * @param parent  Parent NPM package.

@@ -1,5 +1,6 @@
 import { valueProvider } from '@proc7ts/primitives';
 import { ZPackageResolver } from './packages';
+import { ZPlanner } from './plan';
 import { ZSetup } from './setup';
 import { ZTaskFactory, ZTaskParser } from './tasks';
 
@@ -72,6 +73,25 @@ describe('ZSetup', () => {
       expect(setup.packageResolver).toBe(packageResolver);
       expect(packageResolver).toBeDefined();
       expect(setup.packageResolver).toBe(packageResolver);
+    });
+  });
+
+  describe('planner', () => {
+    it('is constructed by default', () => {
+
+      const setup = new ZSetup();
+
+      expect(setup.planner).toBeInstanceOf(ZPlanner);
+      expect(setup.planner).toBe(setup.planner);
+    });
+    it('is built by config', () => {
+
+      let planner!: ZPlanner;
+      const setup = new ZSetup({ planner: s => planner = new ZPlanner(s) });
+
+      expect(setup.planner).toBe(planner);
+      expect(planner).toBeDefined();
+      expect(setup.planner).toBe(planner);
     });
   });
 });

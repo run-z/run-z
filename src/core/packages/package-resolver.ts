@@ -17,7 +17,7 @@ export class ZPackageResolver {
   /**
    * Constructs NPM package resolver.
    *
-   * @param setup  `run-z` setup.
+   * @param setup  Task execution setup.
    */
   constructor(readonly setup: ZSetup) {
   }
