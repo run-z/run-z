@@ -10,68 +10,28 @@ import type { ZTaskParams } from './task-params';
  *
  * @typeparam TAction  Task action type.
  */
-export class ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
-
-  private readonly _params: (readonly [ZCallParams, ZCallDepth])[];
+export interface ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
 
   /**
-   * Constructs a call for task execution.
-   *
-   * @param task  A task to call.
-   * @param params  A function evaluating parameters of the call.
-   * @param depth  A function evaluating the depth of the call.
+   * A task to call.
    */
-  constructor(readonly task: ZTask<TAction>, params: ZCallParams, depth: ZCallDepth) {
-    this._params = [[params, depth]];
-  }
-
-  /**
-   * Refines the call by adding more parameters to it.
-   *
-   * @param params  A function evaluating additional parameters of the call.
-   * @param depth  A function evaluating the depth of the additional call.
-   *
-   * @returns `this` instance.
-   */
-  refine(params: ZCallParams, depth: ZCallDepth): this {
-    this._params.push([params, depth]);
-    return this;
-  }
+  readonly task: ZTask<TAction>;
 
   /**
    * Evaluates task execution parameters.
    *
-   * @returns Mutable task execution parameters instance.
+   * @returns Task execution parameters instance.
    */
-  params(): ZTaskParams.Mutable {
-
-    // Sort the calls from deepest to closest.
-    const allParams = this._params.map(
-        ([params, depth]) => [depth(), params] as const,
-    ).sort(
-        ([firstDepth], [secondDepth]) => secondDepth - firstDepth,
-    );
-
-    // Evaluate parameters.
-    const result: ZTaskParams.Mutable = { attrs: {}, args: [], actionArgs: [] };
-
-    for (const [, params] of allParams) {
-      extendZTaskParams(result, params());
-    }
-
-    return result;
-  }
+  params(): ZTaskParams;
 
   /**
    * Extends this call parameters with the given extension.
    *
    * @param extension  Task parameters extension.
    *
-   * @returns Evaluator of extended mutable task parameters.
+   * @returns Extended task parameters evaluator.
    */
-  extendParams(extension: Partial<ZTaskParams>): (this: void) => ZTaskParams.Mutable {
-    return () => extendZTaskParams(this.params(), extension);
-  }
+  extendParams(extension: Partial<ZTaskParams>): (this: void) => ZTaskParams;
 
 }
 
@@ -95,26 +55,3 @@ export type ZCallDepth =
  * @returns The depth of the call.
  */
     (this: void) => number;
-
-/**
- * @internal
- */
-function extendZTaskParams(
-    params: ZTaskParams.Mutable,
-    { attrs = {}, args = [], actionArgs = [] }: Partial<ZTaskParams>,
-): ZTaskParams.Mutable {
-  for (const [k, v] of Object.entries(attrs)) {
-
-    const values = params.attrs[k];
-
-    if (values) {
-      values.push(...v);
-    } else {
-      params.attrs[k] = Array.from(v);
-    }
-  }
-  params.args.push(...args);
-  params.actionArgs.push(...actionArgs);
-
-  return params;
-}

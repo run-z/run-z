@@ -28,14 +28,14 @@ export class ZTaskFactory {
   ): ZTask<TAction> {
     switch (spec.action.type) {
     case 'command':
-      return new CommandZTask(target, name, spec as ZTaskSpec<ZTaskSpec.Command>) as ZTask<TAction>;
+      return new CommandZTask(target, name, spec as ZTaskSpec<ZTaskSpec.Command>) as ZTask<any>;
     case 'script':
-      return new ScriptZTask(target, name) as ZTask<TAction>;
+      return new ScriptZTask(target, name) as ZTask<any>;
     case 'noop':
-      return new NoOpZTask(target, name, spec as ZTaskSpec<ZTaskSpec.NoOp>) as ZTask<TAction>;
+      return new NoOpZTask(target, name, spec as ZTaskSpec<ZTaskSpec.NoOp>) as ZTask<any>;
     case 'unknown':
     default:
-      return new UnknownZTask(target, name) as ZTask<TAction>;
+      return new UnknownZTask(target, name) as ZTask<any>;
     }
   }
 
@@ -52,21 +52,31 @@ abstract class AbstractZTask<TAction extends ZTaskSpec.Action> extends ZTask<TAc
     super(target, name, spec);
     this.instruction = async (recorder: ZPlanRecorder): Promise<void> => {
 
-      const { target, spec } = this;
-      const call = await recorder.call(
-          this,
-          valueProvider({
-            attrs: spec.attrs,
-            args: spec.args,
-          }),
-      );
+      const call = await this.instruct(recorder);
 
-      return instructOnZTaskDeps(target, recorder, call, spec);
+      await this.instructOnDeps(recorder, call);
     };
   }
 
   get acceptsSubTasks(): boolean {
     return false;
+  }
+
+  protected async instruct(recorder: ZPlanRecorder): Promise<ZCall> {
+
+    const { spec: { attrs, args } } = this;
+
+    return recorder.call(
+        this,
+        valueProvider({ attrs, args }),
+    );
+  }
+
+  protected instructOnDeps(recorder: ZPlanRecorder, taskCall: ZCall): Promise<void> {
+
+    const { target, spec } = this;
+
+    return instructOnZTaskDeps(target, recorder, taskCall, spec);
   }
 
 }
@@ -78,6 +88,16 @@ class CommandZTask extends AbstractZTask<ZTaskSpec.Command> {
 
   get acceptsSubTasks(): true {
     return true;
+  }
+
+  protected async instruct(recorder: ZPlanRecorder): Promise<ZCall> {
+
+    const { spec: { attrs, args, action: { args: actionArgs } } } = this;
+
+    return recorder.call(
+        this,
+        valueProvider({ attrs, args, actionArgs }),
+    );
   }
 
 }

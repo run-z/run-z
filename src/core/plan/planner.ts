@@ -5,7 +5,8 @@
 import { valueProvider } from '@proc7ts/primitives';
 import type { ZSetup } from '../setup';
 import type { ZTask } from '../tasks';
-import { ZCall, ZCallParams } from './call';
+import type { ZCall, ZCallParams } from './call';
+import { ZCallRecord } from './call.impl';
 import type { ZInstruction } from './instruction';
 import type { ZPlan } from './plan';
 import type { ZPlanRecorder } from './plan-recorder';
@@ -40,7 +41,7 @@ export class ZPlanner {
 class ZInstructionRecords {
 
   private readonly _instructions = new Map<ZInstruction, ZInstructionRecord>();
-  private readonly _calls = new Map<ZTask, ZCall>();
+  private readonly _calls = new Map<ZTask, ZCallRecord>();
 
   constructor(readonly setup: ZSetup) {
   }
@@ -70,9 +71,9 @@ class ZInstructionRecords {
     let call = this._calls.get(task);
 
     if (call) {
-      call.refine(params, depth);
+      call.call(params, depth);
     } else {
-      call = new ZCall(task, params, depth);
+      call = new ZCallRecord(task, params, depth);
       this._calls.set(task, call);
       await by.recorder.follow(call.task.instruction);
     }
@@ -83,6 +84,7 @@ class ZInstructionRecords {
   plan(): ZPlan {
     return {
       calls: () => this._calls.values(),
+      callOf: task => this._calls.get(task),
     };
   }
 

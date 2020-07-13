@@ -2,108 +2,104 @@ import { valueProvider } from '@proc7ts/primitives';
 import { ZPackageTree } from '../packages';
 import { ZSetup } from '../setup';
 import type { ZTask, ZTaskSpec } from '../tasks';
-import { ZCall } from './call';
+import type { ZCall } from './call';
 import type { ZTaskParams } from './task-params';
 
 describe('ZCall', () => {
 
+  let setup: ZSetup;
+  let initParams: ZTaskParams;
   let task: ZTask;
 
   beforeEach(async () => {
+    setup = new ZSetup();
 
-    const setup = new ZSetup();
     const tree = new ZPackageTree('root', { name: 'root' });
+    initParams = {
+      attrs: { attr1: ['attr1-val'] },
+      args: ['arg1'],
+      actionArgs: ['cmd-arg1'],
+    };
     const spec: ZTaskSpec = {
       deps: [],
-      attrs: {},
-      args: [],
+      attrs: initParams.attrs,
+      args: initParams.args,
       action: {
         type: 'command',
         command: 'test-command',
         parallel: false,
-        args: [],
+        args: initParams.actionArgs,
       },
     };
 
     task = setup.taskFactory.createTask(await setup.packageResolver.get(tree), 'test', spec);
   });
 
-  let params: ZTaskParams;
-  let call: ZCall;
+  describe('call', () => {
+    it('appends attribute values', async () => {
 
-  beforeEach(() => {
-    params = {
-      attrs: { attr1: ['attr1-val'] },
-      args: ['arg1'],
-      actionArgs: ['cmd-arg1'],
-    };
-    call = new ZCall(task, valueProvider(params), () => 1);
-  });
+      const call = await makeCall({ attrs: { attr1: ['attr1-val2'] } });
 
-  describe('params', () => {
-    it('appends attribute values', () => {
-      expect(call.refine(valueProvider({ attrs: { attr1: ['attr1-val2'] } }), valueProvider(0))).toBe(call);
       expect(call.params()).toEqual({
-        ...params,
-        attrs: { ...params.attrs, attr1: ['attr1-val', 'attr1-val2'] },
+        ...initParams,
+        attrs: { ...initParams.attrs, attr1: ['attr1-val', 'attr1-val2'] },
       });
     });
-    it('prepends attribute values', () => {
-      expect(call.refine(valueProvider({ attrs: { attr1: ['attr1-val2'] } }), valueProvider(2))).toBe(call);
+    it('adds attribute', async () => {
+
+      const call = await makeCall({ attrs: { attr2: ['attr2-val'] } });
+
       expect(call.params()).toEqual({
-        ...params,
-        attrs: { ...params.attrs, attr1: ['attr1-val2', 'attr1-val'] },
+        ...initParams,
+        attrs: { ...initParams.attrs, attr2: ['attr2-val'] },
       });
     });
-    it('adds attributes', () => {
-      expect(call.refine(valueProvider({ attrs: { attr2: ['attr2-val'] } }), valueProvider(2))).toBe(call);
+    it('appends args', async () => {
+
+      const call = await makeCall({ args: ['arg2'] });
+
       expect(call.params()).toEqual({
-        ...params,
-        attrs: { ...params.attrs, attr2: ['attr2-val'] },
+        ...initParams,
+        args: [...initParams.args, 'arg2'],
       });
     });
-    it('appends args', () => {
-      expect(call.refine(valueProvider({ args: ['arg2'] }), valueProvider(0))).toBe(call);
+    it('appends action args', async () => {
+
+      const call = await makeCall({ actionArgs: ['cmd-arg2'] });
+
       expect(call.params()).toEqual({
-        ...params,
-        args: [...params.args, 'arg2'],
-      });
-    });
-    it('prepends args', () => {
-      expect(call.refine(valueProvider({ args: ['arg2'] }), valueProvider(2))).toBe(call);
-      expect(call.params()).toEqual({
-        ...params,
-        args: ['arg2', ...params.args],
-      });
-    });
-    it('appends action args', () => {
-      expect(call.refine(valueProvider({ actionArgs: ['cmd-arg2'] }), valueProvider(0))).toBe(call);
-      expect(call.params()).toEqual({
-        ...params,
-        actionArgs: [...params.actionArgs, 'cmd-arg2'],
-      });
-    });
-    it('prepends action args', () => {
-      expect(call.refine(valueProvider({ actionArgs: ['cmd-arg2'] }), valueProvider(2))).toBe(call);
-      expect(call.params()).toEqual({
-        ...params,
-        actionArgs: ['cmd-arg2', ...params.actionArgs],
+        ...initParams,
+        actionArgs: [...initParams.actionArgs, 'cmd-arg2'],
       });
     });
   });
 
   describe('extendParams', () => {
-    it('extends params', () => {
+    it('extends params', async () => {
+
+      const call = await makeCall();
+
       expect(call.extendParams({
         attrs: { attr1: ['attr1-val2'] },
         args: ['arg2'],
         actionArgs: ['cmd-arg2'],
       })()).toEqual({
-        ...params,
-        attrs: { ...params.attrs, attr1: ['attr1-val', 'attr1-val2'] },
-        args: [...params.args, 'arg2'],
-        actionArgs: [...params.actionArgs, 'cmd-arg2'],
+        ...initParams,
+        attrs: { ...initParams.attrs, attr1: ['attr1-val', 'attr1-val2'] },
+        args: [...initParams.args, 'arg2'],
+        actionArgs: [...initParams.actionArgs, 'cmd-arg2'],
       });
     });
   });
+
+  async function makeCall(params: Partial<ZTaskParams> = {}): Promise<ZCall> {
+
+    const plan = await setup.planner.plan(async recorder => {
+      await recorder.follow(async recorder => {
+        await recorder.call(task, valueProvider(params));
+      });
+    });
+
+    return plan.callOf(task)!;
+  }
 });
