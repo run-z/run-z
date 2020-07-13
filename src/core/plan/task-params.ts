@@ -27,15 +27,3 @@ export interface ZTaskParams {
   readonly actionArgs: readonly string[];
 
 }
-
-export const ZTaskParams = {
-
-  extend(base: ZTaskParams, extension: ZTaskParams): ZTaskParams {
-    return {
-      attrs: { ...base.attrs, ...extension.attrs },
-      args: base.args.concat(extension.args),
-      actionArgs: base.args.concat(extension.args),
-    };
-  },
-
-};

@@ -4,8 +4,7 @@
  */
 import { valueProvider } from '@proc7ts/primitives';
 import type { ZPackage, ZPackageSet } from '../packages';
-import type { ZInstruction, ZPlanRecorder } from '../plan';
-import { ZCall, ZTaskParams } from '../plan';
+import type { ZCall, ZInstruction, ZPlanRecorder } from '../plan';
 import { ZTask } from './task';
 import { ZTaskSpec } from './task-spec';
 
@@ -167,10 +166,8 @@ function zTaskDepInstruction(
     }
   }
 
-  const commandDepParamsBase: ZTaskParams = { attrs, args, actionArgs: [] };
-  const commandDepParams = (): ZTaskParams => ZTaskParams.extend(commandDepParamsBase, taskCall.params());
-  const scriptDepParamsBase = { attrs, args: dep.args, actionArgs: [] };
-  const scriptDepParams = (): ZTaskParams => ZTaskParams.extend(scriptDepParamsBase, taskCall.params());
+  const commandDepParams = taskCall.extendParams({ attrs, args });
+  const scriptDepParams = taskCall.extendParams({ attrs, args: dep.args });
   const callParams = taskCall.params.bind(taskCall);
 
   return async (recorder: ZPlanRecorder) => {

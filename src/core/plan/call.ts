@@ -73,6 +73,29 @@ export class ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
     };
   }
 
+  /**
+   * Extends this call parameters with the given extension.
+   *
+   * @param extension  Task parameters extension.
+   *
+   * @returns Extended task parameters evaluator function.
+   */
+  extendParams(extension: Partial<ZTaskParams>): (this: void) => ZTaskParams {
+
+    const { attrs = {}, args = [], actionArgs = [] } = extension;
+
+    return () => {
+
+      const base = this.params();
+
+      return ({
+        attrs: { ...base.attrs, ...attrs },
+        args: base.args.concat(args),
+        actionArgs: base.args.concat(actionArgs),
+      });
+    };
+  }
+
 }
 
 /**
