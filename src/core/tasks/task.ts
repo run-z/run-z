@@ -3,7 +3,7 @@
  * @module run-z
  */
 import type { ZPackage } from '../packages';
-import type { ZInstruction } from '../plan';
+import type { ZCall, ZInstruction } from '../plan';
 import type { ZTaskSpec } from './task-spec';
 
 /**
@@ -19,14 +19,6 @@ export abstract class ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
   abstract readonly instruction: ZInstruction;
 
   /**
-   * Whether this task accepts sub-task names as arguments.
-   *
-   * This is `true` for {@link ZTaskSpec.Command commands} and {@link ZTaskSpec.NoOp no-ops}, and `false`
-   * for everything else.
-   */
-  abstract readonly acceptsSubTasks: boolean;
-
-  /**
    * Constructs a task.
    *
    * @param target  Target package the task is applied to.
@@ -39,5 +31,18 @@ export abstract class ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
       readonly spec: ZTaskSpec<TAction>,
   ) {
   }
+
+  /**
+   * Builds this task execution when it is used as dependency of another one.
+   *
+   * By default a {@link ZTaskSpec.NoOp no-op task} treats the first argument as a sub-task name, an the rest of
+   * arguments as arguments to this sub-task. The tasks of all other types record a call to this as is.
+   *
+   * @param call  Depending task execution call.
+   * @param dep  Dependency specifier.
+   *
+   * @returns Dependency execution instruction.
+   */
+  abstract asDepOf(call: ZCall, dep: ZTaskSpec.TaskRef): ZInstruction;
 
 }

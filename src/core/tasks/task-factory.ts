@@ -3,9 +3,9 @@
  * @module run-z
  */
 import type { ZPackage } from '../packages';
+import { CommandZTask, NoOpZTask, ScriptZTask, UnknownZTask } from './impl';
 import type { ZTask } from './task';
 import type { ZTaskSpec } from './task-spec';
-import { CommandZTask, NoOpZTask, ScriptZTask, UnknownZTask } from './task.impl';
 
 /**
  * Task factory.
