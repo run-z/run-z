@@ -101,7 +101,7 @@ export namespace ZTaskSpec {
   /**
    * Task action.
    */
-  export type Action = Command | Script | NoOp | Unknown;
+  export type Action = Command | Script | Group | Unknown;
 
   /**
    * Command execution action of the task.
@@ -139,11 +139,11 @@ export namespace ZTaskSpec {
   }
 
   /**
-   * No-op action.
+   * Task grouping action.
    */
-  export interface NoOp {
+  export interface Group {
 
-    readonly type: 'noop';
+    readonly type: 'group';
 
     readonly command?: undefined;
 
@@ -165,8 +165,8 @@ export namespace ZTaskSpec {
 /**
  * @internal
  */
-const noopZTaskAction: ZTaskSpec.NoOp = {
-  type: 'noop',
+const groupZTaskAction: ZTaskSpec.Group = {
+  type: 'group',
 };
 
 /**
@@ -196,10 +196,10 @@ const scriptZTaskSpec: ZTaskSpec<ZTaskSpec.Script> = {
 export const ZTaskSpec = {
 
   /**
-   * No-op task specifier.
+   * Grouping task action specifier.
    */
-  get noopAction(): ZTaskSpec.NoOp {
-    return noopZTaskAction;
+  get groupAction(): ZTaskSpec.Group {
+    return groupZTaskAction;
   },
 
   /**

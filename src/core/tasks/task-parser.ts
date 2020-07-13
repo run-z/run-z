@@ -191,7 +191,7 @@ export class ZTaskParser {
       action = zTaskActionMap[entries[actionIdx]](entries.slice(actionIdx + 1));
     } else {
       args = entries.slice(e);
-      action = ZTaskSpec.noopAction;
+      action = ZTaskSpec.groupAction;
     }
 
     return {
@@ -285,7 +285,7 @@ function addZTaskAttr(attrs: Record<string, string[]>, arg: string, eqIdx: numbe
 /**
  * @internal
  */
-function zTaskCommand([command, ...args]: readonly string[], parallel: boolean): ZTaskSpec.Command | ZTaskSpec.NoOp {
+function zTaskCommand([command, ...args]: readonly string[], parallel: boolean): ZTaskSpec.Command | ZTaskSpec.Group {
   return command
       ? {
         type: 'command',
@@ -293,5 +293,5 @@ function zTaskCommand([command, ...args]: readonly string[], parallel: boolean):
         parallel,
         args,
       }
-      : ZTaskSpec.noopAction;
+      : ZTaskSpec.groupAction;
 }

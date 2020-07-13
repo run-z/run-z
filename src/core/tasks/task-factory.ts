@@ -3,7 +3,7 @@
  * @module run-z
  */
 import type { ZPackage } from '../packages';
-import { CommandZTask, NoOpZTask, ScriptZTask, UnknownZTask } from './impl';
+import { CommandZTask, GroupZTask, ScriptZTask, UnknownZTask } from './impl';
 import type { ZTask } from './task';
 import type { ZTaskSpec } from './task-spec';
 
@@ -32,8 +32,8 @@ export class ZTaskFactory {
     switch (spec.action.type) {
     case 'command':
       return this.createCommand(target, name, spec as ZTaskSpec<ZTaskSpec.Command>) as ZTask<TAction>;
-    case 'noop':
-      return this.createNoOp(target, name, spec as ZTaskSpec<ZTaskSpec.NoOp>) as ZTask<TAction>;
+    case 'group':
+      return this.createGroup(target, name, spec as ZTaskSpec<ZTaskSpec.Group>) as ZTask<TAction>;
     case 'script':
       return this.createScript(target, name) as ZTask<TAction>;
     case 'unknown':
@@ -56,16 +56,16 @@ export class ZTaskFactory {
   }
 
   /**
-   * Creates a no-op task by its {@link ZTaskSpec.NoOp specifier}.
+   * Creates a grouping task by its {@link ZTaskSpec.Group specifier}.
    *
    * @param target  Target package the task is applied to.
    * @param name  Task name.
    * @param spec  Task specifier.
    *
-   * @returns New no-op task instance.
+   * @returns New grouping task instance.
    */
-  createNoOp(target: ZPackage, name: string, spec: ZTaskSpec<ZTaskSpec.NoOp>): ZTask<ZTaskSpec.NoOp> {
-    return new NoOpZTask(target, name, spec);
+  createGroup(target: ZPackage, name: string, spec: ZTaskSpec<ZTaskSpec.Group>): ZTask<ZTaskSpec.Group> {
+    return new GroupZTask(target, name, spec);
   }
 
   /**

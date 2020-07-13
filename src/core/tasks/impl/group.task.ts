@@ -1,17 +1,12 @@
-import { valueProvider } from '@proc7ts/primitives';
 import type { ZPackageSet } from '../../packages';
-import type { ZCall, ZInstruction, ZPlanRecorder } from '../../plan';
+import type { ZCall, ZInstruction } from '../../plan';
 import type { ZTaskSpec } from '../task-spec';
 import { AbstractZTask } from './abstract.task';
 
 /**
  * @internal
  */
-export class NoOpZTask extends AbstractZTask<ZTaskSpec.NoOp> {
-
-  get acceptsSubTasks(): true {
-    return true;
-  }
+export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
 
   asDepOf(call: ZCall, dep: ZTaskSpec.TaskRef): ZInstruction {
 
@@ -34,13 +29,6 @@ export class NoOpZTask extends AbstractZTask<ZTaskSpec.NoOp> {
     }
 
     return super.asDepOf(call, dep);
-  }
-
-  protected async planCall(recorder: ZPlanRecorder): Promise<ZCall> {
-
-    const { spec: { attrs } } = this;
-
-    return recorder.call(this, valueProvider({ attrs }));
   }
 
   private _subTaskTargets(): ZPackageSet {

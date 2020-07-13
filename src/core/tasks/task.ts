@@ -35,7 +35,7 @@ export abstract class ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
   /**
    * Builds this task execution when it is used as dependency of another one.
    *
-   * By default a {@link ZTaskSpec.NoOp no-op task} treats the first argument as a sub-task name, an the rest of
+   * By default a {@link ZTaskSpec.Group grouping task} treats the first argument as a sub-task name, an the rest of
    * arguments as arguments to this sub-task. The tasks of all other types record a call to this as is.
    *
    * @param call  Depending task execution call.
