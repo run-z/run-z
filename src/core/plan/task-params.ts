@@ -7,7 +7,7 @@ import type { ZTaskSpec } from '../tasks';
 /**
  * @internal
  */
-const falseZAttrValues: { [key: string]: 1 } = {
+const falseZTaskFlagValues: { [key: string]: 1 } = {
   0: 1,
   off: 1,
   false: 1,
@@ -101,9 +101,9 @@ export class ZTaskParams {
    */
   flag(name: string): boolean {
 
-    const attr = this.attr(name)?.toLowerCase();
+    const attr = this.attr(name);
 
-    return attr != null && falseZAttrValues[attr] !== 1;
+    return attr != null && !falseZTaskFlagValues[attr.toLowerCase()];
   }
 
   /**

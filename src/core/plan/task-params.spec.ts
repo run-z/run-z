@@ -95,9 +95,21 @@ describe('ZTaskParams', () => {
 
       expect(params.flag('flag')).toBe(false);
     });
+    it('returns `false` for flag with `False` value', () => {
+
+      const params = new ZTaskParams(ZTaskParams.update(mutable, { attrs: { flag: ['true', 'False'] } }));
+
+      expect(params.flag('flag')).toBe(false);
+    });
     it('returns `false` for flag with `off` value', () => {
 
       const params = new ZTaskParams(ZTaskParams.update(mutable, { attrs: { flag: ['on', 'off'] } }));
+
+      expect(params.flag('flag')).toBe(false);
+    });
+    it('returns `false` for flag with `OFF` value', () => {
+
+      const params = new ZTaskParams(ZTaskParams.update(mutable, { attrs: { flag: ['on', 'OFF'] } }));
 
       expect(params.flag('flag')).toBe(false);
     });
