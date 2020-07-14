@@ -31,7 +31,7 @@ export interface ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
    *
    * @returns Extended task parameters evaluator.
    */
-  extendParams(extension: Partial<ZTaskParams>): (this: void) => ZTaskParams;
+  extendParams(extension: ZTaskParams.Partial): (this: void) => ZTaskParams;
 
 }
 
@@ -42,7 +42,7 @@ export type ZCallParams =
 /**
  * @returns Partial task execution parameters.
  */
-    (this: void) => Partial<ZTaskParams>;
+    (this: void) => ZTaskParams.Partial;
 
 /**
  * Task execution call depth evaluator signature.

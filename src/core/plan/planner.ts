@@ -40,6 +40,7 @@ export class ZPlanner {
  */
 class ZInstructionRecords {
 
+  rev = 0;
   private readonly _instructions = new Map<ZInstruction, ZInstructionRecord>();
   private readonly _calls = new Map<ZTask, ZCallRecord>();
 
@@ -47,6 +48,7 @@ class ZInstructionRecords {
   }
 
   async follow(instruction: ZInstruction, depth: (this: void) => number): Promise<void> {
+    ++this.rev;
 
     let record = this._instructions.get(instruction);
 
@@ -64,6 +66,7 @@ class ZInstructionRecords {
       by: ZInstructionRecord,
       params: ZCallParams = valueProvider({}),
   ): Promise<ZCall> {
+    ++this.rev;
 
     const depth: (this: void) => number = task.instruction === by.of
         ? valueProvider(Number.POSITIVE_INFINITY)
@@ -73,7 +76,7 @@ class ZInstructionRecords {
     if (call) {
       call.call(params, depth);
     } else {
-      call = new ZCallRecord(task, params, depth);
+      call = new ZCallRecord(this, task, params, depth);
       this._calls.set(task, call);
       await by.recorder.follow(call.task.instruction);
     }

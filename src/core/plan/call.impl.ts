@@ -1,6 +1,6 @@
 import type { ZTask, ZTaskSpec } from '../tasks';
 import type { ZCall, ZCallDepth, ZCallParams } from './call';
-import type { ZTaskParams } from './task-params';
+import { ZTaskParams } from './task-params';
 
 /**
  * @internal
@@ -8,8 +8,13 @@ import type { ZTaskParams } from './task-params';
 export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> implements ZCall<TAction> {
 
   private readonly _params: (readonly [ZCallParams, ZCallDepth])[];
+  private _builtParams: readonly [number, ZTaskParams] | [] = [];
 
-  constructor(readonly task: ZTask<TAction>, params: ZCallParams, depth: ZCallDepth) {
+  constructor(
+      private readonly _rev: { readonly rev: number },
+      readonly task: ZTask<TAction>,
+      params: ZCallParams, depth: ZCallDepth,
+  ) {
     this._params = [[params, depth]];
   }
 
@@ -18,7 +23,13 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
     return this;
   }
 
-  params(): ZTaskParams.Mutable {
+  params(): ZTaskParams {
+
+    const [rev, cached] = this._builtParams;
+
+    if (rev === this._rev.rev) {
+      return cached as ZTaskParams;
+    }
 
     // Sort the calls from deepest to closest.
     const allParams = this._params.map(
@@ -31,37 +42,18 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
     const result: ZTaskParams.Mutable = { attrs: {}, args: [], actionArgs: [] };
 
     for (const [, params] of allParams) {
-      extendZTaskParams(result, params());
+      ZTaskParams.update(result, params());
     }
 
-    return result;
+    const params = new ZTaskParams(result);
+
+    this._builtParams = [this._rev.rev, params];
+
+    return params;
   }
 
-  extendParams(extension: Partial<ZTaskParams>): (this: void) => ZTaskParams.Mutable {
-    return () => extendZTaskParams(this.params(), extension);
+  extendParams(extension: ZTaskParams.Partial): (this: void) => ZTaskParams {
+    return () => this.params().extend(extension);
   }
 
-}
-
-/**
- * @internal
- */
-function extendZTaskParams(
-    params: ZTaskParams.Mutable,
-    { attrs = {}, args = [], actionArgs = [] }: Partial<ZTaskParams>,
-): ZTaskParams.Mutable {
-  for (const [k, v] of Object.entries(attrs)) {
-
-    const values = params.attrs[k];
-
-    if (values) {
-      values.push(...v);
-    } else {
-      params.attrs[k] = Array.from(v);
-    }
-  }
-  params.args.push(...args);
-  params.actionArgs.push(...actionArgs);
-
-  return params;
 }
