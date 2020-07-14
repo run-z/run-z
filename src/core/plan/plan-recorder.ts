@@ -27,9 +27,9 @@ export interface ZPlanRecorder {
   follow(instruction: ZInstruction): Promise<void>;
 
   /**
-   * Makes the plan contain a call to the given task.
+   * Records a call to the given task.
    *
-   * {@link ZCall.refine Refines the call} if the call to the same task is already recorded.
+   * Updates already recorded call to the same task.
    *
    * @param task  The task to call.
    * @param params  A function evaluating parameters of the call.
