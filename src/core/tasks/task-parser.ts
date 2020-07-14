@@ -54,7 +54,7 @@ export class ZTaskParser {
     let entryIndex = 0;
     let entryPosition = 0;
     const deps: ZTaskSpec.Dep[] = [];
-    const attrs: Record<string, string[]> = {};
+    const attrs: Record<string, [string, ...string[]]> = {};
     let depTask: string | undefined;
     let depParallel = false;
     let depArgs: string[] = [];
@@ -234,7 +234,7 @@ function parseZTaskEntries(commandLine: string): string[] | undefined {
  */
 function createZTaskRef(task: string, parallel: boolean, allArgs: string[]): ZTaskSpec.TaskRef {
 
-  const attrs: Record<string, string[]> = {};
+  const attrs: Record<string, [string, ...string[]]> = {};
   const args: string[] = [];
 
   for (const arg of allArgs) {

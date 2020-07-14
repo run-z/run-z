@@ -94,7 +94,7 @@ export namespace ZTaskSpec {
     /**
      * A map of attribute values by their names.
      */
-    readonly [name: string]: readonly string[];
+    readonly [name: string]: readonly [string, ...string[]];
 
   }
 

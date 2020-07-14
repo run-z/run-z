@@ -40,7 +40,7 @@ export class ZTaskParams {
       if (values) {
         values.push(...v);
       } else {
-        params.attrs[k] = Array.from(v);
+        params.attrs[k] = Array.from(v) as [string, ...string[]];
       }
     }
     params.args.push(...args);
@@ -172,7 +172,7 @@ export namespace ZTaskParams {
     /**
      * Task attributes.
      */
-    attrs: Record<string, string[]>;
+    attrs: Record<string, [string, ...string[]]>;
 
     /**
      * Command line arguments to pass to the task.
