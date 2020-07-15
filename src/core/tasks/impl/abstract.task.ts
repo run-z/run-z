@@ -1,6 +1,5 @@
-import { valueProvider } from '@proc7ts/primitives';
 import type { ZPackage, ZPackageSet } from '../../packages';
-import type { ZCall, ZInstruction, ZPlanRecorder, ZTaskCall } from '../../plan';
+import type { ZCall, ZCallInstruction, ZCallPlanner, ZTaskParams } from '../../plan';
 import { ZTask } from '../task';
 import type { ZTaskSpec } from '../task-spec';
 
@@ -9,34 +8,30 @@ import type { ZTaskSpec } from '../task-spec';
  */
 export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> extends ZTask<TAction> {
 
-  readonly instruction: ZInstruction;
+  params(): ZTaskParams.Partial {
 
-  constructor(target: ZPackage, name: string, spec: ZTaskSpec<TAction>) {
-    super(target, name, spec);
-    this.instruction = async (recorder: ZPlanRecorder): Promise<void> => {
+    const { spec: { attrs, args } } = this;
 
-      const call = await this.planCall(recorder);
+    return { attrs, args };
+  }
 
-      await this.planDeps(recorder, call);
-    };
+  async plan(planner: ZCallPlanner<TAction>): Promise<void> {
+    await this.planDeps(planner);
   }
 
   asDepOf(
       call: ZCall,
       { attrs, args }: ZTaskSpec.TaskRef,
-  ): Iterable<ZTaskCall> | AsyncIterable<ZTaskCall> {
-    return [[this, call.extendParams({ attrs, args })]];
+  ): Iterable<ZCallInstruction> | AsyncIterable<ZCallInstruction> {
+    return [{
+      task: this,
+      params: call.extendParams({ attrs, args }),
+    }];
   }
 
-  protected async planCall(recorder: ZPlanRecorder): Promise<ZCall> {
+  protected async planDeps(planner: ZCallPlanner<TAction>): Promise<void> {
 
-    const { spec: { attrs, args } } = this;
-
-    return recorder.call(this, valueProvider({ attrs, args }));
-  }
-
-  protected async planDeps(recorder: ZPlanRecorder, call: ZCall): Promise<void> {
-
+    const { plannedCall } = planner;
     const { target, spec } = this;
     let targets: ZPackageSet | undefined;
     let parallel: ZTask[] = [];
@@ -46,18 +41,18 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> extends ZT
         targets = updateZTaskDepTargets(target, targets, dep);
       } else {
         if (!dep.parallel) {
-          recorder.makeParallel(parallel);
+          planner.makeParallel(parallel);
           parallel = [];
         }
 
         const depTasks = await resolveZTaskRef(targets || target, dep);
 
         for (const depTask of depTasks) {
-          for await (const [subTask, subTaskParams] of depTask.asDepOf(call, dep)) {
-            await recorder.call(subTask, subTaskParams);
-            recorder.require(this, subTask);
+          for await (const subTaskCall of depTask.asDepOf(plannedCall, dep)) {
+            await planner.call(subTaskCall);
+            planner.require(this, subTaskCall.task);
             if (dep.parallel) {
-              parallel.push(subTask);
+              parallel.push(subTaskCall.task);
             }
           }
         }
@@ -69,7 +64,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> extends ZT
     if (this.isParallel()) {
       parallel.push(this);
     }
-    recorder.makeParallel(parallel);
+    planner.makeParallel(parallel);
   }
 
   /**

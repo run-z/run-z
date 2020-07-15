@@ -87,13 +87,18 @@ describe('ZCall', () => {
       let params1!: ZTaskParams;
       let call2!: ZCall;
       let params2!: ZTaskParams;
-      const plan = await setup.planner.plan(async recorder => {
-        await recorder.follow(async recorder => {
-          call1 = await recorder.call(task, valueProvider({ attrs: { attr1: ['attr1-val2'] } }));
+      const plan = await setup.planner.plan({
+        task,
+        params: valueProvider({ attrs: { attr1: ['attr1-val2'] } }),
+        async plan(planner) {
+          call1 = planner.plannedCall;
           params1 = call1.params();
-          call2 = await recorder.call(task, valueProvider({ attrs: { attr2: ['attr2-val2'] } }));
+          call2 = await planner.call({
+            task,
+            params: valueProvider({ attrs: { attr2: ['attr2-val2'] } }),
+          });
           params2 = call1.params();
-        });
+        },
       });
 
       const call = plan.callOf(task)!;
@@ -125,10 +130,9 @@ describe('ZCall', () => {
 
   async function makeCall(params: ZTaskParams.Partial = {}): Promise<ZCall> {
 
-    const plan = await setup.planner.plan(async recorder => {
-      await recorder.follow(async recorder => {
-        await recorder.call(task, valueProvider(params));
-      });
+    const plan = await setup.planner.plan({
+      task,
+      params: valueProvider(params),
     });
 
     return plan.callOf(task)!;

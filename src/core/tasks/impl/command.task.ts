@@ -1,5 +1,4 @@
-import { valueProvider } from '@proc7ts/primitives';
-import type { ZCall, ZPlanRecorder } from '../../plan';
+import type { ZTaskParams } from '../../plan';
 import type { ZTaskSpec } from '../task-spec';
 import { AbstractZTask } from './abstract.task';
 
@@ -8,11 +7,11 @@ import { AbstractZTask } from './abstract.task';
  */
 export class CommandZTask extends AbstractZTask<ZTaskSpec.Command> {
 
-  protected async planCall(recorder: ZPlanRecorder): Promise<ZCall> {
+  params(): ZTaskParams.Partial {
 
     const { spec: { attrs, args, action: { args: actionArgs } } } = this;
 
-    return recorder.call(this, valueProvider({ attrs, args, actionArgs }));
+    return { attrs, args, actionArgs };
   }
 
   protected isParallel(): boolean {

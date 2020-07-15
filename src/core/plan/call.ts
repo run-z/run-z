@@ -29,7 +29,7 @@ export interface ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
    *
    * @returns An iterable of required task execution calls.
    *
-   * @see ZPlanRecorder.require
+   * @see ZCallPlanner.require
    */
   required(): Iterable<ZCall>;
 
@@ -40,7 +40,7 @@ export interface ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
    *
    * @returns `true` is tasks can be executed in parallel, or `false` otherwise.
    *
-   * @see ZPlanRecorder.makeParallel
+   * @see ZCallPlanner.makeParallel
    */
   parallelWith(other: ZTask): boolean;
 
@@ -54,24 +54,3 @@ export interface ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
   extendParams(extension: ZTaskParams.Partial): (this: void) => ZTaskParams;
 
 }
-
-/**
- * Task execution parameters evaluator signature.
- */
-export type ZCallParams =
-/**
- * @returns Partial task execution parameters.
- */
-    (this: void) => ZTaskParams.Partial;
-
-/**
- * Task execution call depth evaluator signature.
- *
- * This is a function that evaluates the depth of the call. The higher the call depth, the less the priority of
- * the {@link ZTaskParams call parameters} is.
- */
-export type ZCallDepth =
-/**
- * @returns The depth of the call.
- */
-    (this: void) => number;

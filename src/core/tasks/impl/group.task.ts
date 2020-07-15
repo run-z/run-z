@@ -1,5 +1,5 @@
 import type { ZPackageSet } from '../../packages';
-import type { ZCall, ZTaskCall } from '../../plan';
+import type { ZCall, ZCallInstruction } from '../../plan';
 import type { ZTaskSpec } from '../task-spec';
 import { AbstractZTask } from './abstract.task';
 
@@ -11,7 +11,7 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
   async *asDepOf(
       call: ZCall,
       dep: ZTaskSpec.TaskRef,
-  ): Iterable<ZTaskCall> | AsyncIterable<ZTaskCall> {
+  ): Iterable<ZCallInstruction> | AsyncIterable<ZCallInstruction> {
 
     const { attrs, args } = dep;
     const [subTaskName, ...subArgs] = args;
@@ -25,7 +25,10 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
 
         const subTask = target.task(subTaskName);
 
-        yield [subTask, subTaskParams];
+        yield {
+          task: subTask,
+          params: subTaskParams,
+        };
       }
     } else {
       return super.asDepOf(call, dep);
