@@ -54,3 +54,8 @@ export interface ZPlanRecorder {
   makeParallel(tasks: readonly ZTask[]): void;
 
 }
+
+/**
+ * Parameters of the call to the task.
+ */
+export type ZTaskCall = Readonly<Parameters<ZPlanRecorder['call']>>;

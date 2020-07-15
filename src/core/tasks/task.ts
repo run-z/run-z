@@ -3,7 +3,7 @@
  * @module run-z
  */
 import type { ZPackage } from '../packages';
-import type { ZCall, ZInstruction } from '../plan';
+import type { ZCall, ZInstruction, ZTaskCall } from '../plan';
 import type { ZTaskSpec } from './task-spec';
 
 /**
@@ -33,7 +33,7 @@ export abstract class ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
   }
 
   /**
-   * Builds this task execution when it is used as dependency of another one.
+   * Represents this task as a dependency of another one.
    *
    * By default a {@link ZTaskSpec.Group grouping task} treats the first argument as a sub-task name, an the rest of
    * arguments as arguments to this sub-task. The tasks of all other types record a call to this as is.
@@ -41,8 +41,11 @@ export abstract class ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
    * @param call  Depending task execution call.
    * @param dep  Dependency specifier.
    *
-   * @returns Dependency execution instruction.
+   * @returns A potentially asynchronous iterable of {@link ZTaskCall dependency task calls}.
    */
-  abstract asDepOf(call: ZCall, dep: ZTaskSpec.TaskRef): ZInstruction;
+  abstract asDepOf(
+      call: ZCall,
+      dep: ZTaskSpec.TaskRef,
+  ): Iterable<ZTaskCall> | AsyncIterable<ZTaskCall>;
 
 }

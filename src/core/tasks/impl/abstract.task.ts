@@ -1,6 +1,6 @@
 import { valueProvider } from '@proc7ts/primitives';
 import type { ZPackage, ZPackageSet } from '../../packages';
-import type { ZCall, ZInstruction, ZPlanRecorder } from '../../plan';
+import type { ZCall, ZInstruction, ZPlanRecorder, ZTaskCall } from '../../plan';
 import { ZTask } from '../task';
 import type { ZTaskSpec } from '../task-spec';
 
@@ -21,8 +21,11 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> extends ZT
     };
   }
 
-  asDepOf(call: ZCall, { attrs, args }: ZTaskSpec.TaskRef): ZInstruction {
-    return recorder => recorder.call(this, call.extendParams({ attrs, args }));
+  asDepOf(
+      call: ZCall,
+      { attrs, args }: ZTaskSpec.TaskRef,
+  ): Iterable<ZTaskCall> | AsyncIterable<ZTaskCall> {
+    return [[this, call.extendParams({ attrs, args })]];
   }
 
   protected async planCall(recorder: ZPlanRecorder): Promise<ZCall> {
@@ -50,10 +53,12 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> extends ZT
         const depTasks = await resolveZTaskRef(targets || target, dep);
 
         for (const depTask of depTasks) {
-          await recorder.follow(depTask.asDepOf(call, dep));
-          recorder.require(this, depTask);
-          if (dep.parallel) {
-            parallel.push(depTask);
+          for await (const [subTask, subTaskParams] of depTask.asDepOf(call, dep)) {
+            await recorder.call(subTask, subTaskParams);
+            recorder.require(this, subTask);
+            if (dep.parallel) {
+              parallel.push(subTask);
+            }
           }
         }
 

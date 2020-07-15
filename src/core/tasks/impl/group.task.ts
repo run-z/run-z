@@ -1,5 +1,5 @@
 import type { ZPackageSet } from '../../packages';
-import type { ZCall, ZInstruction } from '../../plan';
+import type { ZCall, ZTaskCall } from '../../plan';
 import type { ZTaskSpec } from '../task-spec';
 import { AbstractZTask } from './abstract.task';
 
@@ -8,7 +8,10 @@ import { AbstractZTask } from './abstract.task';
  */
 export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
 
-  asDepOf(call: ZCall, dep: ZTaskSpec.TaskRef): ZInstruction {
+  async *asDepOf(
+      call: ZCall,
+      dep: ZTaskSpec.TaskRef,
+  ): Iterable<ZTaskCall> | AsyncIterable<ZTaskCall> {
 
     const { attrs, args } = dep;
     const [subTaskName, ...subArgs] = args;
@@ -18,17 +21,15 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
 
       const subTaskParams = call.extendParams({ attrs, args: subArgs });
 
-      return async recorder => {
-        for await (const target of this._subTaskTargets().packages()) {
+      for await (const target of this._subTaskTargets().packages()) {
 
-          const subTask = target.task(subTaskName);
+        const subTask = target.task(subTaskName);
 
-          await recorder.call(subTask, subTaskParams);
-        }
-      };
+        yield [subTask, subTaskParams];
+      }
+    } else {
+      return super.asDepOf(call, dep);
     }
-
-    return super.asDepOf(call, dep);
   }
 
   private _subTaskTargets(): ZPackageSet {
