@@ -25,6 +25,26 @@ export interface ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
   params(): ZTaskParams;
 
   /**
+   * Returns this task execution dependencies.
+   *
+   * @returns An iterable of required task execution calls.
+   *
+   * @see ZPlanRecorder.require
+   */
+  required(): Iterable<ZCall>;
+
+  /**
+   * Whether this task call can be executed in parallel with the a call to another task.
+   *
+   * @param other  The task to check.
+   *
+   * @returns `true` is tasks can be executed in parallel, or `false` otherwise.
+   *
+   * @see ZPlanRecorder.makeParallel
+   */
+  parallelWith(other: ZTask): boolean;
+
+  /**
    * Extends this call parameters with the given extension.
    *
    * @param extension  Task parameters extension.

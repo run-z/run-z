@@ -15,4 +15,8 @@ export class CommandZTask extends AbstractZTask<ZTaskSpec.Command> {
     return recorder.call(this, valueProvider({ attrs, args, actionArgs }));
   }
 
+  protected isParallel(): boolean {
+    return this.spec.action.parallel;
+  }
+
 }

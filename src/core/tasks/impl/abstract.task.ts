@@ -36,15 +36,42 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> extends ZT
 
     const { target, spec } = this;
     let targets: ZPackageSet | undefined;
+    let parallel: ZTask[] = [];
 
     for (const dep of spec.deps) {
       if (dep.selector != null) {
         targets = updateZTaskDepTargets(target, targets, dep);
       } else {
-        await planZTaskDeps(recorder, call, targets || target, dep);
+        if (!dep.parallel) {
+          recorder.makeParallel(parallel);
+          parallel = [];
+        }
+
+        const depTasks = await resolveZTaskRef(targets || target, dep);
+
+        for (const depTask of depTasks) {
+          await recorder.follow(depTask.asDepOf(call, dep));
+          recorder.require(this, depTask);
+          if (dep.parallel) {
+            parallel.push(depTask);
+          }
+        }
+
         targets = undefined;
       }
     }
+
+    if (this.isParallel()) {
+      parallel.push(this);
+    }
+    recorder.makeParallel(parallel);
+  }
+
+  /**
+   * Whether this task can be called in parallel to dependencies.
+   */
+  protected isParallel(): boolean {
+    return false;
   }
 
 }
@@ -72,18 +99,15 @@ function updateZTaskDepTargets(
 /**
  * @internal
  */
-async function planZTaskDeps(
-    recorder: ZPlanRecorder,
-    call: ZCall,
-    targets: ZPackageSet,
-    taskRef: ZTaskSpec.TaskRef,
-): Promise<void> {
+async function resolveZTaskRef(targets: ZPackageSet, taskRef: ZTaskSpec.TaskRef): Promise<ZTask[]> {
+
+  const result: ZTask[] = [];
+
   for await (const target of targets.packages()) {
-
-    const depTask = target.task(taskRef.task);
-
-    await recorder.follow(depTask.asDepOf(call, taskRef));
+    result.push(target.task(taskRef.task));
   }
+
+  return result;
 }
 
 

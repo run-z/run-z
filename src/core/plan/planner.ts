@@ -2,11 +2,13 @@
  * @packageDocumentation
  * @module run-z
  */
+import { overNone, thruIt } from '@proc7ts/a-iterable';
+import { nextSkip } from '@proc7ts/call-thru';
 import { valueProvider } from '@proc7ts/primitives';
 import type { ZSetup } from '../setup';
 import type { ZTask } from '../tasks';
 import type { ZCall, ZCallParams } from './call';
-import { ZCallRecord } from './call.impl';
+import { ZCallRecord, ZPlanRecords } from './call.impl';
 import type { ZInstruction } from './instruction';
 import type { ZPlan } from './plan';
 import type { ZPlanRecorder } from './plan-recorder';
@@ -30,7 +32,7 @@ export class ZPlanner {
 
     await records.follow(instruction, valueProvider(0));
 
-    return records.plan();
+    return records.plan;
   }
 
 }
@@ -38,13 +40,20 @@ export class ZPlanner {
 /**
  * @internal
  */
-class ZInstructionRecords {
+class ZInstructionRecords implements ZPlanRecords {
 
   rev = 0;
+  readonly plan: ZPlan;
   private readonly _instructions = new Map<ZInstruction, ZInstructionRecord>();
   private readonly _calls = new Map<ZTask, ZCallRecord>();
+  private readonly _requirements = new Map<ZTask, ZTask[]>();
+  private readonly _parallel = new Map<ZTask, Set<ZTask>>();
 
   constructor(readonly setup: ZSetup) {
+    this.plan = {
+      calls: () => this._calls.values(),
+      callOf: task => this._calls.get(task),
+    };
   }
 
   async follow(instruction: ZInstruction, depth: (this: void) => number): Promise<void> {
@@ -84,11 +93,59 @@ class ZInstructionRecords {
     return call;
   }
 
-  plan(): ZPlan {
-    return {
-      calls: () => this._calls.values(),
-      callOf: task => this._calls.get(task),
-    };
+  require(dependent: ZTask, dependency: ZTask): void {
+
+    const requirements = this._requirements.get(dependent);
+
+    if (requirements) {
+      requirements.push(dependency);
+    } else {
+      this._requirements.set(dependent, [dependency]);
+    }
+  }
+
+  requiredBy(dependent: ZTask): Iterable<ZCall> {
+
+    const requirements = this._requirements.get(dependent);
+
+    if (!requirements) {
+      return overNone();
+    }
+
+    return thruIt(
+        requirements,
+        task => this._calls.get(task) || nextSkip,
+    );
+  }
+
+  makeParallel(tasks: readonly ZTask[]): void {
+    for (let i = tasks.length - 1; i > 0; --i) {
+
+      const first = tasks[i];
+      let parallels = this._parallel.get(first);
+
+      if (!parallels) {
+        parallels = new Set();
+        this._parallel.set(first, parallels);
+      }
+
+      for (let j = i - 1; j >= 0; --j) {
+        parallels.add(tasks[j]);
+      }
+    }
+  }
+
+  areParallel(first: ZTask, second: ZTask): boolean {
+
+    const parallels = this._parallel.get(first);
+
+    if (parallels && parallels.has(second)) {
+      return true;
+    }
+
+    const parallels2 = this._parallel.get(second);
+
+    return !!parallels2 && parallels2.has(first);
   }
 
 }
@@ -102,15 +159,17 @@ class ZInstructionRecord {
   readonly recorder: ZPlanRecorder;
 
   constructor(
-      private readonly records: ZInstructionRecords,
+      records: ZInstructionRecords,
       readonly of: ZInstruction,
       depth: (this: void) => number,
   ) {
     this._depth = depth;
     this.recorder = {
-      setup: this.records.setup,
-      follow: instruction => this.records.follow(instruction, () => this._depth() + 1),
-      call: (task, details) => this.records.call(task, this, details),
+      setup: records.setup,
+      follow: instruction => records.follow(instruction, () => this._depth() + 1),
+      call: (task, details) => records.call(task, this, details),
+      require: records.require.bind(records),
+      makeParallel: records.makeParallel.bind(records),
     };
   }
 

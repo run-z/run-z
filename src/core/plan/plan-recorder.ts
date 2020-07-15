@@ -38,4 +38,19 @@ export interface ZPlanRecorder {
    */
   call(task: ZTask, params?: ZCallParams): Promise<ZCall>;
 
+  /**
+   * Make a task require another one.
+   *
+   * @param dependent  Dependent task.
+   * @param dependency  Dependency task.
+   */
+  require(dependent: ZTask, dependency: ZTask): void;
+
+  /**
+   * Allow parallel tasks execution.
+   *
+   * @param tasks  Tasks that can be executed in parallel to each other.
+   */
+  makeParallel(tasks: readonly ZTask[]): void;
+
 }

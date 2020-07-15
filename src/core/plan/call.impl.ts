@@ -5,15 +5,29 @@ import { ZTaskParams } from './task-params';
 /**
  * @internal
  */
+export interface ZPlanRecords {
+
+  readonly rev: number;
+
+  requiredBy(dependent: ZTask): Iterable<ZCall>;
+
+  areParallel(first: ZTask, second: ZTask): boolean;
+
+}
+
+/**
+ * @internal
+ */
 export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> implements ZCall<TAction> {
 
   private readonly _params: (readonly [ZCallParams, ZCallDepth])[];
   private _builtParams: readonly [number, ZTaskParams] | [] = [];
 
   constructor(
-      private readonly _rev: { readonly rev: number },
+      private readonly _plan: ZPlanRecords,
       readonly task: ZTask<TAction>,
-      params: ZCallParams, depth: ZCallDepth,
+      params: ZCallParams,
+      depth: ZCallDepth,
   ) {
     this._params = [[params, depth]];
   }
@@ -27,7 +41,7 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
 
     const [rev, cached] = this._builtParams;
 
-    if (rev === this._rev.rev) {
+    if (rev === this._plan.rev) {
       return cached as ZTaskParams;
     }
 
@@ -47,13 +61,21 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
 
     const params = new ZTaskParams(result);
 
-    this._builtParams = [this._rev.rev, params];
+    this._builtParams = [this._plan.rev, params];
 
     return params;
   }
 
   extendParams(extension: ZTaskParams.Partial): (this: void) => ZTaskParams {
     return () => this.params().extend(extension);
+  }
+
+  required(): Iterable<ZCall> {
+    return this._plan.requiredBy(this.task);
+  }
+
+  parallelWith(other: ZTask): boolean {
+    return this._plan.areParallel(this.task, other);
   }
 
 }
