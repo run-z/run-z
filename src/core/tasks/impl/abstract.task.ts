@@ -20,12 +20,12 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> extends ZT
   }
 
   asDepOf(
-      call: ZCall,
+      dependent: ZCall,
       { attrs, args }: ZTaskSpec.TaskRef,
   ): Iterable<ZCallInstruction> | AsyncIterable<ZCallInstruction> {
     return [{
       task: this,
-      params: call.extendParams({ attrs, args }),
+      params: dependent.extendParams({ attrs, args }),
     }];
   }
 

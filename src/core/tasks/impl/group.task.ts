@@ -9,7 +9,7 @@ import { AbstractZTask } from './abstract.task';
 export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
 
   async *asDepOf(
-      call: ZCall,
+      dependent: ZCall,
       dep: ZTaskSpec.TaskRef,
   ): Iterable<ZCallInstruction> | AsyncIterable<ZCallInstruction> {
 
@@ -22,11 +22,11 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
       // Add task dependency. Pass call parameters to sub-task rather to this dependency.
       yield {
         task: this,
-        params: () => call.params(),
+        params: () => dependent.params(),
       };
 
       // Delegate to sub-task.
-      const subTaskParams = call.extendParams({ attrs, args: subArgs });
+      const subTaskParams = dependent.extendParams({ attrs, args: subArgs });
 
       for await (const target of this._subTaskTargets().packages()) {
 
@@ -38,7 +38,7 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
         };
       }
     } else {
-      yield* super.asDepOf(call, dep);
+      yield* super.asDepOf(dependent, dep);
     }
   }
 
