@@ -16,4 +16,37 @@ export abstract class ZPackageSet {
    */
   abstract packages(): Iterable<ZPackage> | AsyncIterable<ZPackage>;
 
+  /**
+   * Combines package sets.
+   *
+   * @param other  A package set co combine with this one.
+   *
+   * @returns A set of all packages from `this` and `other` package sets.
+   */
+  andPackages(other: ZPackageSet): ZPackageSet {
+    return new CombinedZPackageSet([this, other]);
+  }
+
+}
+
+/**
+ * @internal
+ */
+class CombinedZPackageSet extends ZPackageSet {
+
+  constructor(readonly sets: readonly ZPackageSet[]) {
+    super();
+  }
+
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async *packages(): AsyncIterable<ZPackage> {
+    for (const set of this.sets) {
+      yield* set.packages();
+    }
+  }
+
+  andPackages(other: ZPackageSet): ZPackageSet {
+    return new CombinedZPackageSet([...this.sets, other]);
+  }
+
 }

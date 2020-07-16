@@ -2,9 +2,9 @@ import { asis } from '@proc7ts/primitives';
 import * as path from 'path';
 import { pathToFileURL, URL } from 'url';
 import { ZPackageDirectory } from '../../fs';
-import { ZTaskParser } from '../tasks';
+import { ZSetup } from '../setup';
 import type { ZPackage } from './package';
-import { ZPackageResolver } from './package-resolver';
+import type { ZPackageResolver } from './package-resolver';
 import { UnknownZPackageError } from './unknown-package-error';
 
 describe('ZPackageResolver', () => {
@@ -13,22 +13,15 @@ describe('ZPackageResolver', () => {
   let resolver: ZPackageResolver;
 
   beforeEach(() => {
-    rootURL = pathToFileURL(path.join(process.cwd(), 'src', 'core', 'packages', 'spec'));
+    rootURL = pathToFileURL(path.join(process.cwd(), 'src', 'spec'));
+    resolver = new ZSetup().packageResolver;
   });
 
   function packageLocation(path: string): ZPackageDirectory {
     return ZPackageDirectory.create(new URL(path, rootURL.href + '/'), rootURL);
   }
 
-  function newResolver(path: string): ZPackageResolver {
-    return new ZPackageResolver(packageLocation(path), { taskParser: new ZTaskParser() });
-  }
-
   describe('get', () => {
-    beforeEach(() => {
-      resolver = newResolver('anonymous');
-    });
-
     it('throws when package not found', async () => {
       expect(await resolver.get(packageLocation('non-existing')).catch(asis)).toBeInstanceOf(UnknownZPackageError);
     });
@@ -45,7 +38,6 @@ describe('ZPackageResolver', () => {
     let pkg: ZPackage;
 
     beforeEach(async () => {
-      resolver = newResolver('anonymous');
       pkg = await resolver.get(packageLocation('anonymous'));
     });
 
@@ -94,7 +86,6 @@ describe('ZPackageResolver', () => {
     let deeplyNested: ZPackage;
 
     beforeEach(async () => {
-      resolver = newResolver('nesting/nested/deeply-nested');
       nested = await resolver.get(packageLocation('nesting/nested'));
       deeplyNested = await resolver.get(packageLocation('nesting/nested/deeply-nested'));
     });
@@ -154,7 +145,6 @@ describe('ZPackageResolver', () => {
     let deeplyNested: ZPackage;
 
     beforeEach(async () => {
-      resolver = newResolver('scoped/nested/deeper');
       pkg = await resolver.get(packageLocation('scoped'));
       nested = await resolver.get(packageLocation('scoped/nested'));
       deeplyNested = await resolver.get(packageLocation('scoped/nested/deeper'));
@@ -212,7 +202,6 @@ describe('ZPackageResolver', () => {
     let pkg: ZPackage;
 
     beforeEach(async () => {
-      resolver = newResolver('illegally-scoped');
       pkg = await resolver.get(packageLocation('illegally-scoped'));
     });
 

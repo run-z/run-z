@@ -1,5 +1,7 @@
+import { ZSetup } from '../setup';
 import type { ZPackage } from './package';
-import { ZPackageResolver } from './package-resolver';
+import type { ZPackageResolver } from './package-resolver';
+import type { ZPackageSet } from './package-set';
 import { ZPackageTree } from './package-tree';
 
 describe('ZPackage', () => {
@@ -18,15 +20,14 @@ describe('ZPackage', () => {
           },
         },
     );
-    resolver = new ZPackageResolver(tree);
+    resolver = new ZSetup({}).packageResolver;
     pkg = await resolver.get(tree);
   });
 
   describe('tasks', () => {
     it('contains tasks', () => {
-      expect(pkg.tasks.size).toBe(2);
-      expect(pkg.tasks.get('task1')?.name).toBe('task1');
-      expect(pkg.tasks.get('task2')?.name).toBe('task2');
+      expect(pkg.task('task1').spec.action?.command).toBe('exec1');
+      expect(pkg.task('task2').spec.action?.command).toBe('exec2');
     });
   });
 
@@ -46,6 +47,33 @@ describe('ZPackage', () => {
       expect(await select('.///')).toEqual(['test']);
     });
   });
+
+  describe('andPackages', () => {
+    it('combines packages', async () => {
+
+      const nested = await resolver.get(tree.put('nested', { name: 'nested' }));
+
+      expect(await packages(pkg.andPackages(nested))).toEqual(['test', 'nested']);
+    });
+    it('combines package sets', async () => {
+
+      const nested = await resolver.get(tree.put('nested', { name: 'nested' }));
+      const nested2 = await resolver.get(tree.put('nested2', { name: 'nested2' }));
+
+      expect(await packages(pkg.andPackages(nested).andPackages(nested2))).toEqual(['test', 'nested', 'nested2']);
+    });
+  });
+
+  async function packages(packageSet: ZPackageSet): Promise<string[]> {
+
+    const result: string[] = [];
+
+    for await (const resolved of packageSet.packages()) {
+      result.push(resolved.name);
+    }
+
+    return result;
+  }
 
   async function select(pattern: string): Promise<string[]> {
 

@@ -4,17 +4,7 @@
  */
 import { parse } from 'shell-quote';
 import { InvalidZTaskError } from './invalid-task-error';
-import type { ZTaskSpec } from './task-spec';
-
-/**
- * @internal
- */
-const nativeZTask: ZTaskSpec = {
-  isNative: true,
-  deps: [],
-  attrs: {},
-  args: [],
-};
+import { ZTaskSpec } from './task-spec';
 
 /**
  * @internal
@@ -30,7 +20,7 @@ const zTaskActionMap: { [name: string]: (args: readonly string[]) => ZTaskSpec.A
 };
 
 /**
- * A parser of {@link ZTaskSpec task specifier} by command line.
+ * A parser of command line containing {@link ZTaskSpec task specifier}.
  */
 export class ZTaskParser {
 
@@ -57,14 +47,14 @@ export class ZTaskParser {
     const entries = parseZTaskEntries(commandLine);
 
     if (!entries) {
-      return nativeZTask;
+      return ZTaskSpec.script;
     }
 
     let e = 0;
     let entryIndex = 0;
     let entryPosition = 0;
     const deps: ZTaskSpec.Dep[] = [];
-    const attrs: Record<string, string[]> = {};
+    const attrs: Record<string, [string, ...string[]]> = {};
     let depTask: string | undefined;
     let depParallel = false;
     let depArgs: string[] = [];
@@ -197,14 +187,14 @@ export class ZTaskParser {
     let action: ZTaskSpec.Action;
 
     if (actionIdx >= 0) {
-      action = zTaskActionMap[entries[actionIdx]](entries.slice(actionIdx + 1));
       args = entries.slice(e, actionIdx);
+      action = zTaskActionMap[entries[actionIdx]](entries.slice(actionIdx + 1));
     } else {
       args = entries.slice(e);
+      action = ZTaskSpec.groupAction;
     }
 
     return {
-      isNative: false,
       deps,
       attrs,
       args,
@@ -230,7 +220,7 @@ function parseZTaskEntries(commandLine: string): string[] | undefined {
     return; // Not a run-z script.
   }
   if (withEnv) {
-    return; // Environment variable substitution supported in native scripts only.
+    return; // Environment variable substitution supported in NPM scripts only.
   }
   if (entries.every(entry => typeof entry === 'string')) {
     return entries.slice(1) as string[];
@@ -244,7 +234,7 @@ function parseZTaskEntries(commandLine: string): string[] | undefined {
  */
 function createZTaskRef(task: string, parallel: boolean, allArgs: string[]): ZTaskSpec.TaskRef {
 
-  const attrs: Record<string, string[]> = {};
+  const attrs: Record<string, [string, ...string[]]> = {};
   const args: string[] = [];
 
   for (const arg of allArgs) {
@@ -282,7 +272,7 @@ function addZTaskAttr(attrs: Record<string, string[]>, arg: string, eqIdx: numbe
     value = arg.substr(eqIdx + 1);
   } else {
     name = arg.substr(1);
-    value = '';
+    value = 'on';
   }
 
   if (attrs[name]) {
@@ -295,13 +285,13 @@ function addZTaskAttr(attrs: Record<string, string[]>, arg: string, eqIdx: numbe
 /**
  * @internal
  */
-function zTaskCommand([command, ...args]: readonly string[], parallel: boolean): ZTaskSpec.Command | undefined {
-  if (!command) {
-    return;
-  }
-  return {
-    command,
-    parallel,
-    args,
-  };
+function zTaskCommand([command, ...args]: readonly string[], parallel: boolean): ZTaskSpec.Command | ZTaskSpec.Group {
+  return command
+      ? {
+        type: 'command',
+        command,
+        parallel,
+        args,
+      }
+      : ZTaskSpec.groupAction;
 }

@@ -6,14 +6,7 @@
 /**
  * Task specifier.
  */
-export interface ZTaskSpec {
-
-  /**
-   * Whether this is a native task.
-   *
-   * `true` when this is no a `run-z` command
-   */
-  readonly isNative: boolean;
+export interface ZTaskSpec<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
 
   /**
    * Task dependencies.
@@ -35,7 +28,7 @@ export interface ZTaskSpec {
   /**
    * Task action.
    */
-  readonly action?: ZTaskSpec.Action;
+  readonly action: TAction;
 
 }
 
@@ -101,19 +94,21 @@ export namespace ZTaskSpec {
     /**
      * A map of attribute values by their names.
      */
-    readonly [name: string]: readonly string[];
+    readonly [name: string]: readonly [string, ...string[]];
 
   }
 
   /**
    * Task action.
    */
-  export type Action = Command | undefined;
+  export type Action = Command | Script | Group | Unknown;
 
   /**
    * Command execution action of the task.
    */
   export interface Command {
+
+    readonly type: 'command';
 
     /**
      * Command to execute.
@@ -128,8 +123,97 @@ export namespace ZTaskSpec {
     /**
      * Command line arguments.
      */
-    readonly args: readonly string[]
+    readonly args: readonly string[];
+
+  }
+
+  /**
+   * NPM script execution action.
+   */
+  export interface Script {
+
+    readonly type: 'script';
+
+    readonly command?: string;
+
+  }
+
+  /**
+   * Task grouping action.
+   */
+  export interface Group {
+
+    readonly type: 'group';
+
+    readonly command?: undefined;
+
+  }
+
+  /**
+   * Unknown action.
+   */
+  export interface Unknown {
+
+    readonly type: 'unknown';
+
+    readonly command?: undefined;
 
   }
 
 }
+
+/**
+ * @internal
+ */
+const groupZTaskAction: ZTaskSpec.Group = {
+  type: 'group',
+};
+
+/**
+ * @internal
+ */
+const unknownZTaskSpec: ZTaskSpec<ZTaskSpec.Unknown> = {
+  deps: [],
+  attrs: {},
+  args: [],
+  action: {
+    type: 'unknown',
+  },
+};
+
+/**
+ * @internal
+ */
+const scriptZTaskSpec: ZTaskSpec<ZTaskSpec.Script> = {
+  deps: [],
+  attrs: {},
+  args: [],
+  action: {
+    type: 'script',
+  },
+};
+
+export const ZTaskSpec = {
+
+  /**
+   * Grouping task action specifier.
+   */
+  get groupAction(): ZTaskSpec.Group {
+    return groupZTaskAction;
+  },
+
+  /**
+   * Unknown task specifier.
+   */
+  get unknown(): ZTaskSpec<ZTaskSpec.Unknown> {
+    return unknownZTaskSpec;
+  },
+
+  /**
+   * NPM script execution task specifier.
+   */
+  get script(): ZTaskSpec<ZTaskSpec.Script> {
+    return scriptZTaskSpec;
+  },
+
+};

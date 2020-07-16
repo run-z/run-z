@@ -2,46 +2,43 @@
  * @packageDocumentation
  * @module run-z
  */
-import { ZTask } from '../tasks';
+import type { ZSetup } from '../setup';
+import type { ZTask } from '../tasks';
 import type { ZPackageLocation } from './package-location';
-import type { ZPackageResolver } from './package-resolver';
 import { ZPackageSet } from './package-set';
 import type { ZPackageJson } from './package.json';
 
 /**
  * NPM package containing tasks and rules.
  */
-export class ZPackage implements ZPackageSet {
+export class ZPackage extends ZPackageSet {
 
   /**
    * Full package name.
    */
   readonly name: string;
 
-  /**
-   * Tasks hosted by this package.
-   */
-  readonly tasks: ReadonlyMap<string, ZTask>;
-
   private _scopeName: string | null | undefined = null;
   private _unscopedName?: string;
   private _hostPackage?: ZPackage;
   private _subPackageName: string | null | undefined = null;
+  private readonly _tasks = new Map<string, ZTask>();
 
   /**
    * Constructs a package.
    *
-   * @param resolver  Package resolver.
+   * @param setup  Task execution setup.
    * @param location  Package location.
    * @param packageJson  `package.json` contents.
    * @param parent  Parent NPM package.
    */
   constructor(
-      readonly resolver: ZPackageResolver,
+      readonly setup: ZSetup,
       readonly location: ZPackageLocation,
       readonly packageJson: ZPackageJson,
       readonly parent?: ZPackage,
   ) {
+    super();
 
     const packageName = this.packageJson.name;
 
@@ -57,16 +54,13 @@ export class ZPackage implements ZPackageSet {
     }
 
     const { scripts = {} } = packageJson;
-    const tasks = new Map<string, ZTask>();
 
     for (const [key, value] of Object.entries(scripts)) {
 
-      const spec = this.resolver.taskParser.parse(value);
+      const spec = this.setup.taskParser.parse(value);
 
-      tasks.set(key, new ZTask(this, key, spec));
+      this._tasks.set(key, this.setup.taskFactory.createTask(this, key, spec));
     }
-
-    this.tasks = tasks;
   }
 
   /**
@@ -156,6 +150,21 @@ export class ZPackage implements ZPackageSet {
     return new ResolvedZPackages(this, selector);
   }
 
+  task(name: string): ZTask {
+
+    const existing = this._tasks.get(name);
+
+    if (existing) {
+      return existing;
+    }
+
+    const absent = this.setup.taskFactory.createUnknown(this, name);
+
+    this._tasks.set(name, absent);
+
+    return absent;
+  }
+
 }
 
 /**
@@ -170,7 +179,7 @@ class ResolvedZPackages extends ZPackageSet {
   async *packages(): AsyncIterable<ZPackage> {
     for await (const l of this.pkg.location.select(this.selector)) {
 
-      const resolved = await this.pkg.resolver.find(l);
+      const resolved = await this.pkg.setup.packageResolver.find(l);
 
       if (resolved) {
         yield resolved;
