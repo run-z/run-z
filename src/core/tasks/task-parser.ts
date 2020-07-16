@@ -272,7 +272,7 @@ function addZTaskAttr(attrs: Record<string, string[]>, arg: string, eqIdx: numbe
     value = arg.substr(eqIdx + 1);
   } else {
     name = arg.substr(1);
-    value = '';
+    value = 'on';
   }
 
   if (attrs[name]) {

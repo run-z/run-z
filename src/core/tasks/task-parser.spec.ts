@@ -232,7 +232,7 @@ describe('ZTaskParser', () => {
     expect(spec.attrs).toEqual({
       attr1: ['val1'],
       attr2: [''],
-      attr3: ['', 'val3'],
+      attr3: ['on', 'val3'],
     });
     expect(spec.action).toBe(ZTaskSpec.groupAction);
   });
@@ -244,7 +244,7 @@ describe('ZTaskParser', () => {
       {
         task: 'dep',
         parallel: false,
-        attrs: { attr2: [''], attr3: ['', 'val3'] },
+        attrs: { attr2: [''], attr3: ['on', 'val3'] },
         args: ['arg1', '--arg2=2'],
       },
     ]);
