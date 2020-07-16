@@ -97,7 +97,7 @@ export class ZInstructionRecords {
     }
   }
 
-  requiredBy(dependent: ZTask): Iterable<ZCall> {
+  requirementsOf(dependent: ZTask): Iterable<ZCall> {
 
     const requirements = this._requirements.get(dependent);
 
@@ -177,16 +177,13 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
 
   _call(instruction: ZCallInstruction, by: ZCallRecord): this {
 
-    let paramDepth: ZCallDepth;
+    const paramDepth: ZCallDepth = () => by._depth() + 1;
 
-    if (by._ofTask(this.task)) {
-      // Prevent infinite recursion when calculating depth.
-      paramDepth = () => by._depth() + 1;
-    } else {
+    if (!by._ofTask(this.task)) {
 
       const prevDepth = this._currDepth;
 
-      paramDepth = this._currDepth = () => Math.min(prevDepth(), by._depth() + 1);
+      this._currDepth = () => Math.min(prevDepth(), paramDepth());
     }
 
     this._addParams(instruction, paramDepth);
@@ -250,7 +247,7 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
   }
 
   required(): Iterable<ZCall> {
-    return this._records.requiredBy(this.task);
+    return this._records.requirementsOf(this.task);
   }
 
   parallelWith(other: ZTask): boolean {
