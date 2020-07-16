@@ -38,7 +38,7 @@ describe('ZCall', () => {
   describe('call', () => {
     it('appends attribute values', async () => {
 
-      const call = await makeCall({ attrs: { attr1: ['attr1-val2'] } });
+      const call = await plan({ attrs: { attr1: ['attr1-val2'] } });
 
       expect(call.params()).toEqual({
         ...initParams,
@@ -47,7 +47,7 @@ describe('ZCall', () => {
     });
     it('adds attribute', async () => {
 
-      const call = await makeCall({ attrs: { attr2: ['attr2-val'] } });
+      const call = await plan({ attrs: { attr2: ['attr2-val'] } });
 
       expect(call.params()).toEqual({
         ...initParams,
@@ -56,7 +56,7 @@ describe('ZCall', () => {
     });
     it('appends args', async () => {
 
-      const call = await makeCall({ args: ['arg2'] });
+      const call = await plan({ args: ['arg2'] });
 
       expect(call.params()).toEqual({
         ...initParams,
@@ -65,7 +65,7 @@ describe('ZCall', () => {
     });
     it('appends action args', async () => {
 
-      const call = await makeCall({ actionArgs: ['cmd-arg2'] });
+      const call = await plan({ actionArgs: ['cmd-arg2'] });
 
       expect(call.params()).toEqual({
         ...initParams,
@@ -77,7 +77,7 @@ describe('ZCall', () => {
   describe('params', () => {
     it('cached', async () => {
 
-      const call = await makeCall({ attrs: { attr1: ['attr1-val2'] } });
+      const call = await plan({ attrs: { attr1: ['attr1-val2'] } });
 
       expect(call.params()).toBe(call.params());
     });
@@ -87,7 +87,7 @@ describe('ZCall', () => {
       let params1!: ZTaskParams;
       let call2!: ZCall;
       let params2!: ZTaskParams;
-      const plan = await setup.planner.plan({
+      const call = await setup.planner.plan({
         task,
         params: valueProvider({ attrs: { attr1: ['attr1-val2'] } }),
         async plan(planner) {
@@ -101,8 +101,6 @@ describe('ZCall', () => {
         },
       });
 
-      const call = plan.callOf(task)!;
-
       expect(call1).toBe(call);
       expect(call2).toBe(call);
       expect(params1).not.toBe(params2);
@@ -113,7 +111,7 @@ describe('ZCall', () => {
   describe('extendParams', () => {
     it('extends params', async () => {
 
-      const call = await makeCall();
+      const call = await plan();
 
       expect(call.extendParams({
         attrs: { attr1: ['attr1-val2'] },
@@ -128,13 +126,10 @@ describe('ZCall', () => {
     });
   });
 
-  async function makeCall(params: ZTaskParams.Partial = {}): Promise<ZCall> {
-
-    const plan = await setup.planner.plan({
+  function plan(params: ZTaskParams.Partial = {}): Promise<ZCall> {
+    return setup.planner.plan({
       task,
       params: valueProvider(params),
     });
-
-    return plan.callOf(task)!;
   }
 });

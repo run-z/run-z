@@ -3,8 +3,9 @@
  * @module run-z
  */
 import type { ZSetup } from '../setup';
+import type { ZTaskSpec } from '../tasks';
+import type { ZCall } from './call';
 import type { ZCallInstruction } from './call-instruction';
-import type { ZPlan } from './plan';
 import { ZInstructionRecords } from './planner.impl';
 
 /**
@@ -25,17 +26,20 @@ export class ZPlanner {
    *
    * The plan would execute the task after executing all of its dependencies.
    *
+   * @typeparam TAction  Task action type.
    * @param instruction  Top-level task call instruction.
    *
-   * @returns New task execution plan.
+   * @returns Top-level task execution call.
    */
-  async plan(instruction: ZCallInstruction): Promise<ZPlan> {
+  async plan<TAction extends ZTaskSpec.Action>(
+      instruction: ZCallInstruction<TAction>,
+  ): Promise<ZCall<TAction>> {
 
     const records = new ZInstructionRecords(this.setup);
 
     await records.call(instruction);
 
-    return records.plan;
+    return records.plan.callOf(instruction.task);
   }
 
 }

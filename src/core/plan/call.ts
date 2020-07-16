@@ -3,6 +3,7 @@
  * @module run-z
  */
 import type { ZTask, ZTaskSpec } from '../tasks';
+import type { ZPlan } from './plan';
 import type { ZTaskParams } from './task-params';
 
 /**
@@ -11,6 +12,11 @@ import type { ZTaskParams } from './task-params';
  * @typeparam TAction  Task action type.
  */
 export interface ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
+
+  /**
+   * Execution plan.
+   */
+  readonly plan: ZPlan;
 
   /**
    * A task to call.

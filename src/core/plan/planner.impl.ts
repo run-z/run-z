@@ -3,6 +3,7 @@ import { nextSkip } from '@proc7ts/call-thru';
 import { valueProvider } from '@proc7ts/primitives';
 import type { ZSetup } from '../setup';
 import type { ZTask, ZTaskSpec } from '../tasks';
+import { UnknownZTaskError } from '../tasks';
 import type { ZCall } from './call';
 import type { ZCallInstruction } from './call-instruction';
 import type { ZPlan } from './plan';
@@ -47,7 +48,20 @@ export class ZInstructionRecords {
   constructor(readonly setup: ZSetup) {
     this.plan = {
       calls: () => this._calls.values(),
-      callOf: task => this._calls.get(task),
+      callOf: <TAction extends ZTaskSpec.Action>(task: ZTask<TAction>): ZCall<TAction> => {
+
+        const call = this._calls.get(task) as ZCallRecord<TAction> | undefined;
+
+        if (!call) {
+          throw new UnknownZTaskError(
+              task.target.name,
+              task.name,
+              `Task "${task.name}" from <${task.target.name}> is never called`,
+          );
+        }
+
+        return call;
+      },
     };
   }
 
@@ -147,6 +161,10 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
     this.task = instruction.task;
     this._currDepth = _parent ? () => _parent._depth() + 1 : valueProvider(0);
     this._addParams(instruction, this._depth.bind(this));
+  }
+
+  get plan(): ZPlan {
+    return this._records.plan;
   }
 
   private _ofTask(task: ZTask): true | undefined {
