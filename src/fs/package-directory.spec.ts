@@ -101,7 +101,7 @@ describe('ZPackageDirectory', () => {
     beforeEach(() => {
       rootURL = new URL(
           'nesting/',
-          pathToFileURL(path.join(process.cwd(), 'src', 'core', 'packages', 'spec', 'nesting')),
+          pathToFileURL(path.join(process.cwd(), 'src', 'spec', 'nesting')),
       );
     });
 
@@ -122,7 +122,7 @@ describe('ZPackageDirectory', () => {
     beforeEach(() => {
       rootURL = new URL(
           'nesting/',
-          pathToFileURL(path.join(process.cwd(), 'src', 'core', 'packages', 'spec', 'nesting')),
+          pathToFileURL(path.join(process.cwd(), 'src', 'spec', 'nesting')),
       );
     });
 

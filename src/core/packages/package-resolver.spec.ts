@@ -13,7 +13,7 @@ describe('ZPackageResolver', () => {
   let resolver: ZPackageResolver;
 
   beforeEach(() => {
-    rootURL = pathToFileURL(path.join(process.cwd(), 'src', 'core', 'packages', 'spec'));
+    rootURL = pathToFileURL(path.join(process.cwd(), 'src', 'spec'));
     resolver = new ZSetup().packageResolver;
   });
 
