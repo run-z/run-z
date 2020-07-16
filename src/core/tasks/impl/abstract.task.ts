@@ -51,9 +51,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> extends ZT
           for await (const subTaskCall of depTask.asDepOf(plannedCall, dep)) {
             await planner.call(subTaskCall);
             planner.require(this, subTaskCall.task);
-            if (dep.parallel) {
-              parallel.push(subTaskCall.task);
-            }
+            parallel.push(subTaskCall.task);
           }
         }
 
