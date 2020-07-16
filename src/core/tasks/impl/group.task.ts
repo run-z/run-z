@@ -17,8 +17,15 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
     const [subTaskName, ...subArgs] = args;
 
     if (subTaskName && !subTaskName.startsWith('-')) {
-      // There is a sub-task to execute
+      // There is a sub-task to execute.
 
+      // Add task dependency. Pass call parameters to sub-task rather to this dependency.
+      yield {
+        task: this,
+        params: () => call.params(),
+      };
+
+      // Delegate to sub-task.
       const subTaskParams = call.extendParams({ attrs, args: subArgs });
 
       for await (const target of this._subTaskTargets().packages()) {
@@ -31,23 +38,22 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
         };
       }
     } else {
-      return super.asDepOf(call, dep);
+      yield* super.asDepOf(call, dep);
     }
   }
 
   private _subTaskTargets(): ZPackageSet {
 
-    const { target, spec: { args } } = this;
-    const parser = target.setup.taskParser;
+    const { target, spec: { deps } } = this;
     let result: ZPackageSet | undefined;
 
-    for (let i = args.length - 1; i >= 0; --i) {
+    for (let i = deps.length - 1; i >= 0; --i) {
 
-      const arg = args[i];
+      const dep = deps[i];
 
-      if (parser.isPackageSelector(arg)) {
+      if (dep.selector) {
 
-        const selected = target.select(arg);
+        const selected = target.select(dep.selector);
 
         result = result ? result.andPackages(selected) : selected;
       } else if (result) {
