@@ -38,7 +38,8 @@ class CombinedZPackageSet extends ZPackageSet {
     super();
   }
 
-  *packages(): Iterable<ZPackage> | AsyncIterable<ZPackage> {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async *packages(): AsyncIterable<ZPackage> {
     for (const set of this.sets) {
       yield* set.packages();
     }
