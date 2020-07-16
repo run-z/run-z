@@ -225,6 +225,42 @@ describe('ZTaskParser', () => {
     expect(spec.args).toHaveLength(0);
     expect(spec.action).toBe(ZTaskSpec.groupAction);
   });
+  it('recognizes parallel external dependency', () => {
+
+    const spec = parser.parse('run-z dep1, ./path//selector dep2');
+
+    expect(spec.deps).toEqual([
+      { task: 'dep1', parallel: false, attrs: {}, args: [] },
+      { selector: './path//selector' },
+      { task: 'dep2', parallel: true, attrs: {}, args: [] },
+    ]);
+    expect(spec.args).toHaveLength(0);
+    expect(spec.action).toBe(ZTaskSpec.groupAction);
+  });
+  it('recognizes parallel external dependency with standalone comma', () => {
+
+    const spec = parser.parse('run-z dep1 ./path//selector , dep2');
+
+    expect(spec.deps).toEqual([
+      { task: 'dep1', parallel: false, attrs: {}, args: [] },
+      { selector: './path//selector' },
+      { task: 'dep2', parallel: true, attrs: {}, args: [] },
+    ]);
+    expect(spec.args).toHaveLength(0);
+    expect(spec.action).toBe(ZTaskSpec.groupAction);
+  });
+  it('recognizes parallel external dependency with comma prefix', () => {
+
+    const spec = parser.parse('run-z dep1 ./path//selector ,dep2');
+
+    expect(spec.deps).toEqual([
+      { task: 'dep1', parallel: false, attrs: {}, args: [] },
+      { selector: './path//selector' },
+      { task: 'dep2', parallel: true, attrs: {}, args: [] },
+    ]);
+    expect(spec.args).toHaveLength(0);
+    expect(spec.action).toBe(ZTaskSpec.groupAction);
+  });
   it('recognizes attributes', () => {
 
     const spec = parser.parse('run-z attr1=val1 attr2= =attr3 attr3=val3');
