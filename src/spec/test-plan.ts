@@ -1,6 +1,6 @@
+import { ZSetup } from '../core';
 import { ZPackage, ZPackageJson, ZPackageTree } from '../core/packages';
 import type { ZCall, ZCallInstruction } from '../core/plan';
-import { ZSetup } from '../core/setup';
 
 export class TestPlan {
 
@@ -8,7 +8,7 @@ export class TestPlan {
   readonly root: ZPackageTree;
   private _target: ZPackageTree;
 
-  constructor(name = 'root', packageJson?: ZPackageJson) {
+  constructor(name = 'root', packageJson: ZPackageJson = {}) {
     this.setup = new ZSetup();
     this._target = this.root = new ZPackageTree(name, packageJson);
   }
