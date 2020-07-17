@@ -11,28 +11,29 @@ import type { ZTaskSpec } from './task-spec';
  *
  * @typeparam TAction  Task action type.
  */
-export abstract class ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
+export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
 
   /**
-   * Constructs a task.
-   *
-   * @param target  Target package the task is applied to.
-   * @param name  Task name.
-   * @param spec  Task specifier.
+   * Target package the task is applied to.
    */
-  constructor(
-      readonly target: ZPackage,
-      readonly name: string,
-      readonly spec: ZTaskSpec<TAction>,
-  ) {
-  }
+  readonly target: ZPackage;
+
+  /**
+   * Task name.
+   */
+  readonly name: string;
+
+  /**
+   * Task specifier.
+   */
+  readonly spec: ZTaskSpec<TAction>;
 
   /**
    * Builds initial task execution parameters.
    *
    * @returns Partial task execution parameters.
    */
-  abstract params(): ZTaskParams.Partial;
+  params(): ZTaskParams.Partial;
 
   /**
    * Plans this task execution.
@@ -44,7 +45,7 @@ export abstract class ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
    * @returns Either nothing when instructions recorded synchronously, or a promise-like instance resolved when
    * instructions recorded asynchronously.
    */
-  abstract plan(planner: ZCallPlanner<TAction>): void | PromiseLike<unknown>;
+  plan(planner: ZCallPlanner<TAction>): void | PromiseLike<unknown>;
 
   /**
    * Represents this task as a dependency of another one.
@@ -57,7 +58,7 @@ export abstract class ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
    *
    * @returns A potentially asynchronous iterable of {@link ZCallInstruction dependency call instructions}.
    */
-  abstract asDepOf(
+  asDepOf(
       dependent: ZCall,
       dep: ZTaskSpec.TaskRef,
   ): Iterable<ZCallInstruction> | AsyncIterable<ZCallInstruction>;

@@ -1,12 +1,19 @@
 import type { ZPackage, ZPackageSet } from '../../packages';
 import type { ZCall, ZCallInstruction, ZCallPlanner, ZTaskParams } from '../../plan';
-import { ZTask } from '../task';
+import type { ZTask } from '../task';
 import type { ZTaskSpec } from '../task-spec';
 
 /**
  * @internal
  */
-export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> extends ZTask<TAction> {
+export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements ZTask<TAction> {
+
+  constructor(
+      readonly target: ZPackage,
+      readonly name: string,
+      readonly spec: ZTaskSpec<TAction>,
+  ) {
+  }
 
   params(): ZTaskParams.Partial {
 
