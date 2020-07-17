@@ -3,9 +3,9 @@
  * @module run-z
  */
 import { valueProvider } from '@proc7ts/primitives';
-import { ZShell } from '../run';
 import { ZPackageLocation } from './package-location';
 import type { ZPackageJson } from './package.json';
+import { ZShell } from './shell';
 
 /**
  * Virtual package tree.

@@ -3,6 +3,7 @@
  * @module run-z
  */
 import type { ZTask, ZTaskSpec } from '../tasks';
+import type { ZJob } from './job';
 import type { ZPlan } from './plan';
 import type { ZTaskParams } from './task-params';
 
@@ -69,5 +70,12 @@ export interface ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
    * @returns Extended task parameters evaluator.
    */
   extendParams(extension: ZTaskParams.Partial): (this: void) => ZTaskParams;
+
+  /**
+   * Executes this call.
+   *
+   * @returns Either new task execution job, or the one already started.
+   */
+  exec(): ZJob<TAction>;
 
 }

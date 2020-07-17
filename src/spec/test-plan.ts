@@ -1,7 +1,6 @@
-import { ZSetup } from '../core';
+import { ZSetup, ZShell } from '../core';
 import { ZPackage, ZPackageJson, ZPackageTree } from '../core/packages';
 import type { ZCall, ZCallInstruction } from '../core/plan';
-import type { ZShell } from '../core/run';
 
 export class TestPlan {
 

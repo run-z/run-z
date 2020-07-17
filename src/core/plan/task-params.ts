@@ -14,7 +14,7 @@ const falseZTaskFlagValues: { [key: string]: 1 } = {
 };
 
 /**
- * Parameters to task execution.
+ * Task execution parameters.
  */
 export class ZTaskParams {
 

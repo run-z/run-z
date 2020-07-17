@@ -3,8 +3,8 @@
  * @module run-z
  */
 import { overNone } from '@proc7ts/a-iterable';
-import type { ZShell } from '../run';
 import type { ZPackageJson } from './package.json';
+import type { ZShell } from './shell';
 
 /**
  * Potential NPM packages location.

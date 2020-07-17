@@ -4,6 +4,7 @@
  */
 import type { ZPackage } from '../packages';
 import type { ZCall, ZCallInstruction, ZCallPlanner, ZTaskParams } from '../plan';
+import type { ZTaskExecution } from '../plan/task-execution';
 import type { ZTaskSpec } from './task-spec';
 
 /**
@@ -62,5 +63,15 @@ export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
       dependent: ZCall,
       dep: ZTaskSpec.TaskRef,
   ): Iterable<ZCallInstruction> | AsyncIterable<ZCallInstruction>;
+
+  /**
+   * Performs task execution.
+   *
+   * @param execution  Task execution context.
+   *
+   * @returns Either nothing when the task is executed synchronously, or a promise-like instance resolved when the task
+   * executed asynchronously.
+   */
+  exec(execution: ZTaskExecution<TAction>): void | PromiseLike<unknown>;
 
 }

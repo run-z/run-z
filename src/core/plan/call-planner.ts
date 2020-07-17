@@ -49,7 +49,7 @@ export interface ZCallPlanner<TAction extends ZTaskSpec.Action> {
    * The task itself will be executed only after each prerequisite completes, unless that prerequisite can be executed
    * {@link makeParallel in parallel}.
    *
-   * Contradictory execution order makes tasks effectively parallel.
+   * Contradictory execution order causes one of the tasks to be executed before prerequisite.
    *
    * @param tasks  Array of tasks in order of their execution.
    */

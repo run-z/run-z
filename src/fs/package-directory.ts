@@ -6,9 +6,7 @@ import { isPresent, valueProvider } from '@proc7ts/primitives';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath, pathToFileURL, URL } from 'url';
-import type { ZPackageJson } from '../core';
-import { ZPackageLocation } from '../core';
-import { ZShell } from '../core/run';
+import { ZPackageJson, ZPackageLocation, ZShell } from '../core';
 import { isRootURL, urlBaseName, urlOfFile } from './url.impl';
 
 /**
@@ -49,6 +47,7 @@ export class ZPackageDirectory extends ZPackageLocation {
    */
   readonly rootURL: URL;
 
+  // TODO Implement FS shell
   readonly shell: ZShell = ZShell.noop;
 
   private _parent?: ZPackageDirectory | null | undefined = null;

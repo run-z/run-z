@@ -1,5 +1,6 @@
 import type { ZPackage, ZPackageSet } from '../../packages';
 import type { ZCall, ZCallInstruction, ZCallPlanner, ZTaskParams } from '../../plan';
+import type { ZTaskExecution } from '../../plan/task-execution';
 import type { ZTask } from '../task';
 import type { ZTaskSpec } from '../task-spec';
 
@@ -34,6 +35,10 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
       task: this,
       params: dependent.extendParams({ attrs, args }),
     }];
+  }
+
+  exec(_execution: ZTaskExecution<TAction>): void | PromiseLike<unknown> {
+    // TODO Execute the task.
   }
 
   protected async planDeps(planner: ZCallPlanner<TAction>): Promise<void> {
