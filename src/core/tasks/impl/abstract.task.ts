@@ -42,6 +42,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
     const { target, spec } = this;
     let targets: ZPackageSet | undefined;
     let parallel: ZTask[] = [];
+    const order: ZTask[] = [];
 
     for (const dep of spec.deps) {
       if (dep.selector != null) {
@@ -57,7 +58,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
         for (const depTask of depTasks) {
           for await (const subTaskCall of depTask.asDepOf(plannedCall, dep)) {
             await planner.call(subTaskCall);
-            planner.require(this, subTaskCall.task);
+            order.push(subTaskCall.task);
             parallel.push(subTaskCall.task);
           }
         }
@@ -65,6 +66,9 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
         targets = undefined;
       }
     }
+
+    order.push(this);
+    planner.order(order);
 
     if (this.isParallel()) {
       parallel.push(this);

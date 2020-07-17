@@ -1,4 +1,4 @@
-import { TestPlan } from '../../../spec';
+import { prerequisitesOf, taskIds, TestPlan } from '../../../spec';
 import { GroupZTask } from './group.task';
 
 describe('GroupZTask', () => {
@@ -30,11 +30,13 @@ describe('GroupZTask', () => {
     const dep1 = plan.callOf(target.task('dep1'));
     const dep2 = plan.callOf(target.task('dep2'));
 
-    expect([...call.required()]).toEqual([dep1]);
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep1));
     expect(call.params().attrs).toEqual({ test: ['1'] });
-    expect([...dep1.required()]).toEqual([dep2]);
+
+    expect(prerequisitesOf(dep1)).toEqual(taskIds(dep2));
     expect(dep1.params().attrs).toEqual({ test: ['1'], dep1: ['2'] });
-    expect([...dep2.required()]).toHaveLength(0);
+
+    expect(prerequisitesOf(dep2)).toHaveLength(0);
     expect(dep2.params().attrs).toEqual({ test: ['1'], dep1: ['2'] });
   });
 
@@ -58,13 +60,16 @@ describe('GroupZTask', () => {
     const dep2 = plan.callOf(target.task('dep2'));
     const dep3 = plan.callOf(target.task('dep3'));
 
-    expect([...call.required()]).toEqual([dep1, dep3]);
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep3));
     expect(call.params().attrs).toEqual({ attr2: ['on'] });
-    expect([...dep1.required()]).toEqual([dep2]);
+
+    expect(prerequisitesOf(dep1)).toEqual(taskIds(dep2));
     expect(dep1.params().attrs).toEqual({ attr2: ['on'] });
-    expect([...dep2.required()]).toHaveLength(0);
+
+    expect(prerequisitesOf(dep2)).toHaveLength(0);
     expect(dep2.params().attrs).toEqual({ attr2: ['on'] });
-    expect([...dep3.required()]).toHaveLength(0);
+
+    expect(prerequisitesOf(dep3)).toEqual(taskIds(dep1));
     expect(dep3.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'] });
   });
 
@@ -108,9 +113,13 @@ describe('GroupZTask', () => {
     const dep1 = plan.callOf(nested1.task('dep'));
     const dep2 = plan.callOf(nested2.task('dep'));
 
-    expect([...call.required()]).toEqual([dep1, dep2]);
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep2));
     expect(call.params().attrs).toEqual({ attr2: ['on'] });
+
+    expect(prerequisitesOf(dep1)).toHaveLength(0);
     expect(dep1.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'], attr3: ['1'] });
+
+    expect(prerequisitesOf(dep2)).toEqual(taskIds(dep1));
     expect(dep2.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'], attr3: ['2'] });
   });
 
@@ -158,11 +167,19 @@ describe('GroupZTask', () => {
     const dep2 = plan.callOf(nested2.task('dep'));
     const sub2 = plan.callOf(nested2.task('sub-task'));
 
-    expect([...call.required()]).toEqual([dep1, sub1, dep2, sub2]);
+    expect(prerequisitesOf(call)).toEqual(taskIds(sub2));
     expect(call.params().attrs).toEqual({ attr1: ['on'] });
+
+    expect(prerequisitesOf(dep1)).toHaveLength(0);
     expect(dep1.params().attrs).toEqual({ attr1: ['on'], attr3: ['1'] });
+
+    expect(prerequisitesOf(sub1)).toEqual(taskIds(dep1));
     expect(sub1.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'] });
+
+    expect(prerequisitesOf(dep2)).toEqual(taskIds(sub1));
     expect(dep2.params().attrs).toEqual({ attr1: ['on'], attr3: ['2'] });
+
+    expect(prerequisitesOf(sub2)).toEqual(taskIds(dep2));
     expect(sub2.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'] });
   });
 
@@ -207,10 +224,16 @@ describe('GroupZTask', () => {
     const sub1 = plan.callOf(nested1.task('sub-task'));
     const sub2 = plan.callOf(nested2.task('sub-task'));
 
-    expect([...call.required()]).toEqual([dep, sub2, sub1]);
+    expect(prerequisitesOf(call)).toEqual(taskIds(sub2));
     expect(call.params().attrs).toEqual({ attr1: ['on'] });
+
+    expect(prerequisitesOf(dep)).toEqual([{ target: 'nested2', task: 'dep3' }]);
     expect(dep.params().attrs).toEqual({ attr1: ['on'] });
+
+    expect(prerequisitesOf(sub1)).toEqual(taskIds(dep));
     expect(sub1.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'] });
+
+    expect(prerequisitesOf(sub2)).toEqual(taskIds(sub1));
     expect(sub2.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'] });
   });
 });

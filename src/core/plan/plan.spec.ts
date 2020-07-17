@@ -1,4 +1,5 @@
-import { TestPlan } from '../../spec';
+import { prerequisitesOf, TestPlan } from '../../spec';
+import { taskIds } from '../../spec/task-id';
 import { UnknownZTaskError } from '../tasks';
 import type { ZCall } from './call';
 import type { ZPlan } from './plan';
@@ -75,7 +76,7 @@ describe('ZPlan', () => {
             const { task } = planner.plannedCall;
             const dep1 = task.target.task('dep1');
 
-            planner.require(task, dep1);
+            planner.order([dep1, task]);
           },
         },
     );
@@ -85,7 +86,7 @@ describe('ZPlan', () => {
 
     const dep2 = plan.callOf(target.task('dep2'));
 
-    expect([...call.required()]).toEqual([dep2]);
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep2));
   });
   it('allows explicit parallel execution', async () => {
     testPlan.addPackage(
@@ -119,8 +120,72 @@ describe('ZPlan', () => {
     const dep1 = target.task('dep1');
     const dep2 = target.task('dep2');
 
-    expect(call.parallelWith(dep1)).toBe(true);
-    expect(call.parallelWith(dep2)).toBe(true);
-    expect(plan.callOf(dep1).parallelWith(dep2)).toBe(true);
+    expect(call.isParallelTo(dep1)).toBe(true);
+    expect(call.isParallelTo(dep2)).toBe(true);
+    expect(plan.callOf(dep1).isParallelTo(dep2)).toBe(true);
+  });
+  it('orders task execution', async () => {
+    testPlan.addPackage(
+        'test',
+        {
+          scripts: {
+            test: 'run-z dep2 dep1',
+            dep1: 'run-z dep2',
+            dep2: 'exec',
+          },
+        },
+    );
+
+    const call = await testPlan.plan('test');
+    const target = call.task.target;
+
+    plan = call.plan;
+
+    const dep1 = plan.callOf(target.task('dep1'));
+    const dep2 = plan.callOf(target.task('dep2'));
+
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep1));
+    expect(call.hasPrerequisite(dep1.task)).toBe(true);
+    expect(call.hasPrerequisite(dep2.task)).toBe(true);
+
+    expect(prerequisitesOf(dep1)).toEqual(taskIds(dep2));
+    expect(dep1.hasPrerequisite(dep2.task)).toBe(true);
+    expect(dep1.hasPrerequisite(call.task)).toBe(false);
+
+    expect(prerequisitesOf(dep2)).toHaveLength(0);
+    expect(dep2.hasPrerequisite(dep1.task)).toBe(false);
+    expect(dep2.hasPrerequisite(call.task)).toBe(false);
+  });
+  it('orders recurrent task execution', async () => {
+    testPlan.addPackage(
+        'test',
+        {
+          scripts: {
+            test: 'run-z dep1 dep2',
+            dep1: 'run-z dep2',
+            dep2: 'exec',
+          },
+        },
+    );
+
+    const call = await testPlan.plan('test');
+    const target = call.task.target;
+
+    plan = call.plan;
+
+    const dep1 = plan.callOf(target.task('dep1'));
+    const dep2 = plan.callOf(target.task('dep2'));
+
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep2));
+    expect(call.hasPrerequisite(dep1.task)).toBe(true);
+    expect(call.hasPrerequisite(dep2.task)).toBe(true);
+
+    expect(prerequisitesOf(dep1)).toEqual(taskIds(dep2));
+    expect(dep1.hasPrerequisite(dep2.task)).toBe(true);
+    expect(dep1.hasPrerequisite(call.task)).toBe(false);
+
+    expect(prerequisitesOf(dep2)).toEqual(taskIds(dep1));
+    expect(dep2.hasPrerequisite(dep1.task)).toBe(true);
+    expect(dep2.hasPrerequisite(call.task)).toBe(false);
   });
 });

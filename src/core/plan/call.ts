@@ -31,24 +31,35 @@ export interface ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
   params(): ZTaskParams;
 
   /**
-   * Returns this task execution dependencies.
+   * Returns immediate prerequisites of this task.
    *
-   * @returns An iterable of required task execution calls.
+   * @returns An iterable of task execution calls to make before this one.
    *
-   * @see ZCallPlanner.require
+   * @see ZCallPlanner.order
    */
-  required(): Iterable<ZCall>;
+  prerequisites(): Iterable<ZCall>;
 
   /**
-   * Whether this task call can be executed in parallel with the a call to another task.
+   * Checks whether a call to the given task is a prerequisite of this one.
    *
-   * @param other  The task to check.
+   * Checks recursively among all immediate and deep prerequisites.
    *
-   * @returns `true` is tasks can be executed in parallel, or `false` otherwise.
+   * @param task  The task to check.
+   *
+   * @returns `true` if the given `task` is {@link ZCallPlanner.order ordered} before this one, or `false` otherwise.
+   */
+  hasPrerequisite(task: ZTask): boolean;
+
+  /**
+   * Checks whether this task call can be executed in parallel to a call to the given task.
+   *
+   * @param task  The task to check.
+   *
+   * @returns `true` if tasks can be executed in parallel, or `false` otherwise.
    *
    * @see ZCallPlanner.makeParallel
    */
-  parallelWith(other: ZTask): boolean;
+  isParallelTo(task: ZTask): boolean;
 
   /**
    * Extends this call parameters with the given extension.

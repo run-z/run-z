@@ -55,7 +55,7 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
 
         const selected = target.select(dep.selector);
 
-        result = result ? result.andPackages(selected) : selected;
+        result = result ? selected.andPackages(result) : selected;
       } else if (result) {
         break;
       }
