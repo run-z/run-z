@@ -124,4 +124,68 @@ describe('ZPlan', () => {
     expect(call.isParallelTo(dep2)).toBe(true);
     expect(plan.callOf(dep1).isParallelTo(dep2)).toBe(true);
   });
+  it('orders task execution', async () => {
+    testPlan.addPackage(
+        'test',
+        {
+          scripts: {
+            test: 'run-z dep2 dep1',
+            dep1: 'run-z dep2',
+            dep2: 'exec',
+          },
+        },
+    );
+
+    const call = await testPlan.plan('test');
+    const target = call.task.target;
+
+    plan = call.plan;
+
+    const dep1 = plan.callOf(target.task('dep1'));
+    const dep2 = plan.callOf(target.task('dep2'));
+
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep1));
+    expect(call.hasPrerequisite(dep1.task)).toBe(true);
+    expect(call.hasPrerequisite(dep2.task)).toBe(true);
+
+    expect(prerequisitesOf(dep1)).toEqual(taskIds(dep2));
+    expect(dep1.hasPrerequisite(dep2.task)).toBe(true);
+    expect(dep1.hasPrerequisite(call.task)).toBe(false);
+
+    expect(prerequisitesOf(dep2)).toHaveLength(0);
+    expect(dep2.hasPrerequisite(dep1.task)).toBe(false);
+    expect(dep2.hasPrerequisite(call.task)).toBe(false);
+  });
+  it('orders recurrent task execution', async () => {
+    testPlan.addPackage(
+        'test',
+        {
+          scripts: {
+            test: 'run-z dep1 dep2',
+            dep1: 'run-z dep2',
+            dep2: 'exec',
+          },
+        },
+    );
+
+    const call = await testPlan.plan('test');
+    const target = call.task.target;
+
+    plan = call.plan;
+
+    const dep1 = plan.callOf(target.task('dep1'));
+    const dep2 = plan.callOf(target.task('dep2'));
+
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep2));
+    expect(call.hasPrerequisite(dep1.task)).toBe(true);
+    expect(call.hasPrerequisite(dep2.task)).toBe(true);
+
+    expect(prerequisitesOf(dep1)).toEqual(taskIds(dep2));
+    expect(dep1.hasPrerequisite(dep2.task)).toBe(true);
+    expect(dep1.hasPrerequisite(call.task)).toBe(false);
+
+    expect(prerequisitesOf(dep2)).toEqual(taskIds(dep1));
+    expect(dep2.hasPrerequisite(dep1.task)).toBe(true);
+    expect(dep2.hasPrerequisite(call.task)).toBe(false);
+  });
 });

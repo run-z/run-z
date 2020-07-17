@@ -130,21 +130,12 @@ export class ZInstructionRecords {
       return true;
     }
     for (const prerequisite of prerequisites) {
-      this.isPrerequisiteOf(prerequisite, toCheck, checked);
+      if (this.isPrerequisiteOf(prerequisite, toCheck, checked)) {
+        return true;
+      }
     }
 
     return false;
-  }
-
-  prerequisiteSetOf(dependent: ZTask): ReadonlySet<ZTask> {
-
-    const prerequisites = this._prerequisites.get(dependent);
-
-    if (!prerequisites) {
-      return new Set();
-    }
-
-    return prerequisites;
   }
 
   makeParallel(tasks: readonly ZTask[]): void {
