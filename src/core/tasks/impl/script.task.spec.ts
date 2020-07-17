@@ -10,7 +10,16 @@ describe('ScriptZTask', () => {
   });
 
   it('does not contain any parameters', async () => {
-    testPlan.addPackage('test', { scripts: { test: 'exec --arg' } });
+    testPlan.addPackage(
+        'test',
+        {
+          packageJson: {
+            scripts: {
+              test: 'exec --arg',
+            },
+          },
+        },
+    );
 
     const call = await testPlan.plan('test');
 

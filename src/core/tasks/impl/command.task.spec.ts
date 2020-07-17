@@ -10,7 +10,16 @@ describe('CommandZTask', () => {
   });
 
   it('accepts command args', async () => {
-    testPlan.addPackage('test', { scripts: { test: 'run-z attr=b --arg --then exec --cmd' } });
+    testPlan.addPackage(
+        'test',
+        {
+          packageJson: {
+            scripts: {
+              test: 'run-z attr=b --arg --then exec --cmd',
+            },
+          },
+        },
+    );
 
     const call = await testPlan.plan('test');
     const params = call.params();
@@ -25,9 +34,11 @@ describe('CommandZTask', () => {
     testPlan.addPackage(
         'test',
         {
-          scripts: {
-            test: 'run-z =attr dep --then exec --cmd',
-            dep: 'exec',
+          packageJson: {
+            scripts: {
+              test: 'run-z =attr dep --then exec --cmd',
+              dep: 'exec',
+            },
           },
         },
     );
@@ -42,10 +53,12 @@ describe('CommandZTask', () => {
     testPlan.addPackage(
         'test',
         {
-          scripts: {
-            test: 'run-z dep1,dep2 --then exec --cmd',
-            dep1: 'exec1',
-            dep2: 'exec2',
+          packageJson: {
+            scripts: {
+              test: 'run-z dep1,dep2 --then exec --cmd',
+              dep1: 'exec1',
+              dep2: 'exec2',
+            },
           },
         },
     );
@@ -69,11 +82,13 @@ describe('CommandZTask', () => {
     testPlan.addPackage(
         'test',
         {
-          scripts: {
-            test: 'run-z dep1 dep2,dep3 --and exec --cmd',
-            dep1: 'exec1',
-            dep2: 'exec2',
-            dep3: 'exec3',
+          packageJson: {
+            scripts: {
+              test: 'run-z dep1 dep2,dep3 --and exec --cmd',
+              dep1: 'exec1',
+              dep2: 'exec2',
+              dep3: 'exec3',
+            },
           },
         },
     );

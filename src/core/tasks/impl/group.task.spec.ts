@@ -13,10 +13,12 @@ describe('GroupZTask', () => {
     testPlan.addPackage(
         'test',
         {
-          scripts: {
-            test: 'run-z dep1 test=1',
-            dep1: 'run-z dep2 dep1=2',
-            dep2: 'run-z --then exec2',
+          packageJson: {
+            scripts: {
+              test: 'run-z dep1 test=1',
+              dep1: 'run-z dep2 dep1=2',
+              dep2: 'run-z --then exec2',
+            },
           },
         },
     );
@@ -44,11 +46,13 @@ describe('GroupZTask', () => {
     testPlan.addPackage(
         'test',
         {
-          scripts: {
-            test: 'run-z dep1/dep3/=attr1 =attr2',
-            dep1: 'run-z dep2',
-            dep2: 'run-z --then exec2',
-            dep3: 'run-z --then exec3',
+          packageJson: {
+            scripts: {
+              test: 'run-z dep1/dep3/=attr1 =attr2',
+              dep1: 'run-z dep2',
+              dep2: 'run-z --then exec2',
+              dep3: 'run-z --then exec3',
+            },
           },
         },
     );
@@ -78,8 +82,10 @@ describe('GroupZTask', () => {
     const target = testPlan.addPackage(
         'test',
         {
-          scripts: {
-            test: 'run-z ./nested// dep/=attr1 =attr2',
+          packageJson: {
+            scripts: {
+              test: 'run-z ./nested// dep/=attr1 =attr2',
+            },
           },
         },
     );
@@ -87,8 +93,10 @@ describe('GroupZTask', () => {
     testPlan.addPackage(
         'test/nested/nested1',
         {
-          scripts: {
-            dep: 'run-z attr3=1 --then exec1',
+          packageJson: {
+            scripts: {
+              dep: 'run-z attr3=1 --then exec1',
+            },
           },
         },
     );
@@ -98,8 +106,10 @@ describe('GroupZTask', () => {
     testPlan.addPackage(
         'test/nested/nested2',
         {
-          scripts: {
-            dep: 'run-z attr3=2 --then exec2',
+          packageJson: {
+            scripts: {
+              dep: 'run-z attr3=2 --then exec2',
+            },
           },
         },
     );
@@ -128,8 +138,10 @@ describe('GroupZTask', () => {
     const target = testPlan.addPackage(
         'test',
         {
-          scripts: {
-            test: 'run-z =attr1 ./nested// dep/sub-task/=attr2',
+          packageJson: {
+            scripts: {
+              test: 'run-z =attr1 ./nested// dep/sub-task/=attr2',
+            },
           },
         },
     );
@@ -137,9 +149,11 @@ describe('GroupZTask', () => {
     testPlan.addPackage(
         'test/nested/nested1',
         {
-          scripts: {
-            dep: 'run-z attr3=1',
-            'sub-task': 'exec1',
+          packageJson: {
+            scripts: {
+              dep: 'run-z attr3=1',
+              'sub-task': 'exec1',
+            },
           },
         },
     );
@@ -149,9 +163,11 @@ describe('GroupZTask', () => {
     testPlan.addPackage(
         'test/nested/nested2',
         {
-          scripts: {
-            dep: 'run-z attr3=2',
-            'sub-task': 'exec2',
+          packageJson: {
+            scripts: {
+              dep: 'run-z attr3=2',
+              'sub-task': 'exec2',
+            },
           },
         },
     );
@@ -188,9 +204,11 @@ describe('GroupZTask', () => {
     const targetLocation = testPlan.addPackage(
         'test',
         {
-          scripts: {
-            test: 'run-z =attr1 dep/sub-task/=attr2',
-            dep: 'run-z dep2 ./nested/nested1 ./nested/nested2 dep3',
+          packageJson: {
+            scripts: {
+              test: 'run-z =attr1 dep/sub-task/=attr2',
+              dep: 'run-z dep2 ./nested/nested1 ./nested/nested2 dep3',
+            },
           },
         },
     );
@@ -198,8 +216,10 @@ describe('GroupZTask', () => {
     testPlan.addPackage(
         'test/nested/nested1',
         {
-          scripts: {
-            'sub-task': 'exec1',
+          packageJson: {
+            scripts: {
+              'sub-task': 'exec1',
+            },
           },
         },
     );
@@ -209,8 +229,10 @@ describe('GroupZTask', () => {
     testPlan.addPackage(
         'test/nested/nested2',
         {
-          scripts: {
-            'sub-task': 'exec2',
+          packageJson: {
+            scripts: {
+              'sub-task': 'exec2',
+            },
           },
         },
     );

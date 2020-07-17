@@ -14,12 +14,14 @@ describe('ZCall', () => {
   beforeEach(async () => {
     setup = new ZSetup();
 
-    const tree = new ZPackageTree('root', { name: 'root' });
+    const tree = new ZPackageTree('root', { packageJson: { name: 'root' } });
+
     initParams = {
       attrs: { attr1: ['attr1-val'] },
       args: ['arg1'],
       actionArgs: ['cmd-arg1'],
     };
+
     const spec: ZTaskSpec = {
       deps: [],
       attrs: initParams.attrs,

@@ -54,7 +54,7 @@ describe('ZPackageTree', () => {
   describe('put', () => {
     it('replaces existing tree', () => {
 
-      const otherNested = root.put('nested1/nested1.1', { name: 'nested1.1' });
+      const otherNested = root.put('nested1/nested1.1', { packageJson: { name: 'nested1.1' } });
 
       expect(otherNested).not.toBe(nested11);
       expect(otherNested.toString()).toBe('root/nested1/nested1.1');

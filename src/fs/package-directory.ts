@@ -8,6 +8,7 @@ import * as path from 'path';
 import { fileURLToPath, pathToFileURL, URL } from 'url';
 import type { ZPackageJson } from '../core';
 import { ZPackageLocation } from '../core';
+import { ZShell } from '../core/run';
 import { isRootURL, urlBaseName, urlOfFile } from './url.impl';
 
 /**
@@ -47,6 +48,8 @@ export class ZPackageDirectory extends ZPackageLocation {
    * Root URL containing all NPM packages.
    */
   readonly rootURL: URL;
+
+  readonly shell: ZShell = ZShell.noop;
 
   private _parent?: ZPackageDirectory | null | undefined = null;
 
