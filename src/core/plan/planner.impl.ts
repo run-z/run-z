@@ -42,7 +42,7 @@ export class ZInstructionRecords {
   rev = 0;
   readonly plan: ZPlan;
   private readonly _calls = new Map<ZTask, ZCallRecord>();
-  private readonly _requirements = new Map<ZTask, ZTask[]>();
+  private readonly _prerequisites = new Map<ZTask, Set<ZTask>>();
   private readonly _parallel = new Map<ZTask, Set<ZTask>>();
 
   constructor(readonly setup: ZSetup) {
@@ -86,29 +86,65 @@ export class ZInstructionRecords {
     return call;
   }
 
-  require(dependent: ZTask, dependency: ZTask): void {
+  order(tasks: readonly ZTask[]): void {
+    for (let i = tasks.length - 1; i > 0; --i) {
 
-    const requirements = this._requirements.get(dependent);
+      const next = tasks[i];
+      const prev = tasks[i - 1];
+      const prerequisites = this._prerequisites.get(next);
 
-    if (requirements) {
-      requirements.push(dependency);
-    } else {
-      this._requirements.set(dependent, [dependency]);
+      if (prerequisites) {
+        prerequisites.add(prev);
+      } else {
+        this._prerequisites.set(next, new Set<ZTask>().add(prev));
+      }
     }
   }
 
-  requirementsOf(dependent: ZTask): Iterable<ZCall> {
+  prerequisitesOf(dependent: ZTask): Iterable<ZCall> {
 
-    const requirements = this._requirements.get(dependent);
+    const prerequisites = this._prerequisites.get(dependent);
 
-    if (!requirements) {
+    if (!prerequisites) {
       return overNone();
     }
 
     return thruIt(
-        requirements,
+        prerequisites,
         task => this._calls.get(task) || nextSkip,
     );
+  }
+
+  isPrerequisiteOf(target: ZTask, toCheck: ZTask, checked: Set<ZTask>): boolean {
+    if (checked.has(target)) {
+      return false;
+    }
+    checked.add(target);
+
+    const prerequisites = this._prerequisites.get(target);
+
+    if (!prerequisites) {
+      return false;
+    }
+    if (prerequisites.has(toCheck)) {
+      return true;
+    }
+    for (const prerequisite of prerequisites) {
+      this.isPrerequisiteOf(prerequisite, toCheck, checked);
+    }
+
+    return false;
+  }
+
+  prerequisiteSetOf(dependent: ZTask): ReadonlySet<ZTask> {
+
+    const prerequisites = this._prerequisites.get(dependent);
+
+    if (!prerequisites) {
+      return new Set();
+    }
+
+    return prerequisites;
   }
 
   makeParallel(tasks: readonly ZTask[]): void {
@@ -207,7 +243,7 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
       setup: this._records.setup,
       plannedCall: this,
       call: instr => this._records.call(instr, this),
-      require: this._records.require.bind(this._records),
+      order: this._records.order.bind(this._records),
       makeParallel: this._records.makeParallel.bind(this._records),
     });
   }
@@ -246,11 +282,15 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
     return () => this.params().extend(extension);
   }
 
-  required(): Iterable<ZCall> {
-    return this._records.requirementsOf(this.task);
+  prerequisites(): Iterable<ZCall> {
+    return this._records.prerequisitesOf(this.task);
   }
 
-  parallelWith(other: ZTask): boolean {
+  hasPrerequisite(task: ZTask): boolean {
+    return this._records.isPrerequisiteOf(this.task, task, new Set());
+  }
+
+  isParallelTo(other: ZTask): boolean {
     return this._records.areParallel(this.task, other);
   }
 

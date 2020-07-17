@@ -1,4 +1,4 @@
-import { TestPlan } from '../../../spec';
+import { prerequisitesOf, taskIds, TestPlan } from '../../../spec';
 import { CommandZTask } from './command.task';
 
 describe('CommandZTask', () => {
@@ -35,7 +35,7 @@ describe('CommandZTask', () => {
     const call = await testPlan.plan('test');
     const dep = call.plan.callOf(call.task.target.task('dep'));
 
-    expect([...call.required()]).toEqual([dep]);
+    expect(prerequisitesOf(call)).toEqual(taskIds([dep]));
     expect(dep.params().attrs).toEqual({ attr: ['on'] });
   });
   it('calls parallel dependencies', async () => {
@@ -56,11 +56,14 @@ describe('CommandZTask', () => {
     const dep1 = plan.callOf(target.task('dep1'));
     const dep2 = plan.callOf(target.task('dep2'));
 
-    expect([...call.required()]).toEqual([dep1, dep2]);
-    expect(call.parallelWith(dep1.task)).toBe(false);
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep2));
+    expect(call.isParallelTo(dep1.task)).toBe(false);
 
-    expect(dep1.parallelWith(dep2.task)).toBe(true);
-    expect(dep2.parallelWith(dep1.task)).toBe(true);
+    expect(prerequisitesOf(dep1)).toHaveLength(0);
+    expect(dep1.isParallelTo(dep2.task)).toBe(true);
+
+    expect(prerequisitesOf(dep2)).toEqual(taskIds(dep1));
+    expect(dep2.isParallelTo(dep1.task)).toBe(true);
   });
   it('executed parallel with dependencies', async () => {
     testPlan.addPackage(
@@ -82,18 +85,21 @@ describe('CommandZTask', () => {
     const dep2 = plan.callOf(target.task('dep2'));
     const dep3 = plan.callOf(target.task('dep3'));
 
-    expect([...call.required()]).toEqual([dep1, dep2, dep3]);
-    expect(call.parallelWith(dep1.task)).toBe(false);
-    expect(call.parallelWith(dep2.task)).toBe(true);
-    expect(call.parallelWith(dep3.task)).toBe(true);
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep3));
+    expect(call.isParallelTo(dep1.task)).toBe(false);
+    expect(call.isParallelTo(dep2.task)).toBe(true);
+    expect(call.isParallelTo(dep3.task)).toBe(true);
 
-    expect(dep1.parallelWith(dep2.task)).toBe(false);
-    expect(dep1.parallelWith(dep3.task)).toBe(false);
+    expect(prerequisitesOf(dep1)).toHaveLength(0);
+    expect(dep1.isParallelTo(dep2.task)).toBe(false);
+    expect(dep1.isParallelTo(dep3.task)).toBe(false);
 
-    expect(dep2.parallelWith(dep3.task)).toBe(true);
-    expect(dep2.parallelWith(call.task)).toBe(true);
+    expect(prerequisitesOf(dep2)).toEqual(taskIds(dep1));
+    expect(dep2.isParallelTo(dep3.task)).toBe(true);
+    expect(dep2.isParallelTo(call.task)).toBe(true);
 
-    expect(dep3.parallelWith(dep2.task)).toBe(true);
-    expect(dep3.parallelWith(call.task)).toBe(true);
+    expect(prerequisitesOf(dep3)).toEqual(taskIds(dep2));
+    expect(dep3.isParallelTo(dep2.task)).toBe(true);
+    expect(dep3.isParallelTo(call.task)).toBe(true);
   });
 });

@@ -41,17 +41,26 @@ export interface ZCallPlanner<TAction extends ZTaskSpec.Action> {
   call<TAction extends ZTaskSpec.Action>(instruction: ZCallInstruction<TAction>): Promise<ZCall<TAction>>;
 
   /**
-   * Make a task require another one.
+   * Sets the task execution order.
    *
-   * @param dependent  Dependent task.
-   * @param dependency  Dependency task.
+   * The call to this method does not cause any of the tasks to be executed.
+   *
+   * When any of the tasks executed it first executes its prerequisites. I.e. the tasks ordered before it.
+   * The task itself will be executed only after each prerequisite completes, unless that prerequisite can be executed
+   * {@link makeParallel in parallel}.
+   *
+   * Contradictory execution order makes tasks effectively parallel.
+   *
+   * @param tasks  Array of tasks in order of their execution.
    */
-  require(dependent: ZTask, dependency: ZTask): void;
+  order(tasks: readonly ZTask[]): void;
 
   /**
    * Allow parallel tasks execution.
    *
-   * @param tasks  Tasks that can be executed in parallel to each other.
+   * The call to this method does not cause any of the tasks to be executed.
+   *
+   * @param tasks  Array of tasks that can be executed in parallel to each other.
    */
   makeParallel(tasks: readonly ZTask[]): void;
 

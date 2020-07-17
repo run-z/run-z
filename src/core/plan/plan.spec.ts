@@ -1,4 +1,5 @@
-import { TestPlan } from '../../spec';
+import { prerequisitesOf, TestPlan } from '../../spec';
+import { taskIds } from '../../spec/task-id';
 import { UnknownZTaskError } from '../tasks';
 import type { ZCall } from './call';
 import type { ZPlan } from './plan';
@@ -75,7 +76,7 @@ describe('ZPlan', () => {
             const { task } = planner.plannedCall;
             const dep1 = task.target.task('dep1');
 
-            planner.require(task, dep1);
+            planner.order([dep1, task]);
           },
         },
     );
@@ -85,7 +86,7 @@ describe('ZPlan', () => {
 
     const dep2 = plan.callOf(target.task('dep2'));
 
-    expect([...call.required()]).toEqual([dep2]);
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep2));
   });
   it('allows explicit parallel execution', async () => {
     testPlan.addPackage(
@@ -119,8 +120,8 @@ describe('ZPlan', () => {
     const dep1 = target.task('dep1');
     const dep2 = target.task('dep2');
 
-    expect(call.parallelWith(dep1)).toBe(true);
-    expect(call.parallelWith(dep2)).toBe(true);
-    expect(plan.callOf(dep1).parallelWith(dep2)).toBe(true);
+    expect(call.isParallelTo(dep1)).toBe(true);
+    expect(call.isParallelTo(dep2)).toBe(true);
+    expect(plan.callOf(dep1).isParallelTo(dep2)).toBe(true);
   });
 });
