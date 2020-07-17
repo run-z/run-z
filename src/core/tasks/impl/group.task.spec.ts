@@ -224,16 +224,16 @@ describe('GroupZTask', () => {
     const sub1 = plan.callOf(nested1.task('sub-task'));
     const sub2 = plan.callOf(nested2.task('sub-task'));
 
-    expect(prerequisitesOf(call)).toEqual(taskIds(sub1));
+    expect(prerequisitesOf(call)).toEqual(taskIds(sub2));
     expect(call.params().attrs).toEqual({ attr1: ['on'] });
 
     expect(prerequisitesOf(dep)).toEqual([{ target: 'nested2', task: 'dep3' }]);
     expect(dep.params().attrs).toEqual({ attr1: ['on'] });
 
-    expect(prerequisitesOf(sub1)).toEqual(taskIds(sub2));
+    expect(prerequisitesOf(sub1)).toEqual(taskIds(dep));
     expect(sub1.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'] });
 
-    expect(prerequisitesOf(sub2)).toEqual(taskIds(dep));
+    expect(prerequisitesOf(sub2)).toEqual(taskIds(sub1));
     expect(sub2.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'] });
   });
 });
