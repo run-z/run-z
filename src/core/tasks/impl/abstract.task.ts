@@ -37,9 +37,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
     }];
   }
 
-  exec(_execution: ZTaskExecution<TAction>): void | PromiseLike<unknown> {
-    // TODO Execute the task.
-  }
+  abstract exec(execution: ZTaskExecution<TAction>): void | PromiseLike<unknown>;
 
   protected async planDeps(planner: ZCallPlanner<TAction>): Promise<void> {
 

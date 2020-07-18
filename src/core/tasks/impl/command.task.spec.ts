@@ -1,4 +1,6 @@
 import { prerequisitesOf, taskIds, TestPlan } from '../../../spec';
+import type { ZShell } from '../../packages';
+import { ZTaskParams } from '../../plan';
 import { CommandZTask } from './command.task';
 
 describe('CommandZTask', () => {
@@ -116,5 +118,38 @@ describe('CommandZTask', () => {
     expect(prerequisitesOf(dep3)).toEqual(taskIds(dep2));
     expect(dep3.isParallelTo(dep2.task)).toBe(true);
     expect(dep3.isParallelTo(call.task)).toBe(true);
+  });
+
+  describe('exec', () => {
+    it('executes command', async () => {
+
+      const shell = {
+        execCommand: jest.fn(),
+      } as jest.Mocked<Partial<ZShell>> as jest.Mocked<ZShell>;
+
+      testPlan.addPackage(
+          'test',
+          {
+            packageJson: {
+              scripts: {
+                test: 'run-z exec/--arg1 --arg2',
+                exec: 'run-z --then start --arg3',
+              },
+            },
+            shell,
+          },
+      );
+
+      const call = await testPlan.plan('test');
+
+      await call.exec().whenDone();
+
+      expect(shell.execCommand).toHaveBeenCalledWith('start', expect.any(ZTaskParams));
+
+      const params = shell.execCommand.mock.calls[0][1];
+
+      expect(params.args).toEqual(['--arg2', '--arg1']);
+      expect(params.actionArgs).toEqual(['--arg3']);
+    });
   });
 });
