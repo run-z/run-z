@@ -9,7 +9,7 @@ describe('SysZShell', () => {
 
   beforeEach(async () => {
 
-    const dir = ZPackageDirectory.create(undefined, pathToFileURL(process.cwd()));
+    const dir = ZPackageDirectory.create({ rootURL: pathToFileURL(process.cwd()) });
     const setup = new ZSetup();
 
     pkg = await setup.packageResolver.get(dir);

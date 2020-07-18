@@ -22,8 +22,13 @@ export class ZPackageDirectory extends ZPackageLocation {
    * @param rootURL  Root URL containing all packages.
    */
   static create(
-      url: URL = pathToFileURL(process.cwd()),
-      rootURL: URL = new URL('file:///'),
+      {
+        url = pathToFileURL(process.cwd()),
+        rootURL = new URL('file:///'),
+      }: {
+        url?: URL,
+        rootURL?: URL,
+      } = {},
   ): ZPackageDirectory {
     url = urlOfFile(url);
     rootURL = urlOfFile(rootURL);

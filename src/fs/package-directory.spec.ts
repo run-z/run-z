@@ -12,7 +12,10 @@ describe('ZPackageDirectory', () => {
 
   describe('create', () => {
     it('throws when not inside root URL', () => {
-      expect(() => ZPackageDirectory.create(new URL('file:///other'), rootURL)).toThrow(TypeError);
+      expect(() => ZPackageDirectory.create({
+        url: new URL('file:///other'),
+        rootURL,
+      })).toThrow(TypeError);
     });
   });
 
@@ -25,7 +28,10 @@ describe('ZPackageDirectory', () => {
     });
     it('has path without trailing `/`', () => {
 
-      const dir = ZPackageDirectory.create(new URL('other/', rootURL), rootURL);
+      const dir = ZPackageDirectory.create({
+        url: new URL('other/', rootURL),
+        rootURL,
+      });
 
       expect(dir.rootURL.pathname).toBe('/root');
     });
@@ -41,7 +47,10 @@ describe('ZPackageDirectory', () => {
     });
     it('has path without trailing `/`', () => {
 
-      const dir = ZPackageDirectory.create(new URL('other/', rootURL), rootURL);
+      const dir = ZPackageDirectory.create({
+        url: new URL('other/', rootURL),
+        rootURL,
+      });
 
       expect(dir.url.pathname).toBe('/root/other');
       expect(dir.url.toString()).toBe('file:///root/other');
@@ -51,7 +60,10 @@ describe('ZPackageDirectory', () => {
   describe('dirURL', () => {
     it('has path with trailing `/`', () => {
 
-      const dir = ZPackageDirectory.create(new URL('other/', rootURL), rootURL);
+      const dir = ZPackageDirectory.create({
+        url: new URL('other/', rootURL),
+        rootURL,
+      });
 
       expect(dir.dirURL.pathname).toBe('/root/other/');
     });
@@ -60,14 +72,20 @@ describe('ZPackageDirectory', () => {
   describe('parent', () => {
     it('resolves to parent', () => {
 
-      const dir = ZPackageDirectory.create(new URL('nested/deeply', rootURL), rootURL);
+      const dir = ZPackageDirectory.create({
+        url: new URL('nested/deeply', rootURL),
+        rootURL,
+      });
 
       expect(dir.parent?.path).toBe('/root/nested');
       expect(dir.parent?.path).toBe('/root/nested');
     });
     it('does not resolve to parent outside root', () => {
 
-      const dir = ZPackageDirectory.create(rootURL, rootURL);
+      const dir = ZPackageDirectory.create({
+        url: rootURL,
+        rootURL,
+      });
 
       expect(dir.parent).toBeUndefined();
       expect(dir.parent).toBeUndefined();
@@ -79,7 +97,10 @@ describe('ZPackageDirectory', () => {
     let dir: ZPackageDirectory;
 
     beforeEach(() => {
-      dir = ZPackageDirectory.create(new URL('dir', rootURL), rootURL);
+      dir = ZPackageDirectory.create({
+        url: new URL('dir', rootURL),
+        rootURL,
+      });
     });
 
     it('resolves to nested', () => {
@@ -107,7 +128,9 @@ describe('ZPackageDirectory', () => {
 
     it('lists immediately nested dirs', async () => {
 
-      const dir = ZPackageDirectory.create(new URL('nested', rootURL));
+      const dir = ZPackageDirectory.create({
+        url: new URL('nested', rootURL),
+      });
       const packages: string[] = [];
 
       for await (const nested of dir.nested()) {
@@ -128,7 +151,7 @@ describe('ZPackageDirectory', () => {
 
     it('lists deeply nested dirs', async () => {
 
-      const dir = ZPackageDirectory.create(rootURL);
+      const dir = ZPackageDirectory.create({ url: rootURL });
       const packages: string[] = [];
 
       for await (const nested of dir.deeplyNested()) {
