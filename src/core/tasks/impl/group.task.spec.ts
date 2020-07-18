@@ -258,4 +258,23 @@ describe('GroupZTask', () => {
     expect(prerequisitesOf(sub2)).toEqual(taskIds(sub1));
     expect(sub2.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'] });
   });
+
+  describe('exec', () => {
+    it('does nothing', async () => {
+      testPlan.addPackage(
+          'test',
+          {
+            packageJson: {
+              scripts: {
+                test: 'run-z absent/=if-present',
+              },
+            },
+          },
+      );
+
+      const call = await testPlan.plan('test');
+
+      expect(await call.exec().whenDone()).toBeUndefined();
+    });
+  });
 });
