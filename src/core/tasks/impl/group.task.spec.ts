@@ -276,5 +276,23 @@ describe('GroupZTask', () => {
 
       expect(await call.exec().whenDone()).toBeUndefined();
     });
+    it('executes prerequisites', async () => {
+      testPlan.addPackage(
+          'test',
+          {
+            packageJson: {
+              scripts: {
+                test: 'run-z dep1,dep2',
+                dep1: 'run-z',
+                dep2: 'run-z',
+              },
+            },
+          },
+      );
+
+      const call = await testPlan.plan('test');
+
+      expect(await call.exec().whenDone()).toBeUndefined();
+    });
   });
 });
