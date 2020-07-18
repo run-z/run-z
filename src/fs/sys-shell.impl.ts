@@ -53,7 +53,7 @@ export class SysZShell implements ZShell {
       childProcess.on('error', reject);
       childProcess.on('exit', (code, signal) => {
 
-        const error = code || signal;
+        const error = signal || code;
 
         if (error) {
           reject(error);
