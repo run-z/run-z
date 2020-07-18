@@ -1,3 +1,4 @@
+import { noop } from '@proc7ts/primitives';
 import type { ZTask, ZTaskSpec } from '../tasks';
 import type { ZCallRecord } from './call.impl';
 import type { ZJob } from './job';
@@ -54,7 +55,7 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
         call: this.call,
       });
     });
-    this._whenDone = Promise.all([whenPrerequisites, this._whenFinished]) as Promise<any>;
+    this._whenDone = Promise.all([whenPrerequisites, this._whenFinished]).then(noop);
 
     return this;
   }

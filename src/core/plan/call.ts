@@ -10,6 +10,9 @@ import type { ZTaskParams } from './task-params';
 /**
  * A call for task execution.
  *
+ * There is at most one call instance per task exists. Subsequent calls just {@link ZTaskParams.update update} its
+ * parameters.
+ *
  * @typeparam TAction  Task action type.
  */
 export interface ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
