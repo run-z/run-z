@@ -22,8 +22,10 @@ describe('UnknownZTask', () => {
     it('throws when absent', async () => {
 
       const call = await testPlan.plan('absent');
+      const error = await call.exec().whenDone().catch(asis);
 
-      expect(await call.exec().whenDone().catch(asis)).toBeInstanceOf(UnknownZTaskError);
+      expect(error).toBeInstanceOf(UnknownZTaskError);
+      expect(error.taskName).toBe('absent');
     });
     it('does not throw when called with `if-present` flag', async () => {
       testPlan.addPackage(
@@ -55,8 +57,10 @@ describe('UnknownZTask', () => {
       );
 
       const call = await testPlan.plan('test');
+      const error = await call.exec().whenDone().catch(asis);
 
-      expect(await call.exec().whenDone().catch(asis)).toBeInstanceOf(UnknownZTaskError);
+      expect(error).toBeInstanceOf(UnknownZTaskError);
+      expect(error.taskName).toBe('absent');
     });
   });
 });
