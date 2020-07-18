@@ -3,11 +3,15 @@
  * @module run-z
  */
 import type { ZTask, ZTaskSpec } from '../tasks';
+import type { ZJob } from './job';
 import type { ZPlan } from './plan';
 import type { ZTaskParams } from './task-params';
 
 /**
  * A call for task execution.
+ *
+ * There is at most one call instance per task exists. Subsequent calls just {@link ZTaskParams.update update} its
+ * parameters.
  *
  * @typeparam TAction  Task action type.
  */
@@ -69,5 +73,12 @@ export interface ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
    * @returns Extended task parameters evaluator.
    */
   extendParams(extension: ZTaskParams.Partial): (this: void) => ZTaskParams;
+
+  /**
+   * Executes this call.
+   *
+   * @returns Either new task execution job, or the one already started.
+   */
+  exec(): ZJob<TAction>;
 
 }

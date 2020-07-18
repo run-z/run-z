@@ -42,6 +42,10 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
     }
   }
 
+  exec(): void {
+    // Grouping task does nothing
+  }
+
   private _subTaskTargets(): ZPackageSet {
 
     const { target, spec: { deps } } = this;

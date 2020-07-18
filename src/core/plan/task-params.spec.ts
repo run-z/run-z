@@ -27,6 +27,10 @@ describe('ZTaskParams', () => {
         attrs: { attr: ['val', 'val2'] },
       });
     });
+    it('ignores undefined attribute values', () => {
+      ZTaskParams.update(mutable, { attrs: { attr: undefined } });
+      expect(mutable).toEqual(initial);
+    });
     it('appends arguments', () => {
       ZTaskParams.update(mutable, { args: ['arg2'] });
       expect(mutable).toEqual({

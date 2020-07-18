@@ -5,6 +5,7 @@
 import { valueProvider } from '@proc7ts/primitives';
 import { ZPackageLocation } from './package-location';
 import type { ZPackageJson } from './package.json';
+import { ZShell } from './shell';
 
 /**
  * Virtual package tree.
@@ -16,6 +17,7 @@ export class ZPackageTree extends ZPackageLocation {
   readonly parent: ZPackageTree | undefined;
   readonly path: string;
   readonly load: () => Promise<ZPackageJson | undefined>;
+  readonly shell: ZShell;
   private readonly _nested = new Map<string, ZPackageTree>();
 
   /**
@@ -24,16 +26,26 @@ export class ZPackageTree extends ZPackageLocation {
    * @param baseName  Base name of the package path.
    * @param packageJson  Either `package.json` contents, a promise resolving to it, or nothing.
    * @param parent  Parent package tree or `undefined` if there is no parent location.
+   * @param shell  Command execution shell to use at this location. The one from the `parent` is used by default,
+   * or {@link ZShell.noop no-op shell} if there is no `parent`.
    */
   constructor(
       readonly baseName: string,
-      packageJson?: PromiseLike<ZPackageJson | undefined> | ZPackageJson,
-      parent?: ZPackageTree,
+      {
+        packageJson,
+        parent,
+        shell = parent ? parent.shell : ZShell.noop,
+      }: {
+        packageJson?: PromiseLike<ZPackageJson | undefined> | ZPackageJson;
+        parent?: ZPackageTree;
+        shell?: ZShell;
+      } = {},
   ) {
     super();
     this.parent = parent;
     this.path = parent ? `${parent.path}/${baseName}` : baseName;
     this.load = valueProvider(Promise.resolve(packageJson));
+    this.shell = shell;
   }
 
   relative(path: string): ZPackageTree | undefined {
@@ -75,16 +87,26 @@ export class ZPackageTree extends ZPackageLocation {
    *
    * @param path  Nested slash-separated package path.
    * @param packageJson  Either new `package.json` contents, a promise resolving to it, or nothing.
+   * @param shell  Command execution shell to use in new package tree.
    *
    * @returns New nested package tree.
    */
-  put(path: string, packageJson?: PromiseLike<ZPackageJson | undefined> | ZPackageJson): ZPackageTree {
+  put(
+      path: string,
+      {
+        packageJson,
+        shell,
+      }: {
+        packageJson?: PromiseLike<ZPackageJson | undefined> | ZPackageJson;
+        shell?: ZShell;
+      } = {},
+  ): ZPackageTree {
 
     const [name, restPath] = pathNameAndRest(path);
 
     if (!restPath) {
 
-      const nested = new ZPackageTree(name, packageJson, this);
+      const nested = new ZPackageTree(name, { packageJson, parent: this, shell });
 
       this._nested.set(name, nested);
 
@@ -93,7 +115,7 @@ export class ZPackageTree extends ZPackageLocation {
 
     const nested = this._nested.get(name) || this.put(name);
 
-    return nested.put(restPath, packageJson);
+    return nested.put(restPath, { packageJson, shell });
   }
 
   toString(): string {

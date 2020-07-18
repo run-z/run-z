@@ -6,4 +6,7 @@ describe('UnknownZTaskError', () => {
       expect(new UnknownZTaskError('package', 'task').message).toBe('Task "task" is not known in <package>');
     });
   });
+  it('is respected when set explicitly', () => {
+    expect(new UnknownZTaskError('package', 'task', 'Error!').message).toBe('Error!');
+  });
 });

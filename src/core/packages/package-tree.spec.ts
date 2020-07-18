@@ -1,4 +1,5 @@
 import { ZPackageTree } from './package-tree';
+import { ZShell } from './shell';
 
 describe('ZPackageTree', () => {
 
@@ -54,7 +55,7 @@ describe('ZPackageTree', () => {
   describe('put', () => {
     it('replaces existing tree', () => {
 
-      const otherNested = root.put('nested1/nested1.1', { name: 'nested1.1' });
+      const otherNested = root.put('nested1/nested1.1', { packageJson: { name: 'nested1.1' } });
 
       expect(otherNested).not.toBe(nested11);
       expect(otherNested.toString()).toBe('root/nested1/nested1.1');
@@ -145,6 +146,17 @@ describe('ZPackageTree', () => {
       return result;
     }
 
+  });
+
+  describe('shell', () => {
+    it('is no-op by default', async () => {
+      expect(root.shell).toBe(ZShell.noop);
+
+      const { execCommand, execScript }: { execCommand: any, execScript: any } = root.shell;
+
+      expect(await execCommand()).toBeUndefined();
+      expect(await execScript()).toBeUndefined();
+    });
   });
 
 });

@@ -9,7 +9,7 @@
 export class UnknownZTaskError extends Error {
 
   /**
-   * Constructs unknown package error.
+   * Constructs unknown task error.
    *
    * @param packageName  Package name the task belongs to.
    * @param taskName  Unknown task name.

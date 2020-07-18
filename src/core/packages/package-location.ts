@@ -4,6 +4,7 @@
  */
 import { overNone } from '@proc7ts/a-iterable';
 import type { ZPackageJson } from './package.json';
+import type { ZShell } from './shell';
 
 /**
  * Potential NPM packages location.
@@ -30,6 +31,11 @@ export abstract class ZPackageLocation {
    * I.e. the last segment of the [[path]].
    */
   readonly abstract baseName: string;
+
+  /**
+   * Command execution shell to use at this location.
+   */
+  readonly abstract shell: ZShell;
 
   /**
    * Constructs location relatively to this one.

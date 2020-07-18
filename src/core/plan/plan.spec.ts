@@ -1,5 +1,4 @@
-import { prerequisitesOf, TestPlan } from '../../spec';
-import { taskIds } from '../../spec/task-id';
+import { prerequisitesOf, taskIds, TestPlan } from '../../spec';
 import { UnknownZTaskError } from '../tasks';
 import type { ZCall } from './call';
 import type { ZPlan } from './plan';
@@ -11,7 +10,7 @@ describe('ZPlan', () => {
   let plan: ZPlan;
 
   beforeEach(async () => {
-    testPlan = new TestPlan('root', { scripts: { test: 'test', other: 'other' } });
+    testPlan = new TestPlan('root', { packageJson: { scripts: { test: 'test', other: 'other' } } });
     call = await testPlan.plan('test');
     plan = call.plan;
   });
@@ -35,10 +34,12 @@ describe('ZPlan', () => {
     testPlan.addPackage(
         'test',
         {
-          scripts: {
-            test: 'run-z attr=0 dep2/attr=1/--arg1 dep1',
-            dep1: 'run-z dep2/attr=2/--arg2',
-            dep2: 'run-z --then exec',
+          packageJson: {
+            scripts: {
+              test: 'run-z attr=0 dep2/attr=1/--arg1 dep1',
+              dep1: 'run-z dep2/attr=2/--arg2',
+              dep2: 'run-z --then exec',
+            },
           },
         },
     );
@@ -60,10 +61,12 @@ describe('ZPlan', () => {
     testPlan.addPackage(
         'test',
         {
-          scripts: {
-            test: 'run-z dep2',
-            dep1: 'run-z dep2',
-            dep2: 'run-z --then exec',
+          packageJson: {
+            scripts: {
+              test: 'run-z dep2',
+              dep1: 'run-z dep2',
+              dep2: 'run-z --then exec',
+            },
           },
         },
     );
@@ -92,10 +95,12 @@ describe('ZPlan', () => {
     testPlan.addPackage(
         'test',
         {
-          scripts: {
-            test: 'run-z dep1,dep2',
-            dep1: 'exec1',
-            dep2: 'exec2',
+          packageJson: {
+            scripts: {
+              test: 'run-z dep1,dep2',
+              dep1: 'exec1',
+              dep2: 'exec2',
+            },
           },
         },
     );
@@ -128,10 +133,12 @@ describe('ZPlan', () => {
     testPlan.addPackage(
         'test',
         {
-          scripts: {
-            test: 'run-z dep2 dep1',
-            dep1: 'run-z dep2',
-            dep2: 'exec',
+          packageJson: {
+            scripts: {
+              test: 'run-z dep2 dep1',
+              dep1: 'run-z dep2',
+              dep2: 'exec',
+            },
           },
         },
     );
@@ -160,10 +167,12 @@ describe('ZPlan', () => {
     testPlan.addPackage(
         'test',
         {
-          scripts: {
-            test: 'run-z dep1 dep2',
-            dep1: 'run-z dep2',
-            dep2: 'exec',
+          packageJson: {
+            scripts: {
+              test: 'run-z dep1 dep2',
+              dep1: 'run-z dep2',
+              dep2: 'exec',
+            },
           },
         },
     );
