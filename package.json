@@ -78,6 +78,11 @@
     "doc:publish": "run-s doc \"doc:gh-pages {@}\" --",
     "lint": "eslint . --ext .js,.ts",
     "rebuild": "run-s clean build",
-    "test": "jest"
+    "test": "jest",
+    "test:all": "run-z test:command/--command2 test:script/--script2 --all3",
+    "test:command": "run-z --then node ./src/spec/bin/ok.js --command1",
+    "test:fail": "run-z --then node ./src/spec/bin/fail.js",
+    "test:kill": "run-z --then node ./src/spec/bin/kill.js",
+    "test:script": "node ./src/spec/bin/ok.js --script1"
   }
 }
