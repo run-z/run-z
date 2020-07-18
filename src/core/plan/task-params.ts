@@ -34,6 +34,9 @@ export class ZTaskParams {
     const { attrs = {}, args = [], actionArgs = [] } = update;
 
     for (const [k, v] of Object.entries(attrs)) {
+      if (!v) {
+        continue;
+      }
 
       const values = params.attrs[k];
 
