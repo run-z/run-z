@@ -92,9 +92,14 @@ export namespace ZTaskSpec {
   export interface Attrs {
 
     /**
+     * Unknown task throws {@link UnknownZTaskError}, unless this {@link ZTaskParams.flag flag} is set.
+     */
+    readonly 'if-present'?: readonly [string, ...string[]];
+
+    /**
      * A map of attribute values by their names.
      */
-    readonly [name: string]: readonly [string, ...string[]];
+    readonly [name: string]: readonly [string, ...string[]] | undefined;
 
   }
 
