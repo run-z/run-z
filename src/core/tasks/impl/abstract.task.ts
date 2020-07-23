@@ -1,3 +1,4 @@
+import { mapIt } from '@proc7ts/a-iterable';
 import type { ZPackage, ZPackageSet } from '../../packages';
 import type { ZCall, ZCallPlanner, ZTaskParams } from '../../plan';
 import type { ZTaskExecution } from '../../plan/task-execution';
@@ -137,15 +138,11 @@ function selectZTaskPreTargets(
 /**
  * @internal
  */
-async function resolveZTaskRef(targets: ZPackageSet, taskRef: ZTaskSpec.TaskRef): Promise<ZTask[]> {
-
-  const result: ZTask[] = [];
-
-  for await (const target of targets.packages()) {
-    result.push(target.task(taskRef.task));
-  }
-
-  return result;
+async function resolveZTaskRef(targets: ZPackageSet, { task }: ZTaskSpec.TaskRef): Promise<Iterable<ZTask>> {
+  return mapIt(
+      await targets.packages(),
+      target => target.task(task),
+  );
 }
 
 

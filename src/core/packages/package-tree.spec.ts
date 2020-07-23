@@ -136,14 +136,7 @@ describe('ZPackageTree', () => {
     });
 
     async function select(pattern: string): Promise<string[]> {
-
-      const result: string[] = [];
-
-      for await (const resolved of root.select(pattern)) {
-        result.push(resolved.path);
-      }
-
-      return result;
+      return Array.from(await root.select(pattern), ({ path }) => path);
     }
 
   });

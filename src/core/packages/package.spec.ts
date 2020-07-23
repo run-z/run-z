@@ -67,24 +67,10 @@ describe('ZPackage', () => {
   });
 
   async function packages(packageSet: ZPackageSet): Promise<string[]> {
-
-    const result: string[] = [];
-
-    for await (const resolved of packageSet.packages()) {
-      result.push(resolved.name);
-    }
-
-    return result;
+    return Array.from(await packageSet.packages(), ({ name }) => name);
   }
 
-  async function select(pattern: string): Promise<string[]> {
-
-    const result: string[] = [];
-
-    for await (const resolved of pkg.select(pattern).packages()) {
-      result.push(resolved.name);
-    }
-
-    return result;
+  async function select(selector: string): Promise<string[]> {
+    return packages(pkg.select(selector));
   }
 });

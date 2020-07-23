@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module run-z
  */
-import { overNone } from '@proc7ts/a-iterable';
+import { flatMapIt, mapIt, overNone } from '@proc7ts/a-iterable';
 import type { ZPackageJson } from './package.json';
 import type { ZShell } from './shell';
 
@@ -49,16 +49,18 @@ export abstract class ZPackageLocation {
   /**
    * Lists nested package locations.
    *
-   * @returns Possibly async iterable of all package locations immediately nested in this one one.
+   * @returns Either an iterable of all package locations immediately nested in this one one, or a promise-like
+   * instance resolving to one.
    */
-  abstract nested(): Iterable<ZPackageLocation> | AsyncIterable<ZPackageLocation>;
+  abstract nested(): Iterable<ZPackageLocation> | Promise<Iterable<ZPackageLocation>>;
 
   /**
    * Lists deeply nested package locations.
    *
-   * @returns Possibly async iterable of all package locations nested in this one or deeper.
+   * @returns Either an iterable of all package locations nested in this one or deeper, or a promise-like instance
+   * resolving to one.
    */
-  abstract deeplyNested(): Iterable<ZPackageLocation> | AsyncIterable<ZPackageLocation>;
+  abstract deeplyNested(): Iterable<ZPackageLocation> | Promise<Iterable<ZPackageLocation>>;
 
   /**
    * Tries to load `package.json` from this location.
@@ -77,9 +79,9 @@ export abstract class ZPackageLocation {
    *
    * @param selector  Package selector.
    *
-   * @returns Possibly async iterable of matching package locations.
+   * @returns A promise resolving to iterable of matching package locations.
    */
-  select(selector: string): Iterable<ZPackageLocation> | AsyncIterable<ZPackageLocation> {
+  async select(selector: string): Promise<Iterable<ZPackageLocation>> {
 
     const index = selector.indexOf('//');
 
@@ -99,23 +101,20 @@ export abstract class ZPackageLocation {
       return overNone();
     }
 
-    return iterate();
+    const allNested: Iterable<ZPackageLocation> = deep ? await root.deeplyNested() : await root.nested();
 
-    async function *iterate(): AsyncIterable<ZPackageLocation> {
-
-      const allNested = deep ? root!.deeplyNested() : root!.nested();
-
-      if (suffix) {
-        for await (const nested of allNested) {
-          yield* nested.select(suffix);
-        }
-      } else {
-        if (deep) {
-          yield root!;
-        }
-        yield* allNested;
-      }
+    if (suffix) {
+      return flatMapIt(
+          await Promise.all(
+              mapIt(
+                  allNested,
+                  nested => nested.select(suffix),
+              ),
+          ),
+      );
     }
+
+    return deep ? flatMapIt([[root], allNested]) : allNested;
   }
 
 }

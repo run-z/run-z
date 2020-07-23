@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module run-z
  */
+import { flatMapIt, mapIt } from '@proc7ts/a-iterable';
 import type { ZPackage } from './package';
 
 /**
@@ -12,9 +13,9 @@ export abstract class ZPackageSet {
   /**
    * Lists packages of this set.
    *
-   * @returns A possibly async iterable of packages this set consists of.
+   * @returns Either ab iterable of packages this set consists of, or a promise-like instance resolving to one.
    */
-  abstract packages(): Iterable<ZPackage> | AsyncIterable<ZPackage>;
+  abstract packages(): Iterable<ZPackage> | PromiseLike<Iterable<ZPackage>>;
 
   /**
    * Combines package sets.
@@ -38,11 +39,15 @@ class CombinedZPackageSet extends ZPackageSet {
     super();
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await
-  async *packages(): AsyncIterable<ZPackage> {
-    for (const set of this.sets) {
-      yield* set.packages();
-    }
+  async packages(): Promise<Iterable<ZPackage>> {
+    return flatMapIt(
+        await Promise.all(
+            mapIt(
+                this.sets,
+                set => set.packages(),
+            ),
+        ),
+    );
   }
 
   andPackages(other: ZPackageSet): ZPackageSet {

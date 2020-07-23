@@ -2,6 +2,8 @@
  * @packageDocumentation
  * @module run-z
  */
+import { filterIt, mapIt } from '@proc7ts/a-iterable';
+import { isPresent } from '@proc7ts/primitives';
 import type { ZSetup } from '../setup';
 import type { ZTask } from '../tasks';
 import type { ZPackageLocation } from './package-location';
@@ -180,15 +182,15 @@ class SelectedZPackages extends ZPackageSet {
     super();
   }
 
-  async *packages(): AsyncIterable<ZPackage> {
-    for await (const l of this.pkg.location.select(this.selector)) {
+  async packages(): Promise<Iterable<ZPackage>> {
 
-      const resolved = await this.pkg.setup.packageResolver.find(l);
+    const locations = await this.pkg.location.select(this.selector);
+    const found: (ZPackage | undefined)[] = await Promise.all(mapIt(
+        locations,
+        (location: ZPackageLocation) => this.pkg.setup.packageResolver.find(location),
+    ));
 
-      if (resolved) {
-        yield resolved;
-      }
-    }
+    return filterIt<ZPackage | undefined, ZPackage>(found, isPresent);
   }
 
   toString(): string {

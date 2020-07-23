@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module run-z
  */
+import { filterIt, flatMapIt, mapIt } from '@proc7ts/a-iterable';
 import { isPresent, valueProvider } from '@proc7ts/primitives';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -94,17 +95,27 @@ export class ZPackageDirectory extends ZPackageLocation {
     return isRootURL(this.rootURL, url) ? new ZPackageDirectory(url, this.rootURL) : undefined;
   }
 
-  nested(): AsyncIterable<ZPackageDirectory> {
+  nested(): Promise<Iterable<ZPackageDirectory>> {
     return nestedZPackageDirs(this, dir => zPackageJsonPath(dir).then(isPresent));
   }
 
-  async *deeplyNested(): AsyncIterable<ZPackageDirectory> {
-    for await (const nested of nestedZPackageDirs(this)) {
-      if (await zPackageJsonPath(nested)) {
-        yield nested;
-      }
-      yield* nested.deeplyNested();
-    }
+  async deeplyNested(): Promise<Iterable<ZPackageDirectory>> {
+
+    const result: Iterable<Promise<Iterable<ZPackageDirectory>>> = mapIt(
+        await nestedZPackageDirs(this),
+        async nested => {
+
+          const deeper = await nested.deeplyNested();
+
+          if (await zPackageJsonPath(nested)) {
+            return flatMapIt([[nested], deeper]);
+          }
+
+          return deeper;
+        },
+    );
+
+    return flatMapIt(await Promise.all(result));
   }
 
   async load(): Promise<ZPackageJson | undefined> {
@@ -123,28 +134,33 @@ export class ZPackageDirectory extends ZPackageLocation {
 /**
  * @internal
  */
-async function *nestedZPackageDirs(
+async function nestedZPackageDirs(
     dir: ZPackageDirectory,
     test: (dir: ZPackageDirectory) => PromiseLike<boolean> | boolean = valueProvider(true),
-): AsyncIterable<ZPackageDirectory> {
+): Promise<Iterable<ZPackageDirectory>> {
 
   const entries = await fs.promises.readdir(fileURLToPath(dir.url), { withFileTypes: true });
+  const dirs: Iterable<Promise<ZPackageDirectory | null>> = mapIt(
+      entries,
+      async entry => {
 
-  for (const entry of entries) {
+        const { name } = entry;
 
-    const { name } = entry;
+        if (!entry.isDirectory() || name === 'node_modules' || name.startsWith('.')) {
+          // Skip hidden directories and `node_modules`
+          return null;
+        }
 
-    if (!entry.isDirectory() || name === 'node_modules' || name.startsWith('.')) {
-      // Skip hidden directories and `node_modules`
-      continue;
-    }
+        const nested = dir.relative(encodeURIComponent(name))!;
 
-    const nested = dir.relative(encodeURIComponent(name))!;
+        return await test(nested) ? nested : null;
+      },
+  );
 
-    if (await test(nested)) {
-      yield nested;
-    }
-  }
+  return filterIt<ZPackageDirectory | null, ZPackageDirectory>(
+      await Promise.all(dirs),
+      isPresent,
+  );
 }
 
 /**

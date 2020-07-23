@@ -31,7 +31,7 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
     const subTaskParams = planner.plannedCall.extendParams({ attrs, args: subArgs });
     const subCalls: Promise<ZCall>[] = [];
 
-    for await (const target of this._subTaskTargets().packages()) {
+    for (const target of await this._subTaskTargets().packages()) {
 
       const subTask = target.task(subTaskName);
 
