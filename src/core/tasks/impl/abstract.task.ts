@@ -45,14 +45,17 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   protected async planDeps(planner: ZCallPlanner<TAction>): Promise<void> {
 
     const { target, spec } = this;
+    let hasTasks = false;
     let targets: ZPackageSet | undefined;
     let parallel: ZTaskQualifier[] = [];
     let prevTasks: ZTask[] = [];
 
     for (const pre of spec.pre) {
       if (pre.selector != null) {
-        targets = selectZTaskPreTargets(target, targets, pre);
+        targets = selectZTaskPreTargets(target, hasTasks ? undefined : targets, pre);
+        hasTasks = false;
       } else {
+        hasTasks = true;
         if (!pre.parallel) {
           planner.makeParallel(parallel);
           parallel = [];
@@ -89,7 +92,6 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
         }
 
         prevTasks = calledTasks;
-        targets = undefined;
       }
     }
 

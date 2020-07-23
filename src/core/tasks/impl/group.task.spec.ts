@@ -84,7 +84,7 @@ describe('GroupZTask', () => {
         {
           packageJson: {
             scripts: {
-              test: 'run-z ./nested// dep/=attr1 =attr2',
+              test: 'run-z ./nested// dep1/=attr1 dep2/=attr2 =test',
             },
           },
         },
@@ -95,7 +95,8 @@ describe('GroupZTask', () => {
         {
           packageJson: {
             scripts: {
-              dep: 'run-z attr3=1 --then exec1',
+              dep1: 'run-z dep=1.1 --then exec11',
+              dep2: 'run-z dep=1.2 --then exec12',
             },
           },
         },
@@ -108,7 +109,8 @@ describe('GroupZTask', () => {
         {
           packageJson: {
             scripts: {
-              dep: 'run-z attr3=2 --then exec2',
+              dep1: 'run-z dep=2.1 --then exec21',
+              dep2: 'run-z dep=2.2 --then exec22',
             },
           },
         },
@@ -120,17 +122,25 @@ describe('GroupZTask', () => {
 
     const call = await testPlan.plan('test');
     const plan = call.plan;
-    const dep1 = plan.callOf(nested1.task('dep'));
-    const dep2 = plan.callOf(nested2.task('dep'));
+    const dep11 = plan.callOf(nested1.task('dep1'));
+    const dep12 = plan.callOf(nested1.task('dep2'));
+    const dep21 = plan.callOf(nested2.task('dep1'));
+    const dep22 = plan.callOf(nested2.task('dep2'));
 
-    expect(prerequisitesOf(call)).toEqual(taskIds(dep1, dep2));
-    expect(call.params().attrs).toEqual({ attr2: ['on'] });
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep12, dep22));
+    expect(call.params().attrs).toEqual({ test: ['on'] });
 
-    expect(prerequisitesOf(dep1)).toHaveLength(0);
-    expect(dep1.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'], attr3: ['1'] });
+    expect(prerequisitesOf(dep11)).toHaveLength(0);
+    expect(dep11.params().attrs).toEqual({ attr1: ['on'], test: ['on'], dep: ['1.1'] });
 
-    expect(prerequisitesOf(dep2)).toHaveLength(0);
-    expect(dep2.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'], attr3: ['2'] });
+    expect(prerequisitesOf(dep12)).toEqual(taskIds(dep11, dep21));
+    expect(dep12.params().attrs).toEqual({ attr2: ['on'], test: ['on'], dep: ['1.2'] });
+
+    expect(prerequisitesOf(dep21)).toHaveLength(0);
+    expect(dep21.params().attrs).toEqual({ attr1: ['on'], test: ['on'], dep: ['2.1'] });
+
+    expect(prerequisitesOf(dep22)).toEqual(taskIds(dep11, dep21));
+    expect(dep22.params().attrs).toEqual({ attr2: ['on'], test: ['on'], dep: ['2.2'] });
   });
 
   it('calls parallel external prerequisites', async () => {
