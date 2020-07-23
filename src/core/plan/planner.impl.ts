@@ -62,18 +62,13 @@ export class ZInstructionRecords {
     return call;
   }
 
-  order(tasks: readonly ZTask[]): void {
-    for (let i = tasks.length - 1; i > 0; --i) {
+  order(first: ZTask, second: ZTask): void {
+    const prerequisites = this._prerequisites.get(second);
 
-      const next = tasks[i];
-      const prev = tasks[i - 1];
-      const prerequisites = this._prerequisites.get(next);
-
-      if (prerequisites) {
-        prerequisites.add(prev);
-      } else {
-        this._prerequisites.set(next, new Set<ZTask>().add(prev));
-      }
+    if (prerequisites) {
+      prerequisites.add(first);
+    } else {
+      this._prerequisites.set(second, new Set<ZTask>().add(first));
     }
   }
 

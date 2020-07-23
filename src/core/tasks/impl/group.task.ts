@@ -1,5 +1,5 @@
 import type { ZPackageSet } from '../../packages';
-import type { ZCall, ZCallInstruction } from '../../plan';
+import type { ZCall, ZCallPlanner } from '../../plan';
 import type { ZTaskSpec } from '../task-spec';
 import { AbstractZTask } from './abstract.task';
 
@@ -8,38 +8,41 @@ import { AbstractZTask } from './abstract.task';
  */
 export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
 
-  async *asPre(
-      dependent: ZCall,
+  async asPre(
+      planner: ZCallPlanner,
       ref: ZTaskSpec.TaskRef,
-  ): Iterable<ZCallInstruction> | AsyncIterable<ZCallInstruction> {
+  ): Promise<Iterable<ZCall>> {
 
     const { attrs, args } = ref;
     const [subTaskName, ...subArgs] = args;
 
-    if (subTaskName && !subTaskName.startsWith('-')) {
-      // There is a sub-task to execute.
-
-      // Add task prerequisite. Pass call parameters to sub-task rather to this prerequisite.
-      yield {
-        task: this,
-        params: () => dependent.params(),
-      };
-
-      // Delegate to sub-task.
-      const subTaskParams = dependent.extendParams({ attrs, args: subArgs });
-
-      for await (const target of this._subTaskTargets().packages()) {
-
-        const subTask = target.task(subTaskName);
-
-        yield {
-          task: subTask,
-          params: subTaskParams,
-        };
-      }
-    } else {
-      yield* super.asPre(dependent, ref);
+    if (!subTaskName || subTaskName.startsWith('-')) {
+      return super.asPre(planner, ref);
     }
+
+    // There is a sub-task(s) to execute.
+    // Call prerequisite. Pass call parameters to sub-task(s) rather then to this prerequisite.
+    await planner.call({
+      task: this,
+      params: () => planner.plannedCall.params(),
+    });
+
+    // Delegate to sub-task(s).
+    const subTaskParams = planner.plannedCall.extendParams({ attrs, args: subArgs });
+    const subCalls: Promise<ZCall>[] = [];
+
+    for await (const target of this._subTaskTargets().packages()) {
+
+      const subTask = target.task(subTaskName);
+
+      subCalls.push(planner.call({
+        task: subTask,
+        params: subTaskParams,
+      }));
+      planner.order(this, subTask);
+    }
+
+    return Promise.all(subCalls);
   }
 
   exec(): void {

@@ -123,13 +123,13 @@ describe('GroupZTask', () => {
     const dep1 = plan.callOf(nested1.task('dep'));
     const dep2 = plan.callOf(nested2.task('dep'));
 
-    expect(prerequisitesOf(call)).toEqual(taskIds(dep2));
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep1, dep2));
     expect(call.params().attrs).toEqual({ attr2: ['on'] });
 
     expect(prerequisitesOf(dep1)).toHaveLength(0);
     expect(dep1.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'], attr3: ['1'] });
 
-    expect(prerequisitesOf(dep2)).toEqual(taskIds(dep1));
+    expect(prerequisitesOf(dep2)).toHaveLength(0);
     expect(dep2.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'], attr3: ['2'] });
   });
 
@@ -183,7 +183,7 @@ describe('GroupZTask', () => {
     const dep2 = plan.callOf(nested2.task('dep'));
     const sub2 = plan.callOf(nested2.task('sub-task'));
 
-    expect(prerequisitesOf(call)).toEqual(taskIds(sub2));
+    expect(prerequisitesOf(call)).toEqual(taskIds(sub1, sub2));
     expect(call.params().attrs).toEqual({ attr1: ['on'] });
 
     expect(prerequisitesOf(dep1)).toHaveLength(0);
@@ -192,7 +192,7 @@ describe('GroupZTask', () => {
     expect(prerequisitesOf(sub1)).toEqual(taskIds(dep1));
     expect(sub1.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'] });
 
-    expect(prerequisitesOf(dep2)).toEqual(taskIds(sub1));
+    expect(prerequisitesOf(dep2)).toHaveLength(0);
     expect(dep2.params().attrs).toEqual({ attr1: ['on'], attr3: ['2'] });
 
     expect(prerequisitesOf(sub2)).toEqual(taskIds(dep2));
@@ -246,16 +246,19 @@ describe('GroupZTask', () => {
     const sub1 = plan.callOf(nested1.task('sub-task'));
     const sub2 = plan.callOf(nested2.task('sub-task'));
 
-    expect(prerequisitesOf(call)).toEqual(taskIds(sub2));
+    expect(prerequisitesOf(call)).toEqual(taskIds(sub1, sub2));
     expect(call.params().attrs).toEqual({ attr1: ['on'] });
 
-    expect(prerequisitesOf(dep)).toEqual([{ target: 'nested2', task: 'dep3' }]);
+    expect(prerequisitesOf(dep)).toEqual([
+        { target: 'nested1', task: 'dep3' },
+        { target: 'nested2', task: 'dep3' },
+    ]);
     expect(dep.params().attrs).toEqual({ attr1: ['on'] });
 
     expect(prerequisitesOf(sub1)).toEqual(taskIds(dep));
     expect(sub1.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'] });
 
-    expect(prerequisitesOf(sub2)).toEqual(taskIds(sub1));
+    expect(prerequisitesOf(sub2)).toEqual(taskIds(dep));
     expect(sub2.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'] });
   });
 

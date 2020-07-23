@@ -79,7 +79,7 @@ describe('ZPlan', () => {
             const { task } = planner.plannedCall;
             const dep1 = task.target.task('dep1');
 
-            planner.order([dep1, task]);
+            planner.order(dep1, task);
           },
         },
     );

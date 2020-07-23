@@ -14,7 +14,7 @@ import type { ZCallInstruction } from './call-instruction';
  *
  * @typeparam TAction  Task action type.
  */
-export interface ZCallPlanner<TAction extends ZTaskSpec.Action> {
+export interface ZCallPlanner<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
 
   /**
    * Task execution setup instance.
@@ -41,7 +41,7 @@ export interface ZCallPlanner<TAction extends ZTaskSpec.Action> {
   call<TAction extends ZTaskSpec.Action>(instruction: ZCallInstruction<TAction>): Promise<ZCall<TAction>>;
 
   /**
-   * Sets the task execution order.
+   * Establishes the task execution order.
    *
    * The call to this method does not cause any of the tasks to be executed.
    *
@@ -51,9 +51,10 @@ export interface ZCallPlanner<TAction extends ZTaskSpec.Action> {
    *
    * Contradictory execution order causes one of the tasks to be executed before prerequisite.
    *
-   * @param tasks  Array of tasks in order of their execution.
+   * @param first  The task executed first.
+   * @param second  The task executed after the first one.
    */
-  order(tasks: readonly ZTask[]): void;
+  order(first: ZTask, second: ZTask): void;
 
   /**
    * Allow parallel tasks execution.

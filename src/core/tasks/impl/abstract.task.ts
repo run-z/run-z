@@ -1,5 +1,5 @@
 import type { ZPackage, ZPackageSet } from '../../packages';
-import type { ZCall, ZCallInstruction, ZCallPlanner, ZTaskParams } from '../../plan';
+import type { ZCall, ZCallPlanner, ZTaskParams } from '../../plan';
 import type { ZTaskExecution } from '../../plan/task-execution';
 import type { ZTask } from '../task';
 import type { ZTaskSpec } from '../task-spec';
@@ -28,24 +28,23 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   }
 
   asPre(
-      dependent: ZCall,
+      planner: ZCallPlanner,
       { attrs, args }: ZTaskSpec.TaskRef,
-  ): Iterable<ZCallInstruction> | AsyncIterable<ZCallInstruction> {
-    return [{
+  ): Promise<Iterable<ZCall>> {
+    return Promise.all([planner.call({
       task: this,
-      params: dependent.extendParams({ attrs, args }),
-    }];
+      params: planner.plannedCall.extendParams({ attrs, args }),
+    })]);
   }
 
   abstract exec(execution: ZTaskExecution<TAction>): void | PromiseLike<unknown>;
 
   protected async planDeps(planner: ZCallPlanner<TAction>): Promise<void> {
 
-    const { plannedCall } = planner;
     const { target, spec } = this;
     let targets: ZPackageSet | undefined;
     let parallel: ZTask[] = [];
-    const order: ZTask[] = [];
+    let prevTasks: ZTask[] = [];
 
     for (const dep of spec.pre) {
       if (dep.selector != null) {
@@ -56,22 +55,30 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
           parallel = [];
         }
 
-        const depTasks = await resolveZTaskRef(targets || target, dep);
+        const preTasks = await resolveZTaskRef(targets || target, dep);
+        const calledTasks: ZTask[] = [];
 
-        for (const depTask of depTasks) {
-          for await (const subTaskCall of depTask.asPre(plannedCall, dep)) {
-            await planner.call(subTaskCall);
-            order.push(subTaskCall.task);
-            parallel.push(subTaskCall.task);
+        for (const preTask of preTasks) {
+
+          const preCalls = await preTask.asPre(planner, dep);
+
+          for (const { task: preTask } of preCalls) {
+            calledTasks.push(preTask);
+            parallel.push(preTask);
+            for (const prevTask of prevTasks) {
+              planner.order(prevTask, preTask);
+            }
           }
         }
 
+        prevTasks = calledTasks;
         targets = undefined;
       }
     }
 
-    order.push(this);
-    planner.order(order);
+    for (const prevTask of prevTasks) {
+      planner.order(prevTask, this);
+    }
 
     if (this.isParallel()) {
       parallel.push(this);
