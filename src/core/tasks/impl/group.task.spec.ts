@@ -145,13 +145,71 @@ describe('GroupZTask', () => {
 
   it('calls parallel external prerequisites', async () => {
 
-    const targetLocation = testPlan.addPackage(
+    const target = testPlan.addPackage(
         'test',
         {
           packageJson: {
             scripts: {
               test: 'run-z dep0, ./nested// dep',
               dep0: 'exec',
+            },
+          },
+        },
+    );
+
+    testPlan.addPackage(
+        'test/nested/nested1',
+        {
+          packageJson: {
+            scripts: {
+              dep: 'exec1',
+            },
+          },
+        },
+    );
+
+    const nested1 = await testPlan.target();
+
+    testPlan.addPackage(
+        'test/nested/nested2',
+        {
+          packageJson: {
+            scripts: {
+              dep: 'exec2',
+            },
+          },
+        },
+    );
+
+    const nested2 = await testPlan.target();
+
+    await testPlan.target(target);
+
+    const call = await testPlan.plan('test');
+    const plan = call.plan;
+    const dep0 = plan.callOf(call.task.target.task('dep0'));
+    const dep1 = plan.callOf(nested1.task('dep'));
+    const dep2 = plan.callOf(nested2.task('dep'));
+
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep1, dep2));
+
+    expect(prerequisitesOf(dep1)).toEqual(taskIds(dep0));
+    expect(dep1.isParallelTo(dep0.task)).toBe(true);
+    expect(dep1.isParallelTo(dep2.task)).toBe(false);
+
+    expect(prerequisitesOf(dep2)).toEqual(taskIds(dep0));
+    expect(dep2.isParallelTo(dep0.task)).toBe(true);
+    expect(dep2.isParallelTo(dep1.task)).toBe(false);
+  });
+
+  it('calls external prerequisites parallel to each other', async () => {
+
+    const target = testPlan.addPackage(
+        'test',
+        {
+          packageJson: {
+            scripts: {
+              test: 'run-z ./nested// dep, dep',
             },
           },
         },
@@ -182,23 +240,21 @@ describe('GroupZTask', () => {
     );
 
     const nested2 = await testPlan.target();
-    const target = await testPlan.target(targetLocation);
+
+    await testPlan.target(target);
 
     const call = await testPlan.plan('test');
     const plan = call.plan;
-    const dep0 = plan.callOf(target.task('dep0'));
     const dep1 = plan.callOf(nested1.task('dep'));
     const dep2 = plan.callOf(nested2.task('dep'));
 
     expect(prerequisitesOf(call)).toEqual(taskIds(dep1, dep2));
 
-    expect(prerequisitesOf(dep1)).toEqual(taskIds(dep0));
-    expect(dep1.isParallelTo(dep0.task)).toBe(true);
-    expect(dep1.isParallelTo(dep2.task)).toBe(false);
+    expect(prerequisitesOf(dep1)).toEqual(taskIds(dep1, dep2));
+    expect(dep1.isParallelTo(dep2.task)).toBe(true);
 
-    expect(prerequisitesOf(dep2)).toEqual(taskIds(dep0));
-    expect(dep2.isParallelTo(dep0.task)).toBe(true);
-    expect(dep2.isParallelTo(dep1.task)).toBe(false);
+    expect(prerequisitesOf(dep2)).toEqual(taskIds(dep1, dep2));
+    expect(dep2.isParallelTo(dep1.task)).toBe(true);
   });
 
   it('calls sub-tasks in other packages', async () => {
