@@ -12,7 +12,7 @@ import type { ZTaskSpec } from './task-spec';
  *
  * @typeparam TAction  Task action type.
  */
-export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
+export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> extends ZTaskQualifier {
 
   /**
    * Target package the task is applied to.
@@ -73,5 +73,21 @@ export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
    * executed asynchronously.
    */
   exec(execution: ZTaskExecution<TAction>): void | PromiseLike<unknown>;
+
+}
+
+/**
+ * Task qualifier.
+ *
+ * Any task may have multiple qualifiers.
+ *
+ * Qualifiers are distinguished by their identity.
+ */
+export interface ZTaskQualifier {
+
+  /**
+   * Human- readable task qualifier.
+   */
+  readonly taskQN: string;
 
 }

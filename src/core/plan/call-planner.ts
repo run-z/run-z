@@ -3,7 +3,7 @@
  * @module run-z
  */
 import type { ZSetup } from '../setup';
-import type { ZTask, ZTaskSpec } from '../tasks';
+import type { ZTask, ZTaskQualifier, ZTaskSpec } from '../tasks';
 import type { ZCall } from './call';
 import type { ZCallInstruction } from './call-instruction';
 
@@ -27,6 +27,16 @@ export interface ZCallPlanner<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
    * All instructions recorded by this planner are related to this call.
    */
   readonly plannedCall: ZCall<TAction>;
+
+  /**
+   * Qualifies the task.
+   *
+   * Add the given qualifier to the task.
+   *
+   * @param task  Target task to add qualifier to.
+   * @param qualifier  Qualifier to add to the task.
+   */
+  qualify(task: ZTask, qualifier: ZTaskQualifier): void;
 
   /**
    * Records a call to a task.
@@ -61,8 +71,8 @@ export interface ZCallPlanner<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
    *
    * The call to this method does not cause any of the tasks to be executed.
    *
-   * @param tasks  Array of tasks that can be executed in parallel to each other.
+   * @param tasks  Array of qualifiers of the tasks that can be executed in parallel to each other.
    */
-  makeParallel(tasks: readonly ZTask[]): void;
+  makeParallel(tasks: readonly ZTaskQualifier[]): void;
 
 }

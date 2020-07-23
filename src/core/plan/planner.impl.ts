@@ -1,7 +1,7 @@
 import { overNone, thruIt } from '@proc7ts/a-iterable';
 import { nextSkip } from '@proc7ts/call-thru';
 import type { ZSetup } from '../setup';
-import type { ZTask, ZTaskSpec } from '../tasks';
+import type { ZTask, ZTaskQualifier, ZTaskSpec } from '../tasks';
 import { UnknownZTaskError } from '../tasks';
 import type { ZCall } from './call';
 import type { ZCallInstruction } from './call-instruction';
@@ -17,9 +17,10 @@ export class ZInstructionRecords {
   rev = 0;
   readonly plan: ZPlan;
   readonly executor: ZExecutor = new ZExecutor();
+  private readonly _qualifiers = new Map<ZTask, Set<ZTaskQualifier>>();
   private readonly _calls = new Map<ZTask, ZCallRecord>();
   private readonly _prerequisites = new Map<ZTask, Set<ZTask>>();
-  private readonly _parallel = new Map<ZTask, Set<ZTask>>();
+  private readonly _parallel = new Map<ZTaskQualifier, Set<ZTaskQualifier>>();
 
   constructor(readonly setup: ZSetup) {
     this.plan = {
@@ -39,6 +40,24 @@ export class ZInstructionRecords {
         return call;
       },
     };
+  }
+
+  qualify(task: ZTask, qualifier: ZTaskQualifier): Set<ZTaskQualifier> {
+
+    let qualifiers = this._qualifiers.get(task);
+
+    if (qualifiers) {
+      qualifiers.add(qualifier);
+    } else {
+      qualifiers = new Set<ZTaskQualifier>().add(task).add(qualifier);
+      this._qualifiers.set(task, qualifiers);
+    }
+
+    return qualifiers;
+  }
+
+  private _qualifiersOf(task: ZTask): Iterable<ZTaskQualifier> {
+    return this._qualifiers.get(task) || [task];
   }
 
   async call<TAction extends ZTaskSpec.Action>(
@@ -109,7 +128,7 @@ export class ZInstructionRecords {
     return false;
   }
 
-  makeParallel(tasks: readonly ZTask[]): void {
+  makeParallel(tasks: ZTaskQualifier[]): void {
     for (let i = tasks.length - 1; i > 0; --i) {
 
       const first = tasks[i];
@@ -127,16 +146,24 @@ export class ZInstructionRecords {
   }
 
   areParallel(first: ZTask, second: ZTask): boolean {
+    return this._areParallel(first, second) || this._areParallel(second, first);
+  }
 
-    const parallels = this._parallel.get(first);
+  private _areParallel(first: ZTask, second: ZTask): boolean {
+    for (const firstQ of this._qualifiersOf(first)) {
 
-    if (parallels && parallels.has(second)) {
-      return true;
+      const parallel = this._parallel.get(firstQ);
+
+      if (parallel) {
+        for (const secondQ of this._qualifiersOf(second)) {
+          if (parallel.has(secondQ)) {
+            return true;
+          }
+        }
+      }
     }
 
-    const parallels2 = this._parallel.get(second);
-
-    return !!parallels2 && parallels2.has(first);
+    return false;
   }
 
 }

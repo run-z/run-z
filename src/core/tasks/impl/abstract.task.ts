@@ -16,6 +16,10 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   ) {
   }
 
+  get taskQN(): string {
+    return this.name;
+  }
+
   params(): ZTaskParams.Partial {
 
     const { spec: { attrs, args } } = this;

@@ -95,6 +95,7 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
     await instruction.plan({
       setup: this._records.setup,
       plannedCall: this,
+      qualify: this._records.qualify.bind(this._records),
       call: instr => this._records.call(instr, this),
       order: this._records.order.bind(this._records),
       makeParallel: this._records.makeParallel.bind(this._records),
