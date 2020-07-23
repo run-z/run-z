@@ -42,18 +42,15 @@ export class ZInstructionRecords {
     };
   }
 
-  qualify(task: ZTask, qualifier: ZTaskQualifier): Set<ZTaskQualifier> {
+  qualify(task: ZTask, qualifier: ZTaskQualifier): void {
 
-    let qualifiers = this._qualifiers.get(task);
+    const qualifiers = this._qualifiers.get(task);
 
     if (qualifiers) {
       qualifiers.add(qualifier);
     } else {
-      qualifiers = new Set<ZTaskQualifier>().add(task).add(qualifier);
-      this._qualifiers.set(task, qualifiers);
+      this._qualifiers.set(task, new Set<ZTaskQualifier>().add(task).add(qualifier));
     }
-
-    return qualifiers;
   }
 
   private _qualifiersOf(task: ZTask): Iterable<ZTaskQualifier> {
