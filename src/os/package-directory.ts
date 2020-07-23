@@ -17,12 +17,14 @@ import { isRootURL, urlBaseName, urlOfFile } from './url.impl';
 export class ZPackageDirectory extends ZPackageLocation {
 
   /**
-   * Constructs NPM package directory.
+   * Opens NPM package directory.
    *
    * @param url  URL of directory without.
    * @param rootURL  Root URL containing all packages.
+   *
+   * @returns New NPM package directory instance.
    */
-  static create(
+  static open(
       {
         url = pathToFileURL(process.cwd()),
         rootURL = new URL('file:///'),

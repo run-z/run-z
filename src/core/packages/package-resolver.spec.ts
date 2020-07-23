@@ -18,7 +18,7 @@ describe('ZPackageResolver', () => {
   });
 
   function packageLocation(path: string): ZPackageDirectory {
-    return ZPackageDirectory.create({
+    return ZPackageDirectory.open({
       url: new URL(path, rootURL.href + '/'),
       rootURL,
     });
