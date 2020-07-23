@@ -147,7 +147,7 @@ export class ZPackage extends ZPackageSet {
    * @returns Selected package set.
    */
   select(selector: string): ZPackageSet {
-    return new ResolvedZPackages(this, selector);
+    return new SelectedZPackages(this, selector);
   }
 
   task(name: string): ZTask {
@@ -165,12 +165,16 @@ export class ZPackage extends ZPackageSet {
     return absent;
   }
 
+  toString(): string {
+    return this.name;
+  }
+
 }
 
 /**
  * @internal
  */
-class ResolvedZPackages extends ZPackageSet {
+class SelectedZPackages extends ZPackageSet {
 
   constructor(readonly pkg: ZPackage, readonly selector: string) {
     super();
@@ -185,6 +189,10 @@ class ResolvedZPackages extends ZPackageSet {
         yield resolved;
       }
     }
+  }
+
+  toString(): string {
+    return this.selector;
   }
 
 }
