@@ -3,7 +3,7 @@
  * @module run-z
  */
 import type { ZPackage } from '../packages';
-import type { ZCall, ZCallInstruction, ZCallPlanner, ZTaskParams } from '../plan';
+import type { ZCall, ZCallPlanner, ZTaskParams } from '../plan';
 import type { ZTaskExecution } from '../plan/task-execution';
 import type { ZTaskSpec } from './task-spec';
 
@@ -12,7 +12,7 @@ import type { ZTaskSpec } from './task-spec';
  *
  * @typeparam TAction  Task action type.
  */
-export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
+export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> extends ZTaskQualifier {
 
   /**
    * Target package the task is applied to.
@@ -49,20 +49,20 @@ export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
   plan(planner: ZCallPlanner<TAction>): void | PromiseLike<unknown>;
 
   /**
-   * Represents this task as a dependency of another one.
+   * Represents this task as a prerequisite of another one.
    *
-   * By default a {@link ZTaskSpec.Group grouping task} treats the first argument as a sub-task name, an the rest of
-   * arguments as arguments to this sub-task. The tasks of all other types record a call to this as is.
+   * By default a {@link ZTaskSpec.Group grouping task} treats the first argument as a sub-task name and the rest of
+   * arguments as arguments to this sub-task. A task of any other type returns a call to itself.
    *
-   * @param dependent  Depending task execution call.
-   * @param dep  Dependency specifier.
+   * @param planner  Depending task planner.
+   * @param ref  Prerequisite task reference.
    *
-   * @returns A potentially asynchronous iterable of {@link ZCallInstruction dependency call instructions}.
+   * @returns A promise resolved to iterable of prerequisite calls.
    */
-  asDepOf(
-      dependent: ZCall,
-      dep: ZTaskSpec.TaskRef,
-  ): Iterable<ZCallInstruction> | AsyncIterable<ZCallInstruction>;
+  asPre(
+      planner: ZCallPlanner,
+      ref: ZTaskSpec.TaskRef,
+  ): Promise<Iterable<ZCall>>;
 
   /**
    * Performs task execution.
@@ -73,5 +73,21 @@ export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
    * executed asynchronously.
    */
   exec(execution: ZTaskExecution<TAction>): void | PromiseLike<unknown>;
+
+}
+
+/**
+ * Task qualifier.
+ *
+ * Any task may have multiple qualifiers.
+ *
+ * Qualifiers are distinguished by their identity.
+ */
+export interface ZTaskQualifier {
+
+  /**
+   * Human- readable task qualifier.
+   */
+  readonly taskQN: string;
 
 }

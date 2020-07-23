@@ -57,7 +57,7 @@ describe('ZPlan', () => {
     expect(dep2.params().args).toEqual(['--arg2', '--arg1']);
     expect(dep2.params().attr('attr')).toBe('1');
   });
-  it('ignores never called dependencies', async () => {
+  it('ignores never called prerequisites', async () => {
     testPlan.addPackage(
         'test',
         {
@@ -79,7 +79,7 @@ describe('ZPlan', () => {
             const { task } = planner.plannedCall;
             const dep1 = task.target.task('dep1');
 
-            planner.order([dep1, task]);
+            planner.order(dep1, task);
           },
         },
     );

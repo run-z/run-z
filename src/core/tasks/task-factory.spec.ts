@@ -17,7 +17,7 @@ describe('ZTaskFactory', () => {
         target,
         'test',
         {
-          deps: [],
+          pre: [],
           attrs: {},
           args: [],
           action: { type: 'wrong' } as any,

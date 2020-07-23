@@ -1,7 +1,7 @@
 import type { ZPackage, ZPackageSet } from '../../packages';
-import type { ZCall, ZCallInstruction, ZCallPlanner, ZTaskParams } from '../../plan';
+import type { ZCall, ZCallPlanner, ZTaskParams } from '../../plan';
 import type { ZTaskExecution } from '../../plan/task-execution';
-import type { ZTask } from '../task';
+import type { ZTask, ZTaskQualifier } from '../task';
 import type { ZTaskSpec } from '../task-spec';
 
 /**
@@ -9,11 +9,14 @@ import type { ZTaskSpec } from '../task-spec';
  */
 export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements ZTask<TAction> {
 
+  readonly taskQN: string;
+
   constructor(
       readonly target: ZPackage,
       readonly name: string,
       readonly spec: ZTaskSpec<TAction>,
   ) {
+    this.taskQN = name;
   }
 
   params(): ZTaskParams.Partial {
@@ -27,51 +30,74 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
     await this.planDeps(planner);
   }
 
-  asDepOf(
-      dependent: ZCall,
+  asPre(
+      planner: ZCallPlanner,
       { attrs, args }: ZTaskSpec.TaskRef,
-  ): Iterable<ZCallInstruction> | AsyncIterable<ZCallInstruction> {
-    return [{
+  ): Promise<Iterable<ZCall>> {
+    return Promise.all([planner.call({
       task: this,
-      params: dependent.extendParams({ attrs, args }),
-    }];
+      params: planner.plannedCall.extendParams({ attrs, args }),
+    })]);
   }
 
   abstract exec(execution: ZTaskExecution<TAction>): void | PromiseLike<unknown>;
 
   protected async planDeps(planner: ZCallPlanner<TAction>): Promise<void> {
 
-    const { plannedCall } = planner;
     const { target, spec } = this;
+    let hasTasks = false;
     let targets: ZPackageSet | undefined;
-    let parallel: ZTask[] = [];
-    const order: ZTask[] = [];
+    let parallel: ZTaskQualifier[] = [];
+    let prevTasks: ZTask[] = [];
 
-    for (const dep of spec.deps) {
-      if (dep.selector != null) {
-        targets = updateZTaskDepTargets(target, targets, dep);
+    for (const pre of spec.pre) {
+      if (pre.selector != null) {
+        targets = selectZTaskPreTargets(target, hasTasks ? undefined : targets, pre);
+        hasTasks = false;
       } else {
-        if (!dep.parallel) {
+        hasTasks = true;
+        if (!pre.parallel) {
           planner.makeParallel(parallel);
           parallel = [];
         }
 
-        const depTasks = await resolveZTaskRef(targets || target, dep);
+        const preTarget = targets || target;
+        const preTasks = await resolveZTaskRef(preTarget, pre);
+        const calledTasks: ZTask[] = [];
 
-        for (const depTask of depTasks) {
-          for await (const subTaskCall of depTask.asDepOf(plannedCall, dep)) {
-            await planner.call(subTaskCall);
-            order.push(subTaskCall.task);
-            parallel.push(subTaskCall.task);
+        for (const preTask of preTasks) {
+
+          const preCalls = await preTask.asPre(planner, pre);
+
+          for (const { task: preTask } of preCalls) {
+            calledTasks.push(preTask);
+            for (const prevTask of prevTasks) {
+              planner.order(prevTask, preTask);
+            }
           }
         }
 
-        targets = undefined;
+        if (calledTasks.length === 1) {
+          parallel.push(calledTasks[0]);
+        } else {
+
+          const qualifier: ZTaskQualifier = {
+            taskQN: `${String(preTarget)} */${pre.task}`,
+          };
+
+          parallel.push(qualifier);
+          for (const calledTask of calledTasks) {
+            planner.qualify(calledTask, qualifier);
+          }
+        }
+
+        prevTasks = calledTasks;
       }
     }
 
-    order.push(this);
-    planner.order(order);
+    for (const prevTask of prevTasks) {
+      planner.order(prevTask, this);
+    }
 
     if (this.isParallel()) {
       parallel.push(this);
@@ -80,7 +106,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   }
 
   /**
-   * Whether this task can be called in parallel to dependencies.
+   * Whether this task can be called in parallel to its prerequisites.
    */
   protected isParallel(): boolean {
     return false;
@@ -91,7 +117,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
 /**
  * @internal
  */
-function updateZTaskDepTargets(
+function selectZTaskPreTargets(
     target: ZPackage,
     targets: ZPackageSet | undefined,
     packageRef: ZTaskSpec.PackageRef,

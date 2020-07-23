@@ -3,7 +3,7 @@
  * @module run-z
  */
 import type { ZSetup } from '../setup';
-import type { ZTask, ZTaskSpec } from '../tasks';
+import type { ZTask, ZTaskQualifier, ZTaskSpec } from '../tasks';
 import type { ZCall } from './call';
 import type { ZCallInstruction } from './call-instruction';
 
@@ -14,7 +14,7 @@ import type { ZCallInstruction } from './call-instruction';
  *
  * @typeparam TAction  Task action type.
  */
-export interface ZCallPlanner<TAction extends ZTaskSpec.Action> {
+export interface ZCallPlanner<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
 
   /**
    * Task execution setup instance.
@@ -29,6 +29,16 @@ export interface ZCallPlanner<TAction extends ZTaskSpec.Action> {
   readonly plannedCall: ZCall<TAction>;
 
   /**
+   * Qualifies the task.
+   *
+   * Add the given qualifier to the task.
+   *
+   * @param task  Target task to add qualifier to.
+   * @param qualifier  Qualifier to add to the task.
+   */
+  qualify(task: ZTask, qualifier: ZTaskQualifier): void;
+
+  /**
    * Records a call to a task.
    *
    * Updates already recorded call to the same task.
@@ -41,7 +51,7 @@ export interface ZCallPlanner<TAction extends ZTaskSpec.Action> {
   call<TAction extends ZTaskSpec.Action>(instruction: ZCallInstruction<TAction>): Promise<ZCall<TAction>>;
 
   /**
-   * Sets the task execution order.
+   * Establishes the task execution order.
    *
    * The call to this method does not cause any of the tasks to be executed.
    *
@@ -51,17 +61,18 @@ export interface ZCallPlanner<TAction extends ZTaskSpec.Action> {
    *
    * Contradictory execution order causes one of the tasks to be executed before prerequisite.
    *
-   * @param tasks  Array of tasks in order of their execution.
+   * @param first  The task executed first.
+   * @param second  The task executed after the first one.
    */
-  order(tasks: readonly ZTask[]): void;
+  order(first: ZTask, second: ZTask): void;
 
   /**
    * Allow parallel tasks execution.
    *
    * The call to this method does not cause any of the tasks to be executed.
    *
-   * @param tasks  Array of tasks that can be executed in parallel to each other.
+   * @param tasks  Array of qualifiers of the tasks that can be executed in parallel to each other.
    */
-  makeParallel(tasks: readonly ZTask[]): void;
+  makeParallel(tasks: readonly ZTaskQualifier[]): void;
 
 }

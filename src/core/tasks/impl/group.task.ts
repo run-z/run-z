@@ -1,5 +1,5 @@
 import type { ZPackageSet } from '../../packages';
-import type { ZCall, ZCallInstruction } from '../../plan';
+import type { ZCall, ZCallPlanner } from '../../plan';
 import type { ZTaskSpec } from '../task-spec';
 import { AbstractZTask } from './abstract.task';
 
@@ -8,38 +8,41 @@ import { AbstractZTask } from './abstract.task';
  */
 export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
 
-  async *asDepOf(
-      dependent: ZCall,
-      dep: ZTaskSpec.TaskRef,
-  ): Iterable<ZCallInstruction> | AsyncIterable<ZCallInstruction> {
+  async asPre(
+      planner: ZCallPlanner,
+      ref: ZTaskSpec.TaskRef,
+  ): Promise<Iterable<ZCall>> {
 
-    const { attrs, args } = dep;
+    const { attrs, args } = ref;
     const [subTaskName, ...subArgs] = args;
 
-    if (subTaskName && !subTaskName.startsWith('-')) {
-      // There is a sub-task to execute.
-
-      // Add task dependency. Pass call parameters to sub-task rather to this dependency.
-      yield {
-        task: this,
-        params: () => dependent.params(),
-      };
-
-      // Delegate to sub-task.
-      const subTaskParams = dependent.extendParams({ attrs, args: subArgs });
-
-      for await (const target of this._subTaskTargets().packages()) {
-
-        const subTask = target.task(subTaskName);
-
-        yield {
-          task: subTask,
-          params: subTaskParams,
-        };
-      }
-    } else {
-      yield* super.asDepOf(dependent, dep);
+    if (!subTaskName || subTaskName.startsWith('-')) {
+      return super.asPre(planner, ref);
     }
+
+    // There is a sub-task(s) to execute.
+    // Call prerequisite. Pass call parameters to sub-task(s) rather then to this prerequisite.
+    await planner.call({
+      task: this,
+      params: () => planner.plannedCall.params(),
+    });
+
+    // Delegate to sub-task(s).
+    const subTaskParams = planner.plannedCall.extendParams({ attrs, args: subArgs });
+    const subCalls: Promise<ZCall>[] = [];
+
+    for await (const target of this._subTaskTargets().packages()) {
+
+      const subTask = target.task(subTaskName);
+
+      subCalls.push(planner.call({
+        task: subTask,
+        params: subTaskParams,
+      }));
+      planner.order(this, subTask);
+    }
+
+    return Promise.all(subCalls);
   }
 
   exec(): void {
@@ -48,12 +51,12 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
 
   private _subTaskTargets(): ZPackageSet {
 
-    const { target, spec: { deps } } = this;
+    const { target, spec: { pre } } = this;
     let result: ZPackageSet | undefined;
 
-    for (let i = deps.length - 1; i >= 0; --i) {
+    for (let i = pre.length - 1; i >= 0; --i) {
 
-      const dep = deps[i];
+      const dep = pre[i];
 
       if (dep.selector) {
 

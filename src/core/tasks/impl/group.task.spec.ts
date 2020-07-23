@@ -9,7 +9,7 @@ describe('GroupZTask', () => {
     testPlan = new TestPlan();
   });
 
-  it('calls dependencies', async () => {
+  it('calls prerequisites', async () => {
     testPlan.addPackage(
         'test',
         {
@@ -77,14 +77,139 @@ describe('GroupZTask', () => {
     expect(dep3.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'] });
   });
 
-  it('calls dependencies from other packages', async () => {
+  it('calls external prerequisites', async () => {
 
     const target = testPlan.addPackage(
         'test',
         {
           packageJson: {
             scripts: {
-              test: 'run-z ./nested// dep/=attr1 =attr2',
+              test: 'run-z ./nested// dep1/=attr1 dep2/=attr2 =test',
+            },
+          },
+        },
+    );
+
+    testPlan.addPackage(
+        'test/nested/nested1',
+        {
+          packageJson: {
+            scripts: {
+              dep1: 'run-z dep=1.1 --then exec11',
+              dep2: 'run-z dep=1.2 --then exec12',
+            },
+          },
+        },
+    );
+
+    const nested1 = await testPlan.target();
+
+    testPlan.addPackage(
+        'test/nested/nested2',
+        {
+          packageJson: {
+            scripts: {
+              dep1: 'run-z dep=2.1 --then exec21',
+              dep2: 'run-z dep=2.2 --then exec22',
+            },
+          },
+        },
+    );
+
+    const nested2 = await testPlan.target();
+
+    await testPlan.target(target);
+
+    const call = await testPlan.plan('test');
+    const plan = call.plan;
+    const dep11 = plan.callOf(nested1.task('dep1'));
+    const dep12 = plan.callOf(nested1.task('dep2'));
+    const dep21 = plan.callOf(nested2.task('dep1'));
+    const dep22 = plan.callOf(nested2.task('dep2'));
+
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep12, dep22));
+    expect(call.params().attrs).toEqual({ test: ['on'] });
+
+    expect(prerequisitesOf(dep11)).toHaveLength(0);
+    expect(dep11.params().attrs).toEqual({ attr1: ['on'], test: ['on'], dep: ['1.1'] });
+
+    expect(prerequisitesOf(dep12)).toEqual(taskIds(dep11, dep21));
+    expect(dep12.params().attrs).toEqual({ attr2: ['on'], test: ['on'], dep: ['1.2'] });
+
+    expect(prerequisitesOf(dep21)).toHaveLength(0);
+    expect(dep21.params().attrs).toEqual({ attr1: ['on'], test: ['on'], dep: ['2.1'] });
+
+    expect(prerequisitesOf(dep22)).toEqual(taskIds(dep11, dep21));
+    expect(dep22.params().attrs).toEqual({ attr2: ['on'], test: ['on'], dep: ['2.2'] });
+  });
+
+  it('calls parallel external prerequisites', async () => {
+
+    const target = testPlan.addPackage(
+        'test',
+        {
+          packageJson: {
+            scripts: {
+              test: 'run-z dep0, ./nested// dep',
+              dep0: 'exec',
+            },
+          },
+        },
+    );
+
+    testPlan.addPackage(
+        'test/nested/nested1',
+        {
+          packageJson: {
+            scripts: {
+              dep: 'exec1',
+            },
+          },
+        },
+    );
+
+    const nested1 = await testPlan.target();
+
+    testPlan.addPackage(
+        'test/nested/nested2',
+        {
+          packageJson: {
+            scripts: {
+              dep: 'exec2',
+            },
+          },
+        },
+    );
+
+    const nested2 = await testPlan.target();
+
+    await testPlan.target(target);
+
+    const call = await testPlan.plan('test');
+    const plan = call.plan;
+    const dep0 = plan.callOf(call.task.target.task('dep0'));
+    const dep1 = plan.callOf(nested1.task('dep'));
+    const dep2 = plan.callOf(nested2.task('dep'));
+
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep1, dep2));
+
+    expect(prerequisitesOf(dep1)).toEqual(taskIds(dep0));
+    expect(dep1.isParallelTo(dep0.task)).toBe(true);
+    expect(dep1.isParallelTo(dep2.task)).toBe(false);
+
+    expect(prerequisitesOf(dep2)).toEqual(taskIds(dep0));
+    expect(dep2.isParallelTo(dep0.task)).toBe(true);
+    expect(dep2.isParallelTo(dep1.task)).toBe(false);
+  });
+
+  it('calls external prerequisites parallel to each other', async () => {
+
+    const target = testPlan.addPackage(
+        'test',
+        {
+          packageJson: {
+            scripts: {
+              test: 'run-z ./nested// dep, dep',
             },
           },
         },
@@ -123,14 +248,13 @@ describe('GroupZTask', () => {
     const dep1 = plan.callOf(nested1.task('dep'));
     const dep2 = plan.callOf(nested2.task('dep'));
 
-    expect(prerequisitesOf(call)).toEqual(taskIds(dep2));
-    expect(call.params().attrs).toEqual({ attr2: ['on'] });
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep1, dep2));
 
-    expect(prerequisitesOf(dep1)).toHaveLength(0);
-    expect(dep1.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'], attr3: ['1'] });
+    expect(prerequisitesOf(dep1)).toEqual(taskIds(dep1, dep2));
+    expect(dep1.isParallelTo(dep2.task)).toBe(true);
 
-    expect(prerequisitesOf(dep2)).toEqual(taskIds(dep1));
-    expect(dep2.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'], attr3: ['2'] });
+    expect(prerequisitesOf(dep2)).toEqual(taskIds(dep1, dep2));
+    expect(dep2.isParallelTo(dep1.task)).toBe(true);
   });
 
   it('calls sub-tasks in other packages', async () => {
@@ -183,7 +307,7 @@ describe('GroupZTask', () => {
     const dep2 = plan.callOf(nested2.task('dep'));
     const sub2 = plan.callOf(nested2.task('sub-task'));
 
-    expect(prerequisitesOf(call)).toEqual(taskIds(sub2));
+    expect(prerequisitesOf(call)).toEqual(taskIds(sub1, sub2));
     expect(call.params().attrs).toEqual({ attr1: ['on'] });
 
     expect(prerequisitesOf(dep1)).toHaveLength(0);
@@ -192,7 +316,7 @@ describe('GroupZTask', () => {
     expect(prerequisitesOf(sub1)).toEqual(taskIds(dep1));
     expect(sub1.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'] });
 
-    expect(prerequisitesOf(dep2)).toEqual(taskIds(sub1));
+    expect(prerequisitesOf(dep2)).toHaveLength(0);
     expect(dep2.params().attrs).toEqual({ attr1: ['on'], attr3: ['2'] });
 
     expect(prerequisitesOf(sub2)).toEqual(taskIds(dep2));
@@ -246,16 +370,19 @@ describe('GroupZTask', () => {
     const sub1 = plan.callOf(nested1.task('sub-task'));
     const sub2 = plan.callOf(nested2.task('sub-task'));
 
-    expect(prerequisitesOf(call)).toEqual(taskIds(sub2));
+    expect(prerequisitesOf(call)).toEqual(taskIds(sub1, sub2));
     expect(call.params().attrs).toEqual({ attr1: ['on'] });
 
-    expect(prerequisitesOf(dep)).toEqual([{ target: 'nested2', task: 'dep3' }]);
+    expect(prerequisitesOf(dep)).toEqual([
+        { target: 'nested1', task: 'dep3' },
+        { target: 'nested2', task: 'dep3' },
+    ]);
     expect(dep.params().attrs).toEqual({ attr1: ['on'] });
 
     expect(prerequisitesOf(sub1)).toEqual(taskIds(dep));
     expect(sub1.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'] });
 
-    expect(prerequisitesOf(sub2)).toEqual(taskIds(sub1));
+    expect(prerequisitesOf(sub2)).toEqual(taskIds(dep));
     expect(sub2.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'] });
   });
 

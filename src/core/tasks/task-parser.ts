@@ -53,7 +53,7 @@ export class ZTaskParser {
     let e = 0;
     let entryIndex = 0;
     let entryPosition = 0;
-    const deps: ZTaskSpec.Dep[] = [];
+    const deps: ZTaskSpec.Pre[] = [];
     const attrs: Record<string, [string, ...string[]]> = {};
     let depTask: string | undefined;
     let depParallel = false;
@@ -195,7 +195,7 @@ export class ZTaskParser {
     }
 
     return {
-      deps,
+      pre: deps,
       attrs,
       args,
       action,

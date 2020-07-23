@@ -9,11 +9,11 @@
 export interface ZTaskSpec<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
 
   /**
-   * Task dependencies.
+   * Task prerequisites.
    *
    * I.e. other tasks to run before this one.
    */
-  readonly deps: readonly ZTaskSpec.Dep[];
+  readonly pre: readonly ZTaskSpec.Pre[];
 
   /**
    * Task attributes.
@@ -35,16 +35,17 @@ export interface ZTaskSpec<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
 export namespace ZTaskSpec {
 
   /**
-   * Task dependency.
+   * Prerequisite of the  task.
    *
    * Either task or package reference.
    */
-  export type Dep = PackageRef | TaskRef;
+  export type Pre = PackageRef | TaskRef;
 
   /**
-   * Package reference.
+   * A reference to package of prerequisite tasks.
    *
-   * When present among {@link ZTaskSpec.deps task dependencies} the subsequent tasks are searched in selected packages.
+   * When present among {@link ZTaskSpec.pre task prerequisites} the subsequent tasks are searched in selected
+   * packages.
    */
   export interface PackageRef {
 
@@ -58,7 +59,7 @@ export namespace ZTaskSpec {
   }
 
   /**
-   * Task reference.
+   * Prerequisite task reference.
    */
   export interface TaskRef {
 
@@ -70,7 +71,7 @@ export namespace ZTaskSpec {
     readonly selector?: undefined;
 
     /**
-     * Whether this task can be executed in parallel with preceding one.
+     * Whether the referenced task can be executed in parallel with preceding one.
      */
     readonly parallel: boolean;
 
@@ -121,7 +122,7 @@ export namespace ZTaskSpec {
     readonly command: string;
 
     /**
-     * Whether the command can be executed in parallel with preceding dependency task.
+     * Whether the command can be executed in parallel with the last prerequisite.
      */
     readonly parallel: boolean;
 
@@ -178,7 +179,7 @@ const groupZTaskAction: ZTaskSpec.Group = {
  * @internal
  */
 const unknownZTaskSpec: ZTaskSpec<ZTaskSpec.Unknown> = {
-  deps: [],
+  pre: [],
   attrs: {},
   args: [],
   action: {
@@ -190,7 +191,7 @@ const unknownZTaskSpec: ZTaskSpec<ZTaskSpec.Unknown> = {
  * @internal
  */
 const scriptZTaskSpec: ZTaskSpec<ZTaskSpec.Script> = {
-  deps: [],
+  pre: [],
   attrs: {},
   args: [],
   action: {

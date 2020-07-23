@@ -24,7 +24,7 @@ export class ZPlanner {
   /**
    * Builds a task execution plan.
    *
-   * The plan would execute the task after executing all of its dependencies.
+   * The plan would execute the task after executing all of its prerequisites.
    *
    * @typeparam TAction  Task action type.
    * @param instruction  Top-level task call instruction.

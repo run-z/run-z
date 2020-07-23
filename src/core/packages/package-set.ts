@@ -49,4 +49,8 @@ class CombinedZPackageSet extends ZPackageSet {
     return new CombinedZPackageSet([...this.sets, other]);
   }
 
+  toString(): string {
+    return this.sets.join(' ');
+  }
+
 }
