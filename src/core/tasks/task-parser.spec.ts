@@ -34,11 +34,11 @@ describe('ZTaskParser', () => {
 
     expect(spec).toBe(ZTaskSpec.script);
   });
-  it('recognizes dependencies', () => {
+  it('recognizes prerequisites', () => {
 
     const spec = parser.parse('run-z dep1 dep2 dep3');
 
-    expect(spec.deps).toEqual([
+    expect(spec.pre).toEqual([
         { task: 'dep1', parallel: false, attrs: {}, args: [] },
         { task: 'dep2', parallel: false, attrs: {}, args: [] },
         { task: 'dep3', parallel: false, attrs: {}, args: [] },
@@ -50,7 +50,7 @@ describe('ZTaskParser', () => {
 
     const spec = parser.parse('run-z dep1 dep2 dep3 --some test');
 
-    expect(spec.deps).toEqual([
+    expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
       { task: 'dep2', parallel: false, attrs: {}, args: [] },
       { task: 'dep3', parallel: false, attrs: {}, args: [] },
@@ -62,7 +62,7 @@ describe('ZTaskParser', () => {
 
     const spec = parser.parse('run-z dep1 dep2 dep3 --some --then cmd --arg');
 
-    expect(spec.deps).toEqual([
+    expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
       { task: 'dep2', parallel: false, attrs: {}, args: [] },
       { task: 'dep3', parallel: false, attrs: {}, args: [] },
@@ -79,7 +79,7 @@ describe('ZTaskParser', () => {
 
     const spec = parser.parse('run-z dep1 dep2 dep3 --some --and cmd --arg');
 
-    expect(spec.deps).toEqual([
+    expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
       { task: 'dep2', parallel: false, attrs: {}, args: [] },
       { task: 'dep3', parallel: false, attrs: {}, args: [] },
@@ -96,7 +96,7 @@ describe('ZTaskParser', () => {
 
     const spec = parser.parse('run-z dep1 dep2 dep3 --some --then');
 
-    expect(spec.deps).toEqual([
+    expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
       { task: 'dep2', parallel: false, attrs: {}, args: [] },
       { task: 'dep3', parallel: false, attrs: {}, args: [] },
@@ -104,11 +104,11 @@ describe('ZTaskParser', () => {
     expect(spec.args).toEqual(['--some']);
     expect(spec.action).toBe(ZTaskSpec.groupAction);
   });
-  it('recognizes dependency argument', () => {
+  it('recognizes prerequisite argument', () => {
 
     const spec = parser.parse('run-z dep1 dep2//-a //dep3 --some test');
 
-    expect(spec.deps).toEqual([
+    expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
       { task: 'dep2', parallel: false, attrs: {}, args: ['-a'] },
       { task: 'dep3', parallel: false, attrs: {}, args: [] },
@@ -116,11 +116,11 @@ describe('ZTaskParser', () => {
     expect(spec.args).toEqual(['--some', 'test']);
     expect(spec.action).toBe(ZTaskSpec.groupAction);
   });
-  it('recognizes shorthand dependency argument', () => {
+  it('recognizes shorthand prerequisite argument', () => {
 
     const spec = parser.parse('run-z dep1 dep2/-a dep3 --some test');
 
-    expect(spec.deps).toEqual([
+    expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
       { task: 'dep2', parallel: false, attrs: {}, args: ['-a'] },
       { task: 'dep3', parallel: false, attrs: {}, args: [] },
@@ -128,11 +128,11 @@ describe('ZTaskParser', () => {
     expect(spec.args).toEqual(['--some', 'test']);
     expect(spec.action).toBe(ZTaskSpec.groupAction);
   });
-  it('recognizes multiple dependency arguments', () => {
+  it('recognizes multiple prerequisite arguments', () => {
 
     const spec = parser.parse('run-z dep1 dep2//-a// //-b// //-c//dep3 --some test');
 
-    expect(spec.deps).toEqual([
+    expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
       { task: 'dep2', parallel: false, attrs: {}, args: ['-a', '-b', '-c'] },
       { task: 'dep3', parallel: false, attrs: {}, args: [] },
@@ -140,11 +140,11 @@ describe('ZTaskParser', () => {
     expect(spec.args).toEqual(['--some', 'test']);
     expect(spec.action).toBe(ZTaskSpec.groupAction);
   });
-  it('recognizes multiple shorthand dependency arguments', () => {
+  it('recognizes multiple shorthand prerequisite arguments', () => {
 
     const spec = parser.parse('run-z dep1 dep2/-a /-b //-c///-d dep3 --some test');
 
-    expect(spec.deps).toEqual([
+    expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
       { task: 'dep2', parallel: false, attrs: {}, args: ['-a', '-b', '-c', '-d'] },
       { task: 'dep3', parallel: false, attrs: {}, args: [] },
@@ -152,11 +152,11 @@ describe('ZTaskParser', () => {
     expect(spec.args).toEqual(['--some', 'test']);
     expect(spec.action).toBe(ZTaskSpec.groupAction);
   });
-  it('ignores empty dependency arguments', () => {
+  it('ignores empty prerequisite arguments', () => {
 
     const spec = parser.parse('run-z dep1 dep2 //// dep3 --some test');
 
-    expect(spec.deps).toEqual([
+    expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
       { task: 'dep2', parallel: false, attrs: {}, args: [] },
       { task: 'dep3', parallel: false, attrs: {}, args: [] },
@@ -164,11 +164,11 @@ describe('ZTaskParser', () => {
     expect(spec.args).toEqual(['--some', 'test']);
     expect(spec.action).toBe(ZTaskSpec.groupAction);
   });
-  it('ignores empty shorthand dependency arguments', () => {
+  it('ignores empty shorthand prerequisite arguments', () => {
 
     const spec = parser.parse('run-z dep1 dep2/ / dep3 --some test');
 
-    expect(spec.deps).toEqual([
+    expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
       { task: 'dep2', parallel: false, attrs: {}, args: [] },
       { task: 'dep3', parallel: false, attrs: {}, args: [] },
@@ -176,11 +176,11 @@ describe('ZTaskParser', () => {
     expect(spec.args).toEqual(['--some', 'test']);
     expect(spec.action).toBe(ZTaskSpec.groupAction);
   });
-  it('recognizes parallel dependencies', () => {
+  it('recognizes parallel prerequisites', () => {
 
     const spec = parser.parse('run-z dep1,dep2, dep3 dep4');
 
-    expect(spec.deps).toEqual([
+    expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
       { task: 'dep2', parallel: true, attrs: {}, args: [] },
       { task: 'dep3', parallel: true, attrs: {}, args: [] },
@@ -189,11 +189,11 @@ describe('ZTaskParser', () => {
     expect(spec.args).toHaveLength(0);
     expect(spec.action).toBe(ZTaskSpec.groupAction);
   });
-  it('recognizes parallel dependency arguments', () => {
+  it('recognizes parallel prerequisite arguments', () => {
 
     const spec = parser.parse('run-z dep1//-a//,dep2 //-b//, dep3');
 
-    expect(spec.deps).toEqual([
+    expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: ['-a'] },
       { task: 'dep2', parallel: true, attrs: {}, args: ['-b'] },
       { task: 'dep3', parallel: true, attrs: {}, args: [] },
@@ -201,11 +201,11 @@ describe('ZTaskParser', () => {
     expect(spec.args).toHaveLength(0);
     expect(spec.action).toBe(ZTaskSpec.groupAction);
   });
-  it('recognizes parallel dependency shorthand arguments', () => {
+  it('recognizes parallel prerequisite shorthand arguments', () => {
 
     const spec = parser.parse('run-z dep1/-a/-b /-c,dep2 /-d, dep3');
 
-    expect(spec.deps).toEqual([
+    expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: ['-a', '-b', '-c'] },
       { task: 'dep2', parallel: true, attrs: {}, args: ['-d'] },
       { task: 'dep3', parallel: true, attrs: {}, args: [] },
@@ -217,7 +217,7 @@ describe('ZTaskParser', () => {
 
     const spec = parser.parse('run-z dep1 ./path//selector dep2');
 
-    expect(spec.deps).toEqual([
+    expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
       { selector: './path//selector' },
       { task: 'dep2', parallel: false, attrs: {}, args: [] },
@@ -225,11 +225,11 @@ describe('ZTaskParser', () => {
     expect(spec.args).toHaveLength(0);
     expect(spec.action).toBe(ZTaskSpec.groupAction);
   });
-  it('recognizes parallel external dependency', () => {
+  it('recognizes parallel external prerequisite', () => {
 
     const spec = parser.parse('run-z dep1, ./path//selector dep2');
 
-    expect(spec.deps).toEqual([
+    expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
       { selector: './path//selector' },
       { task: 'dep2', parallel: true, attrs: {}, args: [] },
@@ -237,11 +237,11 @@ describe('ZTaskParser', () => {
     expect(spec.args).toHaveLength(0);
     expect(spec.action).toBe(ZTaskSpec.groupAction);
   });
-  it('recognizes parallel external dependency with standalone comma', () => {
+  it('recognizes parallel external prerequisite with standalone comma', () => {
 
     const spec = parser.parse('run-z dep1 ./path//selector , dep2');
 
-    expect(spec.deps).toEqual([
+    expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
       { selector: './path//selector' },
       { task: 'dep2', parallel: true, attrs: {}, args: [] },
@@ -249,11 +249,11 @@ describe('ZTaskParser', () => {
     expect(spec.args).toHaveLength(0);
     expect(spec.action).toBe(ZTaskSpec.groupAction);
   });
-  it('recognizes parallel external dependency with comma prefix', () => {
+  it('recognizes parallel external prerequisite with comma prefix', () => {
 
     const spec = parser.parse('run-z dep1 ./path//selector ,dep2');
 
-    expect(spec.deps).toEqual([
+    expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
       { selector: './path//selector' },
       { task: 'dep2', parallel: true, attrs: {}, args: [] },
@@ -272,11 +272,11 @@ describe('ZTaskParser', () => {
     });
     expect(spec.action).toBe(ZTaskSpec.groupAction);
   });
-  it('recognizes dependency attributes', () => {
+  it('recognizes prerequisite attributes', () => {
 
     const spec = parser.parse('run-z attr1=val1 dep/attr2=/=attr3/arg1/--arg2=2/attr3=val3');
 
-    expect(spec.deps).toEqual([
+    expect(spec.pre).toEqual([
       {
         task: 'dep',
         parallel: false,
@@ -287,7 +287,7 @@ describe('ZTaskParser', () => {
     expect(spec.attrs).toEqual({ attr1: ['val1'] });
     expect(spec.action).toBe(ZTaskSpec.groupAction);
   });
-  it('throws on arguments without dependency', () => {
+  it('throws on arguments without prerequisite', () => {
 
     let error!: InvalidZTaskError;
 
@@ -301,7 +301,7 @@ describe('ZTaskParser', () => {
     expect(error.commandLine).toBe('//-a// task');
     expect(error.position).toBe(0);
   });
-  it('throws on shorthand argument without dependency', () => {
+  it('throws on shorthand argument without prerequisite', () => {
 
     let error!: InvalidZTaskError;
 

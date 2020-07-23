@@ -27,7 +27,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
     await this.planDeps(planner);
   }
 
-  asDepOf(
+  asPre(
       dependent: ZCall,
       { attrs, args }: ZTaskSpec.TaskRef,
   ): Iterable<ZCallInstruction> | AsyncIterable<ZCallInstruction> {
@@ -47,7 +47,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
     let parallel: ZTask[] = [];
     const order: ZTask[] = [];
 
-    for (const dep of spec.deps) {
+    for (const dep of spec.pre) {
       if (dep.selector != null) {
         targets = updateZTaskDepTargets(target, targets, dep);
       } else {
@@ -59,7 +59,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
         const depTasks = await resolveZTaskRef(targets || target, dep);
 
         for (const depTask of depTasks) {
-          for await (const subTaskCall of depTask.asDepOf(plannedCall, dep)) {
+          for await (const subTaskCall of depTask.asPre(plannedCall, dep)) {
             await planner.call(subTaskCall);
             order.push(subTaskCall.task);
             parallel.push(subTaskCall.task);
@@ -80,7 +80,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   }
 
   /**
-   * Whether this task can be called in parallel to dependencies.
+   * Whether this task can be called in parallel to its prerequisites.
    */
   protected isParallel(): boolean {
     return false;

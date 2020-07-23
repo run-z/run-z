@@ -32,7 +32,7 @@ describe('CommandZTask', () => {
     expect(params.actionArgs).toEqual(['--cmd']);
   });
 
-  it('calls dependencies', async () => {
+  it('calls prerequisites', async () => {
     testPlan.addPackage(
         'test',
         {
@@ -51,7 +51,7 @@ describe('CommandZTask', () => {
     expect(prerequisitesOf(call)).toEqual(taskIds([dep]));
     expect(dep.params().attrs).toEqual({ attr: ['on'] });
   });
-  it('calls parallel dependencies', async () => {
+  it('calls parallel prerequisites', async () => {
     testPlan.addPackage(
         'test',
         {
@@ -80,7 +80,7 @@ describe('CommandZTask', () => {
     expect(prerequisitesOf(dep2)).toEqual(taskIds(dep1));
     expect(dep2.isParallelTo(dep1.task)).toBe(true);
   });
-  it('executed parallel with dependencies', async () => {
+  it('executed parallel with prerequisites', async () => {
     testPlan.addPackage(
         'test',
         {

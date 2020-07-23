@@ -49,19 +49,19 @@ export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
   plan(planner: ZCallPlanner<TAction>): void | PromiseLike<unknown>;
 
   /**
-   * Represents this task as a dependency of another one.
+   * Represents this task as a prerequisite of another one.
    *
    * By default a {@link ZTaskSpec.Group grouping task} treats the first argument as a sub-task name, an the rest of
    * arguments as arguments to this sub-task. The tasks of all other types record a call to this as is.
    *
    * @param dependent  Depending task execution call.
-   * @param dep  Dependency specifier.
+   * @param ref  Prerequisite task reference.
    *
-   * @returns A potentially asynchronous iterable of {@link ZCallInstruction dependency call instructions}.
+   * @returns A potentially asynchronous iterable of {@link ZCallInstruction prerequisites call instructions}.
    */
-  asDepOf(
+  asPre(
       dependent: ZCall,
-      dep: ZTaskSpec.TaskRef,
+      ref: ZTaskSpec.TaskRef,
   ): Iterable<ZCallInstruction> | AsyncIterable<ZCallInstruction>;
 
   /**

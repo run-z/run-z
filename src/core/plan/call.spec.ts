@@ -23,7 +23,7 @@ describe('ZCall', () => {
     };
 
     const spec: ZTaskSpec = {
-      deps: [],
+      pre: [],
       attrs: initParams.attrs,
       args: initParams.args,
       action: {

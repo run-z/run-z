@@ -9,7 +9,7 @@ describe('GroupZTask', () => {
     testPlan = new TestPlan();
   });
 
-  it('calls dependencies', async () => {
+  it('calls prerequisites', async () => {
     testPlan.addPackage(
         'test',
         {
@@ -77,7 +77,7 @@ describe('GroupZTask', () => {
     expect(dep3.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'] });
   });
 
-  it('calls dependencies from other packages', async () => {
+  it('calls external prerequisites', async () => {
 
     const target = testPlan.addPackage(
         'test',

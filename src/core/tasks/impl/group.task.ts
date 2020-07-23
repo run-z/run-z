@@ -8,18 +8,18 @@ import { AbstractZTask } from './abstract.task';
  */
 export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
 
-  async *asDepOf(
+  async *asPre(
       dependent: ZCall,
-      dep: ZTaskSpec.TaskRef,
+      ref: ZTaskSpec.TaskRef,
   ): Iterable<ZCallInstruction> | AsyncIterable<ZCallInstruction> {
 
-    const { attrs, args } = dep;
+    const { attrs, args } = ref;
     const [subTaskName, ...subArgs] = args;
 
     if (subTaskName && !subTaskName.startsWith('-')) {
       // There is a sub-task to execute.
 
-      // Add task dependency. Pass call parameters to sub-task rather to this dependency.
+      // Add task prerequisite. Pass call parameters to sub-task rather to this prerequisite.
       yield {
         task: this,
         params: () => dependent.params(),
@@ -38,7 +38,7 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
         };
       }
     } else {
-      yield* super.asDepOf(dependent, dep);
+      yield* super.asPre(dependent, ref);
     }
   }
 
@@ -48,12 +48,12 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
 
   private _subTaskTargets(): ZPackageSet {
 
-    const { target, spec: { deps } } = this;
+    const { target, spec: { pre } } = this;
     let result: ZPackageSet | undefined;
 
-    for (let i = deps.length - 1; i >= 0; --i) {
+    for (let i = pre.length - 1; i >= 0; --i) {
 
-      const dep = deps[i];
+      const dep = pre[i];
 
       if (dep.selector) {
 
