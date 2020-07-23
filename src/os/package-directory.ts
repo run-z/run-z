@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath, pathToFileURL, URL } from 'url';
 import { ZPackageJson, ZPackageLocation, ZShell } from '../core';
-import { SysZShell } from './sys-shell.impl';
+import { SystemZShell } from './system-shell.impl';
 import { isRootURL, urlBaseName, urlOfFile } from './url.impl';
 
 /**
@@ -62,7 +62,7 @@ export class ZPackageDirectory extends ZPackageLocation {
     this.url = urlOfFile(url);
     this.dirURL = new URL(this.url.pathname + '/', url);
     this.rootURL = rootURL;
-    this.shell = new SysZShell(this);
+    this.shell = new SystemZShell(this);
   }
 
   get path(): string {

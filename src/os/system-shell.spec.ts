@@ -3,7 +3,7 @@ import { pathToFileURL } from 'url';
 import { ZPackage, ZSetup } from '../core';
 import { ZPackageDirectory } from './package-directory';
 
-describe('SysZShell', () => {
+describe('SystemZShell', () => {
 
   let pkg: ZPackage;
 

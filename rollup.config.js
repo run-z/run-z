@@ -11,7 +11,7 @@ export default {
     'run-z': './src/index.ts',
     'run-z.cli': './src/cli/main.ts',
     'run-z.core': './src/core/index.ts',
-    'run-z.fs': './src/fs/index.ts',
+    'run-z.os': './src/os/index.ts',
   },
   plugins: [
     commonjs(),
@@ -32,8 +32,8 @@ export default {
     if (id.startsWith(path.join(__dirname, 'src', 'core') + path.sep)) {
       return 'run-z.core';
     }
-    if (id.startsWith(path.join(__dirname, 'src', 'fs') + path.sep)) {
-      return 'run-z.fs';
+    if (id.startsWith(path.join(__dirname, 'src', 'os') + path.sep)) {
+      return 'run-z.os';
     }
     return 'run-z';
   },

@@ -1,7 +1,7 @@
 import { asis } from '@proc7ts/primitives';
 import * as path from 'path';
 import { pathToFileURL, URL } from 'url';
-import { ZPackageDirectory } from '../../fs';
+import { ZPackageDirectory } from '../../os';
 import { ZSetup } from '../setup';
 import type { ZPackage } from './package';
 import type { ZPackageResolver } from './package-resolver';

@@ -8,7 +8,7 @@ import type { ZPackageDirectory } from './package-directory';
 /**
  * @internal
  */
-export class SysZShell implements ZShell {
+export class SystemZShell implements ZShell {
 
   constructor(private readonly _dir: ZPackageDirectory) {
   }
