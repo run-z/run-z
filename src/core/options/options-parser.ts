@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module run-z
  */
-import { lazyValue, noop } from '@proc7ts/primitives';
+import { arrayOfElements, lazyValue, noop } from '@proc7ts/primitives';
 import type { ZSetup } from '../setup';
 import type { SupportedZOptions, ZOptionReader, ZOptionsMap, ZOptionsSupport } from './option';
 import { ZOptionSource } from './option';
@@ -14,7 +14,7 @@ export abstract class ZOptionsParser<TCtx, TSrc extends ZOptionSource> {
 
   protected constructor(
       readonly setup: ZSetup,
-      supportedOptions: SupportedZOptions<TCtx, TSrc>[],
+      supportedOptions: SupportedZOptions<TCtx, TSrc>,
   ) {
     this._optionsSupport = context => supportedZOptionsMap(context, supportedOptions);
   }
@@ -195,12 +195,12 @@ function baseZOptionSource(
  */
 async function supportedZOptionsMap<TCtx, TSrc extends ZOptionSource>(
     context: TCtx,
-    supportedOptions: SupportedZOptions<TCtx, TSrc>[],
+    supportedOptions: SupportedZOptions<TCtx, TSrc>,
 ): Promise<ZOptionsMap<TSrc>> {
 
   const result: Partial<Record<string, ZOptionReader<TSrc, any>>> = {};
 
-  for (const supported of supportedOptions) {
+  for (const supported of arrayOfElements(supportedOptions)) {
 
     const map: ZOptionsMap<TSrc> = typeof supported === 'function'
         ? await supported(context)

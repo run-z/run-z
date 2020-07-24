@@ -5,7 +5,8 @@
 
 export type SupportedZOptions<TCtx, TSrc extends ZOptionSource> =
   | ZOptionsMap<TSrc>
-  | ZOptionsSupport<TCtx, TSrc>;
+  | ZOptionsSupport<TCtx, TSrc>
+  | readonly (ZOptionsMap<TSrc> | ZOptionsSupport<TCtx, TSrc>)[];
 
 export interface ZOptionsMap<TSrc extends ZOptionSource> {
 
