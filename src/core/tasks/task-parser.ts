@@ -29,10 +29,48 @@ export class ZTaskParser {
    *
    * @param value  A string value to check.
    *
-   * @returns `true` is the given `value` is either `.` or `..`, or starts with either `./` or `.//`. `false` otherwise.
+   * @returns `true` if the given `value` is either `.` or `..`, or starts with either `./` or `.//`. `false` otherwise.
    */
   isPackageSelector(value: string): boolean {
     return value === '.' || value === '..' || value.startsWith('./') || value.startsWith('../');
+  }
+
+  /**
+   * Checks whether the given string is an option.
+   *
+   * @param value  A string value to check.
+   *
+   * @returns `true` if the given `value` starts with `-`, or `false` otherwise.
+   */
+  isOption(value: string): boolean {
+    return value.startsWith('-');
+  }
+
+  /**
+   * Parses attribute and adds it to attributes collection.
+   *
+   * @param value  A string value potentially containing attribute.
+   * @param attrs  Attributes collection to add attribute to, or a function that accepts attribute name and value
+   * as parameters and returns `false` when attribute ignored.
+   *
+   * @returns `true` if attribute is added to target attributes collection, or `false` if the given string `value` does
+   * not contain attribute specifier or it is ignored.
+   */
+  parseAttr(
+      value: string,
+      attrs: Record<string, string[]> | ((this: void, name: string, value: string) => boolean | void),
+  ): boolean {
+    if (!this.isOption(value)) {
+
+      const addAttr = typeof attrs === 'function' ? attrs : recordZTaskAttr.bind(undefined, attrs);
+      const eqIdx = value.indexOf('=');
+
+      if (eqIdx >= 0) {
+        return addZTaskAttr(addAttr, value, eqIdx);
+      }
+    }
+
+    return false;
   }
 
   /**
@@ -55,10 +93,10 @@ export class ZTaskParser {
     let entryPosition = 0;
     const deps: ZTaskSpec.Pre[] = [];
     const attrs: Record<string, [string, ...string[]]> = {};
-    let depTask: string | undefined;
-    let depParallel = false;
-    let depArgs: string[] = [];
-    let inDepArgs = false;
+    let preTask: string | undefined;
+    let preParallel = false;
+    let preArgs: string[] = [];
+    let inPreArgs = false;
 
     const parseError = (message: string): never => {
 
@@ -87,13 +125,13 @@ export class ZTaskParser {
       throw new InvalidZTaskError(message, reconstructedCmd, position);
     };
     const appendTask = (): void => {
-      if (depTask) {
+      if (preTask) {
         // Finish the task.
-        deps.push(createZTaskRef(depTask, depParallel, depArgs));
-        depArgs = [];
-        depParallel = false;
-        depTask = undefined;
-      } else if (depArgs.length) {
+        deps.push(createZTaskRef(this, preTask, preParallel, preArgs));
+        preArgs = [];
+        preParallel = false;
+        preTask = undefined;
+      } else if (preArgs.length) {
         parseError('Task arguments specified, but not the task');
       }
     };
@@ -102,7 +140,7 @@ export class ZTaskParser {
 
       const entry = entries[e];
 
-      if (entry.startsWith('-')) {
+      if (this.isOption(entry)) {
         break;
       }
       if (this.isPackageSelector(entry)) {
@@ -112,19 +150,10 @@ export class ZTaskParser {
         deps.push({ selector: entry });
         continue;
       }
-      const eqIdx = entry.indexOf('=');
-
-      if (eqIdx >= 0) {
-
-        const slashIdx = entry.indexOf('/');
-
-        if (slashIdx < 0 || eqIdx < slashIdx) {
-          // Attribute specifier.
-          appendTask();
-          entryIndex = e + 1;
-          addZTaskAttr(attrs, entry, eqIdx);
-          continue;
-        }
+      if (this.parseAttr(entry, (n, v) => !n.includes('/') && recordZTaskAttr(attrs, n, v))) {
+        appendTask();
+        entryIndex = e + 1;
+        continue;
       }
 
       const parts = entry.split(zTaskArgsSep);
@@ -134,8 +163,8 @@ export class ZTaskParser {
         const part = parts[p];
 
         if (part) {
-          if (inDepArgs) {
-            depArgs.push(part);
+          if (inPreArgs) {
+            preArgs.push(part);
           } else {
 
             const tasks = part.split(',');
@@ -151,7 +180,7 @@ export class ZTaskParser {
                   ++entryPosition; // Comma
                   parseError('Task argument specified, but not the task');
                 }
-                depArgs.push(...args);
+                preArgs.push(...args);
                 if (tasks.length === 1) {
                   continue;
                 }
@@ -161,12 +190,12 @@ export class ZTaskParser {
               entryIndex = e;
 
               if (task) {
-                depTask = task;
-                depArgs = args;
+                preTask = task;
+                preArgs = args;
               }
 
               if (t) {
-                depParallel = true;
+                preParallel = true;
                 ++entryPosition; // Comma
               }
               entryPosition += task.length;
@@ -175,7 +204,7 @@ export class ZTaskParser {
         }
 
         if (p + 1 < parts.length) {
-          inDepArgs = !inDepArgs;
+          inPreArgs = !inPreArgs;
         }
       }
     }
@@ -232,23 +261,20 @@ function parseZTaskEntries(commandLine: string): string[] | undefined {
 /**
  * @internal
  */
-function createZTaskRef(task: string, parallel: boolean, allArgs: string[]): ZTaskSpec.TaskRef {
+function createZTaskRef(
+    parser: ZTaskParser,
+    task: string,
+    parallel: boolean,
+    allArgs: string[],
+): ZTaskSpec.TaskRef {
 
   const attrs: Record<string, [string, ...string[]]> = {};
   const args: string[] = [];
 
   for (const arg of allArgs) {
-    if (!arg.startsWith('-')) {
-
-      const eqIdx = arg.indexOf('=');
-
-      if (eqIdx >= 0) {
-        addZTaskAttr(attrs, arg, eqIdx);
-        continue;
-      }
+    if (!parser.parseAttr(arg, attrs)) {
+      args.push(arg);
     }
-
-    args.push(arg);
   }
 
   return {
@@ -262,7 +288,11 @@ function createZTaskRef(task: string, parallel: boolean, allArgs: string[]): ZTa
 /**
  * @internal
  */
-function addZTaskAttr(attrs: Record<string, string[]>, arg: string, eqIdx: number): void {
+function addZTaskAttr(
+    addAttr: (this: void, name: string, value: string) => boolean | void,
+    arg: string,
+    eqIdx: number,
+): boolean {
 
   let name: string;
   let value: string;
@@ -275,6 +305,13 @@ function addZTaskAttr(attrs: Record<string, string[]>, arg: string, eqIdx: numbe
     value = 'on';
   }
 
+  return addAttr(name, value) !== false;
+}
+
+/**
+ * @internal
+ */
+function recordZTaskAttr(attrs: Record<string, string[]>, name: string, value: string): void {
   if (attrs[name]) {
     attrs[name].push(value);
   } else {

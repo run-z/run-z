@@ -16,7 +16,7 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
     const { attrs, args } = ref;
     const [subTaskName, ...subArgs] = args;
 
-    if (!subTaskName || subTaskName.startsWith('-')) {
+    if (!subTaskName || planner.setup.taskParser.isOption(subTaskName)) {
       return super.asPre(planner, ref);
     }
 
