@@ -1,3 +1,4 @@
+import { flatMapIt, mapIt } from '@proc7ts/a-iterable';
 import type { ZPackageSet } from '../../packages';
 import type { ZCall, ZCallPlanner } from '../../plan';
 import type { ZTaskSpec } from '../task-spec';
@@ -13,8 +14,7 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
       ref: ZTaskSpec.TaskRef,
   ): Promise<Iterable<ZCall>> {
 
-    const { attrs, args } = ref;
-    const [subTaskName, ...subArgs] = args;
+    const [subTaskName, ...subArgs] = ref.args;
 
     if (!subTaskName || planner.setup.taskParser.isOption(subTaskName)) {
       return super.asPre(planner, ref);
@@ -28,21 +28,20 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
     });
 
     // Delegate to sub-task(s).
-    const subTaskParams = planner.plannedCall.extendParams({ attrs, args: subArgs });
-    const subCalls: Promise<ZCall>[] = [];
+    const subTaskRef: ZTaskSpec.TaskRef = { ...ref, args: subArgs };
+    const subCalls: Iterable<Promise<Iterable<ZCall>>> = mapIt(
+        await this._subTaskTargets().packages(),
+        target => {
 
-    for (const target of await this._subTaskTargets().packages()) {
+          const subTask = target.task(subTaskName);
 
-      const subTask = target.task(subTaskName);
+          planner.order(this, subTask);
 
-      subCalls.push(planner.call({
-        task: subTask,
-        params: subTaskParams,
-      }));
-      planner.order(this, subTask);
-    }
+          return subTask.asPre(planner, subTaskRef);
+        },
+    );
 
-    return Promise.all(subCalls);
+    return flatMapIt(await Promise.all(subCalls));
   }
 
   exec(): void {
