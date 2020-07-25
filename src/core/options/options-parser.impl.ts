@@ -3,46 +3,38 @@
  * @module run-z
  */
 import { arrayOfElements, lazyValue, noop } from '@proc7ts/primitives';
-import type { ZSetup } from '../setup';
-import type { SupportedZOptions, ZOptionReader, ZOptionsMap, ZOptionsSupport } from './option';
+import type { SupportedZOptions, ZOptionReader } from './option';
 import { ZOptionSource } from './option';
 import { UnknownZOptionError } from './unknown-option-error';
 
-export interface ZOptionSourceBaseClass<TArgs extends any[]> {
-  prototype: ZOptionSource;
-  new (...args: TArgs): ZOptionSource;
-}
-
-export interface ZOptionSourceImplClass<TSrc extends ZOptionSource, TCtx, TArgs extends any[]> {
-  prototype: TSrc;
-  new (context: TCtx, ...args: TArgs): TSrc;
-}
-
-
+/**
+ * @internal
+ */
 export abstract class ZOptionsParser<TCtx, TSrc extends ZOptionSource> {
 
-  private readonly _optionsSupport: ZOptionsSupport<TCtx, TSrc>;
-  private readonly _sourceClass: ZOptionSourceImplClass<TSrc, TCtx, [ZOptionSourceImpl<TSrc>]>;
+  private readonly _options: (this: void, context: TCtx) => Promise<Map<string, ZOptionReader<TSrc>[]>>;
+  private readonly _sourceClass: ZOptionSourceBase.ImplClass<TSrc, TCtx, [ZOptionSourceImpl<TSrc>]>;
 
-  protected constructor(
-      readonly setup: ZSetup,
-      supportedOptions: SupportedZOptions<TCtx, TSrc>,
-  ) {
-    this._optionsSupport = context => supportedZOptionsMap(context, supportedOptions);
-    this._sourceClass = this.sourceClass(ZOptionSourceBase as ZOptionSourceBaseClass<any>);
+  constructor(supportedOptions: SupportedZOptions<TCtx, TSrc>) {
+    this._options = context => supportedZOptionsMap(context, supportedOptions);
+    this._sourceClass = this.sourceClass(ZOptionSourceBase$ as ZOptionSourceBase.Class<any>);
   }
 
-  async parseOptions(context: TCtx, args: readonly string[]): Promise<void> {
+  async parseOptions(
+      context: TCtx,
+      args: readonly string[],
+      fromIndex = 0,
+  ): Promise<void> {
 
-    const readers = await this._optionsSupport(context);
-    const recognitions = new Map<string, ZOptionRecognition<TSrc>>();
+    const options = await this._options(context);
 
-    for (let argIndex = 0; argIndex < args.length;) {
+    for (let argIndex = Math.max(0, fromIndex); argIndex < args.length;) {
 
-      const impl = new ZOptionSourceImpl<TSrc>(this.setup, args, argIndex);
+      const impl = new ZOptionSourceImpl<TSrc>(args, argIndex);
       const { option } = impl;
+      const readers = options.get(option);
 
-      if (!readers[option]) {
+      if (!readers) {
         throw new UnknownZOptionError(option);
       }
 
@@ -50,36 +42,17 @@ export abstract class ZOptionsParser<TCtx, TSrc extends ZOptionSource> {
 
       source.values(); // Recognize all arguments by default
 
-      await readers[option]!(source);
+      for (const reader of readers) {
+        await impl.read(source, reader);
+      }
 
-      argIndex = impl.done(source, recognitions);
+      argIndex = await impl.done(source);
     }
   }
 
   abstract sourceClass<TArgs extends any[]>(
-      base: ZOptionSourceBaseClass<TArgs>,
-  ): ZOptionSourceImplClass<TSrc, TCtx, TArgs>;
-
-}
-
-/**
- * @internal
- */
-class ZOptionRecognition<TSrc extends ZOptionSource> {
-
-  readonly whenRead: Promise<TSrc>;
-  readonly set: (by: Promise<TSrc>) => void;
-
-  constructor() {
-
-    let set: (by: Promise<TSrc>) => void;
-
-    this.whenRead = new Promise<TSrc>(
-        (resolve, reject) => set = by => by.then(resolve, reject),
-    );
-
-    this.set = set!;
-  }
+      base: ZOptionSourceBase.Class<TArgs>,
+  ): ZOptionSourceBase.ImplClass<TSrc, TCtx, TArgs>;
 
 }
 
@@ -90,13 +63,13 @@ class ZOptionSourceImpl<TSrc extends ZOptionSource> {
 
   readonly option: string;
   private _recognizedUpto!: number;
-  private _whenRecognized?: ZOptionReader<TSrc>;
+  private _deferred?: ZOptionReader<TSrc>;
+  private readonly _allDeferred: ZOptionReader<TSrc>[] = [];
   private _recognized?: readonly string[];
   private _whenDone: (values: readonly string[]) => void = noop;
   readonly numValues: () => number;
 
   constructor(
-      readonly setup: ZSetup,
       readonly args: readonly string[],
       readonly argIndex: number,
   ) {
@@ -119,6 +92,26 @@ class ZOptionSourceImpl<TSrc extends ZOptionSource> {
     });
   }
 
+  async read(source: TSrc, reader: ZOptionReader<TSrc>): Promise<void> {
+    await reader(source);
+
+    const deferred = this._deferred;
+
+    if (deferred) {
+      this._allDeferred.push(deferred);
+    } else {
+      this._recognized = this.args.slice(this.argIndex + 1, this._recognizedUpto);
+      this._whenDone(this._recognized);
+    }
+  }
+
+  async done(source: TSrc): Promise<number> {
+    for (const deferred of this._allDeferred) {
+      await deferred(source);
+    }
+    return this._recognizedUpto;
+  }
+
   values(numArgs?: number): readonly string[] {
     if (this._recognized) {
       return this._recognized;
@@ -137,36 +130,16 @@ class ZOptionSourceImpl<TSrc extends ZOptionSource> {
 
   recognize(upto: number): void {
     this._recognizedUpto = upto;
-    this._whenRecognized = undefined;
+    this._deferred = undefined;
   }
 
-  skip(whenRecognized?: ZOptionReader<TSrc>): void {
+  defer(whenRecognized?: ZOptionReader<TSrc>): void {
     this.values(); // Mark all arguments recognized
-    this._whenRecognized = whenRecognized;
+    this._deferred = whenRecognized;
   }
 
   whenDone(done: (values: readonly string[]) => void): void {
     this._whenDone = done;
-  }
-
-  done(source: TSrc, recognitions: Map<string, ZOptionRecognition<TSrc>>): number {
-
-    let recognition = recognitions.get(this.option);
-
-    if (!recognition) {
-      recognition = new ZOptionRecognition();
-      recognitions.set(this.option, recognition);
-    }
-
-    if (this._whenRecognized) {
-      recognition.whenRead.then(this._whenRecognized, noop);
-    } else {
-      this._recognized = this.args.slice(this.argIndex + 1, this._recognizedUpto);
-      this._whenDone(this._recognized);
-      recognition.set(Promise.resolve(source));
-    }
-
-    return this._recognizedUpto;
   }
 
 }
@@ -174,7 +147,82 @@ class ZOptionSourceImpl<TSrc extends ZOptionSource> {
 /**
  * @internal
  */
-class ZOptionSourceBase<TSrc extends ZOptionSource> extends ZOptionSource {
+async function supportedZOptionsMap<TCtx, TSrc extends ZOptionSource>(
+    context: TCtx,
+    supportedOptions: SupportedZOptions<TCtx, TSrc>,
+): Promise<Map<string, ZOptionReader<TSrc>[]>> {
+
+  const result = new Map<string, ZOptionReader<TSrc>[]>();
+
+  for (const supported of arrayOfElements(supportedOptions)) {
+
+    const map: SupportedZOptions.Map<TSrc> = typeof supported === 'function'
+        ? await supported(context)
+        : supported;
+
+    for (const [option, reader] of Object.entries(map)) {
+      if (!reader) {
+        continue;
+      }
+
+      const r = reader.bind(map);
+      const readers = result.get(option);
+
+      if (readers) {
+        readers.push(r);
+      } else {
+        result.set(option, [r]);
+      }
+    }
+  }
+
+  return result;
+}
+
+/**
+ * @internal
+ */
+export abstract class ZOptionSourceBase extends ZOptionSource {
+
+  get option(): string {
+    return notImplemented();
+  }
+
+  values(_numArgs?: number): readonly string[] {
+    notImplemented();
+  }
+
+  rest(): readonly string[] {
+    notImplemented();
+  }
+
+  defer(_whenRecognized?: ZOptionReader<this>): void {
+    notImplemented();
+  }
+
+}
+
+/**
+ * @internal
+ */
+export namespace ZOptionSourceBase {
+
+  export interface Class<TArgs extends any[]> {
+    prototype: ZOptionSourceBase;
+    new (...args: TArgs): ZOptionSourceBase;
+  }
+
+  export interface ImplClass<TSrc extends ZOptionSource, TCtx, TArgs extends any[]> {
+    prototype: TSrc;
+    new (context: TCtx, ...args: TArgs): TSrc;
+  }
+
+}
+
+/**
+ * @internal
+ */
+class ZOptionSourceBase$<TSrc extends ZOptionSource> extends ZOptionSource {
 
   constructor(private readonly _impl: ZOptionSourceImpl<TSrc>) {
     super();
@@ -193,8 +241,8 @@ class ZOptionSourceBase<TSrc extends ZOptionSource> extends ZOptionSource {
     return this.values(this._impl.args.length);
   }
 
-  skip(whenRecognized?: ZOptionReader<this>): void {
-    this._impl.skip(whenRecognized as ZOptionReader<any>);
+  defer(whenRecognized?: ZOptionReader<this>): void {
+    this._impl.defer(whenRecognized as ZOptionReader<any>);
   }
 
 }
@@ -202,44 +250,6 @@ class ZOptionSourceBase<TSrc extends ZOptionSource> extends ZOptionSource {
 /**
  * @internal
  */
-async function supportedZOptionsMap<TCtx, TSrc extends ZOptionSource>(
-    context: TCtx,
-    supportedOptions: SupportedZOptions<TCtx, TSrc>,
-): Promise<ZOptionsMap<TSrc>> {
-
-  const result: Partial<Record<string, ZOptionReader<TSrc, any>>> = {};
-
-  for (const supported of arrayOfElements(supportedOptions)) {
-
-    const map: ZOptionsMap<TSrc> = typeof supported === 'function'
-        ? await supported(context)
-        : supported;
-
-    for (const [option, reader] of Object.entries(map)) {
-      if (!reader) {
-        continue;
-      }
-
-      const existing = result[option];
-
-      result[option] = existing
-          ? mergeZOptionReaders(existing, reader.bind(map))
-          : reader;
-    }
-  }
-
-  return result;
-}
-
-/**
- * @internal
- */
-function mergeZOptionReaders<TSrc extends ZOptionSource>(
-    first: ZOptionReader<TSrc>,
-    second: ZOptionReader<TSrc>,
-): ZOptionReader<TSrc> | undefined {
-  return async source => {
-    await first(source);
-    await second(source);
-  };
+function notImplemented(): never {
+  throw new TypeError('Not implemented');
 }

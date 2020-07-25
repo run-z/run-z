@@ -4,18 +4,22 @@
  */
 
 export type SupportedZOptions<TCtx, TSrc extends ZOptionSource> =
-  | ZOptionsMap<TSrc>
-  | ZOptionsSupport<TCtx, TSrc>
-  | readonly (ZOptionsMap<TSrc> | ZOptionsSupport<TCtx, TSrc>)[];
+    | SupportedZOptions.Map<TSrc>
+    | SupportedZOptions.Provider<TCtx, TSrc>
+    | readonly (SupportedZOptions.Map<TSrc> | SupportedZOptions.Provider<TCtx, TSrc>)[];
 
-export interface ZOptionsMap<TSrc extends ZOptionSource> {
+export namespace SupportedZOptions {
 
-  readonly [option: string]: ZOptionReader<TSrc, this> | undefined;
+  export interface Map<TSrc extends ZOptionSource> {
+
+    readonly [option: string]: ZOptionReader<TSrc, this> | undefined;
+
+  }
+
+  export type Provider<TCtx, TSrc extends ZOptionSource> =
+      (this: void, context: TCtx) => Map<TSrc> | PromiseLike<Map<TSrc>>;
 
 }
-
-export type ZOptionsSupport<TCtx, TSrc extends ZOptionSource> =
-    (this: void, context: TCtx) => ZOptionsMap<TSrc> | PromiseLike<ZOptionsMap<TSrc>>;
 
 export type ZOptionReader<TSrc extends ZOptionSource, TThis = void> =
     (this: TThis, source: TSrc) => void | PromiseLike<unknown>;
@@ -28,7 +32,7 @@ export abstract class ZOptionSource {
 
   abstract rest(): readonly string[];
 
-  abstract skip(whenRecognized?: ZOptionReader<this>): void;
+  abstract defer(whenRecognized?: ZOptionReader<this>): void;
 
   protected recognized(_values: readonly string[]): void {
     // nothing by default
