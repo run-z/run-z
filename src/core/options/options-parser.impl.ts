@@ -99,15 +99,17 @@ class ZOptionSourceImpl<TSrc extends ZOptionSource> {
 
     if (deferred) {
       this._allDeferred.push(deferred);
-    } else {
+    } else if (!this._recognized) {
       this._recognized = this.args.slice(this.argIndex + 1, this._recognizedUpto);
-      this._whenDone(this._recognized);
     }
   }
 
   async done(source: TSrc): Promise<number> {
     for (const deferred of this._allDeferred) {
       await deferred(source);
+    }
+    if (this._recognized) {
+      this._whenDone(this._recognized);
     }
     return this._recognizedUpto;
   }
