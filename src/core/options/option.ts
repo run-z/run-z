@@ -28,7 +28,7 @@ export interface ZOptionSource {
 
   readonly option: string;
 
-  values(numArgs?: number): readonly string[];
+  values(max?: number): readonly string[];
 
   rest(): readonly string[];
 

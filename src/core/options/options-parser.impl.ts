@@ -16,7 +16,7 @@ export abstract class ZOptionsParser<TCtx, TSrc extends ZOptionSource> {
 
   constructor(supportedOptions: SupportedZOptions<TCtx, TSrc>) {
     this._options = context => supportedZOptionsMap(context, supportedOptions);
-    this._sourceClass = this.sourceClass(ZOptionSourceBase$ as ZOptionSourceBaseClass<any>);
+    this._sourceClass = this.sourceClass(ZOptionSourceBase as ZOptionSourceBaseClass<any>);
   }
 
   async parseOptions(
@@ -58,102 +58,6 @@ export abstract class ZOptionsParser<TCtx, TSrc extends ZOptionSource> {
 /**
  * @internal
  */
-class ZOptionSourceImpl<TSrc extends ZOptionSource> {
-
-  readonly option: string;
-  private _recognizedUpto!: number;
-  private _deferred?: ZOptionReader<TSrc>;
-  private readonly _allDeferred: ZOptionReader<TSrc>[] = [];
-  private _recognized?: readonly string[];
-  private _whenRecognized: (values: readonly string[]) => void = noop;
-  readonly numValues: () => number;
-
-  constructor(
-      readonly args: readonly string[],
-      readonly argIndex: number,
-  ) {
-    this.option = args[argIndex];
-
-    const firstValueIndex = argIndex + 1;
-
-    this.numValues = lazyValue(() => {
-
-      let i = firstValueIndex;
-
-      while (i < args.length) {
-        if (args[i].startsWith('-')) {
-          break;
-        }
-        ++i;
-      }
-
-      return i - firstValueIndex;
-    });
-  }
-
-  async read(source: TSrc, reader: ZOptionReader<TSrc>): Promise<void> {
-    await reader(source);
-
-    const deferred = this._deferred;
-
-    if (deferred) {
-      this._allDeferred.push(deferred);
-    } else if (!this._recognized) {
-      this._recognized = this.args.slice(this.argIndex + 1, this._recognizedUpto);
-    }
-  }
-
-  async done(source: TSrc): Promise<number> {
-    for (const deferred of this._allDeferred) {
-      await deferred(source);
-    }
-    if (this._recognized) {
-      this._whenRecognized(this._recognized);
-    }
-    return this._recognizedUpto;
-  }
-
-  values(numArgs?: number): readonly string[] {
-    if (this._recognized) {
-      return this._recognized;
-    }
-
-    if (numArgs == null || numArgs < 0) {
-      numArgs = this.numValues();
-    }
-
-    const firstValueIndex = this.argIndex + 1;
-
-    this.recognize(firstValueIndex + numArgs);
-
-    return this.args.slice(firstValueIndex, firstValueIndex + numArgs);
-  }
-
-  recognize(upto: number): void {
-    this._recognizedUpto = upto;
-    this._deferred = undefined;
-  }
-
-  defer(whenRecognized?: ZOptionReader<TSrc>): void {
-    this.values(); // Mark all arguments recognized
-    this._deferred = whenRecognized;
-  }
-
-  whenRecognized(receiver: (values: readonly string[]) => void): void {
-
-    const prevReceiver = this._whenRecognized;
-
-    this._whenRecognized = values => {
-      prevReceiver(values);
-      receiver(values);
-    };
-  }
-
-}
-
-/**
- * @internal
- */
 async function supportedZOptionsMap<TCtx, TSrc extends ZOptionSource>(
     context: TCtx,
     supportedOptions: SupportedZOptions<TCtx, TSrc>,
@@ -189,6 +93,110 @@ async function supportedZOptionsMap<TCtx, TSrc extends ZOptionSource>(
 /**
  * @internal
  */
+class ZOptionSourceImpl<TSrc extends ZOptionSource> {
+
+  readonly option: string;
+  private _recognizedUpto!: number;
+  private _deferred?: ZOptionReader<TSrc>;
+  private readonly _allDeferred: ZOptionReader<TSrc>[] = [];
+  private _recognized?: readonly string[];
+  private _whenRecognized: (values: readonly string[]) => void = noop;
+  readonly numValues: () => number;
+
+  constructor(
+      readonly args: readonly string[],
+      readonly argIndex: number,
+  ) {
+    this.option = args[argIndex];
+
+    const firstValueIndex = argIndex + 1;
+
+    this.numValues = lazyValue(() => {
+
+      let i = firstValueIndex;
+
+      while (i < args.length) {
+        if (args[i].startsWith('-')) {
+          break;
+        }
+        ++i;
+      }
+
+      return i - firstValueIndex;
+    });
+  }
+
+  async read(source: TSrc, reader: ZOptionReader<TSrc>): Promise<void> {
+    if (!this._recognized) {
+      this._recognizedUpto = -1;
+      this._deferred = undefined;
+    }
+    await reader(source);
+    if (this._deferred) {
+      this._allDeferred.push(this._deferred);
+    } else if (!this._recognized) {
+      if (this._recognizedUpto < 0) {
+        throw new UnknownZOptionError(this.option);
+      }
+      this._recognized = this.args.slice(this.argIndex + 1, this._recognizedUpto);
+    }
+  }
+
+  async done(source: TSrc): Promise<number> {
+    for (const deferred of this._allDeferred) {
+      await deferred(source);
+    }
+    if (this._recognized) {
+      this._whenRecognized(this._recognized);
+    } else {
+      throw new UnknownZOptionError(this.option);
+    }
+    return this._recognizedUpto;
+  }
+
+  values(max?: number): readonly string[] {
+    if (this._recognized) {
+      return max != null && max < this._recognized.length
+          ? this._recognized.slice(0, max)
+          : this._recognized;
+    }
+
+    if (max == null || max < 0) {
+      max = this.numValues();
+    }
+
+    const firstValueIndex = this.argIndex + 1;
+
+    this._recognize(firstValueIndex + max);
+
+    return this.args.slice(firstValueIndex, firstValueIndex + max);
+  }
+
+  private _recognize(upto: number): void {
+    this._recognizedUpto = upto;
+    this._deferred = undefined;
+  }
+
+  defer(whenRecognized?: ZOptionReader<TSrc>): void {
+    this.values(); // Mark all arguments recognized
+    this._deferred = whenRecognized;
+  }
+
+  whenRecognized(receiver: (values: readonly string[]) => void): void {
+
+    const prevReceiver = this._whenRecognized;
+
+    this._whenRecognized = values => {
+      prevReceiver(values);
+      receiver(values);
+    };
+  }
+
+}
+
+/**
+ * @internal
+ */
 export interface ZOptionSourceBaseClass<TArgs extends any[]> {
   prototype: ZOptionSource;
   new (...args: TArgs): ZOptionSource;
@@ -202,7 +210,7 @@ export interface ZOptionSourceImplClass<TSrc extends ZOptionSource, TCtx, TArgs 
 /**
  * @internal
  */
-class ZOptionSourceBase$<TSrc extends ZOptionSource> implements ZOptionSource {
+class ZOptionSourceBase<TSrc extends ZOptionSource> implements ZOptionSource {
 
   constructor(private readonly _impl: ZOptionSourceImpl<TSrc>) {
   }
@@ -211,8 +219,8 @@ class ZOptionSourceBase$<TSrc extends ZOptionSource> implements ZOptionSource {
     return this._impl.option;
   }
 
-  values(numArgs?: number): readonly string[] {
-    return this._impl.values(numArgs);
+  values(max?: number): readonly string[] {
+    return this._impl.values(max);
   }
 
   rest(): readonly string[] {
