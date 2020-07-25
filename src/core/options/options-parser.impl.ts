@@ -12,10 +12,17 @@ import { UnknownZOptionError } from './unknown-option-error';
 export abstract class ZOptionsParser<TCtx, TOption extends ZOption> {
 
   private readonly _options: (this: void, context: TCtx) => Promise<Map<string, ZOptionReader<TOption>[]>>;
-  private readonly _optionClass: ZOptionImplClass<TOption, TCtx, [ZOptionImpl<TOption>]>;
+  readonly isOptionName: (this: void, arg: string) => boolean;
+  private readonly _optionClass: ZOptionImplClass<TOption, TCtx, [ZOptionImpl<TCtx, TOption>]>;
 
-  constructor(supportedOptions: SupportedZOptions<TCtx, TOption>) {
-    this._options = context => supportedZOptionsMap(context, supportedOptions);
+  constructor(config: ZOptionsConfig<TCtx, TOption>) {
+
+    const { options, isOptionName } = config;
+
+    this._options = context => supportedZOptionsMap(context, options);
+    this.isOptionName = isOptionName
+        ? isOptionName.bind(config)
+        : arg => arg.startsWith('-');
     this._optionClass = this.optionClass(ZOptionBase as ZOptionBaseClass<any>);
   }
 
@@ -29,20 +36,23 @@ export abstract class ZOptionsParser<TCtx, TOption extends ZOption> {
 
     for (let argIndex = Math.max(0, fromIndex); argIndex < args.length;) {
 
-      const impl = new ZOptionImpl<TOption>(args, argIndex);
+      const impl = new ZOptionImpl(this, args, argIndex);
       const { name } = impl;
-      const readers = options.get(name);
-
-      if (!readers) {
-        throw new UnknownZOptionError(name);
-      }
+      const allReaders: ZOptionReader<TOption>[][] = [
+          options.get(name) || [],
+          this.isOptionName(name) && options.get('--*') || [],
+          options.get('*') || [],
+      ];
 
       const option = new this._optionClass(context, impl);
 
-      option.values(); // Recognize all arguments by default
-
-      for (const reader of readers) {
-        await impl.read(option, reader);
+      for (const readers of allReaders) {
+        for (const reader of readers) {
+          await impl.read(option, reader);
+        }
+        if (impl.recognized) {
+          break;
+        }
       }
 
       argIndex = await impl.done(option);
@@ -93,29 +103,62 @@ async function supportedZOptionsMap<TCtx, TOption extends ZOption>(
 /**
  * @internal
  */
-class ZOptionImpl<TOption extends ZOption> {
+export interface ZOptionsConfig<TCtx, TOption extends ZOption> {
+
+  readonly options: SupportedZOptions<TCtx, TOption>;
+
+  isOptionName?(arg: string): boolean;
+
+}
+
+/**
+ * @internal
+ */
+export interface ZOptionBaseClass<TArgs extends any[]> {
+  prototype: ZOption;
+  new (...args: TArgs): ZOption;
+}
+
+/**
+ * @internal
+ */
+export interface ZOptionImplClass<TOption extends ZOption, TCtx, TArgs extends any[]> {
+  prototype: TOption;
+  new (context: TCtx, ...args: TArgs): TOption;
+}
+
+/**
+ * @internal
+ */
+class ZOptionImpl<TCtx, TOption extends ZOption> {
 
   readonly name: string;
   private readonly _valueIndex: number;
+  private readonly _numValues: () => number;
+
   private _recognizedUpto!: number;
   private _deferred?: ZOptionReader<TOption>;
   private readonly _allDeferred: ZOptionReader<TOption>[] = [];
-  private _recognized?: readonly string[];
+
+  recognized?: readonly string[];
   private _whenRecognized: (values: readonly string[]) => void = noop;
-  private readonly _numValues: () => number;
 
   constructor(
+      parser: ZOptionsParser<TCtx, TOption>,
       readonly args: readonly string[],
       readonly argIndex: number,
   ) {
     this.name = args[argIndex];
     this._valueIndex = argIndex + 1;
+
+    const { isOptionName } = parser;
+
     this._numValues = lazyValue(() => {
 
       let i = this._valueIndex;
 
       while (i < args.length) {
-        if (args[i].startsWith('-')) {
+        if (isOptionName(args[i])) {
           break;
         }
         ++i;
@@ -126,18 +169,20 @@ class ZOptionImpl<TOption extends ZOption> {
   }
 
   async read(option: TOption, reader: ZOptionReader<TOption>): Promise<void> {
-    if (!this._recognized) {
+    if (!this.recognized) {
       this._recognizedUpto = -1;
       this._deferred = undefined;
     }
+
     await reader(option);
+
     if (this._deferred) {
       this._allDeferred.push(this._deferred);
-    } else if (!this._recognized) {
+    } else if (!this.recognized) {
       if (this._recognizedUpto < 0) {
         throw new UnknownZOptionError(this.name);
       }
-      this._recognized = this.args.slice(this._valueIndex, this._recognizedUpto);
+      this.recognized = this.args.slice(this._valueIndex, this._recognizedUpto);
     }
   }
 
@@ -145,8 +190,8 @@ class ZOptionImpl<TOption extends ZOption> {
     for (const deferred of this._allDeferred) {
       await deferred(option);
     }
-    if (this._recognized) {
-      this._whenRecognized(this._recognized);
+    if (this.recognized) {
+      this._whenRecognized(this.recognized);
     } else {
       throw new UnknownZOptionError(this.name);
     }
@@ -154,10 +199,10 @@ class ZOptionImpl<TOption extends ZOption> {
   }
 
   values(rest: boolean, max?: number): readonly string[] {
-    if (this._recognized) {
-      return max != null && max < this._recognized.length
-          ? this._recognized.slice(0, max)
-          : this._recognized;
+    if (this.recognized) {
+      return max != null && max < this.recognized.length
+          ? this.recognized.slice(0, max)
+          : this.recognized;
     }
 
     const numValues = this._numValues();
@@ -197,25 +242,9 @@ class ZOptionImpl<TOption extends ZOption> {
 /**
  * @internal
  */
-export interface ZOptionBaseClass<TArgs extends any[]> {
-  prototype: ZOption;
-  new (...args: TArgs): ZOption;
-}
+class ZOptionBase<TCtx, TOption extends ZOption> implements ZOption {
 
-/**
- * @internal
- */
-export interface ZOptionImplClass<TOption extends ZOption, TCtx, TArgs extends any[]> {
-  prototype: TOption;
-  new (context: TCtx, ...args: TArgs): TOption;
-}
-
-/**
- * @internal
- */
-class ZOptionBase<TOption extends ZOption> implements ZOption {
-
-  constructor(private readonly _impl: ZOptionImpl<TOption>) {
+  constructor(private readonly _impl: ZOptionImpl<TCtx, TOption>) {
   }
 
   get name(): string {

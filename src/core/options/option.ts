@@ -14,6 +14,10 @@ export namespace SupportedZOptions {
 
     readonly [option: string]: ZOptionReader<TOption, this> | undefined;
 
+    readonly '--*'?: ZOptionReader<TOption, this>;
+
+    readonly '*'?: ZOptionReader<TOption, this>;
+
   }
 
   export type Provider<TCtx, TOption extends ZOption> =
