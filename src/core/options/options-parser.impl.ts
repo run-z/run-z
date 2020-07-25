@@ -3,8 +3,7 @@
  * @module run-z
  */
 import { arrayOfElements, lazyValue, noop } from '@proc7ts/primitives';
-import type { SupportedZOptions, ZOptionReader } from './option';
-import { ZOptionSource } from './option';
+import type { SupportedZOptions, ZOptionReader, ZOptionSource } from './option';
 import { UnknownZOptionError } from './unknown-option-error';
 
 /**
@@ -13,11 +12,11 @@ import { UnknownZOptionError } from './unknown-option-error';
 export abstract class ZOptionsParser<TCtx, TSrc extends ZOptionSource> {
 
   private readonly _options: (this: void, context: TCtx) => Promise<Map<string, ZOptionReader<TSrc>[]>>;
-  private readonly _sourceClass: ZOptionSourceBase.ImplClass<TSrc, TCtx, [ZOptionSourceImpl<TSrc>]>;
+  private readonly _sourceClass: ZOptionSourceImplClass<TSrc, TCtx, [ZOptionSourceImpl<TSrc>]>;
 
   constructor(supportedOptions: SupportedZOptions<TCtx, TSrc>) {
     this._options = context => supportedZOptionsMap(context, supportedOptions);
-    this._sourceClass = this.sourceClass(ZOptionSourceBase$ as ZOptionSourceBase.Class<any>);
+    this._sourceClass = this.sourceClass(ZOptionSourceBase$ as ZOptionSourceBaseClass<any>);
   }
 
   async parseOptions(
@@ -51,8 +50,8 @@ export abstract class ZOptionsParser<TCtx, TSrc extends ZOptionSource> {
   }
 
   abstract sourceClass<TArgs extends any[]>(
-      base: ZOptionSourceBase.Class<TArgs>,
-  ): ZOptionSourceBase.ImplClass<TSrc, TCtx, TArgs>;
+      base: ZOptionSourceBaseClass<TArgs>,
+  ): ZOptionSourceImplClass<TSrc, TCtx, TArgs>;
 
 }
 
@@ -66,7 +65,7 @@ class ZOptionSourceImpl<TSrc extends ZOptionSource> {
   private _deferred?: ZOptionReader<TSrc>;
   private readonly _allDeferred: ZOptionReader<TSrc>[] = [];
   private _recognized?: readonly string[];
-  private _whenDone: (values: readonly string[]) => void = noop;
+  private _whenRecognized: (values: readonly string[]) => void = noop;
   readonly numValues: () => number;
 
   constructor(
@@ -109,7 +108,7 @@ class ZOptionSourceImpl<TSrc extends ZOptionSource> {
       await deferred(source);
     }
     if (this._recognized) {
-      this._whenDone(this._recognized);
+      this._whenRecognized(this._recognized);
     }
     return this._recognizedUpto;
   }
@@ -140,8 +139,14 @@ class ZOptionSourceImpl<TSrc extends ZOptionSource> {
     this._deferred = whenRecognized;
   }
 
-  whenDone(done: (values: readonly string[]) => void): void {
-    this._whenDone = done;
+  whenRecognized(receiver: (values: readonly string[]) => void): void {
+
+    const prevReceiver = this._whenRecognized;
+
+    this._whenRecognized = values => {
+      prevReceiver(values);
+      receiver(values);
+    };
   }
 
 }
@@ -184,51 +189,22 @@ async function supportedZOptionsMap<TCtx, TSrc extends ZOptionSource>(
 /**
  * @internal
  */
-export abstract class ZOptionSourceBase extends ZOptionSource {
+export interface ZOptionSourceBaseClass<TArgs extends any[]> {
+  prototype: ZOptionSource;
+  new (...args: TArgs): ZOptionSource;
+}
 
-  get option(): string {
-    return notImplemented();
-  }
-
-  values(_numArgs?: number): readonly string[] {
-    notImplemented();
-  }
-
-  rest(): readonly string[] {
-    notImplemented();
-  }
-
-  defer(_whenRecognized?: ZOptionReader<this>): void {
-    notImplemented();
-  }
-
+export interface ZOptionSourceImplClass<TSrc extends ZOptionSource, TCtx, TArgs extends any[]> {
+  prototype: TSrc;
+  new (context: TCtx, ...args: TArgs): TSrc;
 }
 
 /**
  * @internal
  */
-export namespace ZOptionSourceBase {
-
-  export interface Class<TArgs extends any[]> {
-    prototype: ZOptionSourceBase;
-    new (...args: TArgs): ZOptionSourceBase;
-  }
-
-  export interface ImplClass<TSrc extends ZOptionSource, TCtx, TArgs extends any[]> {
-    prototype: TSrc;
-    new (context: TCtx, ...args: TArgs): TSrc;
-  }
-
-}
-
-/**
- * @internal
- */
-class ZOptionSourceBase$<TSrc extends ZOptionSource> extends ZOptionSource {
+class ZOptionSourceBase$<TSrc extends ZOptionSource> implements ZOptionSource {
 
   constructor(private readonly _impl: ZOptionSourceImpl<TSrc>) {
-    super();
-    _impl.whenDone(values => this.recognized(values));
   }
 
   get option(): string {
@@ -247,11 +223,8 @@ class ZOptionSourceBase$<TSrc extends ZOptionSource> extends ZOptionSource {
     this._impl.defer(whenRecognized as ZOptionReader<any>);
   }
 
-}
+  whenRecognized(receiver: (this: void, values: readonly string[]) => void): void {
+    this._impl.whenRecognized(receiver);
+  }
 
-/**
- * @internal
- */
-function notImplemented(): never {
-  throw new TypeError('Not implemented');
 }

@@ -24,18 +24,16 @@ export namespace SupportedZOptions {
 export type ZOptionReader<TSrc extends ZOptionSource, TThis = void> =
     (this: TThis, source: TSrc) => void | PromiseLike<unknown>;
 
-export abstract class ZOptionSource {
+export interface ZOptionSource {
 
-  abstract readonly option: string;
+  readonly option: string;
 
-  abstract values(numArgs?: number): readonly string[];
+  values(numArgs?: number): readonly string[];
 
-  abstract rest(): readonly string[];
+  rest(): readonly string[];
 
-  abstract defer(whenRecognized?: ZOptionReader<this>): void;
+  defer(whenRecognized?: ZOptionReader<this>): void;
 
-  protected recognized(_values: readonly string[]): void {
-    // nothing by default
-  }
+  whenRecognized(receiver: (this: void, values: readonly string[]) => void): void;
 
 }

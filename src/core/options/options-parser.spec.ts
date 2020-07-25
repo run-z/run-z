@@ -1,29 +1,27 @@
 import { asis, noop } from '@proc7ts/primitives';
-import { ZOptionSource } from './option';
-import { ZOptionSourceBase, ZOptionsParser } from './options-parser.impl';
+import type { ZOptionSource } from './option';
+import { ZOptionSourceBaseClass, ZOptionSourceImplClass, ZOptionsParser } from './options-parser.impl';
 import { UnknownZOptionError } from './unknown-option-error';
 
 describe('ZOptionsParser', () => {
 
   let recognized: Record<string, readonly string[]>;
 
-  abstract class TestSource extends ZOptionSource {
-  }
+  type TestSource = ZOptionSource;
 
   class TestParser extends ZOptionsParser<null, TestSource> {
 
     sourceClass<TArgs extends any[]>(
-        base: ZOptionSourceBase.Class<TArgs>,
-    ): ZOptionSourceBase.ImplClass<TestSource, null, TArgs> {
+        base: ZOptionSourceBaseClass<TArgs>,
+    ): ZOptionSourceImplClass<TestSource, null, TArgs> {
 
-      class TestSourceImpl extends base {
+      class TestSourceImpl extends base implements TestSource {
 
         constructor(_context: null, ...args: TArgs) {
           super(...args);
-        }
-
-        recognized(values: readonly string[]): void {
-          recognized[this.option] = values;
+          this.whenRecognized(values => {
+            recognized[this.option] = values;
+          });
         }
 
       }
