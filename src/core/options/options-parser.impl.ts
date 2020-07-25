@@ -96,24 +96,23 @@ async function supportedZOptionsMap<TCtx, TSrc extends ZOptionSource>(
 class ZOptionSourceImpl<TSrc extends ZOptionSource> {
 
   readonly option: string;
+  private readonly _valueIndex: number;
   private _recognizedUpto!: number;
   private _deferred?: ZOptionReader<TSrc>;
   private readonly _allDeferred: ZOptionReader<TSrc>[] = [];
   private _recognized?: readonly string[];
   private _whenRecognized: (values: readonly string[]) => void = noop;
-  readonly numValues: () => number;
+  private readonly _numValues: () => number;
 
   constructor(
       readonly args: readonly string[],
       readonly argIndex: number,
   ) {
     this.option = args[argIndex];
+    this._valueIndex = argIndex + 1;
+    this._numValues = lazyValue(() => {
 
-    const firstValueIndex = argIndex + 1;
-
-    this.numValues = lazyValue(() => {
-
-      let i = firstValueIndex;
+      let i = this._valueIndex;
 
       while (i < args.length) {
         if (args[i].startsWith('-')) {
@@ -122,7 +121,7 @@ class ZOptionSourceImpl<TSrc extends ZOptionSource> {
         ++i;
       }
 
-      return i - firstValueIndex;
+      return i - this._valueIndex;
     });
   }
 
@@ -138,7 +137,7 @@ class ZOptionSourceImpl<TSrc extends ZOptionSource> {
       if (this._recognizedUpto < 0) {
         throw new UnknownZOptionError(this.option);
       }
-      this._recognized = this.args.slice(this.argIndex + 1, this._recognizedUpto);
+      this._recognized = this.args.slice(this._valueIndex, this._recognizedUpto);
     }
   }
 
@@ -162,14 +161,12 @@ class ZOptionSourceImpl<TSrc extends ZOptionSource> {
     }
 
     if (max == null || max < 0) {
-      max = this.numValues();
+      max = this._numValues();
     }
 
-    const firstValueIndex = this.argIndex + 1;
+    this._recognize(this._valueIndex + max);
 
-    this._recognize(firstValueIndex + max);
-
-    return this.args.slice(firstValueIndex, firstValueIndex + max);
+    return this.args.slice(this._valueIndex, this._valueIndex + max);
   }
 
   private _recognize(upto: number): void {
