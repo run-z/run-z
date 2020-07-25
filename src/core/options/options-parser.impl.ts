@@ -153,15 +153,19 @@ class ZOptionSourceImpl<TSrc extends ZOptionSource> {
     return this._recognizedUpto;
   }
 
-  values(max?: number): readonly string[] {
+  values(rest: boolean, max?: number): readonly string[] {
     if (this._recognized) {
       return max != null && max < this._recognized.length
           ? this._recognized.slice(0, max)
           : this._recognized;
     }
 
+    const numValues = this._numValues();
+
     if (max == null || max < 0) {
-      max = this._numValues();
+      max = numValues;
+    } else if (!rest && max > numValues) {
+      max = numValues;
     }
 
     this._recognize(this._valueIndex + max);
@@ -175,7 +179,6 @@ class ZOptionSourceImpl<TSrc extends ZOptionSource> {
   }
 
   defer(whenRecognized?: ZOptionReader<TSrc>): void {
-    this.values(); // Mark all arguments recognized
     this._deferred = whenRecognized;
   }
 
@@ -217,11 +220,11 @@ class ZOptionSourceBase<TSrc extends ZOptionSource> implements ZOptionSource {
   }
 
   values(max?: number): readonly string[] {
-    return this._impl.values(max);
+    return this._impl.values(false, max);
   }
 
   rest(): readonly string[] {
-    return this.values(this._impl.args.length);
+    return this._impl.values(true, this._impl.args.length);
   }
 
   defer(whenRecognized?: ZOptionReader<this>): void {

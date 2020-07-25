@@ -92,6 +92,29 @@ describe('ZOptionsParser', () => {
       '--end': [],
     });
   });
+  it('recognizes option with up to the max values', async () => {
+
+    let values: readonly string[] | undefined;
+    let rest: readonly string[] | undefined;
+    const parser = new TestParser({
+      '--test': source => {
+        rest = source.rest();
+        values = source.values(13);
+      },
+      '--end': source => {
+        source.rest();
+      },
+    });
+
+    await parser.parseOptions(null, ['--test', 'val1', 'val2', '--end']);
+
+    expect(values).toEqual(['val1', 'val2']);
+    expect(rest).toEqual(['val1', 'val2', '--end']);
+    expect(recognized).toEqual({
+      '--test': ['val1', 'val2'],
+      '--end': [],
+    });
+  });
   it('throws on unrecognized option', async () => {
 
     const parser = new TestParser({});
