@@ -309,6 +309,27 @@ describe('ZOptionsParser', () => {
     expect(error).toBeInstanceOf(UnknownZOptionError);
     expect(error.optionName).toBe('--test');
   });
+  it('does not throw when option reader does nothing before option recognition', async () => {
+
+    const parser = new TestParser({
+      options: [
+        {
+          '--test': noop,
+        },
+        {
+          '--test': option => {
+            option.rest();
+          },
+        },
+      ],
+    });
+
+    await parser.parseOptions(null, ['--test', '1', '2']);
+
+    expect(recognized).toEqual({
+      '--test': ['1', '2'],
+    });
+  });
   it('does not throw when option reader does nothing after option recognition', async () => {
 
     const parser = new TestParser({

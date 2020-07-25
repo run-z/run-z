@@ -178,10 +178,7 @@ class ZOptionImpl<TCtx, TOption extends ZOption> {
 
     if (this._deferred) {
       this._allDeferred.push(this._deferred);
-    } else if (!this.recognized) {
-      if (this._recognizedUpto < 0) {
-        throw new UnknownZOptionError(this.name);
-      }
+    } else if (!this.recognized && this._recognizedUpto >= 0) {
       this.recognized = this.args.slice(this._valueIndex, this._recognizedUpto);
     }
   }
