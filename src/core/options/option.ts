@@ -3,30 +3,30 @@
  * @module run-z
  */
 
-export type SupportedZOptions<TCtx, TSrc extends ZOptionSource> =
-    | SupportedZOptions.Map<TSrc>
-    | SupportedZOptions.Provider<TCtx, TSrc>
-    | readonly (SupportedZOptions.Map<TSrc> | SupportedZOptions.Provider<TCtx, TSrc>)[];
+export type SupportedZOptions<TCtx, TOption extends ZOption> =
+    | SupportedZOptions.Map<TOption>
+    | SupportedZOptions.Provider<TCtx, TOption>
+    | readonly (SupportedZOptions.Map<TOption> | SupportedZOptions.Provider<TCtx, TOption>)[];
 
 export namespace SupportedZOptions {
 
-  export interface Map<TSrc extends ZOptionSource> {
+  export interface Map<TOption extends ZOption> {
 
-    readonly [option: string]: ZOptionReader<TSrc, this> | undefined;
+    readonly [option: string]: ZOptionReader<TOption, this> | undefined;
 
   }
 
-  export type Provider<TCtx, TSrc extends ZOptionSource> =
-      (this: void, context: TCtx) => Map<TSrc> | PromiseLike<Map<TSrc>>;
+  export type Provider<TCtx, TOption extends ZOption> =
+      (this: void, context: TCtx) => Map<TOption> | PromiseLike<Map<TOption>>;
 
 }
 
-export type ZOptionReader<TSrc extends ZOptionSource, TThis = void> =
-    (this: TThis, source: TSrc) => void | PromiseLike<unknown>;
+export type ZOptionReader<TOption extends ZOption, TThis = void> =
+    (this: TThis, option: TOption) => void | PromiseLike<unknown>;
 
-export interface ZOptionSource {
+export interface ZOption {
 
-  readonly option: string;
+  readonly name: string;
 
   values(max?: number): readonly string[];
 
