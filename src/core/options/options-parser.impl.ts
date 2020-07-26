@@ -141,7 +141,7 @@ class ZOptionImpl<TCtx, TOption extends ZOption> {
   private readonly _allDeferred: ZOptionReader<TOption>[] = [];
 
   recognized?: readonly string[];
-  private _whenRecognized: (values: readonly string[]) => void = noop;
+  private _whenRecognized: (option: TOption) => void = noop;
 
   constructor(
       parser: ZOptionsParser<TCtx, TOption>,
@@ -188,7 +188,7 @@ class ZOptionImpl<TCtx, TOption extends ZOption> {
       await deferred(option);
     }
     if (this.recognized) {
-      this._whenRecognized(this.recognized);
+      this._whenRecognized(option);
     } else {
       throw new UnknownZOptionError(this.name);
     }
@@ -224,7 +224,7 @@ class ZOptionImpl<TCtx, TOption extends ZOption> {
     this._deferred = whenRecognized;
   }
 
-  whenRecognized(receiver: (values: readonly string[]) => void): void {
+  whenRecognized(receiver: (option: TOption) => void): void {
 
     const prevReceiver = this._whenRecognized;
 
@@ -260,8 +260,8 @@ class ZOptionBase<TCtx, TOption extends ZOption> implements ZOption {
     this._impl.defer(whenRecognized as ZOptionReader<any>);
   }
 
-  whenRecognized(receiver: (this: void, values: readonly string[]) => void): void {
-    this._impl.whenRecognized(receiver);
+  whenRecognized(receiver: (this: void, option: this) => void): void {
+    this._impl.whenRecognized(receiver as (option: any) => void);
   }
 
 }

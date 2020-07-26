@@ -19,8 +19,8 @@ describe('ZOptionsParser', () => {
 
         constructor(_context: null, ...args: TArgs) {
           super(...args);
-          this.whenRecognized(values => {
-            recognized[this.name] = values;
+          this.whenRecognized(option => {
+            recognized[this.name] = option.values();
           });
         }
 

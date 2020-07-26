@@ -38,6 +38,6 @@ export interface ZOption {
 
   defer(whenRecognized?: ZOptionReader<this>): void;
 
-  whenRecognized(receiver: (this: void, values: readonly string[]) => void): void;
+  whenRecognized(receiver: (this: void, option: this) => void): void;
 
 }
