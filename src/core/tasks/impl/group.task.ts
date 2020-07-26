@@ -31,9 +31,9 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
     const subTaskRef: ZTaskSpec.TaskRef = { ...ref, args: subArgs };
     const subCalls: Iterable<Promise<Iterable<ZCall>>> = mapIt(
         await this._subTaskTargets().packages(),
-        target => {
+        async target => {
 
-          const subTask = target.task(subTaskName);
+          const subTask = await target.task(subTaskName);
 
           planner.order(this, subTask);
 

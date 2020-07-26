@@ -46,7 +46,7 @@ describe('CommandZTask', () => {
     );
 
     const call = await testPlan.plan('test');
-    const dep = call.plan.callOf(call.task.target.task('dep'));
+    const dep = call.plan.callOf(await call.task.target.task('dep'));
 
     expect(prerequisitesOf(call)).toEqual(taskIds([dep]));
     expect(dep.params().attrs).toEqual({ attr: ['on'] });
@@ -68,8 +68,8 @@ describe('CommandZTask', () => {
     const call = await testPlan.plan('test');
     const target = call.task.target;
     const plan = call.plan;
-    const dep1 = plan.callOf(target.task('dep1'));
-    const dep2 = plan.callOf(target.task('dep2'));
+    const dep1 = plan.callOf(await target.task('dep1'));
+    const dep2 = plan.callOf(await target.task('dep2'));
 
     expect(prerequisitesOf(call)).toEqual(taskIds(dep2));
     expect(call.isParallelTo(dep1.task)).toBe(false);
@@ -98,9 +98,9 @@ describe('CommandZTask', () => {
     const call = await testPlan.plan('test');
     const target = call.task.target;
     const plan = call.plan;
-    const dep1 = plan.callOf(target.task('dep1'));
-    const dep2 = plan.callOf(target.task('dep2'));
-    const dep3 = plan.callOf(target.task('dep3'));
+    const dep1 = plan.callOf(await target.task('dep1'));
+    const dep2 = plan.callOf(await target.task('dep2'));
+    const dep3 = plan.callOf(await target.task('dep3'));
 
     expect(prerequisitesOf(call)).toEqual(taskIds(dep3));
     expect(call.isParallelTo(dep1.task)).toBe(false);

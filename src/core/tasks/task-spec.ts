@@ -5,6 +5,8 @@
 
 /**
  * Task specifier.
+ *
+ * Built by {@link ZTaskParser.parse parsing command line}.
  */
 export interface ZTaskSpec<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
 
@@ -35,7 +37,7 @@ export interface ZTaskSpec<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
 export namespace ZTaskSpec {
 
   /**
-   * Prerequisite of the  task.
+   * Prerequisite of the task.
    *
    * Either task or package reference.
    */

@@ -43,7 +43,7 @@ export class TestPlan {
   async plan(taskName: string, instruction: Omit<ZCallInstruction, 'task'> = {}): Promise<ZCall> {
 
     const target = await this.target();
-    const task = target.task(taskName);
+    const task = await target.task(taskName);
 
     return this.setup.planner.plan({ ...instruction, task });
   }

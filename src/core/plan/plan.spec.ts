@@ -22,9 +22,9 @@ describe('ZPlan', () => {
   });
 
   describe('callOf', () => {
-    it('throws when non-called task requested', () => {
+    it('throws when non-called task requested', async () => {
 
-      const otherTask = call.task.target.task('other');
+      const otherTask = await call.task.target.task('other');
 
       expect(() => plan.callOf(otherTask)).toThrow(UnknownZTaskError);
     });
@@ -49,8 +49,8 @@ describe('ZPlan', () => {
 
     plan = call.plan;
 
-    const dep1 = plan.callOf(target.task('dep1'));
-    const dep2 = plan.callOf(target.task('dep2'));
+    const dep1 = plan.callOf(await target.task('dep1'));
+    const dep2 = plan.callOf(await target.task('dep2'));
 
     expect(dep1.params().args).toHaveLength(0);
     expect(dep1.params().attrs).toEqual({ attr: ['0'] });
@@ -74,10 +74,10 @@ describe('ZPlan', () => {
     const call = await testPlan.plan(
         'test',
         {
-          plan(planner) {
+          async plan(planner) {
 
             const { task } = planner.plannedCall;
-            const dep1 = task.target.task('dep1');
+            const dep1 = await task.target.task('dep1');
 
             planner.order(dep1, task);
           },
@@ -87,7 +87,7 @@ describe('ZPlan', () => {
 
     plan = call.plan;
 
-    const dep2 = plan.callOf(target.task('dep2'));
+    const dep2 = plan.callOf(await target.task('dep2'));
 
     expect(prerequisitesOf(call)).toEqual(taskIds(dep2));
   });
@@ -108,11 +108,11 @@ describe('ZPlan', () => {
     const call = await testPlan.plan(
         'test',
         {
-          plan(planner) {
+          async plan(planner) {
 
             const { task } = planner.plannedCall;
-            const dep1 = task.target.task('dep1');
-            const dep2 = task.target.task('dep2');
+            const dep1 = await task.target.task('dep1');
+            const dep2 = await task.target.task('dep2');
 
             planner.makeParallel([task, dep1, dep2]);
           },
@@ -122,8 +122,8 @@ describe('ZPlan', () => {
 
     plan = call.plan;
 
-    const dep1 = target.task('dep1');
-    const dep2 = target.task('dep2');
+    const dep1 = await target.task('dep1');
+    const dep2 = await target.task('dep2');
 
     expect(call.isParallelTo(dep1)).toBe(true);
     expect(call.isParallelTo(dep2)).toBe(true);
@@ -148,8 +148,8 @@ describe('ZPlan', () => {
 
     plan = call.plan;
 
-    const dep1 = plan.callOf(target.task('dep1'));
-    const dep2 = plan.callOf(target.task('dep2'));
+    const dep1 = plan.callOf(await target.task('dep1'));
+    const dep2 = plan.callOf(await target.task('dep2'));
 
     expect(prerequisitesOf(call)).toEqual(taskIds(dep1));
     expect(call.hasPrerequisite(dep1.task)).toBe(true);
@@ -182,8 +182,8 @@ describe('ZPlan', () => {
 
     plan = call.plan;
 
-    const dep1 = plan.callOf(target.task('dep1'));
-    const dep2 = plan.callOf(target.task('dep2'));
+    const dep1 = plan.callOf(await target.task('dep1'));
+    const dep2 = plan.callOf(await target.task('dep2'));
 
     expect(prerequisitesOf(call)).toEqual(taskIds(dep2));
     expect(call.hasPrerequisite(dep1.task)).toBe(true);

@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module run-z
  */
-import { filterIt, mapIt } from '@proc7ts/a-iterable';
+import { filterIt, mapIt, overEntries } from '@proc7ts/a-iterable';
 import { isPresent } from '@proc7ts/primitives';
 import type { ZSetup } from '../setup';
 import type { ZTask } from '../tasks';
@@ -24,7 +24,7 @@ export class ZPackage extends ZPackageSet {
   private _unscopedName?: string;
   private _hostPackage?: ZPackage;
   private _subPackageName: string | null | undefined = null;
-  private readonly _tasks = new Map<string, ZTask>();
+  private _tasks?: Map<string, ZTask>;
 
   /**
    * Constructs a package.
@@ -53,15 +53,6 @@ export class ZPackage extends ZPackageSet {
       this.name = `${parent.name}${dirName}`;
     } else {
       this.name = location.baseName;
-    }
-
-    const { scripts = {} } = packageJson;
-
-    for (const [key, value] of Object.entries(scripts)) {
-
-      const spec = this.setup.taskParser.parse(value);
-
-      this._tasks.set(key, this.setup.taskFactory.createTask(this, key, spec));
     }
   }
 
@@ -152,7 +143,36 @@ export class ZPackage extends ZPackageSet {
     return new SelectedZPackages(this, selector);
   }
 
-  task(name: string): ZTask {
+  /**
+   * Returns a task by its name.
+   *
+   * @param name  Task name.
+   *
+   * @returns A promise resolved to task instance. May have {@link ZTaskSpec.Unknown unknown action} if the task is not
+   * present in `scripts` section of {@link packageJson `package.json`}.
+   */
+  async task(name: string): Promise<ZTask> {
+    if (!this._tasks) {
+
+      const { taskParser, taskFactory } = this.setup;
+      const { scripts = {} } = this.packageJson;
+
+      this._tasks = new Map(
+          await Promise.all(
+              mapIt(
+                  overEntries<Record<string, string>>(scripts),
+                  async ([key, value]): Promise<readonly [string, ZTask]> => [
+                    key,
+                    taskFactory.createTask(
+                        this,
+                        key,
+                        await taskParser.parse(value),
+                    ),
+                  ],
+              ),
+          ),
+      );
+    }
 
     const existing = this._tasks.get(name);
 

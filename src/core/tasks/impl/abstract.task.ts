@@ -139,10 +139,10 @@ function selectZTaskPreTargets(
  * @internal
  */
 async function resolveZTaskRef(targets: ZPackageSet, { task }: ZTaskSpec.TaskRef): Promise<Iterable<ZTask>> {
-  return mapIt(
+  return Promise.all(mapIt(
       await targets.packages(),
       target => target.task(task),
-  );
+  ));
 }
 
 

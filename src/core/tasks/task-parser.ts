@@ -78,20 +78,20 @@ export class ZTaskParser {
    *
    * @param commandLine  Task command line.
    *
-   * @returns Parsed task specifier.
+   * @returns A promise resolved to parsed task specifier.
    */
-  parse(commandLine: string): ZTaskSpec {
+  async parse(commandLine: string): Promise<ZTaskSpec> {
 
     const entries = parseZTaskEntries(commandLine);
 
     if (!entries) {
-      return ZTaskSpec.script;
+      return Promise.resolve(ZTaskSpec.script);
     }
 
     let e = 0;
     let entryIndex = 0;
     let entryPosition = 0;
-    const deps: ZTaskSpec.Pre[] = [];
+    const pre: ZTaskSpec.Pre[] = [];
     const attrs: Record<string, [string, ...string[]]> = {};
     let preTask: string | undefined;
     let preParallel = false;
@@ -127,7 +127,7 @@ export class ZTaskParser {
     const appendTask = (): void => {
       if (preTask) {
         // Finish the task.
-        deps.push(createZTaskRef(this, preTask, preParallel, preArgs));
+        pre.push(createZTaskRef(this, preTask, preParallel, preArgs));
         preArgs = [];
         preParallel = false;
         preTask = undefined;
@@ -147,7 +147,7 @@ export class ZTaskParser {
         // Package reference
         appendTask();
         entryIndex = e + 1;
-        deps.push({ selector: entry });
+        pre.push({ selector: entry });
         continue;
       }
       if (this.parseAttr(entry, (n, v) => !n.includes('/') && recordZTaskAttr(attrs, n, v))) {
@@ -223,12 +223,12 @@ export class ZTaskParser {
       action = ZTaskSpec.groupAction;
     }
 
-    return {
-      pre: deps,
+    return Promise.resolve({
+      pre,
       attrs,
       args,
       action,
-    };
+    });
   }
 
 }

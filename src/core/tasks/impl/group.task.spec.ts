@@ -29,8 +29,8 @@ describe('GroupZTask', () => {
 
     const plan = call.plan;
     const target = call.task.target;
-    const dep1 = plan.callOf(target.task('dep1'));
-    const dep2 = plan.callOf(target.task('dep2'));
+    const dep1 = plan.callOf(await target.task('dep1'));
+    const dep2 = plan.callOf(await target.task('dep2'));
 
     expect(prerequisitesOf(call)).toEqual(taskIds(dep1));
     expect(call.params().attrs).toEqual({ test: ['1'] });
@@ -60,9 +60,9 @@ describe('GroupZTask', () => {
     const call = await testPlan.plan('test');
     const plan = call.plan;
     const target = call.task.target;
-    const dep1 = plan.callOf(target.task('dep1'));
-    const dep2 = plan.callOf(target.task('dep2'));
-    const dep3 = plan.callOf(target.task('dep3'));
+    const dep1 = plan.callOf(await target.task('dep1'));
+    const dep2 = plan.callOf(await target.task('dep2'));
+    const dep3 = plan.callOf(await target.task('dep3'));
 
     expect(prerequisitesOf(call)).toEqual(taskIds(dep3));
     expect(call.params().attrs).toEqual({ attr2: ['on'] });
@@ -122,10 +122,10 @@ describe('GroupZTask', () => {
 
     const call = await testPlan.plan('test');
     const plan = call.plan;
-    const dep11 = plan.callOf(nested1.task('dep1'));
-    const dep12 = plan.callOf(nested1.task('dep2'));
-    const dep21 = plan.callOf(nested2.task('dep1'));
-    const dep22 = plan.callOf(nested2.task('dep2'));
+    const dep11 = plan.callOf(await nested1.task('dep1'));
+    const dep12 = plan.callOf(await nested1.task('dep2'));
+    const dep21 = plan.callOf(await nested2.task('dep1'));
+    const dep22 = plan.callOf(await nested2.task('dep2'));
 
     expect(prerequisitesOf(call)).toEqual(taskIds(dep12, dep22));
     expect(call.params().attrs).toEqual({ test: ['on'] });
@@ -187,9 +187,9 @@ describe('GroupZTask', () => {
 
     const call = await testPlan.plan('test');
     const plan = call.plan;
-    const dep0 = plan.callOf(call.task.target.task('dep0'));
-    const dep1 = plan.callOf(nested1.task('dep'));
-    const dep2 = plan.callOf(nested2.task('dep'));
+    const dep0 = plan.callOf(await call.task.target.task('dep0'));
+    const dep1 = plan.callOf(await nested1.task('dep'));
+    const dep2 = plan.callOf(await nested2.task('dep'));
 
     expect(prerequisitesOf(call)).toEqual(taskIds(dep1, dep2));
 
@@ -245,8 +245,8 @@ describe('GroupZTask', () => {
 
     const call = await testPlan.plan('test');
     const plan = call.plan;
-    const dep1 = plan.callOf(nested1.task('dep'));
-    const dep2 = plan.callOf(nested2.task('dep'));
+    const dep1 = plan.callOf(await nested1.task('dep'));
+    const dep2 = plan.callOf(await nested2.task('dep'));
 
     expect(prerequisitesOf(call)).toEqual(taskIds(dep1, dep2));
 
@@ -302,10 +302,10 @@ describe('GroupZTask', () => {
 
     const call = await testPlan.plan('test');
     const plan = call.plan;
-    const dep1 = plan.callOf(nested1.task('dep'));
-    const sub1 = plan.callOf(nested1.task('sub-task'));
-    const dep2 = plan.callOf(nested2.task('dep'));
-    const sub2 = plan.callOf(nested2.task('sub-task'));
+    const dep1 = plan.callOf(await nested1.task('dep'));
+    const sub1 = plan.callOf(await nested1.task('sub-task'));
+    const dep2 = plan.callOf(await nested2.task('dep'));
+    const sub2 = plan.callOf(await nested2.task('sub-task'));
 
     expect(prerequisitesOf(call)).toEqual(taskIds(sub1, sub2));
     expect(call.params().attrs).toEqual({ attr1: ['on'] });
@@ -366,9 +366,9 @@ describe('GroupZTask', () => {
     const target = await testPlan.target(targetLocation);
     const call = await testPlan.plan('test');
     const plan = call.plan;
-    const dep = plan.callOf(target.task('dep'));
-    const sub1 = plan.callOf(nested1.task('sub-task'));
-    const sub2 = plan.callOf(nested2.task('sub-task'));
+    const dep = plan.callOf(await target.task('dep'));
+    const sub1 = plan.callOf(await nested1.task('sub-task'));
+    const sub2 = plan.callOf(await nested2.task('sub-task'));
 
     expect(prerequisitesOf(call)).toEqual(taskIds(sub1, sub2));
     expect(call.params().attrs).toEqual({ attr1: ['on'] });
