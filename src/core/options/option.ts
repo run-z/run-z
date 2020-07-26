@@ -32,6 +32,10 @@ export interface ZOption {
 
   readonly name: string;
 
+  readonly args: readonly string[];
+
+  readonly argIndex: number;
+
   values(max?: number): readonly string[];
 
   rest(): readonly string[];

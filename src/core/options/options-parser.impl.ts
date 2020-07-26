@@ -11,19 +11,38 @@ import { UnknownZOptionError } from './unknown-option-error';
  */
 export abstract class ZOptionsParser<TCtx, TOption extends ZOption> {
 
-  private readonly _options: (this: void, context: TCtx) => Promise<Map<string, ZOptionReader<TOption>[]>>;
-  readonly isOptionName: (this: void, arg: string) => boolean;
-  private readonly _optionClass: ZOptionImplClass<TOption, TCtx, [ZOptionImpl<TCtx, TOption>]>;
+  private _options?: (this: void, context: TCtx) => Promise<Map<string, ZOptionReader<TOption>[]>>;
+  private _isOptionName?: (this: void, arg: string) => boolean;
+  private _optClass?: ZOptionImplClass<TOption, TCtx, [ZOptionImpl<TCtx, TOption>]>;
 
-  constructor(config: ZOptionsConfig<TCtx, TOption>) {
+  constructor(private readonly _config: ZOptionsConfig<TCtx, TOption>) {
+  }
 
-    const { options, isOptionName } = config;
+  private get options(): (this: void, context: TCtx) => Promise<Map<string, ZOptionReader<TOption>[]>> {
+    if (this._options) {
+      return this._options;
+    }
+    return this._options = context => supportedZOptionsMap(context, this._config.options);
+  }
 
-    this._options = context => supportedZOptionsMap(context, options);
-    this.isOptionName = isOptionName
-        ? isOptionName.bind(config)
-        : arg => arg.startsWith('-');
-    this._optionClass = this.optionClass(ZOptionBase as ZOptionBaseClass<any>);
+  private get optClass(): ZOptionImplClass<TOption, TCtx, [ZOptionImpl<TCtx, TOption>]> {
+    if (this._optClass) {
+      return this._optClass;
+    }
+    return this._optClass = this.optionClass(ZOptionBase as ZOptionBaseClass<any>);
+  }
+
+  isOptionName(arg: string): boolean {
+    if (!this._isOptionName) {
+
+      const { isOptionName } = this._config;
+
+      this._isOptionName = isOptionName
+          ? isOptionName.bind(this._config)
+          : arg => arg.startsWith('-');
+    }
+
+    return this._isOptionName(arg);
   }
 
   async parseOptions(
@@ -32,7 +51,7 @@ export abstract class ZOptionsParser<TCtx, TOption extends ZOption> {
       fromIndex = 0,
   ): Promise<void> {
 
-    const options = await this._options(context);
+    const options = await this.options(context);
 
     for (let argIndex = Math.max(0, fromIndex); argIndex < args.length;) {
 
@@ -44,7 +63,7 @@ export abstract class ZOptionsParser<TCtx, TOption extends ZOption> {
           options.get('*') || [],
       ];
 
-      const option = new this._optionClass(context, impl);
+      const option = new this.optClass(context, impl);
 
       for (const readers of allReaders) {
         for (const reader of readers) {
@@ -150,15 +169,12 @@ class ZOptionImpl<TCtx, TOption extends ZOption> {
   ) {
     this.name = args[argIndex];
     this._valueIndex = argIndex + 1;
-
-    const { isOptionName } = parser;
-
     this._numValues = lazyValue(() => {
 
       let i = this._valueIndex;
 
       while (i < args.length) {
-        if (isOptionName(args[i])) {
+        if (parser.isOptionName(args[i])) {
           break;
         }
         ++i;
@@ -246,6 +262,14 @@ class ZOptionBase<TCtx, TOption extends ZOption> implements ZOption {
 
   get name(): string {
     return this._impl.name;
+  }
+
+  get args(): readonly string[] {
+    return this._impl.args;
+  }
+
+  get argIndex(): number {
+    return this._impl.argIndex;
   }
 
   values(max?: number): readonly string[] {
