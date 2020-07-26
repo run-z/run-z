@@ -55,7 +55,7 @@ export class ZSetup {
     return this._taskParser || (
         this._taskParser = this._config.taskParser
             ? valueByRecipe(this._config.taskParser, this)
-            : new ZTaskParser()
+            : new ZTaskParser(this)
     );
   }
 
