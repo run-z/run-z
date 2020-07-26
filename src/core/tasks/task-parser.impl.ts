@@ -17,12 +17,12 @@ export class ZTaskCLParser extends ZOptionsParser<ZTaskCLData, ZTaskCLOption> {
 
   constructor(readonly setup: ZSetup) {
     super({
-      options: ({ clParser }) => ({
-        '--and': clParser.readCommand.bind(clParser, true),
-        '--then': clParser.readCommand.bind(clParser, false),
-        '--*': clParser.readNamed.bind(clParser),
-        '*': clParser.readPositional.bind(clParser),
-      }),
+      options: {
+        '--and': ZTaskCLParser.readCommand.bind(undefined, true),
+        '--then': ZTaskCLParser.readCommand.bind(undefined, false),
+        '--*': ZTaskCLParser.readNamed,
+        '*': ZTaskCLParser.readPositional,
+      },
       isOptionName: setup.taskParser.isOption.bind(setup.taskParser),
     });
   }
@@ -84,14 +84,14 @@ export class ZTaskCLParser extends ZOptionsParser<ZTaskCLData, ZTaskCLOption> {
     return TaskOption;
   }
 
-  private readNamed(option: ZTaskCLOption): void {
+  private static readNamed(option: ZTaskCLOption): void {
     option.addArg(option.name);
     for (const arg of option.values()) {
       option.addArg(arg);
     }
   }
 
-  private readPositional(option: ZTaskCLOption): void {
+  private static readPositional(option: ZTaskCLOption): void {
 
     const { taskParser, data, name: entry } = option;
 
@@ -166,7 +166,7 @@ export class ZTaskCLParser extends ZOptionsParser<ZTaskCLData, ZTaskCLOption> {
     option.values(0);
   }
 
-  readCommand(parallel: boolean, option: ZTaskCLOption): void {
+  private static readCommand(parallel: boolean, option: ZTaskCLOption): void {
 
     const [command, ...args] = option.rest();
 

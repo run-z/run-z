@@ -11,11 +11,13 @@ import { UnknownZOptionError } from './unknown-option-error';
  */
 export abstract class ZOptionsParser<TCtx, TOption extends ZOption> {
 
+  private readonly _config: ZOptionsConfig<TCtx, TOption>;
   private _options?: (this: void, context: TCtx) => Promise<Map<string, ZOptionReader<TOption>[]>>;
   private _isOptionName?: (this: void, arg: string) => boolean;
   private _optClass?: ZOptionImplClass<TOption, TCtx, [ZOptionImpl<TCtx, TOption>]>;
 
-  constructor(private readonly _config: ZOptionsConfig<TCtx, TOption>) {
+  constructor(config: ZOptionsConfig<TCtx, TOption>) {
+    this._config = config;
   }
 
   private get options(): (this: void, context: TCtx) => Promise<Map<string, ZOptionReader<TOption>[]>> {
