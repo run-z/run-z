@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module run-z
  */
-import { filterIt, mapIt, overEntries } from '@proc7ts/a-iterable';
+import { filterIt, mapIt } from '@proc7ts/a-iterable';
 import { isPresent } from '@proc7ts/primitives';
 import type { ZSetup } from '../setup';
 import type { ZTask } from '../tasks';
@@ -24,7 +24,8 @@ export class ZPackage extends ZPackageSet {
   private _unscopedName?: string;
   private _hostPackage?: ZPackage;
   private _subPackageName: string | null | undefined = null;
-  private _tasks?: Map<string, ZTask>;
+
+  private readonly _tasks = new Map<string, Promise<ZTask>>();
 
   /**
    * Constructs a package.
@@ -151,28 +152,7 @@ export class ZPackage extends ZPackageSet {
    * @returns A promise resolved to task instance. May have {@link ZTaskSpec.Unknown unknown action} if the task is not
    * present in `scripts` section of {@link packageJson `package.json`}.
    */
-  async task(name: string): Promise<ZTask> {
-    if (!this._tasks) {
-
-      const { taskParser, taskFactory } = this.setup;
-      const { scripts = {} } = this.packageJson;
-
-      this._tasks = new Map(
-          await Promise.all(
-              mapIt(
-                  overEntries<Record<string, string>>(scripts),
-                  async ([key, value]): Promise<readonly [string, ZTask]> => [
-                    key,
-                    taskFactory.createTask(
-                        this,
-                        key,
-                        await taskParser.parse(value),
-                    ),
-                  ],
-              ),
-          ),
-      );
-    }
+  task(name: string): Promise<ZTask> {
 
     const existing = this._tasks.get(name);
 
@@ -180,7 +160,23 @@ export class ZPackage extends ZPackageSet {
       return existing;
     }
 
-    const absent = this.setup.taskFactory.createUnknown(this, name);
+    const script = this.packageJson.scripts?.[name];
+
+    if (script) {
+
+      const parsed = this.setup.taskParser.parse(script)
+          .then(spec => this.setup.taskFactory.createTask(
+              this,
+              name,
+              spec,
+          ));
+
+      this._tasks.set(name, parsed);
+
+      return parsed;
+    }
+
+    const absent = Promise.resolve(this.setup.taskFactory.createUnknown(this, name));
 
     this._tasks.set(name, absent);
 
