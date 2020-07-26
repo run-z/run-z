@@ -1,6 +1,7 @@
 import { asis } from '@proc7ts/primitives';
+import { ZSetup } from '../setup';
 import { InvalidZTaskError } from './invalid-task-error';
-import { ZTaskParser } from './task-parser';
+import type { ZTaskParser } from './task-parser';
 import { ZTaskSpec } from './task-spec';
 
 describe('ZTaskParser', () => {
@@ -8,7 +9,7 @@ describe('ZTaskParser', () => {
   let parser: ZTaskParser;
 
   beforeEach(() => {
-    parser = new ZTaskParser();
+    parser = new ZSetup().taskParser;
   });
 
   it('recognizes NPM script task', async () => {
