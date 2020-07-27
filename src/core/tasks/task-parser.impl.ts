@@ -23,7 +23,6 @@ export class ZTaskCLParser extends ZOptionsParser<ZTaskCLData, ZTaskCLOption> {
         '--*': ZTaskCLParser.readNamed,
         '*': ZTaskCLParser.readPositional,
       },
-      isOptionName: setup.taskParser.isOption.bind(setup.taskParser),
     });
   }
 

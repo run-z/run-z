@@ -442,32 +442,4 @@ describe('ZOptionsParser', () => {
       expect(defaultPositional).toBeUndefined();
     });
   });
-
-  describe('isNamedOption', () => {
-    it('is consulted', async () => {
-
-      let result: string | undefined;
-      const parser = new TestParser({
-        options: {
-          '--*'(option) {
-            result = 'named';
-            option.rest();
-          },
-          '*'(option) {
-            result = 'positional';
-            option.rest();
-          },
-        },
-        isOptionName(arg: string): boolean {
-          return arg.startsWith('-') && arg.length > 1;
-        },
-      });
-
-      await parser.parseOptions(null, ['-']);
-      expect(result).toBe('positional');
-
-      await parser.parseOptions(null, ['-t']);
-      expect(result).toBe('named');
-    });
-  });
 });

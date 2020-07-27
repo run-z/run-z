@@ -1,4 +1,5 @@
 import { flatMapIt, mapIt } from '@proc7ts/a-iterable';
+import { ZOptionInput } from '../../options';
 import type { ZPackageSet } from '../../packages';
 import type { ZCall, ZCallPlanner } from '../../plan';
 import type { ZTaskSpec } from '../task-spec';
@@ -16,7 +17,7 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
 
     const [subTaskName, ...subArgs] = ref.args;
 
-    if (!subTaskName || planner.setup.taskParser.isOption(subTaskName)) {
+    if (!subTaskName || ZOptionInput.isOptionName(subTaskName)) {
       return super.asPre(planner, ref);
     }
 

@@ -3,6 +3,7 @@
  * @module run-z
  */
 import { parse } from 'shell-quote';
+import { ZOptionInput } from '../options';
 import type { ZSetup } from '../setup';
 import { recordZTaskAttr, ZTaskCLParser } from './task-parser.impl';
 import { ZTaskSpec } from './task-spec';
@@ -34,17 +35,6 @@ export class ZTaskParser {
   }
 
   /**
-   * Checks whether the given string is an option.
-   *
-   * @param value  A string value to check.
-   *
-   * @returns `true` if the given `value` starts with `-`, or `false` otherwise.
-   */
-  isOption(value: string): boolean {
-    return value.startsWith('-');
-  }
-
-  /**
    * Parses attribute and adds it to attributes collection.
    *
    * @param value  A string value potentially containing attribute.
@@ -58,7 +48,7 @@ export class ZTaskParser {
       value: string,
       attrs: Record<string, string[]> | ((this: void, name: string, value: string) => boolean | void),
   ): boolean {
-    if (!this.isOption(value)) {
+    if (!ZOptionInput.isOptionName(value)) {
 
       const addAttr = typeof attrs === 'function' ? attrs : recordZTaskAttr.bind(undefined, attrs);
       const eqIdx = value.indexOf('=');

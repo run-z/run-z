@@ -2,8 +2,10 @@
  * @packageDocumentation
  * @module run-z
  */
-import { arrayOfElements, lazyValue, noop } from '@proc7ts/primitives';
+import { arrayOfElements, noop } from '@proc7ts/primitives';
 import type { SupportedZOptions, ZOption, ZOptionReader } from './option';
+import type { ZOptionInput } from './option-input';
+import { ZOptionPuller } from './option-puller';
 import { UnknownZOptionError } from './unknown-option-error';
 
 /**
@@ -13,8 +15,8 @@ export abstract class ZOptionsParser<TCtx, TOption extends ZOption> {
 
   private readonly _config: ZOptionsConfig<TCtx, TOption>;
   private _options?: (this: void, context: TCtx) => Promise<Map<string, ZOptionReader<TOption>[]>>;
-  private _isOptionName?: (this: void, arg: string) => boolean;
-  private _optClass?: ZOptionImplClass<TOption, TCtx, [ZOptionImpl<TCtx, TOption>]>;
+  private _puller?: ZOptionPuller;
+  private _optClass?: ZOptionImplClass<TOption, TCtx, [ZOptionImpl<TOption>]>;
 
   constructor(config: ZOptionsConfig<TCtx, TOption>) {
     this._config = config;
@@ -27,24 +29,21 @@ export abstract class ZOptionsParser<TCtx, TOption extends ZOption> {
     return this._options = context => supportedZOptionsMap(context, this._config.options);
   }
 
-  private get optClass(): ZOptionImplClass<TOption, TCtx, [ZOptionImpl<TCtx, TOption>]> {
+  private get optClass(): ZOptionImplClass<TOption, TCtx, [ZOptionImpl<TOption>]> {
     if (this._optClass) {
       return this._optClass;
     }
     return this._optClass = this.optionClass(ZOptionBase as ZOptionBaseClass<any>);
   }
 
-  isOptionName(arg: string): boolean {
-    if (!this._isOptionName) {
-
-      const { isOptionName } = this._config;
-
-      this._isOptionName = isOptionName
-          ? isOptionName.bind(this._config)
-          : arg => arg.startsWith('-');
+  private get puller(): ZOptionPuller {
+    if (this._puller) {
+      return this._puller;
     }
 
-    return this._isOptionName(arg);
+    const { puller } = this._config;
+
+    return this._puller = puller ? ZOptionPuller.by(puller) : ZOptionPuller.default;
   }
 
   async parseOptions(
@@ -54,20 +53,21 @@ export abstract class ZOptionsParser<TCtx, TOption extends ZOption> {
   ): Promise<void> {
 
     const options = await this.options(context);
+    const optionClass = this.optClass;
+    const puller = this.puller;
 
     for (let argIndex = Math.max(0, fromIndex); argIndex < args.length;) {
 
-      const impl = new ZOptionImpl(this, args, argIndex);
-      const { name } = impl;
-      const allReaders: ZOptionReader<TOption>[][] = [
-          options.get(name) || [],
-          this.isOptionName(name) && options.get('--*') || [],
-          options.get('*') || [],
-      ];
+      const impl = new ZOptionImpl<TOption>(args, argIndex);
+      const option = new optionClass(context, impl);
+      const inputs = puller(impl.tail);
 
-      const option = new this.optClass(context, impl);
+      for (const input of inputs) {
+        args = impl.setInput(input);
 
-      for (const readers of allReaders) {
+        const { key = input.name } = input;
+        const readers: ZOptionReader<TOption>[] = options.get(key) || [];
+
         for (const reader of readers) {
           await impl.read(option, reader);
         }
@@ -128,7 +128,7 @@ export interface ZOptionsConfig<TCtx, TOption extends ZOption> {
 
   readonly options: SupportedZOptions<TCtx, TOption>;
 
-  isOptionName?(arg: string): boolean;
+  readonly puller?: ZOptionPuller | readonly ZOptionPuller[];
 
 }
 
@@ -151,11 +151,11 @@ export interface ZOptionImplClass<TOption extends ZOption, TCtx, TArgs extends a
 /**
  * @internal
  */
-class ZOptionImpl<TCtx, TOption extends ZOption> {
+class ZOptionImpl<TOption extends ZOption> {
 
-  readonly name: string;
-  private readonly _valueIndex: number;
-  private readonly _numValues: () => number;
+  private readonly _head: readonly string[];
+  private _name!: string;
+  private _values!: readonly string[];
 
   private _recognizedUpto!: number;
   private _deferred?: ZOptionReader<TOption>;
@@ -164,26 +164,30 @@ class ZOptionImpl<TCtx, TOption extends ZOption> {
   recognized?: readonly string[];
   private _whenRecognized: (option: TOption) => void = noop;
 
-  constructor(
-      parser: ZOptionsParser<TCtx, TOption>,
-      readonly args: readonly string[],
-      readonly argIndex: number,
-  ) {
-    this.name = args[argIndex];
-    this._valueIndex = argIndex + 1;
-    this._numValues = lazyValue(() => {
+  constructor(private _args: readonly string[], readonly argIndex: number) {
+    this._head = _args.slice(0, argIndex);
+  }
 
-      let i = this._valueIndex;
+  get args(): readonly string[] {
+    return this._args;
+  }
 
-      while (i < args.length) {
-        if (parser.isOptionName(args[i])) {
-          break;
-        }
-        ++i;
-      }
+  get name(): string {
+    return this._name;
+  }
 
-      return i - this._valueIndex;
-    });
+  get tail(): readonly [string, ...string[]] {
+    return this.args.slice(this.argIndex) as readonly string[] as readonly [string, ...string[]];
+  }
+
+  setInput(input: ZOptionInput): readonly string[] {
+
+    const { name, values = [], tail = [] } = input;
+
+    this._name = name;
+    this._values = values;
+
+    return this._args = [...this._head, name, ...values, ...tail];
   }
 
   async read(option: TOption, reader: ZOptionReader<TOption>): Promise<void> {
@@ -197,7 +201,7 @@ class ZOptionImpl<TCtx, TOption extends ZOption> {
     if (this._deferred) {
       this._allDeferred.push(this._deferred);
     } else if (!this.recognized && this._recognizedUpto >= 0) {
-      this.recognized = this.args.slice(this._valueIndex, this._recognizedUpto);
+      this.recognized = this.args.slice(this.argIndex + 1, this._recognizedUpto);
     }
   }
 
@@ -205,11 +209,13 @@ class ZOptionImpl<TCtx, TOption extends ZOption> {
     for (const deferred of this._allDeferred) {
       await deferred(option);
     }
+
     if (this.recognized) {
       this._whenRecognized(option);
     } else {
       throw new UnknownZOptionError(this.name);
     }
+
     return this._recognizedUpto;
   }
 
@@ -220,17 +226,17 @@ class ZOptionImpl<TCtx, TOption extends ZOption> {
           : this.recognized;
     }
 
-    const numValues = this._numValues();
+    const numValues = this._values.length;
 
-    if (max == null || max < 0) {
-      max = numValues;
-    } else if (!rest && max > numValues) {
+    if (max == null || max < 0 || !rest && max > numValues) {
       max = numValues;
     }
 
-    this._recognize(this._valueIndex + max);
+    const valueIndex = this.argIndex + 1;
 
-    return this.args.slice(this._valueIndex, this._valueIndex + max);
+    this._recognize(valueIndex + max);
+
+    return this.args.slice(valueIndex, valueIndex + max);
   }
 
   private _recognize(upto: number): void {
@@ -257,9 +263,9 @@ class ZOptionImpl<TCtx, TOption extends ZOption> {
 /**
  * @internal
  */
-class ZOptionBase<TCtx, TOption extends ZOption> implements ZOption {
+class ZOptionBase<TOption extends ZOption> implements ZOption {
 
-  constructor(private readonly _impl: ZOptionImpl<TCtx, TOption>) {
+  constructor(private readonly _impl: ZOptionImpl<TOption>) {
   }
 
   get name(): string {
