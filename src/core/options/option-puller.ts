@@ -103,13 +103,25 @@ function pullShortZOption(args: readonly [string, ...string[]]): Iterable<ZOptio
     return [];
   }
 
-  const values = ZOptionInput.valuesOf(args, 1);
+  const rest = args.slice(1);
+  const values = ZOptionInput.valuesOf(rest);
   const tail = args.slice(values.length + 1);
+  const result: ZOptionInput[] = [{ name, values, tail }];
+  const letters = name.substr(2);
 
-  return [
-    { name, values, tail },
-    { key: '-*', name, values, tail },
-  ];
+  if (letters) {
+
+    const shortName = name.substr(0, 2);
+
+    result.push(
+        { key: shortName + '*', name: shortName, values: [letters], tail: rest },
+        { name: shortName, tail: ['-' + letters, ...rest] },
+    );
+  }
+
+  result.push({ key: '-*', name, values, tail });
+
+  return result;
 }
 
 /**

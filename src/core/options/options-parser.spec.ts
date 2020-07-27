@@ -6,7 +6,7 @@ import { UnknownZOptionError } from './unknown-option-error';
 
 describe('ZOptionsParser', () => {
 
-  let recognized: Record<string, readonly string[]>;
+  let recognized: Record<string, string[]>;
 
   type TestOption = ZOption;
 
@@ -21,7 +21,11 @@ describe('ZOptionsParser', () => {
         constructor(_context: null, ...args: TArgs) {
           super(...args);
           this.whenRecognized(option => {
-            recognized[this.name] = option.values();
+            if (recognized[this.name]) {
+              recognized[this.name].push(...option.values());
+            } else {
+              recognized[this.name] = [...option.values()];
+            }
           });
         }
 
@@ -549,6 +553,70 @@ describe('ZOptionsParser', () => {
       expect(recognized).toBe('--test');
       expect(defaultLong).toBeUndefined();
       expect(defaultPositional).toBeUndefined();
+    });
+  });
+
+  describe('short options', () => {
+    it('recognizes one-letter option without parameter', async () => {
+
+      const parser = new TestParser({
+        options: {
+          '-t'(option) {
+            option.values();
+          },
+          '*'(option) {
+            option.rest();
+          },
+        },
+      });
+
+      await parser.parseOptions(null, ['-test']);
+
+      expect(recognized).toEqual({
+        '-t': [],
+        '-est': [],
+      });
+    });
+    it('prefers one-letter option with parameter', async () => {
+
+      const parser = new TestParser({
+        options: {
+          '-t'(option) {
+            option.values();
+          },
+          '-t*'(option) {
+            option.values();
+          },
+        },
+      });
+
+      await parser.parseOptions(null, ['-test']);
+
+      expect(recognized).toEqual({
+        '-t': ['est'],
+      });
+    });
+    it('prefers multi-letter option with parameter', async () => {
+
+      const parser = new TestParser({
+        options: {
+          '-t*'(option) {
+            option.values();
+          },
+          '-t'(option) {
+            option.values();
+          },
+          '-test'(option) {
+            option.values();
+          },
+        },
+      });
+
+      await parser.parseOptions(null, ['-test', 'some']);
+
+      expect(recognized).toEqual({
+        '-test': ['some'],
+      });
     });
   });
 });
