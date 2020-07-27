@@ -60,21 +60,36 @@ export abstract class ZOptionsParser<TCtx, TOption extends ZOption> {
 
       const impl = new ZOptionImpl<TOption>(args, argIndex);
       const option = new optionClass(context, impl);
-      const inputs = puller(impl.tail);
 
-      for (const input of inputs) {
-        args = impl.setInput(input);
+      let retry: boolean;
 
-        const { key = input.name } = input;
-        const readers: ZOptionReader<TOption>[] = options.get(key) || [];
+      do {
+        retry = false;
+        for (const input of puller(impl.tail)) {
+          if (input.retry) {
+            if (impl.recognized) {
+              // Ignore retry attempts for already recognized option
+              continue;
+            }
+            retry = true;
+          }
+          args = impl.setInput(input);
 
-        for (const reader of readers) {
-          await impl.read(option, reader);
+          if (retry) {
+            break; // Apply replacement
+          }
+
+          const { key = input.name } = input;
+          const readers: ZOptionReader<TOption>[] = options.get(key) || [];
+
+          for (const reader of readers) {
+            await impl.read(option, reader);
+          }
+          if (impl.recognized) {
+            break;
+          }
         }
-        if (impl.recognized) {
-          break;
-        }
-      }
+      } while (retry);
 
       argIndex = await impl.done(option);
     }

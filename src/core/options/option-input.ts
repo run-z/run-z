@@ -13,6 +13,8 @@ export interface ZOptionInput {
 
   readonly tail?: readonly string[];
 
+  readonly retry?: boolean;
+
 }
 
 export const ZOptionInput = {
