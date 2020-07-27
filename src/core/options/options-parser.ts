@@ -3,40 +3,56 @@
  * @module run-z
  */
 import { arrayOfElements, noop } from '@proc7ts/primitives';
-import type { SupportedZOptions, ZOption, ZOptionReader } from './option';
+import type { ZOption, ZOptionReader } from './option';
 import type { ZOptionInput } from './option-input';
 import { ZOptionSyntax } from './option-syntax';
+import type { ZOptionsConfig } from './options-config';
+import type { SupportedZOptions } from './supported-options';
 import { UnknownZOptionError } from './unknown-option-error';
 
 /**
- * @internal
+ * Command line options parser.
+ *
+ * @typeparam TCtx  A type of option processing context required by parser.
+ * @typeparam TOption  A type of option representation.
  */
-export abstract class ZOptionsParser<TCtx, TOption extends ZOption> {
+export class ZOptionsParser<TCtx, TOption extends ZOption> {
 
   private readonly _config: ZOptionsConfig<TCtx, TOption>;
   private _options?: (this: void, context: TCtx) => Promise<Map<string, ZOptionReader<TOption>[]>>;
   private _syntax?: ZOptionSyntax;
-  private _optClass?: ZOptionImplClass<TOption, TCtx, [ZOptionImpl<TOption>]>;
+  private _optionClass?: ZOption.ImplClass<TOption, TCtx, [ZOptionImpl<TOption>]>;
 
+  /**
+   * Constructs command line options parser.
+   *
+   * @param config  Command line options configuration.
+   */
   constructor(config: ZOptionsConfig<TCtx, TOption>) {
     this._config = config;
   }
 
-  private get options(): (this: void, context: TCtx) => Promise<Map<string, ZOptionReader<TOption>[]>> {
+  private get options(): (this: void, context: TCtx) => Promise<Map<string, readonly ZOptionReader<TOption>[]>> {
     if (this._options) {
       return this._options;
     }
     return this._options = context => supportedZOptionsMap(context, this._config.options);
   }
 
-  private get optClass(): ZOptionImplClass<TOption, TCtx, [ZOptionImpl<TOption>]> {
-    if (this._optClass) {
-      return this._optClass;
+  /**
+   * Command line option representation class constructor.
+   */
+  get optionClass(): ZOption.ImplClass<TOption, TCtx, [ZOptionImpl<TOption>]> {
+    if (this._optionClass) {
+      return this._optionClass;
     }
-    return this._optClass = this.optionClass(ZOptionBase as ZOptionBaseClass<any>);
+    return this._optionClass = this._config.optionClass(ZOptionBase as ZOption.BaseClass<any>);
   }
 
-  private get syntax(): ZOptionSyntax {
+  /**
+   * Command line options syntax.
+   */
+  get syntax(): ZOptionSyntax {
     if (this._syntax) {
       return this._syntax;
     }
@@ -46,14 +62,23 @@ export abstract class ZOptionsParser<TCtx, TOption extends ZOption> {
     return this._syntax = syntax ? ZOptionSyntax.by(syntax) : ZOptionSyntax.default;
   }
 
+  /**
+   * Parses command line options.
+   *
+   * @param context  Options processing context. This context is supposed to receive the processing results.
+   * @param args  Array of command line arguments
+   * @param fromIndex  An index of command line argument to start processing from.
+   *
+   * @returns A promise resolved to processing context when parsing completes.
+   */
   async parseOptions(
       context: TCtx,
       args: readonly string[],
       fromIndex = 0,
-  ): Promise<void> {
+  ): Promise<TCtx> {
 
     const options = await this.options(context);
-    const optionClass = this.optClass;
+    const optionClass = this.optionClass;
     const syntax = this.syntax;
 
     for (let argIndex = Math.max(0, fromIndex); argIndex < args.length;) {
@@ -74,7 +99,7 @@ export abstract class ZOptionsParser<TCtx, TOption extends ZOption> {
           }
 
           const { key = input.name } = input;
-          const readers: ZOptionReader<TOption>[] = options.get(key) || [];
+          const readers = options.get(key) || [];
 
           for (const reader of readers) {
             await impl.read(option, reader);
@@ -87,11 +112,9 @@ export abstract class ZOptionsParser<TCtx, TOption extends ZOption> {
 
       argIndex = await impl.done(option);
     }
-  }
 
-  abstract optionClass<TArgs extends any[]>(
-      base: ZOptionBaseClass<TArgs>,
-  ): ZOptionImplClass<TOption, TCtx, TArgs>;
+    return context;
+  }
 
 }
 
@@ -133,37 +156,11 @@ async function supportedZOptionsMap<TCtx, TOption extends ZOption>(
 /**
  * @internal
  */
-export interface ZOptionsConfig<TCtx, TOption extends ZOption> {
-
-  readonly options: SupportedZOptions<TCtx, TOption>;
-
-  readonly syntax?: ZOptionSyntax | readonly ZOptionSyntax[];
-
-}
-
-/**
- * @internal
- */
-export interface ZOptionBaseClass<TArgs extends any[]> {
-  prototype: ZOption;
-  new (...args: TArgs): ZOption;
-}
-
-/**
- * @internal
- */
-export interface ZOptionImplClass<TOption extends ZOption, TCtx, TArgs extends any[]> {
-  prototype: TOption;
-  new (context: TCtx, ...args: TArgs): TOption;
-}
-
-/**
- * @internal
- */
 class ZOptionImpl<TOption extends ZOption> {
 
   private readonly _head: readonly string[];
   private _name!: string;
+  private _key!: string;
   private _values!: readonly string[];
 
   private _recognizedUpto!: number;
@@ -185,15 +182,20 @@ class ZOptionImpl<TOption extends ZOption> {
     return this._name;
   }
 
+  get key(): string {
+    return this._key;
+  }
+
   get tail(): readonly [string, ...string[]] {
     return this.args.slice(this.argIndex) as readonly string[] as readonly [string, ...string[]];
   }
 
   setInput(input: ZOptionInput): readonly string[] {
 
-    const { name, values = [], tail = [] } = input;
+    const { name, key = name, values = [], tail = [] } = input;
 
     this._name = name;
+    this._key = key;
     this._values = values;
 
     return this._args = [...this._head, name, ...values, ...tail];
@@ -279,6 +281,10 @@ class ZOptionBase<TOption extends ZOption> implements ZOption {
 
   get name(): string {
     return this._impl.name;
+  }
+
+  get key(): string {
+    return this._impl.key;
   }
 
   get args(): readonly string[] {

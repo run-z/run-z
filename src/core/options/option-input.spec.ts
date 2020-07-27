@@ -33,5 +33,11 @@ describe('ZOptionInput', () => {
       expect(ZOptionInput.equal({ name: 'a', tail: ['a'] }, { name: 'a', tail: ['b'] })).toBe(false);
       expect(ZOptionInput.equal({ name: 'a', tail: ['a'] }, { name: 'a', tail: ['a', 'b'] })).toBe(false);
     });
+    it('compares retries', () => {
+      expect(ZOptionInput.equal({ name: 'a', retry: false }, { name: 'a' })).toBe(true);
+      expect(ZOptionInput.equal({ name: 'a' }, { name: 'a', retry: false })).toBe(true);
+      expect(ZOptionInput.equal({ name: 'a', retry: true }, { name: 'a', retry: true })).toBe(true);
+      expect(ZOptionInput.equal({ name: 'a' }, { name: 'a', retry: true })).toBe(false);
+    });
   });
 });

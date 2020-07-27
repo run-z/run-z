@@ -1,7 +1,9 @@
 import { asis, noop, valueProvider } from '@proc7ts/primitives';
-import type { SupportedZOptions, ZOption, ZOptionReader } from './option';
+import type { ZOption, ZOptionReader } from './option';
 import { ZOptionSyntax } from './option-syntax';
-import { ZOptionBaseClass, ZOptionImplClass, ZOptionsParser } from './options-parser.impl';
+import type { ZOptionsConfig } from './options-config';
+import { ZOptionsParser } from './options-parser';
+import type { SupportedZOptions } from './supported-options';
 import { UnknownZOptionError } from './unknown-option-error';
 
 describe('ZOptionsParser', () => {
@@ -12,27 +14,35 @@ describe('ZOptionsParser', () => {
 
   class TestParser extends ZOptionsParser<null, TestOption> {
 
-    optionClass<TArgs extends any[]>(
-        base: ZOptionBaseClass<TArgs>,
-    ): ZOptionImplClass<TestOption, null, TArgs> {
+    constructor(config: Omit<ZOptionsConfig<null, TestOption>, 'optionClass'>) {
+      super({
+        ...config,
 
-      class TestSourceImpl extends base implements TestOption {
+        optionClass<TArgs extends any[]>(
+            base: ZOption.BaseClass<TArgs>,
+        ): ZOption.ImplClass<TestOption, null, TArgs> {
 
-        constructor(_context: null, ...args: TArgs) {
-          super(...args);
-          this.whenRecognized(option => {
-            if (recognized[this.name]) {
-              recognized[this.name].push(...option.values());
-            } else {
-              recognized[this.name] = [...option.values()];
+          class TestSourceImpl extends base implements TestOption {
+
+            constructor(_context: null, ...args: TArgs) {
+              super(...args);
+              this.whenRecognized(option => {
+                if (recognized[this.name]) {
+                  recognized[this.name].push(...option.values());
+                } else {
+                  recognized[this.name] = [...option.values()];
+                }
+              });
             }
-          });
-        }
 
-      }
+          }
 
-      return TestSourceImpl;
+          return TestSourceImpl;
+        },
+
+      });
     }
+
 
   }
 
@@ -446,6 +456,8 @@ describe('ZOptionsParser', () => {
     let readPositional: jest.Mock<ReturnType<ZOptionReader<TestOption>>, Parameters<ZOptionReader<TestOption>>>;
     let defaultPositional: string | undefined;
 
+    let fallbackKey: string | undefined;
+
     function newParser(options: SupportedZOptions.Map<TestOption> = {}): TestParser {
       return new TestParser({
         options: {
@@ -460,21 +472,26 @@ describe('ZOptionsParser', () => {
     beforeEach(() => {
       readLong = jest.fn(option => {
         defaultLong = option.name;
+        fallbackKey = option.key;
         option.values();
       });
       defaultLong = undefined;
 
       readShort = jest.fn(option => {
         defaultShort = option.name;
+        fallbackKey = option.key;
         option.values();
       });
       defaultShort = undefined;
 
       readPositional = jest.fn(option => {
         defaultPositional = option.name;
+        fallbackKey = option.key;
         option.values();
       });
       defaultPositional = undefined;
+
+      fallbackKey = undefined;
     });
 
     it('reads unrecognized long option with fallback reader', async () => {
@@ -482,6 +499,8 @@ describe('ZOptionsParser', () => {
       const parser = newParser();
 
       await parser.parseOptions(null, ['--test']);
+
+      expect(fallbackKey).toBe('--*');
 
       expect(readLong).toHaveBeenCalledTimes(1);
       expect(defaultLong).toBe('--test');
@@ -497,6 +516,8 @@ describe('ZOptionsParser', () => {
 
       await parser.parseOptions(null, ['-t']);
 
+      expect(fallbackKey).toBe('-*');
+
       expect(readShort).toHaveBeenCalledTimes(1);
       expect(defaultShort).toBe('-t');
 
@@ -510,6 +531,8 @@ describe('ZOptionsParser', () => {
       const parser = newParser();
 
       await parser.parseOptions(null, ['test']);
+
+      expect(fallbackKey).toBe('*');
 
       expect(readShort).not.toHaveBeenCalled();
 
@@ -529,6 +552,8 @@ describe('ZOptionsParser', () => {
       const parser = newParser();
 
       await parser.parseOptions(null, ['--test']);
+
+      expect(fallbackKey).toBe('*');
 
       expect(readShort).not.toHaveBeenCalled();
 
@@ -550,7 +575,9 @@ describe('ZOptionsParser', () => {
 
       await parser.parseOptions(null, ['--test']);
 
+      expect(fallbackKey).toBeUndefined();
       expect(recognized).toBe('--test');
+      expect(defaultShort).toBeUndefined();
       expect(defaultLong).toBeUndefined();
       expect(defaultPositional).toBeUndefined();
     });
