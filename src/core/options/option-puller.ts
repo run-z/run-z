@@ -77,12 +77,29 @@ function zOptionPullerBy(puller: ZOptionPuller | readonly ZOptionPuller[]): ZOpt
  */
 function pullLongZOption(args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
 
-  const [name] = args;
+  let [name] = args;
 
   if (!name.startsWith('--')) {
     return [];
   }
 
+  const eqIdx = name.indexOf('=', 2);
+
+  if (eqIdx > 0) {
+    // `--name=value` form
+
+    const values = [name.substr(eqIdx + 1)];
+    const tail = args.slice(1);
+
+    name = name.substr(0, eqIdx);
+
+    return [
+      { name, values, tail },
+      { key: '--*', name, values, tail },
+    ];
+  }
+
+  // `--name value value...` form
   const values = ZOptionInput.valuesOf(args, 1);
   const tail = args.slice(values.length + 1);
 

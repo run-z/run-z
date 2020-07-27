@@ -435,7 +435,7 @@ describe('ZOptionsParser', () => {
     });
   });
 
-  describe('fallback readers', () => {
+  describe('fallback reader', () => {
 
     let readShort: jest.Mock<ReturnType<ZOptionReader<TestOption>>, Parameters<ZOptionReader<TestOption>>>;
     let defaultShort: string | undefined;
@@ -556,7 +556,30 @@ describe('ZOptionsParser', () => {
     });
   });
 
-  describe('short options', () => {
+  describe('long option', () => {
+    it('recognizes `--name=value` format', async () => {
+
+      const parser = new TestParser({
+        options: {
+          '--test'(option) {
+            option.values();
+          },
+          '*'(option) {
+            option.rest();
+          },
+        },
+      });
+
+      await parser.parseOptions(null, ['--test=value', 'rest']);
+
+      expect(recognized).toEqual({
+        '--test': ['value'],
+        rest: [],
+      });
+    });
+  });
+
+  describe('short option', () => {
     it('recognizes one-letter option without parameter', async () => {
 
       const parser = new TestParser({
