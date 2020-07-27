@@ -33,7 +33,7 @@ export namespace SupportedZOptions {
          *
          * The latter can be either an option name, or its wildcard supported by the {@link ZOptionSyntax syntax} used.
          */
-        readonly [option: string]: ZOptionReader<TOption, this> | undefined;
+        readonly [key: string]: ZOptionReader<TOption, this> | undefined;
 
         /**
          * Fallback option reader consulted when none of the readers recognized the option in
@@ -66,8 +66,8 @@ export namespace SupportedZOptions {
     /**
      * @param context  Option processing context.
      *
-     * @returns Either a {@link Map map of readers}, or its promise.
+     * @returns A {@link Map map of option readers}.
      */
-        (this: void, context: TCtx) => Map<TOption> | PromiseLike<Map<TOption>>;
+        (this: void, context: TCtx) => Map<TOption>;
 
 }

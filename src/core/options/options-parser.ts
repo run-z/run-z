@@ -19,7 +19,7 @@ import { UnknownZOptionError } from './unknown-option-error';
 export class ZOptionsParser<TCtx, TOption extends ZOption> {
 
   private readonly _config: ZOptionsConfig<TCtx, TOption>;
-  private _options?: (this: void, context: TCtx) => Promise<Map<string, ZOptionReader<TOption>[]>>;
+  private _options?: (this: void, context: TCtx) => Map<string, ZOptionReader<TOption>[]>;
   private _syntax?: ZOptionSyntax;
   private _optionClass?: ZOption.ImplClass<TOption, TCtx, [ZOptionImpl<TOption>]>;
 
@@ -32,7 +32,7 @@ export class ZOptionsParser<TCtx, TOption extends ZOption> {
     this._config = config;
   }
 
-  private get options(): (this: void, context: TCtx) => Promise<Map<string, readonly ZOptionReader<TOption>[]>> {
+  private get options(): (this: void, context: TCtx) => Map<string, readonly ZOptionReader<TOption>[]> {
     if (this._options) {
       return this._options;
     }
@@ -77,7 +77,7 @@ export class ZOptionsParser<TCtx, TOption extends ZOption> {
       fromIndex = 0,
   ): Promise<TCtx> {
 
-    const options = await this.options(context);
+    const options = this.options(context);
     const optionClass = this.optionClass;
     const syntax = this.syntax;
 
@@ -121,17 +121,17 @@ export class ZOptionsParser<TCtx, TOption extends ZOption> {
 /**
  * @internal
  */
-async function supportedZOptionsMap<TCtx, TOption extends ZOption>(
+function supportedZOptionsMap<TCtx, TOption extends ZOption>(
     context: TCtx,
     supportedOptions: SupportedZOptions<TCtx, TOption>,
-): Promise<Map<string, ZOptionReader<TOption>[]>> {
+): Map<string, ZOptionReader<TOption>[]> {
 
   const result = new Map<string, ZOptionReader<TOption>[]>();
 
   for (const supported of arrayOfElements(supportedOptions)) {
 
     const map: SupportedZOptions.Map<TOption> = typeof supported === 'function'
-        ? await supported(context)
+        ? supported(context)
         : supported;
 
     for (const [option, reader] of Object.entries(map)) {
