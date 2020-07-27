@@ -156,7 +156,7 @@ describe('ZTaskParser', () => {
   });
   it('ignores empty prerequisite arguments', async () => {
 
-    const spec = await parser.parse('run-z dep1 dep2 //// dep3 --some test');
+    const spec = await parser.parse('run-z dep1 dep2 // // dep3 --some test');
 
     expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
@@ -294,7 +294,7 @@ describe('ZTaskParser', () => {
     const error: InvalidZTaskError = await parser.parse('run-z   //-a//   task').catch(asis);
 
     expect(error).toBeInstanceOf(InvalidZTaskError);
-    expect(error.commandLine).toBe('//-a// task');
+    expect(error.commandLine).toBe('// -a // task');
     expect(error.position).toBe(0);
   });
   it('throws on shorthand argument without prerequisite', async () => {
@@ -310,47 +310,47 @@ describe('ZTaskParser', () => {
     const error: InvalidZTaskError = await parser.parse('run-z  task1,  //-a//   task2').catch(asis);
 
     expect(error).toBeInstanceOf(InvalidZTaskError);
-    expect(error.commandLine).toBe('task1, //-a// task2');
-    expect(error.position).toBe(7);
+    expect(error.commandLine).toBe('task1 , // -a // task2');
+    expect(error.position).toBe(8);
   });
   it('throws on shorthand argument after comma', async () => {
 
     const error: InvalidZTaskError = await parser.parse('run-z  task1,  /-a   task2').catch(asis);
 
     expect(error).toBeInstanceOf(InvalidZTaskError);
-    expect(error.commandLine).toBe('task1, /-a task2');
-    expect(error.position).toBe(7);
+    expect(error.commandLine).toBe('task1 , /-a task2');
+    expect(error.position).toBe(8);
   });
   it('throws on arguments after comma within the same entry', async () => {
 
     const error: InvalidZTaskError = await parser.parse('run-z  task1,//-a//   task2').catch(asis);
 
     expect(error).toBeInstanceOf(InvalidZTaskError);
-    expect(error.commandLine).toBe('task1,//-a// task2');
-    expect(error.position).toBe(6);
+    expect(error.commandLine).toBe('task1 , // -a // task2');
+    expect(error.position).toBe(8);
   });
   it('throws on shorthand argument after comma within the same entry', async () => {
 
     const error: InvalidZTaskError = await parser.parse('run-z  task1,/-a   task2').catch(asis);
 
     expect(error).toBeInstanceOf(InvalidZTaskError);
-    expect(error.commandLine).toBe('task1,/-a task2');
-    expect(error.position).toBe(6);
+    expect(error.commandLine).toBe('task1 , /-a task2');
+    expect(error.position).toBe(8);
   });
   it('throws on arguments after comma inside entry', async () => {
 
     const error: InvalidZTaskError = await parser.parse('run-z  task1,//-a//task2').catch(asis);
 
     expect(error).toBeInstanceOf(InvalidZTaskError);
-    expect(error.commandLine).toBe('task1,//-a//task2');
-    expect(error.position).toBe(6);
+    expect(error.commandLine).toBe('task1 , // -a // task2');
+    expect(error.position).toBe(8);
   });
   it('throws on shorthand argument after comma inside entry', async () => {
 
     const error: InvalidZTaskError = await parser.parse('run-z  task1,/-a,task2').catch(asis);
 
     expect(error).toBeInstanceOf(InvalidZTaskError);
-    expect(error.commandLine).toBe('task1,/-a,task2');
-    expect(error.position).toBe(6);
+    expect(error.commandLine).toBe('task1 , /-a , task2');
+    expect(error.position).toBe(8);
   });
 });
