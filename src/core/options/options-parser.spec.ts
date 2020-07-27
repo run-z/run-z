@@ -1,6 +1,6 @@
 import { asis, noop, valueProvider } from '@proc7ts/primitives';
 import type { SupportedZOptions, ZOption, ZOptionReader } from './option';
-import { ZOptionPuller } from './option-puller';
+import { ZOptionSyntax } from './option-syntax';
 import { ZOptionBaseClass, ZOptionImplClass, ZOptionsParser } from './options-parser.impl';
 import { UnknownZOptionError } from './unknown-option-error';
 
@@ -357,8 +357,8 @@ describe('ZOptionsParser', () => {
     });
   });
 
-  describe('pulling', () => {
-    it('retries pulling with a replacement', async () => {
+  describe('syntax', () => {
+    it('retries replacement processing', async () => {
 
       const parser = new TestParser({
         options: [
@@ -371,9 +371,9 @@ describe('ZOptionsParser', () => {
             },
           },
         ],
-        puller: [
+        syntax: [
           ([name]) => name === '--test' ? [{ name: '--replaced', retry: true }] : [],
-          ZOptionPuller.long,
+          ZOptionSyntax.longOptions,
         ],
       });
 
@@ -383,7 +383,7 @@ describe('ZOptionsParser', () => {
         '--replaced': [],
       });
     });
-    it('retries pulling with replacement args', async () => {
+    it('retries replacement args processing', async () => {
 
       const parser = new TestParser({
         options: [
@@ -396,9 +396,9 @@ describe('ZOptionsParser', () => {
             },
           },
         ],
-        puller: [
+        syntax: [
           ([name]) => name === '--test' ? [{ name: '--replaced', values: ['r'], tail: ['t'], retry: true }] : [],
-          ZOptionPuller.long,
+          ZOptionSyntax.longOptions,
         ],
       });
 
@@ -408,7 +408,7 @@ describe('ZOptionsParser', () => {
         '--replaced': ['r', 't'],
       });
     });
-    it('prevents retry pulling retry after option recognition', async () => {
+    it('prevents processing retry after option recognition', async () => {
 
       const parser = new TestParser({
         options: [
@@ -421,8 +421,8 @@ describe('ZOptionsParser', () => {
             },
           },
         ],
-        puller: [
-            ZOptionPuller.long,
+        syntax: [
+            ZOptionSyntax.longOptions,
             () => [{ name: '--replaced', retry: true }],
         ],
       });

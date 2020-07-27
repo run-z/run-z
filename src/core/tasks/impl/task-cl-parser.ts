@@ -1,7 +1,7 @@
 import { thruIt } from '@proc7ts/a-iterable';
 import { nextSkip } from '@proc7ts/call-thru';
 import type { SupportedZOptions } from '../../options';
-import { ZOptionInput, ZOptionPuller } from '../../options';
+import { ZOptionInput, ZOptionSyntax } from '../../options';
 import { ZOptionBaseClass, ZOptionImplClass, ZOptionsParser } from '../../options/options-parser.impl';
 import type { ZSetup } from '../../setup';
 import { InvalidZTaskError } from '../invalid-task-error';
@@ -17,7 +17,7 @@ export class ZTaskCLParser extends ZOptionsParser<ZTaskBuilder, ZTaskOption> {
   constructor(readonly setup: ZSetup) {
     super({
       options: zTaskCLOptions(),
-      puller: zTaskCLPullers(setup),
+      syntax: zTaskCLPullers(setup),
     });
   }
 
@@ -182,24 +182,24 @@ function readZTaskCommand(parallel: boolean, option: ZTaskOption): void {
 /**
  * @internal
  */
-function zTaskCLPullers(setup: ZSetup): readonly ZOptionPuller[] {
+function zTaskCLPullers(setup: ZSetup): readonly ZOptionSyntax[] {
   return [
-    ZOptionPuller.long,
-    ZOptionPuller.short,
-    pullZPackageRef.bind(undefined, setup),
-    pullZTaskAttr.bind(undefined, setup),
-    pullZTaskPreArgs,
-    pullParallelZTasks,
-    pullZTaskPre,
-    pullZTaskShorthandPreArg,
-    ZOptionPuller.any,
+    ZOptionSyntax.longOptions,
+    ZOptionSyntax.shortOptions,
+    zPackageRefSyntax.bind(undefined, setup),
+    zTaskAttrSyntax.bind(undefined, setup),
+    zTaskPreArgsSyntax,
+    parallelZTasksSyntax,
+    zTaskPreSyntax,
+    xTaskShorthandPreArgSyntax,
+    ZOptionSyntax.any,
   ];
 }
 
 /**
  * @internal
  */
-function pullZPackageRef({ taskParser }: ZSetup, args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
+function zPackageRefSyntax({ taskParser }: ZSetup, args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
 
   const [name] = args;
 
@@ -218,7 +218,7 @@ function pullZPackageRef({ taskParser }: ZSetup, args: readonly [string, ...stri
 /**
  * @internal
  */
-function pullZTaskAttr({ taskParser }: ZSetup, args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
+function zTaskAttrSyntax({ taskParser }: ZSetup, args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
 
   const [first] = args;
   const attr = taskParser.parseAttr(first);
@@ -252,7 +252,7 @@ function pullZTaskAttr({ taskParser }: ZSetup, args: readonly [string, ...string
 /**
  * @internal
  */
-function pullZTaskPreArgs(args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
+function zTaskPreArgsSyntax(args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
 
   const [first] = args;
   const openingIdx = first.indexOf('//');
@@ -344,7 +344,7 @@ const parallelZTaskSep = /(,)/;
 /**
  * @internal
  */
-function pullParallelZTasks(args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
+function parallelZTasksSyntax(args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
 
   const [entry] = args;
   const [name, ...values] = entry.split(parallelZTaskSep).filter(name => !!name);
@@ -355,7 +355,7 @@ function pullParallelZTasks(args: readonly [string, ...string[]]): Iterable<ZOpt
 /**
  * @internal
  */
-function pullZTaskPre(args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
+function zTaskPreSyntax(args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
 
   const [entry] = args;
   const [name, ...preArgs] = entry.split('/');
@@ -380,7 +380,7 @@ function pullZTaskPre(args: readonly [string, ...string[]]): Iterable<ZOptionInp
 /**
  * @internal
  */
-function pullZTaskShorthandPreArg(args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
+function xTaskShorthandPreArgSyntax(args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
 
   const [name] = args;
 

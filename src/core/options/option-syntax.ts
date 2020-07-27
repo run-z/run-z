@@ -1,42 +1,42 @@
-import { filterIt, flatMapIt } from '@proc7ts/a-iterable';
-import { isArrayOfElements } from '@proc7ts/primitives';
-import { ZOptionInput } from './option-input';
-
 /**
  * @packageDocumentation
  * @module run-z
  */
-export type ZOptionPuller = (this: void, args: readonly [string, ...string[]]) => Iterable<ZOptionInput>;
+import { filterIt, flatMapIt } from '@proc7ts/a-iterable';
+import { isArrayOfElements } from '@proc7ts/primitives';
+import { ZOptionInput } from './option-input';
+
+export type ZOptionSyntax = (this: void, args: readonly [string, ...string[]]) => Iterable<ZOptionInput>;
 
 /**
  * @internal
  */
-const defaultZOptionPuller = zOptionPullerBy([
-  pullLongZOption,
-  pullShortZOption,
-  pullAnyZOption,
+const defaultZOptionSyntax = zOptionSyntaxBy([
+  longZOptionSyntax,
+  shortZOptionSyntax,
+  anyZOptionSyntax,
 ]);
 
-export const ZOptionPuller = {
+export const ZOptionSyntax = {
 
-  get default(): ZOptionPuller {
-    return defaultZOptionPuller;
+  get default(): ZOptionSyntax {
+    return defaultZOptionSyntax;
   },
 
-  get long(): ZOptionPuller {
-    return pullLongZOption;
+  get longOptions(): ZOptionSyntax {
+    return longZOptionSyntax;
   },
 
-  get short(): ZOptionPuller {
-    return pullShortZOption;
+  get shortOptions(): ZOptionSyntax {
+    return shortZOptionSyntax;
   },
 
-  get any(): ZOptionPuller {
-    return pullAnyZOption;
+  get any(): ZOptionSyntax {
+    return anyZOptionSyntax;
   },
 
-  by(this: void, puller: ZOptionPuller | readonly ZOptionPuller[]): ZOptionPuller {
-    return zOptionPullerBy(puller);
+  by(this: void, syntax: ZOptionSyntax | readonly ZOptionSyntax[]): ZOptionSyntax {
+    return zOptionSyntaxBy(syntax);
   },
 
 };
@@ -44,9 +44,9 @@ export const ZOptionPuller = {
 /**
  * @internal
  */
-function zOptionPullerBy(puller: ZOptionPuller | readonly ZOptionPuller[]): ZOptionPuller {
-  if (!isArrayOfElements(puller)) {
-    return puller;
+function zOptionSyntaxBy(syntax: ZOptionSyntax | readonly ZOptionSyntax[]): ZOptionSyntax {
+  if (!isArrayOfElements(syntax)) {
+    return syntax;
   }
 
   return args => {
@@ -55,7 +55,7 @@ function zOptionPullerBy(puller: ZOptionPuller | readonly ZOptionPuller[]): ZOpt
 
     return filterIt(
         flatMapIt(
-            puller,
+            syntax,
             p => p(args),
         ),
         input => {
@@ -75,7 +75,7 @@ function zOptionPullerBy(puller: ZOptionPuller | readonly ZOptionPuller[]): ZOpt
 /**
  * @internal
  */
-function pullLongZOption(args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
+function longZOptionSyntax(args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
 
   let [name] = args;
 
@@ -112,7 +112,7 @@ function pullLongZOption(args: readonly [string, ...string[]]): Iterable<ZOption
 /**
  * @internal
  */
-function pullShortZOption(args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
+function shortZOptionSyntax(args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
 
   const [name] = args;
 
@@ -144,7 +144,7 @@ function pullShortZOption(args: readonly [string, ...string[]]): Iterable<ZOptio
 /**
  * @internal
  */
-function pullAnyZOption(args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
+function anyZOptionSyntax(args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
 
   const [name] = args;
   const values = ZOptionInput.valuesOf(args, 1);

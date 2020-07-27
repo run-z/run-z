@@ -5,7 +5,7 @@
 import { arrayOfElements, noop } from '@proc7ts/primitives';
 import type { SupportedZOptions, ZOption, ZOptionReader } from './option';
 import type { ZOptionInput } from './option-input';
-import { ZOptionPuller } from './option-puller';
+import { ZOptionSyntax } from './option-syntax';
 import { UnknownZOptionError } from './unknown-option-error';
 
 /**
@@ -15,7 +15,7 @@ export abstract class ZOptionsParser<TCtx, TOption extends ZOption> {
 
   private readonly _config: ZOptionsConfig<TCtx, TOption>;
   private _options?: (this: void, context: TCtx) => Promise<Map<string, ZOptionReader<TOption>[]>>;
-  private _puller?: ZOptionPuller;
+  private _syntax?: ZOptionSyntax;
   private _optClass?: ZOptionImplClass<TOption, TCtx, [ZOptionImpl<TOption>]>;
 
   constructor(config: ZOptionsConfig<TCtx, TOption>) {
@@ -36,14 +36,14 @@ export abstract class ZOptionsParser<TCtx, TOption extends ZOption> {
     return this._optClass = this.optionClass(ZOptionBase as ZOptionBaseClass<any>);
   }
 
-  private get puller(): ZOptionPuller {
-    if (this._puller) {
-      return this._puller;
+  private get syntax(): ZOptionSyntax {
+    if (this._syntax) {
+      return this._syntax;
     }
 
-    const { puller } = this._config;
+    const { syntax } = this._config;
 
-    return this._puller = puller ? ZOptionPuller.by(puller) : ZOptionPuller.default;
+    return this._syntax = syntax ? ZOptionSyntax.by(syntax) : ZOptionSyntax.default;
   }
 
   async parseOptions(
@@ -54,7 +54,7 @@ export abstract class ZOptionsParser<TCtx, TOption extends ZOption> {
 
     const options = await this.options(context);
     const optionClass = this.optClass;
-    const puller = this.puller;
+    const syntax = this.syntax;
 
     for (let argIndex = Math.max(0, fromIndex); argIndex < args.length;) {
 
@@ -65,7 +65,7 @@ export abstract class ZOptionsParser<TCtx, TOption extends ZOption> {
 
       do {
         retry = false;
-        for (const input of puller(impl.tail)) {
+        for (const input of syntax(impl.tail)) {
           args = impl.setInput(input);
 
           if (input.retry) {
@@ -137,7 +137,7 @@ export interface ZOptionsConfig<TCtx, TOption extends ZOption> {
 
   readonly options: SupportedZOptions<TCtx, TOption>;
 
-  readonly puller?: ZOptionPuller | readonly ZOptionPuller[];
+  readonly syntax?: ZOptionSyntax | readonly ZOptionSyntax[];
 
 }
 
