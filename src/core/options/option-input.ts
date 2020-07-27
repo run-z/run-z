@@ -19,8 +19,8 @@ export interface ZOptionInput {
 
 export const ZOptionInput = {
 
-  isOptionName(this: void, arg: string): boolean {
-    return arg.startsWith('-') && arg !== '-' && arg !== '--';
+  isOptionValue(this: void, arg: string): boolean {
+    return !arg.startsWith('-') || arg === '-';
   },
 
   valuesOf(this: void, args: readonly string[], fromIndex = 0): readonly string[] {
@@ -31,7 +31,7 @@ export const ZOptionInput = {
 
       const arg = args[i];
 
-      if (ZOptionInput.isOptionName(arg)) {
+      if (!ZOptionInput.isOptionValue(arg)) {
         break;
       }
 

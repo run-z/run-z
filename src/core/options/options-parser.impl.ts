@@ -66,16 +66,10 @@ export abstract class ZOptionsParser<TCtx, TOption extends ZOption> {
       do {
         retry = false;
         for (const input of puller(impl.tail)) {
-          if (input.retry) {
-            if (impl.recognized) {
-              // Ignore retry attempts for already recognized option
-              continue;
-            }
-            retry = true;
-          }
           args = impl.setInput(input);
 
-          if (retry) {
+          if (input.retry) {
+            retry = true;
             break; // Apply replacement
           }
 

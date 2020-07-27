@@ -17,7 +17,7 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
 
     const [subTaskName, ...subArgs] = ref.args;
 
-    if (!subTaskName || ZOptionInput.isOptionName(subTaskName)) {
+    if (!subTaskName || !ZOptionInput.isOptionValue(subTaskName)) {
       return super.asPre(planner, ref);
     }
 

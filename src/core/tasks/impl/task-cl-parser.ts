@@ -1,18 +1,18 @@
 import { thruIt } from '@proc7ts/a-iterable';
 import { nextSkip } from '@proc7ts/call-thru';
-import type { SupportedZOptions } from '../options';
-import { ZOptionInput, ZOptionPuller } from '../options';
-import { ZOptionBaseClass, ZOptionImplClass, ZOptionsParser } from '../options/options-parser.impl';
-import type { ZSetup } from '../setup';
-import { InvalidZTaskError } from './invalid-task-error';
-import type { ZTaskOption } from './task-option';
-import type { ZTaskParser } from './task-parser';
-import { ZTaskSpec } from './task-spec';
+import type { SupportedZOptions } from '../../options';
+import { ZOptionInput, ZOptionPuller } from '../../options';
+import { ZOptionBaseClass, ZOptionImplClass, ZOptionsParser } from '../../options/options-parser.impl';
+import type { ZSetup } from '../../setup';
+import { InvalidZTaskError } from '../invalid-task-error';
+import type { ZTaskOption } from '../task-option';
+import type { ZTaskParser } from '../task-parser';
+import { ZTaskSpec } from '../task-spec';
 
 /**
  * @internal
  */
-export class ZTaskCLParser extends ZOptionsParser<ZTaskCLData, ZTaskCLOption> {
+export class ZTaskCLParser extends ZOptionsParser<ZTaskBuilder, ZTaskOption> {
 
   constructor(readonly setup: ZSetup) {
     super({
@@ -23,7 +23,7 @@ export class ZTaskCLParser extends ZOptionsParser<ZTaskCLData, ZTaskCLOption> {
 
   async parseTask(entries: readonly string[]): Promise<ZTaskSpec> {
 
-    const data = new ZTaskCLData(this);
+    const data = new ZTaskBuilder(this);
 
     await this.parseOptions(data, entries);
 
@@ -39,39 +39,51 @@ export class ZTaskCLParser extends ZOptionsParser<ZTaskCLData, ZTaskCLOption> {
 
   optionClass<TArgs extends any[]>(
       base: ZOptionBaseClass<TArgs>,
-  ): ZOptionImplClass<ZTaskCLOption, ZTaskCLData, TArgs> {
+  ): ZOptionImplClass<ZTaskOption, ZTaskBuilder, TArgs> {
 
     const setup = this.setup;
 
-    class TaskOption extends base implements ZTaskCLOption {
+    class TaskOption extends base implements ZTaskOption {
 
-      constructor(readonly data: ZTaskCLData, ...args: TArgs) {
+      constructor(private readonly _builder: ZTaskBuilder, ...args: TArgs) {
         super(...args);
-        data.moveTo(this);
+        _builder.moveTo(this);
       }
 
       get setup(): ZSetup {
         return setup;
       }
 
-      get taskParser(): ZTaskParser {
-        return setup.taskParser;
+      addPre(pre: ZTaskSpec.Pre): void {
+        this._builder.finishPre();
+        this._builder.pre.push(pre);
       }
 
-      addPre(pre: ZTaskSpec.Pre): void {
-        this.data.pre.push(pre);
+      addPreTask(name: string): void {
+        this._builder.finishPre();
+        this._builder.preTask = name;
+      }
+
+      addPreArgs(...args: readonly string[]): void {
+        this._builder.addPreArgs(args);
+      }
+
+      parallelPre(): void {
+        this._builder.finishPre();
+        this._builder.preParallel = true;
       }
 
       addAttr(name: string, value: string): void {
-        recordZTaskAttr(this.data.attrs, name, value);
+        this._builder.finishPre();
+        recordZTaskAttr(this._builder.attrs, name, value);
       }
 
       addArg(arg: string): void {
-        this.data.args.push(arg);
+        this._builder.args.push(arg);
       }
 
       setAction(action: ZTaskSpec.Action): void {
-        this.data.action = action;
+        this._builder.action = action;
       }
 
     }
@@ -84,7 +96,7 @@ export class ZTaskCLParser extends ZOptionsParser<ZTaskCLData, ZTaskCLOption> {
 /**
  * @internal
  */
-function zTaskCLOptions(): SupportedZOptions<ZTaskCLData, ZTaskCLOption> {
+function zTaskCLOptions(): SupportedZOptions<ZTaskBuilder, ZTaskOption> {
   return {
 
     '--and': readZTaskCommand.bind(undefined, true),
@@ -93,59 +105,48 @@ function zTaskCLOptions(): SupportedZOptions<ZTaskCLData, ZTaskCLOption> {
     '-*': readNamedZTaskArg,
     '--*': readNamedZTaskArg,
 
-    './*'(option: ZTaskCLOption): void {
-
-      const { data } = option;
-
-      // Package reference
-      data.finishPre();
+    './*'(option: ZTaskOption): void {
       option.addPre({ selector: option.name });
       option.values(0);
     },
 
-    '*=*'(option: ZTaskCLOption): void {
+    '*=*'(option: ZTaskOption): void {
 
-      const { name, taskParser, data } = option;
+      const { name, setup: { taskParser } } = option;
 
       if (taskParser.parseAttr(name, (n, v) => !n.includes('/') && option.addAttr(n, v))) {
-        data.finishPre();
         option.values(0);
       }
     },
 
-    '/*'(option: ZTaskCLOption): void {
+    '/*'(option: ZTaskOption): void {
 
-      const { name, data } = option;
+      const { name } = option;
       const preArg = name.substr(1);
 
       if (preArg) {
-        data.addPreArgs(preArg);
+        option.addPreArgs(preArg);
       }
       option.values(0);
     },
 
-    '//*'(option: ZTaskCLOption): void {
-      option.data.addPreArgs(...option.values().slice(0, -1));
+    '//*'(option: ZTaskOption): void {
+      option.addPreArgs(...option.values().slice(0, -1));
     },
 
-    ','(option: ZTaskCLOption): void {
-
-      const { data } = option;
-
-      data.finishPre();
-      data.preParallel = true;
+    ','(option: ZTaskOption): void {
+      option.parallelPre();
       option.values(0);
     },
 
-    '*'(option: ZTaskCLOption): void {
+    '*'(option: ZTaskOption): void {
 
-      const { data, name: task } = option;
+      const { name } = option;
 
-      if (task) {
-        data.finishPre();
-        option.values(0);
-        data.preTask = task;
+      if (name) {
+        option.addPreTask(name);
       }
+      option.values(0);
     },
 
   };
@@ -154,7 +155,7 @@ function zTaskCLOptions(): SupportedZOptions<ZTaskCLData, ZTaskCLOption> {
 /**
  * @internal
  */
-function readNamedZTaskArg(option: ZTaskCLOption): void {
+function readNamedZTaskArg(option: ZTaskOption): void {
   option.addArg(option.name);
   for (const arg of option.values()) {
     option.addArg(arg);
@@ -164,7 +165,7 @@ function readNamedZTaskArg(option: ZTaskCLOption): void {
 /**
  * @internal
  */
-function readZTaskCommand(parallel: boolean, option: ZTaskCLOption): void {
+function readZTaskCommand(parallel: boolean, option: ZTaskOption): void {
 
   const [command, ...args] = option.rest();
 
@@ -264,7 +265,7 @@ function pullZTaskPreArgs(args: readonly [string, ...string[]]): Iterable<ZOptio
     // Split and retry
     return [
       {
-        name: first.substr(0, openingIdx),
+        name: first.substr(0, openingIdx).trim(),
         tail: [first.substr(openingIdx), ...args.slice(1)],
         retry: true,
       },
@@ -283,10 +284,11 @@ function pullZTaskPreArgs(args: readonly [string, ...string[]]): Iterable<ZOptio
   if (closingIdx > 0) {
     // First arg contains both opening and closing delimiter
 
-    const values = contentIdx < first.length ? [first.substring(contentIdx, closingIdx), '//'] : ['//'];
+    const values = [first.substring(contentIdx, closingIdx), '//'];
     const afterPreArgsIdx = closingIdx + delimiter.length;
     const restArgs = args.slice(1);
-    const tail = afterPreArgsIdx < first.length ? [first.substr(afterPreArgsIdx), ...restArgs] : restArgs;
+    const suffix = first.substr(afterPreArgsIdx).trim();
+    const tail = suffix ? [suffix, ...restArgs] : restArgs;
 
     return [{
       key: '//*',
@@ -404,9 +406,9 @@ function pullZTaskShorthandPreArg(args: readonly [string, ...string[]]): Iterabl
 /**
  * @internal
  */
-export class ZTaskCLData {
+export class ZTaskBuilder {
 
-  private _option!: ZTaskCLOption;
+  private _option!: ZTaskOption;
   readonly pre: ZTaskSpec.Pre[] = [];
   readonly attrs: Record<string, [string, ...string[]]> = {};
   readonly args: string[] = [];
@@ -419,11 +421,11 @@ export class ZTaskCLData {
   constructor(readonly clParser: ZTaskCLParser) {
   }
 
-  moveTo(option: ZTaskCLOption): void {
+  moveTo(option: ZTaskOption): void {
     this._option = option;
   }
 
-  addPreArgs(...args: readonly string[]): void {
+  addPreArgs(args: readonly string[]): void {
     if (!this._preArgs.length) {
       this._preArgsAt = this._option.argIndex;
     }
@@ -469,14 +471,6 @@ export class ZTaskCLData {
 
     throw new InvalidZTaskError(message, reconstructedCmd, position);
   }
-
-}
-
-interface ZTaskCLOption extends ZTaskOption {
-
-  readonly taskParser: ZTaskParser;
-
-  readonly data: ZTaskCLData;
 
 }
 

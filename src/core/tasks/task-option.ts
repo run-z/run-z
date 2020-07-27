@@ -26,6 +26,25 @@ export interface ZTaskOption extends ZOption {
   addPre(pre: ZTaskSpec.Pre): void;
 
   /**
+   * Appends a task prerequisite.
+   *
+   * @param name  Prerequisite task name to append.
+   */
+  addPreTask(name: string): void
+
+  /**
+   * Appends arguments to prerequisite task added by the most recent call to {@link addPreTask}.
+   *
+   * @param args  Prerequisite arguments to add. May contain attributes.
+   */
+  addPreArgs(...args: readonly string[]): void;
+
+  /**
+   * Makes a prerequisite added by the most recent call to {@link addPreTask} run in parallel with the next one.
+   */
+  parallelPre(): void;
+
+  /**
    * Appends a task attribute.
    *
    * @param name  Target attribute name.

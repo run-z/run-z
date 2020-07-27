@@ -48,6 +48,18 @@ describe('ZTaskParser', () => {
     expect(spec.args).toHaveLength(0);
     expect(spec.action).toBe(ZTaskSpec.groupAction);
   });
+  it('ignores empty prerequisite', async () => {
+
+    const spec = await parser.parse('run-z dep1 "" dep2 dep3');
+
+    expect(spec.pre).toEqual([
+      { task: 'dep1', parallel: false, attrs: {}, args: [] },
+      { task: 'dep2', parallel: false, attrs: {}, args: [] },
+      { task: 'dep3', parallel: false, attrs: {}, args: [] },
+    ]);
+    expect(spec.args).toHaveLength(0);
+    expect(spec.action).toBe(ZTaskSpec.groupAction);
+  });
   it('recognizes arguments', async () => {
 
     const spec = await parser.parse('run-z dep1 dep2 dep3 --some test');
@@ -140,6 +152,41 @@ describe('ZTaskParser', () => {
       { task: 'dep3', parallel: false, attrs: {}, args: [] },
     ]);
     expect(spec.args).toEqual(['--some', 'test']);
+    expect(spec.action).toBe(ZTaskSpec.groupAction);
+  });
+  it('recognizes prerequisite arguments with multi-slash delimiter', async () => {
+
+    const spec = await parser.parse('run-z dep1 dep2///-a -b -c/// dep3 --some test');
+
+    expect(spec.pre).toEqual([
+      { task: 'dep1', parallel: false, attrs: {}, args: [] },
+      { task: 'dep2', parallel: false, attrs: {}, args: ['-a', '-b', '-c'] },
+      { task: 'dep3', parallel: false, attrs: {}, args: [] },
+    ]);
+    expect(spec.args).toEqual(['--some', 'test']);
+    expect(spec.action).toBe(ZTaskSpec.groupAction);
+  });
+  it('recognizes quoted prerequisite arguments', async () => {
+
+    const spec = await parser.parse('run-z dep1 "dep2 ///-a -b -c/// " dep3 --some test');
+
+    expect(spec.pre).toEqual([
+      { task: 'dep1', parallel: false, attrs: {}, args: [] },
+      { task: 'dep2', parallel: false, attrs: {}, args: ['-a -b -c'] },
+      { task: 'dep3', parallel: false, attrs: {}, args: [] },
+    ]);
+    expect(spec.args).toEqual(['--some', 'test']);
+    expect(spec.action).toBe(ZTaskSpec.groupAction);
+  });
+  it('reads unclosed prerequisite arguments up to the end', async () => {
+
+    const spec = await parser.parse('run-z dep1 dep2////-a -b -c // dep3 --some test');
+
+    expect(spec.pre).toEqual([
+      { task: 'dep1', parallel: false, attrs: {}, args: [] },
+      { task: 'dep2', parallel: false, attrs: {}, args: ['-a', '-b', '-c', '//', 'dep3', '--some', 'test'] },
+    ]);
+    expect(spec.args).toHaveLength(0);
     expect(spec.action).toBe(ZTaskSpec.groupAction);
   });
   it('recognizes multiple shorthand prerequisite arguments', async () => {

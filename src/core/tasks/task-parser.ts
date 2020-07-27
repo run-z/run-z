@@ -6,7 +6,7 @@ import { noop } from '@proc7ts/primitives';
 import { parse } from 'shell-quote';
 import { ZOptionInput } from '../options';
 import type { ZSetup } from '../setup';
-import { recordZTaskAttr, ZTaskCLParser } from './task-cl-parser.impl';
+import { recordZTaskAttr, ZTaskCLParser } from './impl/task-cl-parser';
 import { ZTaskSpec } from './task-spec';
 
 /**
@@ -49,7 +49,7 @@ export class ZTaskParser {
       value: string,
       attrs: Record<string, string[]> | ((this: void, name: string, value: string) => boolean | void) = noop,
   ): readonly [string, string] | undefined {
-    if (!ZOptionInput.isOptionName(value)) {
+    if (ZOptionInput.isOptionValue(value)) {
 
       const addAttr = typeof attrs === 'function' ? attrs : recordZTaskAttr.bind(undefined, attrs);
       const eqIdx = value.indexOf('=');

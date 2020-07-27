@@ -79,7 +79,7 @@ function pullLongZOption(args: readonly [string, ...string[]]): Iterable<ZOption
 
   const [name] = args;
 
-  if (name.length < 3 || !name.startsWith('--')) {
+  if (!name.startsWith('--')) {
     return [];
   }
 
@@ -99,7 +99,7 @@ function pullShortZOption(args: readonly [string, ...string[]]): Iterable<ZOptio
 
   const [name] = args;
 
-  if (name.length < 2 || !name.startsWith('-')) {
+  if (name.length < 2 || !name.startsWith('-') || name.startsWith('--')) {
     return [];
   }
 
