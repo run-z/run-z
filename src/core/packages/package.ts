@@ -24,7 +24,8 @@ export class ZPackage extends ZPackageSet {
   private _unscopedName?: string;
   private _hostPackage?: ZPackage;
   private _subPackageName: string | null | undefined = null;
-  private readonly _tasks = new Map<string, ZTask>();
+
+  private readonly _tasks = new Map<string, Promise<ZTask>>();
 
   /**
    * Constructs a package.
@@ -53,15 +54,6 @@ export class ZPackage extends ZPackageSet {
       this.name = `${parent.name}${dirName}`;
     } else {
       this.name = location.baseName;
-    }
-
-    const { scripts = {} } = packageJson;
-
-    for (const [key, value] of Object.entries(scripts)) {
-
-      const spec = this.setup.taskParser.parse(value);
-
-      this._tasks.set(key, this.setup.taskFactory.createTask(this, key, spec));
     }
   }
 
@@ -152,7 +144,15 @@ export class ZPackage extends ZPackageSet {
     return new SelectedZPackages(this, selector);
   }
 
-  task(name: string): ZTask {
+  /**
+   * Returns a task by its name.
+   *
+   * @param name  Task name.
+   *
+   * @returns A promise resolved to task instance. May have {@link ZTaskSpec.Unknown unknown action} if the task is not
+   * present in `scripts` section of {@link packageJson `package.json`}.
+   */
+  task(name: string): Promise<ZTask> {
 
     const existing = this._tasks.get(name);
 
@@ -160,7 +160,23 @@ export class ZPackage extends ZPackageSet {
       return existing;
     }
 
-    const absent = this.setup.taskFactory.createUnknown(this, name);
+    const script = this.packageJson.scripts?.[name];
+
+    if (script) {
+
+      const parsed = this.setup.taskParser.parse(script)
+          .then(spec => this.setup.taskFactory.createTask(
+              this,
+              name,
+              spec,
+          ));
+
+      this._tasks.set(name, parsed);
+
+      return parsed;
+    }
+
+    const absent = Promise.resolve(this.setup.taskFactory.createUnknown(this, name));
 
     this._tasks.set(name, absent);
 

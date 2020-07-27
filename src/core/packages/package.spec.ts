@@ -27,9 +27,13 @@ describe('ZPackage', () => {
   });
 
   describe('tasks', () => {
-    it('contains tasks', () => {
-      expect(pkg.task('task1').spec.action?.command).toBe('exec1');
-      expect(pkg.task('task2').spec.action?.command).toBe('exec2');
+    it('contains tasks', async () => {
+
+      const task1 = await pkg.task('task1');
+      const task2 = await pkg.task('task2');
+
+      expect(task1.spec.action?.command).toBe('exec1');
+      expect(task2.spec.action?.command).toBe('exec2');
     });
   });
 

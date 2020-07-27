@@ -2,27 +2,27 @@
  * @packageDocumentation
  * @module run-z
  */
+import { noop } from '@proc7ts/primitives';
 import { parse } from 'shell-quote';
-import { InvalidZTaskError } from './invalid-task-error';
+import { ZOptionInput } from '../options';
+import type { ZSetup } from '../setup';
+import { recordZTaskAttr, ZTaskCLParser } from './impl/task-cl-parser';
 import { ZTaskSpec } from './task-spec';
-
-/**
- * @internal
- */
-const zTaskArgsSep = /\/\//;
-
-/**
- * @internal
- */
-const zTaskActionMap: { [name: string]: (args: readonly string[]) => ZTaskSpec.Action; } = {
-  '--then': args => zTaskCommand(args, false),
-  '--and': args => zTaskCommand(args, true),
-};
 
 /**
  * A parser of command line containing {@link ZTaskSpec task specifier}.
  */
 export class ZTaskParser {
+
+  private _clParser?: ZTaskCLParser;
+
+  /**
+   * Constructs task parser.
+   *
+   * @param setup  Task execution setup.
+   */
+  constructor(readonly setup: ZSetup) {
+  }
 
   /**
    * Checks whether the given string is package selector.
@@ -33,17 +33,6 @@ export class ZTaskParser {
    */
   isPackageSelector(value: string): boolean {
     return value === '.' || value === '..' || value.startsWith('./') || value.startsWith('../');
-  }
-
-  /**
-   * Checks whether the given string is an option.
-   *
-   * @param value  A string value to check.
-   *
-   * @returns `true` if the given `value` starts with `-`, or `false` otherwise.
-   */
-  isOption(value: string): boolean {
-    return value.startsWith('-');
   }
 
   /**
@@ -58,9 +47,9 @@ export class ZTaskParser {
    */
   parseAttr(
       value: string,
-      attrs: Record<string, string[]> | ((this: void, name: string, value: string) => boolean | void),
-  ): boolean {
-    if (!this.isOption(value)) {
+      attrs: Record<string, string[]> | ((this: void, name: string, value: string) => boolean | void) = noop,
+  ): readonly [string, string] | undefined {
+    if (ZOptionInput.isOptionValue(value)) {
 
       const addAttr = typeof attrs === 'function' ? attrs : recordZTaskAttr.bind(undefined, attrs);
       const eqIdx = value.indexOf('=');
@@ -70,7 +59,7 @@ export class ZTaskParser {
       }
     }
 
-    return false;
+    return;
   }
 
   /**
@@ -78,157 +67,20 @@ export class ZTaskParser {
    *
    * @param commandLine  Task command line.
    *
-   * @returns Parsed task specifier.
+   * @returns A promise resolved to parsed task specifier.
    */
-  parse(commandLine: string): ZTaskSpec {
+  async parse(commandLine: string): Promise<ZTaskSpec> {
 
     const entries = parseZTaskEntries(commandLine);
 
     if (!entries) {
-      return ZTaskSpec.script;
+      return Promise.resolve(ZTaskSpec.script);
+    }
+    if (!this._clParser) {
+      this._clParser = new ZTaskCLParser(this.setup);
     }
 
-    let e = 0;
-    let entryIndex = 0;
-    let entryPosition = 0;
-    const deps: ZTaskSpec.Pre[] = [];
-    const attrs: Record<string, [string, ...string[]]> = {};
-    let preTask: string | undefined;
-    let preParallel = false;
-    let preArgs: string[] = [];
-    let inPreArgs = false;
-
-    const parseError = (message: string): never => {
-
-      let position = 0;
-      let reconstructedCmd = '';
-
-      for (let i = 0; i < entries.length; ++i) {
-
-        const entry = entries[i];
-
-        if (i === entryIndex) {
-          position = reconstructedCmd.length + entryPosition;
-          if (entryPosition >= entry.length) {
-            // The end of entry
-            // Move to the start of the next one.
-            ++position;
-          }
-        }
-        if (reconstructedCmd) {
-          reconstructedCmd += ' ';
-        }
-
-        reconstructedCmd += entry;
-      }
-
-      throw new InvalidZTaskError(message, reconstructedCmd, position);
-    };
-    const appendTask = (): void => {
-      if (preTask) {
-        // Finish the task.
-        deps.push(createZTaskRef(this, preTask, preParallel, preArgs));
-        preArgs = [];
-        preParallel = false;
-        preTask = undefined;
-      } else if (preArgs.length) {
-        parseError('Task arguments specified, but not the task');
-      }
-    };
-
-    for (; e < entries.length; ++e) {
-
-      const entry = entries[e];
-
-      if (this.isOption(entry)) {
-        break;
-      }
-      if (this.isPackageSelector(entry)) {
-        // Package reference
-        appendTask();
-        entryIndex = e + 1;
-        deps.push({ selector: entry });
-        continue;
-      }
-      if (this.parseAttr(entry, (n, v) => !n.includes('/') && recordZTaskAttr(attrs, n, v))) {
-        appendTask();
-        entryIndex = e + 1;
-        continue;
-      }
-
-      const parts = entry.split(zTaskArgsSep);
-
-      for (let p = 0; p < parts.length; ++p) {
-
-        const part = parts[p];
-
-        if (part) {
-          if (inPreArgs) {
-            preArgs.push(part);
-          } else {
-
-            const tasks = part.split(',');
-
-            for (let t = 0; t < tasks.length; ++t) {
-
-              const [task, ...rest] = tasks[t].split('/');
-              const args = rest.filter(arg => !!arg);
-
-              if (!task) {
-                // Just arg(s)
-                if (args.length && t) {
-                  ++entryPosition; // Comma
-                  parseError('Task argument specified, but not the task');
-                }
-                preArgs.push(...args);
-                if (tasks.length === 1) {
-                  continue;
-                }
-              }
-
-              appendTask();
-              entryIndex = e;
-
-              if (task) {
-                preTask = task;
-                preArgs = args;
-              }
-
-              if (t) {
-                preParallel = true;
-                ++entryPosition; // Comma
-              }
-              entryPosition += task.length;
-            }
-          }
-        }
-
-        if (p + 1 < parts.length) {
-          inPreArgs = !inPreArgs;
-        }
-      }
-    }
-
-    appendTask();
-
-    const actionIdx = entries.findIndex(arg => zTaskActionMap[arg], e);
-    let args: readonly string[];
-    let action: ZTaskSpec.Action;
-
-    if (actionIdx >= 0) {
-      args = entries.slice(e, actionIdx);
-      action = zTaskActionMap[entries[actionIdx]](entries.slice(actionIdx + 1));
-    } else {
-      args = entries.slice(e);
-      action = ZTaskSpec.groupAction;
-    }
-
-    return {
-      pre: deps,
-      attrs,
-      args,
-      action,
-    };
+    return this._clParser.parseTask(entries);
   }
 
 }
@@ -261,38 +113,11 @@ function parseZTaskEntries(commandLine: string): string[] | undefined {
 /**
  * @internal
  */
-function createZTaskRef(
-    parser: ZTaskParser,
-    task: string,
-    parallel: boolean,
-    allArgs: string[],
-): ZTaskSpec.TaskRef {
-
-  const attrs: Record<string, [string, ...string[]]> = {};
-  const args: string[] = [];
-
-  for (const arg of allArgs) {
-    if (!parser.parseAttr(arg, attrs)) {
-      args.push(arg);
-    }
-  }
-
-  return {
-    task,
-    parallel,
-    attrs,
-    args,
-  };
-}
-
-/**
- * @internal
- */
 function addZTaskAttr(
     addAttr: (this: void, name: string, value: string) => boolean | void,
     arg: string,
     eqIdx: number,
-): boolean {
+): readonly [string, string] | undefined {
 
   let name: string;
   let value: string;
@@ -305,30 +130,5 @@ function addZTaskAttr(
     value = 'on';
   }
 
-  return addAttr(name, value) !== false;
-}
-
-/**
- * @internal
- */
-function recordZTaskAttr(attrs: Record<string, string[]>, name: string, value: string): void {
-  if (attrs[name]) {
-    attrs[name].push(value);
-  } else {
-    attrs[name] = [value];
-  }
-}
-
-/**
- * @internal
- */
-function zTaskCommand([command, ...args]: readonly string[], parallel: boolean): ZTaskSpec.Command | ZTaskSpec.Group {
-  return command
-      ? {
-        type: 'command',
-        command,
-        parallel,
-        args,
-      }
-      : ZTaskSpec.groupAction;
+  return addAttr(name, value) !== false ? [name, value] : undefined;
 }
