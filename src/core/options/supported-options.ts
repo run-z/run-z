@@ -63,7 +63,7 @@ export namespace SupportedZOptions {
   /**
    * Options syntax provider signature.
    *
-   * The provider is called by options parser at once per {@link ZOptionsParser.parseOptions parse request}.
+   * The provider is called at most once per {@link ZOptionsParser parser call}.
    *
    * @typeparam TCtx  A type of option processing context required by parser.
    * @typeparam TOption  A type of option representation.

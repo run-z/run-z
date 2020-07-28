@@ -12,7 +12,7 @@ import { ZOptionInput } from './option-input';
  * The syntax is a function that converts raw command line arguments to {@link ZOptionInput option input} suitable
  * to be recognized by {@link ZOptionReader option readers}.
  *
- * A syntax should be {@link ZOptionsConfig.syntax registered} for options parser to respect it.
+ * A syntax should be {@link ZOptionsParser.Config.syntax registered} for options parser to respect it.
  */
 export type ZOptionSyntax =
 /**

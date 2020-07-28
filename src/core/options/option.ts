@@ -7,7 +7,7 @@
  * Base representation of command line option passed to its {@link ZOptionReader reader} in order to be recognized.
  *
  * A class implementing this interface along with any interface specific to the parser is created by
- * {@link ZOptionsConfig.optionClass} method.
+ * {@link ZOptionsParser.Config.optionClass} method.
  *
  * The {@link ZOptionReader reader} uses option methods to recognize and consume command line arguments. Once recognized
  * these arguments are consumed, and option reading continues from the next non-consumed argument.
@@ -107,7 +107,7 @@ export namespace ZOption {
   /**
    * A class constructor implementing a command line option representation.
    *
-   * This is a class to extend by {@link ZOptionsConfig.optionClass options parser}.
+   * This is a class to extend by {@link ZOptionsParser.Config.optionClass options parser}.
    *
    * @typeparam TArgs  A type of constructor arguments.
    */
