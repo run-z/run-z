@@ -9,10 +9,7 @@
     "package.json",
     "parallel",
     "run",
-    "task",
-    "workspace",
-    "workspaces",
-    "yarn"
+    "task"
   ],
   "homepage": "https://github.com/run-z/run-z",
   "repository": {
