@@ -640,6 +640,27 @@ describe('ZOptionsParser', () => {
         '-t': ['VALUE'],
       });
     });
+    it('prefers one-letter fallback', async () => {
+
+      const parser = simpleZOptionsParser({
+        options: {
+          '-?'(option) {
+            option.values();
+          },
+          '-*'(option) {
+            option.values();
+          },
+        },
+      });
+
+      const recognized = await parser(['-test', 'some']);
+
+      expect(recognized).toEqual({
+        '-t': ['some'],
+        '-e': [],
+        '-s': [],
+      });
+    });
     it('prefers multi-letter option with parameter', async () => {
 
       const parser = simpleZOptionsParser({

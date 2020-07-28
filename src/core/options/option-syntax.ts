@@ -70,6 +70,7 @@ export const ZOptionSyntax = {
    * - `-name [value1 [value2 ...]]`. Corresponding option key should be in `-name` format.
    * - `-n[m[o...]][VALUE]`. Corresponding option key should be in `-n*` format.
    *
+   * Uses `-?` as a fallback key of one-letter options.
    * Uses `-*` as a fallback option key.
    *
    * Enabled {@link default by default}.
@@ -181,19 +182,21 @@ function shortZOptionSyntax(args: readonly [string, ...string[]]): Iterable<ZOpt
     return [];
   }
 
-  const rest = args.slice(1);
-  const values = ZOptionInput.valuesOf(rest);
+  const restArgs = args.slice(1);
+  const values = ZOptionInput.valuesOf(restArgs);
   const tail = args.slice(values.length + 1);
   const result: ZOptionInput[] = [{ name, values, tail }];
-  const letters = name.substr(2);
+  const restLetters = name.substr(2);
 
-  if (letters) {
+  if (restLetters) {
 
-    const shortName = name.substr(0, 2);
+    const oneLetterName = name.substr(0, 2);
+    const oneLetterTail = ['-' + restLetters, ...restArgs];
 
     result.push(
-        { key: shortName + '*', name: shortName, values: [letters], tail: rest },
-        { name: shortName, tail: ['-' + letters, ...rest] },
+        { key: oneLetterName + '*', name: oneLetterName, values: [restLetters], tail: restArgs },
+        { name: oneLetterName, tail: oneLetterTail },
+        { key: '-?', name: oneLetterName, tail: oneLetterTail },
     );
   }
 

@@ -20,54 +20,60 @@ export type SupportedZOptions<TOption extends ZOption = ZOption, TCtx = unknown>
 
 export namespace SupportedZOptions {
 
-    /**
-     * A map of {@link ZOptionReader readers} corresponding to option keys or their wildcards.
-     *
-     * @typeparam TCtx  A type of option processing context required by parser.
-     * @typeparam TOption  A type of option representation.
-     */
-    export interface Map<TOption extends ZOption = ZOption> {
-
-        /**
-         * Option reader method corresponding to option key.
-         *
-         * The latter can be either an option name, or its wildcard supported by the {@link ZOptionSyntax syntax} used.
-         */
-        readonly [key: string]: ZOptionReader<TOption, this> | undefined;
-
-        /**
-         * Fallback option reader consulted when none of the readers recognized the option in
-         * {@link ZOptionSyntax.longOptions long syntax}.
-         */
-        readonly '--*'?: ZOptionReader<TOption, this>;
-
-        /**
-         * Fallback option reader consulted when none of the readers recognized the option in
-         * {@link ZOptionSyntax.shortOptions short syntax}.
-         */
-        readonly '-*'?: ZOptionReader<TOption, this>;
-
-        /**
-         * Fallback option reader consulted when none of the readers the option in {@link ZOptionSyntax.any any syntax}.
-         */
-        readonly '*'?: ZOptionReader<TOption, this>;
-
-    }
+  /**
+   * A map of {@link ZOptionReader readers} corresponding to option keys or their wildcards.
+   *
+   * @typeparam TCtx  A type of option processing context required by parser.
+   * @typeparam TOption  A type of option representation.
+   */
+  export interface Map<TOption extends ZOption = ZOption> {
 
     /**
-     * Options syntax provider signature.
+     * Option reader method corresponding to option key.
      *
-     * The provider is called by options parser at once per {@link ZOptionsParser.parseOptions parse request}.
-     *
-     * @typeparam TCtx  A type of option processing context required by parser.
-     * @typeparam TOption  A type of option representation.
+     * The latter can be either an option name, or its wildcard supported by the {@link ZOptionSyntax syntax} used.
      */
-    export type Provider<TOption extends ZOption = ZOption, TCtx = unknown> =
+    readonly [key: string]: ZOptionReader<TOption, this> | undefined;
+
     /**
-     * @param context  Option processing context.
-     *
-     * @returns A {@link Map map of option readers}.
+     * Fallback option reader consulted when none of the readers recognized the option in
+     * {@link ZOptionSyntax.longOptions long syntax}.
      */
-        (this: void, context: TCtx) => Map<TOption>;
+    readonly '--*'?: ZOptionReader<TOption, this>;
+
+    /**
+     * Fallback option reader consulted when none of the readers recognized the option in
+     * {@link ZOptionSyntax.shortOptions one-letter syntax}.
+     */
+    readonly '-?'?: ZOptionReader<TOption, this>;
+
+    /**
+     * Fallback option reader consulted when none of the readers recognized the option in
+     * {@link ZOptionSyntax.shortOptions short syntax}.
+     */
+    readonly '-*'?: ZOptionReader<TOption, this>;
+
+    /**
+     * Fallback option reader consulted when none of the readers the option in {@link ZOptionSyntax.any any syntax}.
+     */
+    readonly '*'?: ZOptionReader<TOption, this>;
+
+  }
+
+  /**
+   * Options syntax provider signature.
+   *
+   * The provider is called by options parser at once per {@link ZOptionsParser.parseOptions parse request}.
+   *
+   * @typeparam TCtx  A type of option processing context required by parser.
+   * @typeparam TOption  A type of option representation.
+   */
+  export type Provider<TOption extends ZOption = ZOption, TCtx = unknown> =
+  /**
+   * @param context  Option processing context.
+   *
+   * @returns A {@link Map map of option readers}.
+   */
+      (this: void, context: TCtx) => Map<TOption>;
 
 }
