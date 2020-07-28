@@ -67,11 +67,12 @@ export const ZOptionSyntax = {
    *
    * Supports the following option formats:
    *
+   * - `-name=VALUE`. Corresponding key should be in `-name` format.
    * - `-name [value1 [value2 ...]]`. Corresponding option key should be in `-name` format.
    * - `-n[m[o...]][VALUE]`. Corresponding option key should be in `-n*` format.
    *
-   * Uses `-?` as a fallback key of one-letter options.
-   * Uses `-*` as a fallback option key.
+   * Uses `-?` as a fallback key for one-letter options.
+   * Uses `-*` as a generic fallback option key.
    *
    * Enabled {@link default by default}.
    */
@@ -176,17 +177,38 @@ function longZOptionSyntax(args: readonly [string, ...string[]]): Iterable<ZOpti
  */
 function shortZOptionSyntax(args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
 
-  const [name] = args;
+  let [name] = args;
 
   if (name.length < 2 || !name.startsWith('-') || name.startsWith('--')) {
     return [];
   }
 
+  const result: ZOptionInput[] = [];
+  const eqIdx = name.indexOf('=', 2);
+
+  if (eqIdx > 0) {
+    // `-name=value` form
+
+    const values = [name.substr(eqIdx + 1)];
+    const tail = args.slice(1);
+
+    name = name.substr(0, eqIdx);
+
+    result.push({ name, values, tail });
+    if (name.length === 2) {
+      result.push({ key: '-?', name, values, tail });
+    }
+    result.push({ key: '-*', name, values, tail });
+
+    return result;
+  }
+
   const restArgs = args.slice(1);
   const values = ZOptionInput.valuesOf(restArgs);
   const tail = args.slice(values.length + 1);
-  const result: ZOptionInput[] = [{ name, values, tail }];
   const restLetters = name.substr(2);
+
+  result.push({ name, values, tail });
 
   if (restLetters) {
 
@@ -198,6 +220,9 @@ function shortZOptionSyntax(args: readonly [string, ...string[]]): Iterable<ZOpt
         { name: oneLetterName, tail: oneLetterTail },
         { key: '-?', name: oneLetterName, tail: oneLetterTail },
     );
+  } else {
+    // One-letter syntax
+    result.push({ key: '-?', name, values, tail });
   }
 
   result.push({ key: '-*', name, values, tail });

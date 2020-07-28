@@ -683,5 +683,40 @@ describe('ZOptionsParser', () => {
         '-test': ['some'],
       });
     });
+    it('recognizes `-name=VALUE` format', async () => {
+
+      const parser = simpleZOptionsParser({
+        options: {
+          '-test'(option) {
+            option.values();
+          },
+        },
+      });
+
+      const recognized = await parser(['-test=some']);
+
+      expect(recognized).toEqual({
+        '-test': ['some'],
+      });
+    });
+    it('falls back to `-?` key for `-n=VALUE` format', async () => {
+
+      const parser = simpleZOptionsParser({
+        options: {
+          '-?'(option) {
+            option.values();
+          },
+          '-*'(option) {
+            option.values(0);
+          },
+        },
+      });
+
+      const recognized = await parser(['-t=some']);
+
+      expect(recognized).toEqual({
+        '-t': ['some'],
+      });
+    });
   });
 });
