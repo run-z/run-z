@@ -6,7 +6,7 @@ import { noop } from '@proc7ts/primitives';
 import { parse } from 'shell-quote';
 import { ZOptionInput } from '../options';
 import type { ZSetup } from '../setup';
-import { recordZTaskAttr, ZTaskCLParser } from './impl/task-cl-parser';
+import { recordZTaskAttr, zTaskSpecParser } from './impl/task-spec-parser';
 import { ZTaskSpec } from './task-spec';
 
 /**
@@ -14,7 +14,7 @@ import { ZTaskSpec } from './task-spec';
  */
 export class ZTaskParser {
 
-  private _clParser?: ZTaskCLParser;
+  private _specParser?: ReturnType<typeof zTaskSpecParser>;
 
   /**
    * Constructs task parser.
@@ -76,11 +76,11 @@ export class ZTaskParser {
     if (!entries) {
       return Promise.resolve(ZTaskSpec.script);
     }
-    if (!this._clParser) {
-      this._clParser = new ZTaskCLParser(this.setup);
+    if (!this._specParser) {
+      this._specParser = zTaskSpecParser(this.setup);
     }
 
-    return this._clParser.parseTask(entries);
+    return this._specParser(entries);
   }
 
 }

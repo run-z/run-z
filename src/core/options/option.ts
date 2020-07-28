@@ -112,8 +112,11 @@ export namespace ZOption {
    * @typeparam TArgs  A type of constructor arguments.
    */
   export interface BaseClass<TArgs extends any[]> {
+
     prototype: ZOption;
+
     new (...args: TArgs): ZOption;
+
   }
 
   /**
@@ -124,6 +127,7 @@ export namespace ZOption {
    * @typeparam TArgs  A type of arguments to pass to the {@link BaseClass base constructor}.
    */
   export interface ImplClass<TOption extends ZOption, TCtx, TArgs extends any[]> {
+
     prototype: TOption;
 
     /**
@@ -133,6 +137,7 @@ export namespace ZOption {
      * @param args  Arguments to pass to the {@link BaseClass base constructor}.
      */
     new (context: TCtx, ...args: TArgs): TOption;
+
   }
 
 }

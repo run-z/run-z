@@ -10,13 +10,13 @@ import type { ZOption, ZOptionReader } from './option';
  * This is either a {@link SupportedZOptions.Map map of option readers}, its {@link SupportedZOptions.Provider provider
  * function}, or an array of the above. Multiple readers may be specified per option key with the latter.
  *
- * @typeparam TCtx  A type of option processing context required by parser.
  * @typeparam TOption  A type of option representation.
+ * @typeparam TCtx  A type of option processing context required by parser.
  */
-export type SupportedZOptions<TCtx, TOption extends ZOption> =
+export type SupportedZOptions<TOption extends ZOption = ZOption, TCtx = unknown> =
     | SupportedZOptions.Map<TOption>
-    | SupportedZOptions.Provider<TCtx, TOption>
-    | readonly (SupportedZOptions.Map<TOption> | SupportedZOptions.Provider<TCtx, TOption>)[];
+    | SupportedZOptions.Provider<TOption, TCtx>
+    | readonly (SupportedZOptions.Map<TOption> | SupportedZOptions.Provider<TOption, TCtx>)[];
 
 export namespace SupportedZOptions {
 
@@ -26,7 +26,7 @@ export namespace SupportedZOptions {
      * @typeparam TCtx  A type of option processing context required by parser.
      * @typeparam TOption  A type of option representation.
      */
-    export interface Map<TOption extends ZOption> {
+    export interface Map<TOption extends ZOption = ZOption> {
 
         /**
          * Option reader method corresponding to option key.
@@ -62,7 +62,7 @@ export namespace SupportedZOptions {
      * @typeparam TCtx  A type of option processing context required by parser.
      * @typeparam TOption  A type of option representation.
      */
-    export type Provider<TCtx, TOption extends ZOption> =
+    export type Provider<TOption extends ZOption = ZOption, TCtx = unknown> =
     /**
      * @param context  Option processing context.
      *

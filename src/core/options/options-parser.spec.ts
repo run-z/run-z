@@ -1,60 +1,18 @@
 import { asis, noop, valueProvider } from '@proc7ts/primitives';
 import type { ZOption, ZOptionReader } from './option';
 import { ZOptionSyntax } from './option-syntax';
-import type { ZOptionsConfig } from './options-config';
-import { ZOptionsParser } from './options-parser';
+import { parseZOptions } from './parse-options';
+import { SimpleZOptionsParser, simpleZOptionsParser } from './simple-options-parser';
 import type { SupportedZOptions } from './supported-options';
 import { UnknownZOptionError } from './unknown-option-error';
 
 describe('ZOptionsParser', () => {
 
-  let recognized: Record<string, string[]>;
-
-  type TestOption = ZOption;
-
-  class TestParser extends ZOptionsParser<null, TestOption> {
-
-    constructor(config: Omit<ZOptionsConfig<null, TestOption>, 'optionClass'>) {
-      super({
-        ...config,
-
-        optionClass<TArgs extends any[]>(
-            base: ZOption.BaseClass<TArgs>,
-        ): ZOption.ImplClass<TestOption, null, TArgs> {
-
-          class TestSourceImpl extends base implements TestOption {
-
-            constructor(_context: null, ...args: TArgs) {
-              super(...args);
-              this.whenRecognized(option => {
-                if (recognized[this.name]) {
-                  recognized[this.name].push(...option.values());
-                } else {
-                  recognized[this.name] = [...option.values()];
-                }
-              });
-            }
-
-          }
-
-          return TestSourceImpl;
-        },
-
-      });
-    }
-
-
-  }
-
-  beforeEach(() => {
-    recognized = {};
-  });
-
   it('recognizes option without values', async () => {
 
     let values: readonly string[] | undefined;
 
-    const parser = new TestParser({
+    const parser = simpleZOptionsParser({
       options: {
         '--test': option => {
           values = option.values();
@@ -62,7 +20,7 @@ describe('ZOptionsParser', () => {
       },
     });
 
-    await parser.parseOptions(null, ['--test']);
+    const recognized = await parser(['--test']);
 
     expect(values).toHaveLength(0);
     expect(recognized).toEqual({
@@ -73,7 +31,7 @@ describe('ZOptionsParser', () => {
 
     let values: readonly string[] | undefined;
 
-    const parser = new TestParser({
+    const parser = simpleZOptionsParser({
       options: {
         '--test': option => {
           values = option.values();
@@ -81,7 +39,7 @@ describe('ZOptionsParser', () => {
       },
     });
 
-    await parser.parseOptions(null, ['--test', 'val']);
+    const recognized = await parser(['--test', 'val']);
 
     expect(values).toEqual(['val']);
     expect(recognized).toEqual({
@@ -92,7 +50,7 @@ describe('ZOptionsParser', () => {
 
     let values: readonly string[] | undefined;
     let rest: readonly string[] | undefined;
-    const parser = new TestParser({
+    const parser = simpleZOptionsParser({
       options: {
         '--test': option => {
           rest = option.rest();
@@ -104,7 +62,7 @@ describe('ZOptionsParser', () => {
       },
     });
 
-    await parser.parseOptions(null, ['--test', 'val1', 'val2', '--end']);
+    const recognized = await parser(['--test', 'val1', 'val2', '--end']);
 
     expect(values).toEqual(['val1', 'val2']);
     expect(rest).toEqual(['val1', 'val2', '--end']);
@@ -117,7 +75,7 @@ describe('ZOptionsParser', () => {
 
     let values: readonly string[] | undefined;
     let rest: readonly string[] | undefined;
-    const parser = new TestParser({
+    const parser = simpleZOptionsParser({
       options: {
         '--test': option => {
           rest = option.rest();
@@ -129,7 +87,7 @@ describe('ZOptionsParser', () => {
       },
     });
 
-    await parser.parseOptions(null, ['--test', 'val1', 'val2', '--end']);
+    const recognized = await parser(['--test', 'val1', 'val2', '--end']);
 
     expect(values).toEqual(['val1', 'val2']);
     expect(rest).toEqual(['val1', 'val2', '--end']);
@@ -140,18 +98,17 @@ describe('ZOptionsParser', () => {
   });
   it('throws on unrecognized option', async () => {
 
-    const parser = new TestParser({ options: {} });
-    const error = await parser.parseOptions(null, ['--option']).catch(asis);
+    const parser = simpleZOptionsParser({ options: {} });
+    const error = await parser(['--option']).catch(asis);
 
     expect(error).toBeInstanceOf(UnknownZOptionError);
     expect(error.optionName).toBe('--option');
-    expect(recognized).toEqual({});
   });
   it('accepts supported options provider', async () => {
 
     let values: readonly string[] | undefined;
 
-    const parser = new TestParser({
+    const parser = simpleZOptionsParser({
       options: valueProvider({
         '--test': option => {
           values = option.values();
@@ -159,7 +116,7 @@ describe('ZOptionsParser', () => {
       }),
     });
 
-    await parser.parseOptions(null, ['--test', 'val']);
+    const recognized = await parser(['--test', 'val']);
 
     expect(values).toEqual(['val']);
     expect(recognized).toEqual({
@@ -170,7 +127,7 @@ describe('ZOptionsParser', () => {
 
     let values: readonly string[] | undefined;
 
-    const parser = new TestParser({
+    const parser = simpleZOptionsParser({
       options: [
         {
           '--test': option => {
@@ -183,7 +140,7 @@ describe('ZOptionsParser', () => {
       ],
     });
 
-    await parser.parseOptions(null, ['--test', 'val']);
+    const recognized = await parser(['--test', 'val']);
 
     expect(values).toEqual(['val']);
     expect(recognized).toEqual({
@@ -195,7 +152,7 @@ describe('ZOptionsParser', () => {
     let deferred: readonly string[] | undefined;
     let restDeferred: readonly string[] | undefined;
     let values: readonly string[] | undefined;
-    const parser = new TestParser({
+    const parser = simpleZOptionsParser({
       options: [
         {
           '--test': option => {
@@ -216,7 +173,7 @@ describe('ZOptionsParser', () => {
       ],
     });
 
-    await parser.parseOptions(null, ['--test', 'val', 'end']);
+    const recognized = await parser(['--test', 'val', 'end']);
 
     expect(values).toEqual(['val']);
     expect(deferred).toEqual(['val']);
@@ -232,7 +189,7 @@ describe('ZOptionsParser', () => {
     let deferred: readonly string[] | undefined;
     let restDeferred: readonly string[] | undefined;
     let accepted: readonly string[] | undefined;
-    const parser = new TestParser({
+    const parser = simpleZOptionsParser({
       options: [
         {
           '--test': option => {
@@ -254,7 +211,7 @@ describe('ZOptionsParser', () => {
       ],
     });
 
-    await parser.parseOptions(null, ['--test', 'val', 'end']);
+    const recognized = await parser(['--test', 'val', 'end']);
 
     expect(values).toEqual(['val']);
     expect(accepted).toEqual(['val']);
@@ -270,7 +227,7 @@ describe('ZOptionsParser', () => {
     let firstDeferred: readonly string[] | undefined;
     let allDeferred: readonly string[] | undefined;
     let values: readonly string[] | undefined;
-    const parser = new TestParser({
+    const parser = simpleZOptionsParser({
       options: [
         {
           '--test': option => {
@@ -289,7 +246,7 @@ describe('ZOptionsParser', () => {
       ],
     });
 
-    await parser.parseOptions(null, ['--test', 'val', 'end']);
+    const recognized = await parser(['--test', 'val', 'end']);
 
     expect(values).toEqual(['val', 'end']);
     expect(firstDeferred).toEqual(['val']);
@@ -300,33 +257,33 @@ describe('ZOptionsParser', () => {
   });
   it('throws when option recognition deferred, but not complete', async () => {
 
-    const parser = new TestParser({
+    const parser = simpleZOptionsParser({
       options: {
         '--test': option => {
           option.defer(noop);
         },
       },
     });
-    const error = await parser.parseOptions(null, ['--test']).catch(asis);
+    const error = await parser(['--test']).catch(asis);
 
     expect(error).toBeInstanceOf(UnknownZOptionError);
     expect(error.optionName).toBe('--test');
   });
   it('throws when option reader does nothing', async () => {
 
-    const parser = new TestParser({
+    const parser = simpleZOptionsParser({
       options: {
         '--test': noop,
       },
     });
-    const error = await parser.parseOptions(null, ['--test']).catch(asis);
+    const error = await parser(['--test']).catch(asis);
 
     expect(error).toBeInstanceOf(UnknownZOptionError);
     expect(error.optionName).toBe('--test');
   });
   it('does not throw when option reader does nothing before option recognition', async () => {
 
-    const parser = new TestParser({
+    const parser = simpleZOptionsParser({
       options: [
         {
           '--test': noop,
@@ -339,7 +296,7 @@ describe('ZOptionsParser', () => {
       ],
     });
 
-    await parser.parseOptions(null, ['--test', '1', '2']);
+    const recognized = await parser(['--test', '1', '2']);
 
     expect(recognized).toEqual({
       '--test': ['1', '2'],
@@ -347,7 +304,7 @@ describe('ZOptionsParser', () => {
   });
   it('does not throw when option reader does nothing after option recognition', async () => {
 
-    const parser = new TestParser({
+    const parser = simpleZOptionsParser({
       options: [
         {
           '--test': option => {
@@ -360,17 +317,30 @@ describe('ZOptionsParser', () => {
       ],
     });
 
-    await parser.parseOptions(null, ['--test', '1', '2']);
+    const recognized = await parser(['--test', '1', '2']);
 
     expect(recognized).toEqual({
       '--test': ['1', '2'],
     });
   });
 
+  describe('simple', () => {
+    it('recognizes all options by default', async () => {
+
+      const recognized = await parseZOptions(['some', '--test', 'val1', 'val2', '-tVALUE', '--test', 'val3']);
+
+      expect(recognized).toEqual({
+        some: [],
+        '--test': ['val1', 'val2', 'val3'],
+        '-tVALUE': [],
+      });
+    });
+  });
+
   describe('syntax', () => {
     it('retries replacement processing', async () => {
 
-      const parser = new TestParser({
+      const parser = simpleZOptionsParser({
         options: [
           {
             '--test': option => {
@@ -387,7 +357,7 @@ describe('ZOptionsParser', () => {
         ],
       });
 
-      await parser.parseOptions(null, ['--test', '1', '2']);
+      const recognized = await parser(['--test', '1', '2']);
 
       expect(recognized).toEqual({
         '--replaced': [],
@@ -395,7 +365,7 @@ describe('ZOptionsParser', () => {
     });
     it('retries replacement args processing', async () => {
 
-      const parser = new TestParser({
+      const parser = simpleZOptionsParser({
         options: [
           {
             '--test': option => {
@@ -412,7 +382,7 @@ describe('ZOptionsParser', () => {
         ],
       });
 
-      await parser.parseOptions(null, ['--test', '1', '2']);
+      const recognized = await parser(['--test', '1', '2']);
 
       expect(recognized).toEqual({
         '--replaced': ['r', 't'],
@@ -420,7 +390,7 @@ describe('ZOptionsParser', () => {
     });
     it('prevents processing retry after option recognition', async () => {
 
-      const parser = new TestParser({
+      const parser = simpleZOptionsParser({
         options: [
           {
             '--test': option => {
@@ -437,7 +407,7 @@ describe('ZOptionsParser', () => {
         ],
       });
 
-      await parser.parseOptions(null, ['--test', '1', '2']);
+      const recognized = await parser(['--test', '1', '2']);
 
       expect(recognized).toEqual({
         '--test': ['1', '2'],
@@ -447,19 +417,19 @@ describe('ZOptionsParser', () => {
 
   describe('fallback reader', () => {
 
-    let readShort: jest.Mock<ReturnType<ZOptionReader<TestOption>>, Parameters<ZOptionReader<TestOption>>>;
+    let readShort: jest.Mock<ReturnType<ZOptionReader<ZOption>>, Parameters<ZOptionReader<ZOption>>>;
     let defaultShort: string | undefined;
 
-    let readLong: jest.Mock<ReturnType<ZOptionReader<TestOption>>, Parameters<ZOptionReader<TestOption>>>;
+    let readLong: jest.Mock<ReturnType<ZOptionReader<ZOption>>, Parameters<ZOptionReader<ZOption>>>;
     let defaultLong: string | undefined;
 
-    let readPositional: jest.Mock<ReturnType<ZOptionReader<TestOption>>, Parameters<ZOptionReader<TestOption>>>;
+    let readPositional: jest.Mock<ReturnType<ZOptionReader<ZOption>>, Parameters<ZOptionReader<ZOption>>>;
     let defaultPositional: string | undefined;
 
     let fallbackKey: string | undefined;
 
-    function newParser(options: SupportedZOptions.Map<TestOption> = {}): TestParser {
-      return new TestParser({
+    function newParser(options: SupportedZOptions.Map<ZOption> = {}): SimpleZOptionsParser {
+      return simpleZOptionsParser({
         options: {
           ...options,
           '--*': readLong,
@@ -498,7 +468,7 @@ describe('ZOptionsParser', () => {
 
       const parser = newParser();
 
-      await parser.parseOptions(null, ['--test']);
+      await parser(['--test']);
 
       expect(fallbackKey).toBe('--*');
 
@@ -514,7 +484,7 @@ describe('ZOptionsParser', () => {
 
       const parser = newParser();
 
-      await parser.parseOptions(null, ['-t']);
+      await parser(['-t']);
 
       expect(fallbackKey).toBe('-*');
 
@@ -530,7 +500,7 @@ describe('ZOptionsParser', () => {
 
       const parser = newParser();
 
-      await parser.parseOptions(null, ['test']);
+      await parser(['test']);
 
       expect(fallbackKey).toBe('*');
 
@@ -551,7 +521,7 @@ describe('ZOptionsParser', () => {
 
       const parser = newParser();
 
-      await parser.parseOptions(null, ['--test']);
+      await parser(['--test']);
 
       expect(fallbackKey).toBe('*');
 
@@ -565,18 +535,18 @@ describe('ZOptionsParser', () => {
     });
     it('does not fallback if option read', async () => {
 
-      let recognized: string | undefined;
+      let recognizedName: string | undefined;
       const parser = newParser({
         '--test': option => {
           option.rest();
-          recognized = option.name;
+          recognizedName = option.name;
         },
       });
 
-      await parser.parseOptions(null, ['--test']);
+      await parser(['--test']);
 
       expect(fallbackKey).toBeUndefined();
-      expect(recognized).toBe('--test');
+      expect(recognizedName).toBe('--test');
       expect(defaultShort).toBeUndefined();
       expect(defaultLong).toBeUndefined();
       expect(defaultPositional).toBeUndefined();
@@ -586,7 +556,7 @@ describe('ZOptionsParser', () => {
   describe('long option', () => {
     it('recognizes `--name=value` format', async () => {
 
-      const parser = new TestParser({
+      const parser = simpleZOptionsParser({
         options: {
           '--test'(option) {
             option.values();
@@ -597,7 +567,7 @@ describe('ZOptionsParser', () => {
         },
       });
 
-      await parser.parseOptions(null, ['--test=value', 'rest']);
+      const recognized = await parser(['--test=value', 'rest']);
 
       expect(recognized).toEqual({
         '--test': ['value'],
@@ -609,7 +579,7 @@ describe('ZOptionsParser', () => {
   describe('short option', () => {
     it('recognizes one-letter option without parameter', async () => {
 
-      const parser = new TestParser({
+      const parser = simpleZOptionsParser({
         options: {
           '-t'(option) {
             option.values();
@@ -620,7 +590,7 @@ describe('ZOptionsParser', () => {
         },
       });
 
-      await parser.parseOptions(null, ['-test']);
+      const recognized = await parser(['-test']);
 
       expect(recognized).toEqual({
         '-t': [],
@@ -629,7 +599,7 @@ describe('ZOptionsParser', () => {
     });
     it('prefers one-letter option with parameter', async () => {
 
-      const parser = new TestParser({
+      const parser = simpleZOptionsParser({
         options: {
           '-t'(option) {
             option.values();
@@ -640,15 +610,39 @@ describe('ZOptionsParser', () => {
         },
       });
 
-      await parser.parseOptions(null, ['-test']);
+      const recognized = await parser(['-test']);
 
       expect(recognized).toEqual({
         '-t': ['est'],
       });
     });
+    it('recognizes one-letter flags following each other', async () => {
+
+      const parser = simpleZOptionsParser({
+        options: {
+          '-m'(option) {
+            option.values();
+          },
+          '-n'(option) {
+            option.values();
+          },
+          '-t'(option) {
+            option.values();
+          },
+        },
+      });
+
+      const recognized = await parser(['-mnt', 'VALUE']);
+
+      expect(recognized).toEqual({
+        '-m': [],
+        '-n': [],
+        '-t': ['VALUE'],
+      });
+    });
     it('prefers multi-letter option with parameter', async () => {
 
-      const parser = new TestParser({
+      const parser = simpleZOptionsParser({
         options: {
           '-t*'(option) {
             option.values();
@@ -662,7 +656,7 @@ describe('ZOptionsParser', () => {
         },
       });
 
-      await parser.parseOptions(null, ['-test', 'some']);
+      const recognized = await parser(['-test', 'some']);
 
       expect(recognized).toEqual({
         '-test': ['some'],
