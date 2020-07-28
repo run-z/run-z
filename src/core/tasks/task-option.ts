@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module run-z
  */
-import type { ZOption, ZOptionReader } from '../options';
+import type { ZOption, ZOptionReader } from '@run-z/optionz';
 import type { ZSetup } from '../setup';
 import type { ZTaskSpec } from './task-spec';
 

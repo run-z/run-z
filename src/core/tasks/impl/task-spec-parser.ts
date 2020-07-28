@@ -1,7 +1,7 @@
 import { thruIt } from '@proc7ts/a-iterable';
 import { nextSkip } from '@proc7ts/call-thru';
-import type { SupportedZOptions, ZOption } from '../../options';
-import { customZOptionsParser, ZOptionInput, ZOptionsParser, ZOptionSyntax } from '../../options';
+import type { ZOption, ZOptionsParser } from '@run-z/optionz';
+import { customZOptionsParser, SupportedZOptions, ZOptionInput, ZOptionSyntax } from '@run-z/optionz';
 import type { ZSetup } from '../../setup';
 import { InvalidZTaskError } from '../invalid-task-error';
 import type { ZTaskOption } from '../task-option';

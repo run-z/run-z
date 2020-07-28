@@ -1,5 +1,5 @@
 import { flatMapIt, mapIt } from '@proc7ts/a-iterable';
-import { ZOptionInput } from '../../options';
+import { ZOptionInput } from '@run-z/optionz';
 import type { ZPackageSet } from '../../packages';
 import type { ZCall, ZCallPlanner } from '../../plan';
 import type { ZTaskSpec } from '../task-spec';
