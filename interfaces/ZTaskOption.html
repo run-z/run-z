@@ -111,6 +111,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="ZTaskOption.html#addArg" class="tsd-kind-icon">add<wbr>Arg</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="ZTaskOption.html#addAttr" class="tsd-kind-icon">add<wbr>Attr</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="ZTaskOption.html#addAttrs" class="tsd-kind-icon">add<wbr>Attrs</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="ZTaskOption.html#addPre" class="tsd-kind-icon">add<wbr>Pre</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="ZTaskOption.html#addPreArgs" class="tsd-kind-icon">add<wbr>Pre<wbr>Args</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="ZTaskOption.html#addPreTask" class="tsd-kind-icon">add<wbr>Pre<wbr>Task</a></li>
@@ -134,7 +135,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="ZTaskOption.html">ZTaskOption</a>.<a href="ZTaskOption.html#argIndex">argIndex</a></p>
 						<ul>
-							<li>Defined in run-z/run-z/node_modules/@run-z/optionz/d.ts/option.d.ts:41</li>
+							<li>Defined in run-z/optionz/d.ts/option.d.ts:41</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -150,7 +151,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="ZTaskOption.html">ZTaskOption</a>.<a href="ZTaskOption.html#args">args</a></p>
 						<ul>
-							<li>Defined in run-z/run-z/node_modules/@run-z/optionz/d.ts/option.d.ts:37</li>
+							<li>Defined in run-z/optionz/d.ts/option.d.ts:37</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -167,7 +168,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="ZTaskOption.html">ZTaskOption</a>.<a href="ZTaskOption.html#key">key</a></p>
 						<ul>
-							<li>Defined in run-z/run-z/node_modules/@run-z/optionz/d.ts/option.d.ts:31</li>
+							<li>Defined in run-z/optionz/d.ts/option.d.ts:31</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -185,7 +186,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="ZTaskOption.html">ZTaskOption</a>.<a href="ZTaskOption.html#name">name</a></p>
 						<ul>
-							<li>Defined in run-z/run-z/node_modules/@run-z/optionz/d.ts/option.d.ts:24</li>
+							<li>Defined in run-z/optionz/d.ts/option.d.ts:24</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -201,7 +202,7 @@
 					<div class="tsd-signature tsd-kind-icon">setup<span class="tsd-signature-symbol">:</span> <a href="../classes/ZSetup.html" class="tsd-signature-type">ZSetup</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/17e3bd4/src/core/tasks/task-option.ts#L19">run-z/run-z/src/core/tasks/task-option.ts:19</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/ef89690/src/core/tasks/task-option.ts#L19">run-z/run-z/src/core/tasks/task-option.ts:19</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -217,26 +218,26 @@
 					<a name="addArg" class="tsd-anchor"></a>
 					<h3>add<wbr>Arg</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>Arg<span class="tsd-signature-symbol">(</span>arg<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Arg<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/17e3bd4/src/core/tasks/task-option.ts#L60">run-z/run-z/src/core/tasks/task-option.ts:60</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/ef89690/src/core/tasks/task-option.ts#L67">run-z/run-z/src/core/tasks/task-option.ts:67</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Add raw command line argument.</p>
+									<p>Appends raw command line argument(s) to the task.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>arg: <span class="tsd-signature-type">string</span></h5>
+									<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>args: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>Command line argument to add.</p>
+										<p>Command line argument(s) to append.</p>
 									</div>
 								</li>
 							</ul>
@@ -254,7 +255,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/17e3bd4/src/core/tasks/task-option.ts#L53">run-z/run-z/src/core/tasks/task-option.ts:53</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/ef89690/src/core/tasks/task-option.ts#L53">run-z/run-z/src/core/tasks/task-option.ts:53</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -282,6 +283,37 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="addAttrs" class="tsd-anchor"></a>
+					<h3>add<wbr>Attrs</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Attrs<span class="tsd-signature-symbol">(</span>attrs<span class="tsd-signature-symbol">: </span><a href="../globals.html#ZTaskSpec.Attrs" class="tsd-signature-type">Attrs</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/ef89690/src/core/tasks/task-option.ts#L60">run-z/run-z/src/core/tasks/task-option.ts:60</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Appends task attributes.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>attrs: <a href="../globals.html#ZTaskSpec.Attrs" class="tsd-signature-type">Attrs</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Attributes to append.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
 					<a name="addPre" class="tsd-anchor"></a>
 					<h3>add<wbr>Pre</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
@@ -291,7 +323,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/17e3bd4/src/core/tasks/task-option.ts#L26">run-z/run-z/src/core/tasks/task-option.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/ef89690/src/core/tasks/task-option.ts#L26">run-z/run-z/src/core/tasks/task-option.ts:26</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -322,7 +354,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/17e3bd4/src/core/tasks/task-option.ts#L40">run-z/run-z/src/core/tasks/task-option.ts:40</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/ef89690/src/core/tasks/task-option.ts#L40">run-z/run-z/src/core/tasks/task-option.ts:40</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -353,7 +385,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/17e3bd4/src/core/tasks/task-option.ts#L33">run-z/run-z/src/core/tasks/task-option.ts:33</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/ef89690/src/core/tasks/task-option.ts#L33">run-z/run-z/src/core/tasks/task-option.ts:33</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -385,7 +417,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ZTaskOption.html">ZTaskOption</a>.<a href="ZTaskOption.html#defer">defer</a></p>
 								<ul>
-									<li>Defined in run-z/run-z/node_modules/@run-z/optionz/d.ts/option.d.ts:82</li>
+									<li>Defined in run-z/optionz/d.ts/option.d.ts:84</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -418,7 +450,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/17e3bd4/src/core/tasks/task-option.ts#L45">run-z/run-z/src/core/tasks/task-option.ts:45</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/ef89690/src/core/tasks/task-option.ts#L45">run-z/run-z/src/core/tasks/task-option.ts:45</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -434,26 +466,35 @@
 					<a name="rest" class="tsd-anchor"></a>
 					<h3>rest</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">rest<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></li>
+						<li class="tsd-signature tsd-kind-icon">rest<span class="tsd-signature-symbol">(</span>max<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ZTaskOption.html">ZTaskOption</a>.<a href="ZTaskOption.html#rest">rest</a></p>
 								<ul>
-									<li>Defined in run-z/run-z/node_modules/@run-z/optionz/d.ts/option.d.ts:73</li>
+									<li>Defined in run-z/optionz/d.ts/option.d.ts:75</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Reads all of the remaining command line arguments and treat them as option values.</p>
+									<p>Reads up to the maximum number of the remaining command line arguments and treat them as option values.</p>
 								</div>
-								<p>Reads [values] and all command line arguments following them up to the end of command line.</p>
+								<p>Reads [values] and all command line arguments following them up to the end of command line or their maximum number.</p>
 								<p>Calling this method marks all arguments read as recognized. This can be changed by calling any recognition method
 								again.</p>
-								<p>When called on already recognized option this method just returns the values returned to the reader that recognized
-								them.</p>
+								<p>When called on already recognized option this method just returns the values previously returned to the reader
+								that recognized them.</p>
 							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> max: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The maximum number of arguments to read.</p>
+									</div>
+								</li>
+							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4>
 							<p>Command line arguments array.</p>
 						</li>
@@ -469,12 +510,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/17e3bd4/src/core/tasks/task-option.ts#L69">run-z/run-z/src/core/tasks/task-option.ts:69</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/ef89690/src/core/tasks/task-option.ts#L76">run-z/run-z/src/core/tasks/task-option.ts:76</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Assigns action to the task.</p>
+									<p>Assigns a task action.</p>
 								</div>
 								<p>The task action defaults to <a href="../globals.html#ZTaskSpec.Group">grouping task</a> unless reassigned by this call.</p>
 							</div>
@@ -502,7 +543,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ZTaskOption.html">ZTaskOption</a>.<a href="ZTaskOption.html#values">values</a></p>
 								<ul>
-									<li>Defined in run-z/run-z/node_modules/@run-z/optionz/d.ts/option.d.ts:59</li>
+									<li>Defined in run-z/optionz/d.ts/option.d.ts:59</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -514,8 +555,8 @@
 								<code>--name value1 value2 ...</code> syntax supports any number of them.</p>
 								<p>Calling this method marks the option and value arguments as recognized. This can be changed by calling any
 								recognition method again.</p>
-								<p>When called on already recognized option this method just returns the values returned to the reader that recognized
-								them.</p>
+								<p>When called on already recognized option this method just returns the values previously returned to the reader
+								that recognized them.</p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -542,7 +583,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ZTaskOption.html">ZTaskOption</a>.<a href="ZTaskOption.html#whenRecognized">whenRecognized</a></p>
 								<ul>
-									<li>Defined in run-z/run-z/node_modules/@run-z/optionz/d.ts/option.d.ts:92</li>
+									<li>Defined in run-z/optionz/d.ts/option.d.ts:94</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -667,6 +708,9 @@
 						<a href="ZTask.html" class="tsd-kind-icon">ZTask</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="ZTaskBuilder.html" class="tsd-kind-icon">ZTask<wbr>Builder</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
 						<a href="ZTaskExecution.html" class="tsd-kind-icon">ZTask<wbr>Execution</a>
 					</li>
 				</ul>
@@ -700,6 +744,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="ZTaskOption.html#addAttr" class="tsd-kind-icon">add<wbr>Attr</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="ZTaskOption.html#addAttrs" class="tsd-kind-icon">add<wbr>Attrs</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="ZTaskOption.html#addPre" class="tsd-kind-icon">add<wbr>Pre</a>

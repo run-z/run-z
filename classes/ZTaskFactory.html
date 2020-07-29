@@ -69,6 +69,7 @@
 					<div class="lead">
 						<p>Task factory.</p>
 					</div>
+					<p>Constructs <a href="../interfaces/ZTaskBuilder.html">task builders</a> that can be used to create new tasks.</p>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -86,11 +87,7 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ZTaskFactory.html#createCommand" class="tsd-kind-icon">create<wbr>Command</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ZTaskFactory.html#createGroup" class="tsd-kind-icon">create<wbr>Group</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ZTaskFactory.html#createScript" class="tsd-kind-icon">create<wbr>Script</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="ZTaskFactory.html#createTask" class="tsd-kind-icon">create<wbr>Task</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ZTaskFactory.html#createUnknown" class="tsd-kind-icon">create<wbr>Unknown</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ZTaskFactory.html#newTask" class="tsd-kind-icon">new<wbr>Task</a></li>
 							</ul>
 						</section>
 					</div>
@@ -99,21 +96,21 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="createCommand" class="tsd-anchor"></a>
-					<h3>create<wbr>Command</h3>
+					<a name="newTask" class="tsd-anchor"></a>
+					<h3>new<wbr>Task</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">create<wbr>Command<span class="tsd-signature-symbol">(</span>target<span class="tsd-signature-symbol">: </span><a href="ZPackage.html" class="tsd-signature-type">ZPackage</a>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, spec<span class="tsd-signature-symbol">: </span><a href="../globals.html#ZTaskSpec" class="tsd-signature-type">ZTaskSpec</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#ZTaskSpec.Command" class="tsd-signature-type">Command</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/ZTask.html" class="tsd-signature-type">ZTask</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#ZTaskSpec.Command" class="tsd-signature-type">Command</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">new<wbr>Task<span class="tsd-signature-symbol">(</span>target<span class="tsd-signature-symbol">: </span><a href="ZPackage.html" class="tsd-signature-type">ZPackage</a>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/ZTaskBuilder.html" class="tsd-signature-type">ZTaskBuilder</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/17e3bd4/src/core/tasks/task-factory.ts#L54">run-z/run-z/src/core/tasks/task-factory.ts:54</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/ef89690/src/core/tasks/task-factory.ts#L24">run-z/run-z/src/core/tasks/task-factory.ts:24</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Creates a command execution task by its <a href="../globals.html#ZTaskSpec.Command">specifier</a>.</p>
+									<p>Creates new task builder.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -121,198 +118,18 @@
 								<li>
 									<h5>target: <a href="ZPackage.html" class="tsd-signature-type">ZPackage</a></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>Target package the task is applied to.</p>
+										<p>Target package the new task is to be applied to.</p>
 									</div>
 								</li>
 								<li>
 									<h5>name: <span class="tsd-signature-type">string</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>Task name.</p>
-									</div>
-								</li>
-								<li>
-									<h5>spec: <a href="../globals.html#ZTaskSpec" class="tsd-signature-type">ZTaskSpec</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#ZTaskSpec.Command" class="tsd-signature-type">Command</a><span class="tsd-signature-symbol">&gt;</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Task specifier.</p>
+										<p>New task name.</p>
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../interfaces/ZTask.html" class="tsd-signature-type">ZTask</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#ZTaskSpec.Command" class="tsd-signature-type">Command</a><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>New command execution task instance.</p>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="createGroup" class="tsd-anchor"></a>
-					<h3>create<wbr>Group</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">create<wbr>Group<span class="tsd-signature-symbol">(</span>target<span class="tsd-signature-symbol">: </span><a href="ZPackage.html" class="tsd-signature-type">ZPackage</a>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, spec<span class="tsd-signature-symbol">: </span><a href="../globals.html#ZTaskSpec" class="tsd-signature-type">ZTaskSpec</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#ZTaskSpec.Group" class="tsd-signature-type">Group</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/ZTask.html" class="tsd-signature-type">ZTask</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#ZTaskSpec.Group" class="tsd-signature-type">Group</a><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/17e3bd4/src/core/tasks/task-factory.ts#L67">run-z/run-z/src/core/tasks/task-factory.ts:67</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Creates a grouping task by its <a href="../globals.html#ZTaskSpec.Group">specifier</a>.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>target: <a href="ZPackage.html" class="tsd-signature-type">ZPackage</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Target package the task is applied to.</p>
-									</div>
-								</li>
-								<li>
-									<h5>name: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Task name.</p>
-									</div>
-								</li>
-								<li>
-									<h5>spec: <a href="../globals.html#ZTaskSpec" class="tsd-signature-type">ZTaskSpec</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#ZTaskSpec.Group" class="tsd-signature-type">Group</a><span class="tsd-signature-symbol">&gt;</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Task specifier.</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../interfaces/ZTask.html" class="tsd-signature-type">ZTask</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#ZTaskSpec.Group" class="tsd-signature-type">Group</a><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>New grouping task instance.</p>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="createScript" class="tsd-anchor"></a>
-					<h3>create<wbr>Script</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">create<wbr>Script<span class="tsd-signature-symbol">(</span>target<span class="tsd-signature-symbol">: </span><a href="ZPackage.html" class="tsd-signature-type">ZPackage</a>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/ZTask.html" class="tsd-signature-type">ZTask</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#ZTaskSpec.Script" class="tsd-signature-type">Script</a><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/17e3bd4/src/core/tasks/task-factory.ts#L79">run-z/run-z/src/core/tasks/task-factory.ts:79</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Creates an NPM script execution task.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>target: <a href="ZPackage.html" class="tsd-signature-type">ZPackage</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Target package the task is applied to.</p>
-									</div>
-								</li>
-								<li>
-									<h5>name: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Task name.</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../interfaces/ZTask.html" class="tsd-signature-type">ZTask</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#ZTaskSpec.Script" class="tsd-signature-type">Script</a><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>New NPM script execution task instance.</p>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
-					<a name="createTask" class="tsd-anchor"></a>
-					<h3>create<wbr>Task</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">create<wbr>Task&lt;TAction&gt;<span class="tsd-signature-symbol">(</span>target<span class="tsd-signature-symbol">: </span><a href="ZPackage.html" class="tsd-signature-type">ZPackage</a>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, spec<span class="tsd-signature-symbol">: </span><a href="../globals.html#ZTaskSpec" class="tsd-signature-type">ZTaskSpec</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAction</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/ZTask.html" class="tsd-signature-type">ZTask</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAction</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/17e3bd4/src/core/tasks/task-factory.ts#L27">run-z/run-z/src/core/tasks/task-factory.ts:27</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Creates a task by its <a href="../globals.html#ZTaskSpec">specifier</a>.</p>
-								</div>
-								<p>Delegates to corresponding <code>create...()</code> method.</p>
-							</div>
-							<h4 class="tsd-type-parameters-title">Type parameters</h4>
-							<ul class="tsd-type-parameters">
-								<li>
-									<h4>TAction<span class="tsd-signature-symbol">: </span><a href="../globals.html#ZTaskSpec.Action" class="tsd-signature-type">Action</a></h4>
-									<div class="tsd-comment tsd-typography">
-										<p>Task action type.</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>target: <a href="ZPackage.html" class="tsd-signature-type">ZPackage</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Target package the task is applied to.</p>
-									</div>
-								</li>
-								<li>
-									<h5>name: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Task name.</p>
-									</div>
-								</li>
-								<li>
-									<h5>spec: <a href="../globals.html#ZTaskSpec" class="tsd-signature-type">ZTaskSpec</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAction</span><span class="tsd-signature-symbol">&gt;</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Task specifier.</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../interfaces/ZTask.html" class="tsd-signature-type">ZTask</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAction</span><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>New task instance.</p>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="createUnknown" class="tsd-anchor"></a>
-					<h3>create<wbr>Unknown</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">create<wbr>Unknown<span class="tsd-signature-symbol">(</span>target<span class="tsd-signature-symbol">: </span><a href="ZPackage.html" class="tsd-signature-type">ZPackage</a>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/ZTask.html" class="tsd-signature-type">ZTask</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#ZTaskSpec.Unknown" class="tsd-signature-type">Unknown</a><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/17e3bd4/src/core/tasks/task-factory.ts#L91">run-z/run-z/src/core/tasks/task-factory.ts:91</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Creates an unknown task.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>target: <a href="ZPackage.html" class="tsd-signature-type">ZPackage</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Target package the task is applied to.</p>
-									</div>
-								</li>
-								<li>
-									<h5>name: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Task name.</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../interfaces/ZTask.html" class="tsd-signature-type">ZTask</a><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#ZTaskSpec.Unknown" class="tsd-signature-type">Unknown</a><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>New unknown task instance.</p>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/ZTaskBuilder.html" class="tsd-signature-type">ZTaskBuilder</a></h4>
+							<p>New task builder.</p>
 						</li>
 					</ul>
 				</section>
@@ -367,19 +184,7 @@
 						<a href="ZTaskFactory.html" class="tsd-kind-icon">ZTask<wbr>Factory</a>
 						<ul>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="ZTaskFactory.html#createCommand" class="tsd-kind-icon">create<wbr>Command</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="ZTaskFactory.html#createGroup" class="tsd-kind-icon">create<wbr>Group</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="ZTaskFactory.html#createScript" class="tsd-kind-icon">create<wbr>Script</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
-								<a href="ZTaskFactory.html#createTask" class="tsd-kind-icon">create<wbr>Task</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="ZTaskFactory.html#createUnknown" class="tsd-kind-icon">create<wbr>Unknown</a>
+								<a href="ZTaskFactory.html#newTask" class="tsd-kind-icon">new<wbr>Task</a>
 							</li>
 						</ul>
 					</li>
@@ -417,6 +222,9 @@
 					</li>
 					<li class=" tsd-kind-interface tsd-has-type-parameter">
 						<a href="../interfaces/ZTask.html" class="tsd-kind-icon">ZTask</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="../interfaces/ZTaskBuilder.html" class="tsd-kind-icon">ZTask<wbr>Builder</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-has-type-parameter">
 						<a href="../interfaces/ZTaskExecution.html" class="tsd-kind-icon">ZTask<wbr>Execution</a>

@@ -84,21 +84,27 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
+							<h3>Interfaces</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-interface tsd-parent-kind-class"><a href="../interfaces/ZTaskParser.Config.html" class="tsd-kind-icon">Config</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Type aliases</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-type-alias tsd-parent-kind-class tsd-is-static"><a href="ZTaskParser.html#SupportedOptions" class="tsd-kind-icon">Supported<wbr>Options</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="ZTaskParser.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
-							<h3>Properties</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="ZTaskParser.html#_specParser" class="tsd-kind-icon">_spec<wbr>Parser</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="ZTaskParser.html#setup" class="tsd-kind-icon">setup</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ZTaskParser.html#applyOptions" class="tsd-kind-icon">apply<wbr>Options</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ZTaskParser.html#isPackageSelector" class="tsd-kind-icon">is<wbr>Package<wbr>Selector</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ZTaskParser.html#parse" class="tsd-kind-icon">parse</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ZTaskParser.html#parseAttr" class="tsd-kind-icon">parse<wbr>Attr</a></li>
@@ -108,18 +114,36 @@
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Type aliases</h2>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-class tsd-is-static">
+					<a name="SupportedOptions" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> Supported<wbr>Options</h3>
+					<div class="tsd-signature tsd-kind-icon">Supported<wbr>Options<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">SupportedZOptions</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ZTaskOption.html" class="tsd-signature-type">ZTaskOption</a><span class="tsd-signature-symbol">, </span><a href="../interfaces/ZTaskBuilder.html" class="tsd-signature-type">ZTaskBuilder</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/ef89690/src/core/tasks/task-parser.ts#L116">run-z/run-z/src/core/tasks/task-parser.ts:116</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>A set of supported task options.</p>
+						</div>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Constructors</h2>
 				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new ZTask<wbr>Parser<span class="tsd-signature-symbol">(</span>setup<span class="tsd-signature-symbol">: </span><a href="ZSetup.html" class="tsd-signature-type">ZSetup</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ZTaskParser.html" class="tsd-signature-type">ZTaskParser</a></li>
+						<li class="tsd-signature tsd-kind-icon">new ZTask<wbr>Parser<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">?: </span><a href="../interfaces/ZTaskParser.Config.html" class="tsd-signature-type">Config</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ZTaskParser.html" class="tsd-signature-type">ZTaskParser</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/17e3bd4/src/core/tasks/task-parser.ts#L17">run-z/run-z/src/core/tasks/task-parser.ts:17</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/ef89690/src/core/tasks/task-parser.ts#L26">run-z/run-z/src/core/tasks/task-parser.ts:26</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -130,10 +154,10 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>setup: <a href="ZSetup.html" class="tsd-signature-type">ZSetup</a></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> config: <a href="../interfaces/ZTaskParser.Config.html" class="tsd-signature-type">Config</a><span class="tsd-signature-symbol"> = {}</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<div class="lead">
-											<p>Task execution setup.</p>
+											<p>Task parser configuration.</p>
 										</div>
 									</div>
 								</li>
@@ -144,35 +168,45 @@
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
-					<a name="_specParser" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> <span class="tsd-flag ts-flagOptional">Optional</span> _spec<wbr>Parser</h3>
-					<div class="tsd-signature tsd-kind-icon">_spec<wbr>Parser<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ReturnType</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">typeof </span><span class="tsd-signature-type">zTaskSpecParser</span><span class="tsd-signature-symbol">&gt;</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/17e3bd4/src/core/tasks/task-parser.ts#L17">run-z/run-z/src/core/tasks/task-parser.ts:17</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="setup" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> setup</h3>
-					<div class="tsd-signature tsd-kind-icon">setup<span class="tsd-signature-symbol">:</span> <a href="ZSetup.html" class="tsd-signature-type">ZSetup</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/17e3bd4/src/core/tasks/task-parser.ts#L24">run-z/run-z/src/core/tasks/task-parser.ts:24</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Task execution setup.</p>
-						</div>
-					</div>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="applyOptions" class="tsd-anchor"></a>
+					<h3>apply<wbr>Options</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">apply<wbr>Options<span class="tsd-signature-symbol">(</span>builder<span class="tsd-signature-symbol">: </span><a href="../interfaces/ZTaskBuilder.html" class="tsd-signature-type">ZTaskBuilder</a>, args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ZTaskBuilder.html" class="tsd-signature-type">ZTaskBuilder</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/ef89690/src/core/tasks/task-parser.ts#L102">run-z/run-z/src/core/tasks/task-parser.ts:102</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Recognized options from command line arguments and applies them to the task.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>builder: <a href="../interfaces/ZTaskBuilder.html" class="tsd-signature-type">ZTaskBuilder</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Target task builder to apply recognized task options with.</p>
+									</div>
+								</li>
+								<li>
+									<h5>args: <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Arguments to apply.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ZTaskBuilder.html" class="tsd-signature-type">ZTaskBuilder</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>A promise resolved to task builder when command line options applied.</p>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="isPackageSelector" class="tsd-anchor"></a>
 					<h3>is<wbr>Package<wbr>Selector</h3>
@@ -183,7 +217,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/17e3bd4/src/core/tasks/task-parser.ts#L34">run-z/run-z/src/core/tasks/task-parser.ts:34</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/ef89690/src/core/tasks/task-parser.ts#L44">run-z/run-z/src/core/tasks/task-parser.ts:44</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -209,31 +243,37 @@
 					<a name="parse" class="tsd-anchor"></a>
 					<h3>parse</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">parse<span class="tsd-signature-symbol">(</span>commandLine<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#ZTaskSpec" class="tsd-signature-type">ZTaskSpec</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">parse<span class="tsd-signature-symbol">(</span>builder<span class="tsd-signature-symbol">: </span><a href="../interfaces/ZTaskBuilder.html" class="tsd-signature-type">ZTaskBuilder</a>, commandLine<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ZTaskBuilder.html" class="tsd-signature-type">ZTaskBuilder</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/17e3bd4/src/core/tasks/task-parser.ts#L72">run-z/run-z/src/core/tasks/task-parser.ts:72</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/ef89690/src/core/tasks/task-parser.ts#L83">run-z/run-z/src/core/tasks/task-parser.ts:83</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Builds task specifier by its command line.</p>
+									<p>Parses a command line and applies recognized options to the task.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
+									<h5>builder: <a href="../interfaces/ZTaskBuilder.html" class="tsd-signature-type">ZTaskBuilder</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Target task builder to apply recognized task options with.</p>
+									</div>
+								</li>
+								<li>
 									<h5>commandLine: <span class="tsd-signature-type">string</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>Task command line.</p>
+										<p>Task command line to parse.</p>
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../globals.html#ZTaskSpec" class="tsd-signature-type">ZTaskSpec</a><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>A promise resolved to parsed task specifier.</p>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ZTaskBuilder.html" class="tsd-signature-type">ZTaskBuilder</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>A promise resolved to task builder when command line parsed.</p>
 						</li>
 					</ul>
 				</section>
@@ -247,7 +287,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/17e3bd4/src/core/tasks/task-parser.ts#L48">run-z/run-z/src/core/tasks/task-parser.ts:48</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/ef89690/src/core/tasks/task-parser.ts#L58">run-z/run-z/src/core/tasks/task-parser.ts:58</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -333,14 +373,17 @@
 					<li class="current tsd-kind-class">
 						<a href="ZTaskParser.html" class="tsd-kind-icon">ZTask<wbr>Parser</a>
 						<ul>
+							<li class=" tsd-kind-interface tsd-parent-kind-class">
+								<a href="../interfaces/ZTaskParser.Config.html" class="tsd-kind-icon">Config</a>
+							</li>
+							<li class=" tsd-kind-type-alias tsd-parent-kind-class tsd-is-static">
+								<a href="ZTaskParser.html#SupportedOptions" class="tsd-kind-icon">Supported<wbr>Options</a>
+							</li>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
 								<a href="ZTaskParser.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
-								<a href="ZTaskParser.html#_specParser" class="tsd-kind-icon">_spec<wbr>Parser</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="ZTaskParser.html#setup" class="tsd-kind-icon">setup</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="ZTaskParser.html#applyOptions" class="tsd-kind-icon">apply<wbr>Options</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="ZTaskParser.html#isPackageSelector" class="tsd-kind-icon">is<wbr>Package<wbr>Selector</a>
@@ -381,6 +424,9 @@
 					</li>
 					<li class=" tsd-kind-interface tsd-has-type-parameter">
 						<a href="../interfaces/ZTask.html" class="tsd-kind-icon">ZTask</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="../interfaces/ZTaskBuilder.html" class="tsd-kind-icon">ZTask<wbr>Builder</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-has-type-parameter">
 						<a href="../interfaces/ZTaskExecution.html" class="tsd-kind-icon">ZTask<wbr>Execution</a>
