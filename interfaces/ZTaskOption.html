@@ -103,7 +103,9 @@
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="ZTaskOption.html#args" class="tsd-kind-icon">args</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="ZTaskOption.html#key" class="tsd-kind-icon">key</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="ZTaskOption.html#name" class="tsd-kind-icon">name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ZTaskOption.html#setup" class="tsd-kind-icon">setup</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ZTaskOption.html#preTask" class="tsd-kind-icon">pre<wbr>Task</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ZTaskOption.html#taskName" class="tsd-kind-icon">task<wbr>Name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ZTaskOption.html#taskTarget" class="tsd-kind-icon">task<wbr>Target</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -113,7 +115,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="ZTaskOption.html#addAttr" class="tsd-kind-icon">add<wbr>Attr</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="ZTaskOption.html#addAttrs" class="tsd-kind-icon">add<wbr>Attrs</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="ZTaskOption.html#addPre" class="tsd-kind-icon">add<wbr>Pre</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="ZTaskOption.html#addPreArgs" class="tsd-kind-icon">add<wbr>Pre<wbr>Args</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="ZTaskOption.html#addPreArg" class="tsd-kind-icon">add<wbr>Pre<wbr>Arg</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="ZTaskOption.html#addPreTask" class="tsd-kind-icon">add<wbr>Pre<wbr>Task</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="ZTaskOption.html#defer" class="tsd-kind-icon">defer</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="ZTaskOption.html#parallelPre" class="tsd-kind-icon">parallel<wbr>Pre</a></li>
@@ -197,17 +199,47 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="setup" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> setup</h3>
-					<div class="tsd-signature tsd-kind-icon">setup<span class="tsd-signature-symbol">:</span> <a href="../classes/ZSetup.html" class="tsd-signature-type">ZSetup</a></div>
+					<a name="preTask" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> pre<wbr>Task</h3>
+					<div class="tsd-signature tsd-kind-icon">pre<wbr>Task<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/8c7629b/src/core/tasks/task-option.ts#L19">run-z/run-z/src/core/tasks/task-option.ts:19</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-option.ts#L29">run-z/run-z/src/core/tasks/task-option.ts:29</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Task execution setup.</p>
+							<p>The name of prerequisite added by the most recent call to <a href="ZTaskOption.html#addPreTask">addPreTask</a>, unless it is already complete.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="taskName" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> task<wbr>Name</h3>
+					<div class="tsd-signature tsd-kind-icon">task<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-option.ts#L24">run-z/run-z/src/core/tasks/task-option.ts:24</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Task name.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="taskTarget" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> task<wbr>Target</h3>
+					<div class="tsd-signature tsd-kind-icon">task<wbr>Target<span class="tsd-signature-symbol">:</span> <a href="../classes/ZPackage.html" class="tsd-signature-type">ZPackage</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-option.ts#L19">run-z/run-z/src/core/tasks/task-option.ts:19</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Target package the task is applied to.</p>
 						</div>
 					</div>
 				</section>
@@ -224,13 +256,14 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/8c7629b/src/core/tasks/task-option.ts#L67">run-z/run-z/src/core/tasks/task-option.ts:67</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-option.ts#L81">run-z/run-z/src/core/tasks/task-option.ts:81</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Appends raw command line argument(s) to the task.</p>
+									<p>Appends raw command line argument(s) to the task action.</p>
 								</div>
+								<p>It is illegal to add arguments without <a href="ZTaskOption.html#setAction">action set</a>.</p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -255,7 +288,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/8c7629b/src/core/tasks/task-option.ts#L53">run-z/run-z/src/core/tasks/task-option.ts:53</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-option.ts#L65">run-z/run-z/src/core/tasks/task-option.ts:65</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -292,7 +325,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/8c7629b/src/core/tasks/task-option.ts#L60">run-z/run-z/src/core/tasks/task-option.ts:60</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-option.ts#L72">run-z/run-z/src/core/tasks/task-option.ts:72</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -323,7 +356,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/8c7629b/src/core/tasks/task-option.ts#L26">run-z/run-z/src/core/tasks/task-option.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-option.ts#L36">run-z/run-z/src/core/tasks/task-option.ts:36</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -345,27 +378,27 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="addPreArgs" class="tsd-anchor"></a>
-					<h3>add<wbr>Pre<wbr>Args</h3>
+					<a name="addPreArg" class="tsd-anchor"></a>
+					<h3>add<wbr>Pre<wbr>Arg</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>Pre<wbr>Args<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Pre<wbr>Arg<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/8c7629b/src/core/tasks/task-option.ts#L40">run-z/run-z/src/core/tasks/task-option.ts:40</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-option.ts#L52">run-z/run-z/src/core/tasks/task-option.ts:52</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Appends arguments to prerequisite task added by the most recent call to <a href="ZTaskOption.html#addPreTask">addPreTask</a>.</p>
+									<p>Appends argument(s) to prerequisite task call initiated by the most recent call to <a href="ZTaskOption.html#addPreTask">addPreTask</a>.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>args: <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+									<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>args: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Prerequisite arguments to add. May contain attributes.</p>
 									</div>
@@ -385,13 +418,14 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/8c7629b/src/core/tasks/task-option.ts#L33">run-z/run-z/src/core/tasks/task-option.ts:33</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-option.ts#L45">run-z/run-z/src/core/tasks/task-option.ts:45</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Appends a task prerequisite.</p>
+									<p>Initiates a call to prerequisite task.</p>
 								</div>
+								<p>The prerequisite will be added as soon as task specification modified by any method but {@link addPreArgs()}.</p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -450,7 +484,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/8c7629b/src/core/tasks/task-option.ts#L45">run-z/run-z/src/core/tasks/task-option.ts:45</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-option.ts#L57">run-z/run-z/src/core/tasks/task-option.ts:57</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -510,7 +544,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/8c7629b/src/core/tasks/task-option.ts#L76">run-z/run-z/src/core/tasks/task-option.ts:76</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-option.ts#L90">run-z/run-z/src/core/tasks/task-option.ts:90</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -737,7 +771,13 @@
 								<a href="ZTaskOption.html#name" class="tsd-kind-icon">name</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="ZTaskOption.html#setup" class="tsd-kind-icon">setup</a>
+								<a href="ZTaskOption.html#preTask" class="tsd-kind-icon">pre<wbr>Task</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="ZTaskOption.html#taskName" class="tsd-kind-icon">task<wbr>Name</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="ZTaskOption.html#taskTarget" class="tsd-kind-icon">task<wbr>Target</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="ZTaskOption.html#addArg" class="tsd-kind-icon">add<wbr>Arg</a>
@@ -752,7 +792,7 @@
 								<a href="ZTaskOption.html#addPre" class="tsd-kind-icon">add<wbr>Pre</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="ZTaskOption.html#addPreArgs" class="tsd-kind-icon">add<wbr>Pre<wbr>Args</a>
+								<a href="ZTaskOption.html#addPreArg" class="tsd-kind-icon">add<wbr>Pre<wbr>Arg</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="ZTaskOption.html#addPreTask" class="tsd-kind-icon">add<wbr>Pre<wbr>Task</a>
