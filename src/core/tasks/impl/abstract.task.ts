@@ -4,20 +4,20 @@ import type { ZCall, ZCallPlanner, ZTaskParams } from '../../plan';
 import type { ZTaskExecution } from '../../plan/task-execution';
 import type { ZTask, ZTaskQualifier } from '../task';
 import type { ZTaskSpec } from '../task-spec';
+import type { ZTaskBuilder$ } from './task-builder';
 
 /**
  * @internal
  */
 export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements ZTask<TAction> {
 
+  readonly target: ZPackage;
+  readonly name: string;
   readonly taskQN: string;
 
-  constructor(
-      readonly target: ZPackage,
-      readonly name: string,
-      readonly spec: ZTaskSpec<TAction>,
-  ) {
-    this.taskQN = name;
+  constructor(builder: ZTaskBuilder$, readonly spec: ZTaskSpec<TAction>) {
+    this.target = builder.target;
+    this.taskQN = this.name = builder.name;
   }
 
   params(): ZTaskParams.Partial {

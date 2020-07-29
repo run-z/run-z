@@ -1,7 +1,7 @@
 import { valueProvider } from '@proc7ts/primitives';
 import { ZPackageTree } from '../packages';
 import { ZSetup } from '../setup';
-import type { ZTask, ZTaskSpec } from '../tasks';
+import type { ZTask } from '../tasks';
 import type { ZCall } from './call';
 import type { ZTaskParams } from './task-params';
 
@@ -22,19 +22,17 @@ describe('ZCall', () => {
       actionArgs: ['cmd-arg1'],
     };
 
-    const spec: ZTaskSpec = {
-      pre: [],
-      attrs: initParams.attrs,
-      args: initParams.args,
-      action: {
-        type: 'command',
-        command: 'test-command',
-        parallel: false,
-        args: initParams.actionArgs,
-      },
-    };
-
-    task = setup.taskFactory.createTask(await setup.packageResolver.get(tree), 'test', spec);
+    task = setup.taskFactory
+        .newTask(await setup.packageResolver.get(tree), 'test')
+        .addAttrs(initParams.attrs)
+        .addArg(...initParams.args)
+        .setAction({
+          type: 'command',
+          command: 'test-command',
+          parallel: false,
+          args: initParams.actionArgs,
+        })
+        .task();
   });
 
   describe('call', () => {

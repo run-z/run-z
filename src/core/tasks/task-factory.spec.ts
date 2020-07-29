@@ -13,26 +13,17 @@ describe('ZTaskFactory', () => {
   it('constructs unknown task by default', async () => {
 
     const target = await testPlan.target();
-    const task = testPlan.setup.taskFactory.createTask(
-        target,
-        'test',
-        {
-          pre: [],
-          attrs: {},
-          args: [],
-          action: { type: 'wrong' } as any,
-        },
-    );
+    const task = testPlan.setup.taskFactory.newTask(target, 'test').setAction({ type: 'wrong' } as any).task();
 
-    expect(task.spec).toBe(ZTaskSpec.unknown);
+    expect(task.spec.action).toBe(ZTaskSpec.unknownAction);
     expect(task).toBeInstanceOf(UnknownZTask);
   });
   it('constructs unknown task for unknown spec', async () => {
 
     const target = await testPlan.target();
-    const task = testPlan.setup.taskFactory.createTask(target, 'test', ZTaskSpec.unknown);
+    const task = testPlan.setup.taskFactory.newTask(target, 'test').setAction(ZTaskSpec.unknownAction).task();
 
-    expect(task.spec).toBe(ZTaskSpec.unknown);
+    expect(task.spec.action).toBe(ZTaskSpec.unknownAction);
     expect(task).toBeInstanceOf(UnknownZTask);
   });
 });

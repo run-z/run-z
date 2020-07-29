@@ -1,44 +1,46 @@
 import { asis } from '@proc7ts/primitives';
+import { ZPackage, ZPackageTree } from '../packages';
 import { ZSetup } from '../setup';
 import { InvalidZTaskError } from './invalid-task-error';
-import type { ZTaskParser } from './task-parser';
 import { ZTaskSpec } from './task-spec';
 
 describe('ZTaskParser', () => {
 
-  let parser: ZTaskParser;
+  let setup: ZSetup;
+  let target: ZPackage;
 
-  beforeEach(() => {
-    parser = new ZSetup().taskParser;
+  beforeEach(async () => {
+    setup = new ZSetup();
+    target = await setup.packageResolver.get(new ZPackageTree('root', { packageJson: { name: 'root' } }));
   });
 
   it('recognizes NPM script task', async () => {
 
-    const spec = await parser.parse('some command');
+    const spec = await parseSpec('some command');
 
-    expect(spec).toBe(ZTaskSpec.script);
+    expect(spec.action).toBe(ZTaskSpec.scriptAction);
   });
   it('treats task with comment as NPM script', async () => {
 
-    const spec = await parser.parse('run-z command #comment');
+    const spec = await parseSpec('run-z command #comment');
 
-    expect(spec).toBe(ZTaskSpec.script);
+    expect(spec.action).toBe(ZTaskSpec.scriptAction);
   });
   it('treats task with shell commands as NPM script', async () => {
 
-    const spec = await parser.parse('run-z command > out');
+    const spec = await parseSpec('run-z command > out');
 
-    expect(spec).toBe(ZTaskSpec.script);
+    expect(spec.action).toBe(ZTaskSpec.scriptAction);
   });
   it('treats task with environment variable substitution as NPM script', async () => {
 
-    const spec = await parser.parse('run-z comm${some_env}');
+    const spec = await parseSpec('run-z comm${some_env}');
 
-    expect(spec).toBe(ZTaskSpec.script);
+    expect(spec.action).toBe(ZTaskSpec.scriptAction);
   });
   it('recognizes prerequisites', async () => {
 
-    const spec = await parser.parse('run-z dep1 dep2 dep3');
+    const spec = await parseSpec('run-z dep1 dep2 dep3');
 
     expect(spec.pre).toEqual([
         { task: 'dep1', parallel: false, attrs: {}, args: [] },
@@ -50,7 +52,7 @@ describe('ZTaskParser', () => {
   });
   it('ignores empty prerequisite', async () => {
 
-    const spec = await parser.parse('run-z dep1 "" dep2 dep3');
+    const spec = await parseSpec('run-z dep1 "" dep2 dep3');
 
     expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
@@ -62,7 +64,7 @@ describe('ZTaskParser', () => {
   });
   it('recognizes arguments', async () => {
 
-    const spec = await parser.parse('run-z dep1 dep2 dep3 --some test');
+    const spec = await parseSpec('run-z dep1 dep2 dep3 --some test');
 
     expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
@@ -74,7 +76,24 @@ describe('ZTaskParser', () => {
   });
   it('recognizes command', async () => {
 
-    const spec = await parser.parse('run-z dep1 dep2 dep3 --some --then cmd --arg');
+    const spec = await parseSpec('run-z dep1 dep2 dep3 --some --then cmd --arg');
+
+    expect(spec.pre).toEqual([
+      { task: 'dep1', parallel: false, attrs: {}, args: [] },
+      { task: 'dep2', parallel: false, attrs: {}, args: [] },
+      { task: 'dep3', parallel: false, attrs: {}, args: [] },
+    ]);
+    expect(spec.args).toEqual(['--some']);
+    expect(spec.action).toEqual({
+      type: 'command',
+      command: 'cmd',
+      parallel: false,
+      args: ['--arg'],
+    });
+  });
+  it('applies command options', async () => {
+
+    const spec = await applyOptions(['dep1', 'dep2', 'dep3', '--some', '--then', 'cmd', '--arg']);
 
     expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
@@ -91,7 +110,7 @@ describe('ZTaskParser', () => {
   });
   it('recognizes parallel command', async () => {
 
-    const spec = await parser.parse('run-z dep1 dep2 dep3 --some --and cmd --arg');
+    const spec = await parseSpec('run-z dep1 dep2 dep3 --some --and cmd --arg');
 
     expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
@@ -108,7 +127,7 @@ describe('ZTaskParser', () => {
   });
   it('ignores incomplete command', async () => {
 
-    const spec = await parser.parse('run-z dep1 dep2 dep3 --some --then');
+    const spec = await parseSpec('run-z dep1 dep2 dep3 --some --then');
 
     expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
@@ -120,7 +139,7 @@ describe('ZTaskParser', () => {
   });
   it('recognizes prerequisite argument', async () => {
 
-    const spec = await parser.parse('run-z dep1 dep2//-a //dep3 --some test');
+    const spec = await parseSpec('run-z dep1 dep2//-a //dep3 --some test');
 
     expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
@@ -132,7 +151,7 @@ describe('ZTaskParser', () => {
   });
   it('recognizes shorthand prerequisite argument', async () => {
 
-    const spec = await parser.parse('run-z dep1 dep2/-a dep3 --some test');
+    const spec = await parseSpec('run-z dep1 dep2/-a dep3 --some test');
 
     expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
@@ -144,7 +163,7 @@ describe('ZTaskParser', () => {
   });
   it('recognizes multiple prerequisite arguments', async () => {
 
-    const spec = await parser.parse('run-z dep1 dep2//-a// //-b// //-c//dep3 --some test');
+    const spec = await parseSpec('run-z dep1 dep2//-a// //-b// //-c//dep3 --some test');
 
     expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
@@ -156,7 +175,7 @@ describe('ZTaskParser', () => {
   });
   it('recognizes prerequisite arguments with multi-slash delimiter', async () => {
 
-    const spec = await parser.parse('run-z dep1 dep2///-a -b -c/// dep3 --some test');
+    const spec = await parseSpec('run-z dep1 dep2///-a -b -c/// dep3 --some test');
 
     expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
@@ -168,7 +187,7 @@ describe('ZTaskParser', () => {
   });
   it('recognizes quoted prerequisite arguments', async () => {
 
-    const spec = await parser.parse('run-z dep1 "dep2 ///-a -b -c/// " dep3 --some test');
+    const spec = await parseSpec('run-z dep1 "dep2 ///-a -b -c/// " dep3 --some test');
 
     expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
@@ -180,7 +199,7 @@ describe('ZTaskParser', () => {
   });
   it('reads unclosed prerequisite arguments up to the end', async () => {
 
-    const spec = await parser.parse('run-z dep1 dep2////-a -b -c // dep3 --some test');
+    const spec = await parseSpec('run-z dep1 dep2////-a -b -c // dep3 --some test');
 
     expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
@@ -191,7 +210,7 @@ describe('ZTaskParser', () => {
   });
   it('recognizes multiple shorthand prerequisite arguments', async () => {
 
-    const spec = await parser.parse('run-z dep1 dep2/-a /-b //-c///-d dep3 --some test');
+    const spec = await parseSpec('run-z dep1 dep2/-a /-b //-c///-d dep3 --some test');
 
     expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
@@ -203,7 +222,7 @@ describe('ZTaskParser', () => {
   });
   it('ignores empty prerequisite arguments', async () => {
 
-    const spec = await parser.parse('run-z dep1 dep2 // // dep3 --some test');
+    const spec = await parseSpec('run-z dep1 dep2 // // dep3 --some test');
 
     expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
@@ -215,7 +234,7 @@ describe('ZTaskParser', () => {
   });
   it('ignores empty shorthand prerequisite arguments', async () => {
 
-    const spec = await parser.parse('run-z dep1 dep2/ / dep3 --some test');
+    const spec = await parseSpec('run-z dep1 dep2/ / dep3 --some test');
 
     expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
@@ -227,7 +246,7 @@ describe('ZTaskParser', () => {
   });
   it('recognizes parallel prerequisites', async () => {
 
-    const spec = await parser.parse('run-z dep1,dep2, dep3 dep4');
+    const spec = await parseSpec('run-z dep1,dep2, dep3 dep4');
 
     expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
@@ -240,7 +259,7 @@ describe('ZTaskParser', () => {
   });
   it('recognizes parallel prerequisite arguments', async () => {
 
-    const spec = await parser.parse('run-z dep1//-a//,dep2 //-b//, dep3');
+    const spec = await parseSpec('run-z dep1//-a//,dep2 //-b//, dep3');
 
     expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: ['-a'] },
@@ -252,7 +271,7 @@ describe('ZTaskParser', () => {
   });
   it('recognizes parallel prerequisite shorthand arguments', async () => {
 
-    const spec = await parser.parse('run-z dep1/-a/-b /-c,dep2 /-d, dep3');
+    const spec = await parseSpec('run-z dep1/-a/-b /-c,dep2 /-d, dep3');
 
     expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: ['-a', '-b', '-c'] },
@@ -264,7 +283,7 @@ describe('ZTaskParser', () => {
   });
   it('recognizes package reference', async () => {
 
-    const spec = await parser.parse('run-z dep1 ./path//selector dep2');
+    const spec = await parseSpec('run-z dep1 ./path//selector dep2');
 
     expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
@@ -276,7 +295,7 @@ describe('ZTaskParser', () => {
   });
   it('recognizes parallel external prerequisite', async () => {
 
-    const spec = await parser.parse('run-z dep1, ./path//selector dep2');
+    const spec = await parseSpec('run-z dep1, ./path//selector dep2');
 
     expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
@@ -288,7 +307,7 @@ describe('ZTaskParser', () => {
   });
   it('recognizes parallel external prerequisite with standalone comma', async () => {
 
-    const spec = await parser.parse('run-z dep1 ./path//selector , dep2');
+    const spec = await parseSpec('run-z dep1 ./path//selector , dep2');
 
     expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
@@ -300,7 +319,7 @@ describe('ZTaskParser', () => {
   });
   it('recognizes parallel external prerequisite with comma prefix', async () => {
 
-    const spec = await parser.parse('run-z dep1 ./path//selector ,dep2');
+    const spec = await parseSpec('run-z dep1 ./path//selector ,dep2');
 
     expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
@@ -312,7 +331,7 @@ describe('ZTaskParser', () => {
   });
   it('recognizes attributes', async () => {
 
-    const spec = await parser.parse('run-z attr1=val1 attr2= =attr3 attr3=val3');
+    const spec = await parseSpec('run-z attr1=val1 attr2= =attr3 attr3=val3');
 
     expect(spec.attrs).toEqual({
       attr1: ['val1'],
@@ -323,7 +342,7 @@ describe('ZTaskParser', () => {
   });
   it('recognizes prerequisite attributes', async () => {
 
-    const spec = await parser.parse('run-z attr1=val1 dep/attr2=/=attr3/arg1/--arg2=2/attr3=val3');
+    const spec = await parseSpec('run-z attr1=val1 dep/attr2=/=attr3/arg1/--arg2=2/attr3=val3');
 
     expect(spec.pre).toEqual([
       {
@@ -338,7 +357,7 @@ describe('ZTaskParser', () => {
   });
   it('throws on arguments without prerequisite', async () => {
 
-    const error: InvalidZTaskError = await parser.parse('run-z   //-a//   task').catch(asis);
+    const error: InvalidZTaskError = await parseSpec('run-z   //-a//   task').catch(asis);
 
     expect(error).toBeInstanceOf(InvalidZTaskError);
     expect(error.commandLine).toBe('// -a // task');
@@ -346,7 +365,7 @@ describe('ZTaskParser', () => {
   });
   it('throws on shorthand argument without prerequisite', async () => {
 
-    const error: InvalidZTaskError = await parser.parse('run-z   /-a   task').catch(asis);
+    const error: InvalidZTaskError = await parseSpec('run-z   /-a   task').catch(asis);
 
     expect(error).toBeInstanceOf(InvalidZTaskError);
     expect(error.commandLine).toBe('/-a task');
@@ -354,7 +373,7 @@ describe('ZTaskParser', () => {
   });
   it('throws on arguments after comma', async () => {
 
-    const error: InvalidZTaskError = await parser.parse('run-z  task1,  //-a//   task2').catch(asis);
+    const error: InvalidZTaskError = await parseSpec('run-z  task1,  //-a//   task2').catch(asis);
 
     expect(error).toBeInstanceOf(InvalidZTaskError);
     expect(error.commandLine).toBe('task1 , // -a // task2');
@@ -362,7 +381,7 @@ describe('ZTaskParser', () => {
   });
   it('throws on shorthand argument after comma', async () => {
 
-    const error: InvalidZTaskError = await parser.parse('run-z  task1,  /-a   task2').catch(asis);
+    const error: InvalidZTaskError = await parseSpec('run-z  task1,  /-a   task2').catch(asis);
 
     expect(error).toBeInstanceOf(InvalidZTaskError);
     expect(error.commandLine).toBe('task1 , /-a task2');
@@ -370,7 +389,7 @@ describe('ZTaskParser', () => {
   });
   it('throws on arguments after comma within the same entry', async () => {
 
-    const error: InvalidZTaskError = await parser.parse('run-z  task1,//-a//   task2').catch(asis);
+    const error: InvalidZTaskError = await parseSpec('run-z  task1,//-a//   task2').catch(asis);
 
     expect(error).toBeInstanceOf(InvalidZTaskError);
     expect(error.commandLine).toBe('task1 , // -a // task2');
@@ -378,7 +397,7 @@ describe('ZTaskParser', () => {
   });
   it('throws on shorthand argument after comma within the same entry', async () => {
 
-    const error: InvalidZTaskError = await parser.parse('run-z  task1,/-a   task2').catch(asis);
+    const error: InvalidZTaskError = await parseSpec('run-z  task1,/-a   task2').catch(asis);
 
     expect(error).toBeInstanceOf(InvalidZTaskError);
     expect(error.commandLine).toBe('task1 , /-a task2');
@@ -386,7 +405,7 @@ describe('ZTaskParser', () => {
   });
   it('throws on arguments after comma inside entry', async () => {
 
-    const error: InvalidZTaskError = await parser.parse('run-z  task1,//-a//task2').catch(asis);
+    const error: InvalidZTaskError = await parseSpec('run-z  task1,//-a//task2').catch(asis);
 
     expect(error).toBeInstanceOf(InvalidZTaskError);
     expect(error.commandLine).toBe('task1 , // -a // task2');
@@ -394,10 +413,24 @@ describe('ZTaskParser', () => {
   });
   it('throws on shorthand argument after comma inside entry', async () => {
 
-    const error: InvalidZTaskError = await parser.parse('run-z  task1,/-a,task2').catch(asis);
+    const error: InvalidZTaskError = await parseSpec('run-z  task1,/-a,task2').catch(asis);
 
     expect(error).toBeInstanceOf(InvalidZTaskError);
     expect(error.commandLine).toBe('task1 , /-a , task2');
     expect(error.position).toBe(8);
   });
+
+  async function parseSpec(commandLine: string): Promise<ZTaskSpec> {
+
+    const builder = await setup.taskFactory.newTask(target, 'test').parse(commandLine);
+
+    return builder.spec();
+  }
+
+  async function applyOptions(args: readonly string[]): Promise<ZTaskSpec> {
+
+    const builder = await setup.taskFactory.newTask(target, 'test').applyOptions(args);
+
+    return builder.spec();
+  }
 });

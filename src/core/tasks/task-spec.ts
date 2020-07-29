@@ -180,25 +180,15 @@ const groupZTaskAction: ZTaskSpec.Group = {
 /**
  * @internal
  */
-const unknownZTaskSpec: ZTaskSpec<ZTaskSpec.Unknown> = {
-  pre: [],
-  attrs: {},
-  args: [],
-  action: {
-    type: 'unknown',
-  },
+const unknownZTaskAction: ZTaskSpec.Unknown = {
+  type: 'unknown',
 };
 
 /**
  * @internal
  */
-const scriptZTaskSpec: ZTaskSpec<ZTaskSpec.Script> = {
-  pre: [],
-  attrs: {},
-  args: [],
-  action: {
-    type: 'script',
-  },
+const scriptZTaskAction: ZTaskSpec.Script = {
+  type: 'script',
 };
 
 export const ZTaskSpec = {
@@ -211,17 +201,17 @@ export const ZTaskSpec = {
   },
 
   /**
-   * Unknown task specifier.
+   * Unknown task action specifier.
    */
-  get unknown(): ZTaskSpec<ZTaskSpec.Unknown> {
-    return unknownZTaskSpec;
+  get unknownAction(): ZTaskSpec.Unknown {
+    return unknownZTaskAction;
   },
 
   /**
    * NPM script execution task specifier.
    */
-  get script(): ZTaskSpec<ZTaskSpec.Script> {
-    return scriptZTaskSpec;
+  get scriptAction(): ZTaskSpec.Script {
+    return scriptZTaskAction;
   },
 
 };

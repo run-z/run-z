@@ -4,18 +4,21 @@ import type { ZOption, ZOptionsParser } from '@run-z/optionz';
 import { customZOptionsParser, SupportedZOptions, ZOptionInput, ZOptionSyntax } from '@run-z/optionz';
 import type { ZSetup } from '../../setup';
 import { InvalidZTaskError } from '../invalid-task-error';
+import type { ZTaskBuilder } from '../task-builder';
 import type { ZTaskOption } from '../task-option';
 import type { ZTaskParser } from '../task-parser';
-import { ZTaskSpec } from '../task-spec';
+import type { ZTaskSpec } from '../task-spec';
 
 /**
  * @internal
  */
-export function zTaskSpecParser(setup: ZSetup): (this: void, entries: readonly string[]) => Promise<ZTaskSpec> {
+export function zTaskSpecParser(
+    setup: ZSetup,
+): (this: void, builder: ZTaskBuilder, entries: readonly string[]) => Promise<ZTaskBuilder> {
 
   const parser: ZOptionsParser<DraftZTask> = customZOptionsParser({
     options: zTaskCLOptions(),
-    syntax: zTaskCLPullers(setup),
+    syntax: zTaskSpecSyntax(setup),
     optionClass<TArgs extends any[]>(
         base: ZOption.BaseClass<TArgs>,
     ): ZOption.ImplClass<ZTaskOption, DraftZTask, TArgs> {
@@ -33,7 +36,7 @@ export function zTaskSpecParser(setup: ZSetup): (this: void, entries: readonly s
 
         addPre(pre: ZTaskSpec.Pre): void {
           this._draft.finishPre();
-          this._draft.pre.push(pre);
+          this._draft.builder.addPre(pre);
         }
 
         addPreTask(name: string): void {
@@ -52,15 +55,22 @@ export function zTaskSpecParser(setup: ZSetup): (this: void, entries: readonly s
 
         addAttr(name: string, value: string): void {
           this._draft.finishPre();
-          recordZTaskAttr(this._draft.attrs, name, value);
+          this._draft.builder.addAttr(name, value);
         }
 
-        addArg(arg: string): void {
-          this._draft.args.push(arg);
+        addAttrs(attrs: ZTaskSpec.Attrs): void {
+          this._draft.finishPre();
+          this._draft.builder.addAttrs(attrs);
+        }
+
+        addArg(...args: string[]): void {
+          this._draft.finishPre();
+          this._draft.builder.addArg(...args);
         }
 
         setAction(action: ZTaskSpec.Action): void {
-          this._draft.action = action;
+          this._draft.finishPre();
+          this._draft.builder.setAction(action);
         }
 
       }
@@ -69,8 +79,8 @@ export function zTaskSpecParser(setup: ZSetup): (this: void, entries: readonly s
     },
   });
 
-  return entries => parser(new DraftZTask(), entries)
-      .then(builder => builder.build());
+  return (builder, entries) => parser(new DraftZTask(builder), entries)
+      .then(builder => builder.done());
 }
 
 /**
@@ -162,7 +172,7 @@ function readZTaskCommand(parallel: boolean, option: ZTaskOption): void {
 /**
  * @internal
  */
-function zTaskCLPullers(setup: ZSetup): readonly ZOptionSyntax[] {
+function zTaskSpecSyntax(setup: ZSetup): readonly ZOptionSyntax[] {
   return [
     ZOptionSyntax.longOptions,
     ZOptionSyntax.shortOptions,
@@ -389,14 +399,13 @@ function zTaskShorthandPreArgSyntax(args: readonly [string, ...string[]]): Itera
 export class DraftZTask {
 
   private _option!: ZTaskOption;
-  readonly pre: ZTaskSpec.Pre[] = [];
-  readonly attrs: Record<string, [string, ...string[]]> = {};
-  readonly args: string[] = [];
-  action?: ZTaskSpec.Action;
   preTask: string | undefined;
   preParallel = false;
   private _preArgs: string[] = [];
   private _preArgsAt = 0;
+
+  constructor(readonly builder: ZTaskBuilder) {
+  }
 
   moveTo(option: ZTaskOption): void {
     this._option = option;
@@ -412,7 +421,7 @@ export class DraftZTask {
   finishPre(): void {
     if (this.preTask) {
       // Finish the task.
-      this.pre.push(createZTaskRef(
+      this.builder.addPre(createZTaskRef(
           this._option.setup.taskParser,
           this.preTask,
           this.preParallel,
@@ -449,14 +458,9 @@ export class DraftZTask {
     throw new InvalidZTaskError(message, reconstructedCmd, position);
   }
 
-  build(): ZTaskSpec {
+  done(): ZTaskBuilder {
     this.finishPre();
-    return {
-      pre: this.pre,
-      attrs: this.attrs,
-      args: this.args,
-      action: this.action || ZTaskSpec.groupAction,
-    };
+    return this.builder;
   }
 
 }
@@ -480,12 +484,7 @@ function createZTaskRef(
     }
   }
 
-  return {
-    task,
-    parallel,
-    attrs,
-    args,
-  };
+  return { task, parallel, attrs, args };
 }
 
 /**
