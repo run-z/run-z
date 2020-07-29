@@ -121,7 +121,7 @@
 					<div class="tsd-signature tsd-kind-icon">Supported<wbr>Options<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">SupportedZOptions</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ZTaskOption.html" class="tsd-signature-type">ZTaskOption</a><span class="tsd-signature-symbol">, </span><a href="../interfaces/ZTaskBuilder.html" class="tsd-signature-type">ZTaskBuilder</a><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/ef89690/src/core/tasks/task-parser.ts#L116">run-z/run-z/src/core/tasks/task-parser.ts:116</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/8c7629b/src/core/tasks/task-parser.ts#L117">run-z/run-z/src/core/tasks/task-parser.ts:117</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -143,7 +143,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/ef89690/src/core/tasks/task-parser.ts#L26">run-z/run-z/src/core/tasks/task-parser.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/8c7629b/src/core/tasks/task-parser.ts#L26">run-z/run-z/src/core/tasks/task-parser.ts:26</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -173,13 +173,13 @@
 					<a name="applyOptions" class="tsd-anchor"></a>
 					<h3>apply<wbr>Options</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">apply<wbr>Options<span class="tsd-signature-symbol">(</span>builder<span class="tsd-signature-symbol">: </span><a href="../interfaces/ZTaskBuilder.html" class="tsd-signature-type">ZTaskBuilder</a>, args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ZTaskBuilder.html" class="tsd-signature-type">ZTaskBuilder</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">apply<wbr>Options<span class="tsd-signature-symbol">(</span>builder<span class="tsd-signature-symbol">: </span><a href="../interfaces/ZTaskBuilder.html" class="tsd-signature-type">ZTaskBuilder</a>, args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, fromIndex<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ZTaskBuilder.html" class="tsd-signature-type">ZTaskBuilder</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/ef89690/src/core/tasks/task-parser.ts#L102">run-z/run-z/src/core/tasks/task-parser.ts:102</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/8c7629b/src/core/tasks/task-parser.ts#L103">run-z/run-z/src/core/tasks/task-parser.ts:103</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -201,6 +201,12 @@
 										<p>Arguments to apply.</p>
 									</div>
 								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> fromIndex: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>An index of command line argument to start processing from. <code>0</code> by default.</p>
+									</div>
+								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ZTaskBuilder.html" class="tsd-signature-type">ZTaskBuilder</a><span class="tsd-signature-symbol">&gt;</span></h4>
 							<p>A promise resolved to task builder when command line options applied.</p>
@@ -217,7 +223,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/ef89690/src/core/tasks/task-parser.ts#L44">run-z/run-z/src/core/tasks/task-parser.ts:44</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/8c7629b/src/core/tasks/task-parser.ts#L44">run-z/run-z/src/core/tasks/task-parser.ts:44</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -249,7 +255,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/ef89690/src/core/tasks/task-parser.ts#L83">run-z/run-z/src/core/tasks/task-parser.ts:83</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/8c7629b/src/core/tasks/task-parser.ts#L83">run-z/run-z/src/core/tasks/task-parser.ts:83</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -287,7 +293,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/ef89690/src/core/tasks/task-parser.ts#L58">run-z/run-z/src/core/tasks/task-parser.ts:58</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/8c7629b/src/core/tasks/task-parser.ts#L58">run-z/run-z/src/core/tasks/task-parser.ts:58</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
