@@ -3,7 +3,7 @@
  * @module run-z
  */
 import type { ZOption, ZOptionReader } from '@run-z/optionz';
-import type { ZSetup } from '../setup';
+import type { ZPackage } from '../packages';
 import type { ZTaskSpec } from './task-spec';
 
 /**
@@ -14,9 +14,14 @@ import type { ZTaskSpec } from './task-spec';
 export interface ZTaskOption extends ZOption {
 
   /**
-   * Task execution setup.
+   * Target package the task is applied to.
    */
-  readonly setup: ZSetup;
+  readonly taskTarget: ZPackage;
+
+  /**
+   * Task name.
+   */
+  readonly taskName: string;
 
   /**
    * Appends a task prerequisite.

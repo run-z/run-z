@@ -3,6 +3,7 @@ import { nextSkip } from '@proc7ts/call-thru';
 import { arrayOfElements, valueByRecipe } from '@proc7ts/primitives';
 import type { ZOption, ZOptionsParser } from '@run-z/optionz';
 import { customZOptionsParser, SupportedZOptions, ZOptionInput, ZOptionSyntax } from '@run-z/optionz';
+import type { ZPackage } from '../../packages';
 import type { ZSetup } from '../../setup';
 import { InvalidZTaskError } from '../invalid-task-error';
 import type { ZTaskBuilder } from '../task-builder';
@@ -32,13 +33,14 @@ export function zTaskSpecParser(
 
       class TaskOption extends base implements ZTaskOption {
 
+        readonly taskTarget: ZPackage;
+        readonly taskName: string;
+
         constructor(private readonly _draft: DraftZTask, ...args: TArgs) {
           super(...args);
+          this.taskTarget = _draft.builder.target;
+          this.taskName = _draft.builder.name;
           _draft.moveTo(this);
-        }
-
-        get setup(): ZSetup {
-          return setup;
         }
 
         addPre(pre: ZTaskSpec.Pre): void {
@@ -111,7 +113,7 @@ const defaultZTaskSpecOptions: SupportedZOptions.Map<ZTaskOption> = {
 
   '*=*'(option: ZTaskOption): void {
 
-    const { name, setup: { taskParser } } = option;
+    const { name, taskTarget: { setup: { taskParser } } } = option;
 
     if (taskParser.parseAttr(name, (n, v) => !n.includes('/') && option.addAttr(n, v))) {
       option.values(0);
@@ -443,7 +445,7 @@ export class DraftZTask {
     if (this.preTask) {
       // Finish the task.
       this.builder.addPre(createZTaskRef(
-          this._option.setup.taskParser,
+          this._option.taskTarget.setup.taskParser,
           this.preTask,
           this.preParallel,
           this._preArgs,
