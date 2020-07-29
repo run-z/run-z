@@ -194,10 +194,14 @@ function readNamedZTaskArg(option: ZTaskOption): void {
  * @internal
  */
 function readNameValueZTaskArg(option: ZTaskOption): void {
+
+  const [value] = option.values(1);
+  const arg = `${option.name}=${value}`;
+
   if (option.preTask) {
-    option.addPreArg(option.name, ...option.values());
+    option.addPreArg(arg);
   } else {
-    option.addArg(option.name, ...option.values());
+    option.addArg(arg);
   }
 }
 

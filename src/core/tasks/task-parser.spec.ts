@@ -74,10 +74,10 @@ describe('ZTaskParser', () => {
     expect(spec.pre).toEqual([
       { task: 'dep1', parallel: false, attrs: {}, args: [] },
       { task: 'dep2', parallel: false, attrs: {}, args: [] },
-      { task: 'dep3', parallel: false, attrs: {}, args: ['--dep-arg1', 'value', '--dep-arg2'] },
+      { task: 'dep3', parallel: false, attrs: {}, args: ['--dep-arg1=value', '--dep-arg2'] },
       { task: 'test', parallel: false, attrs: {}, args: [] },
     ]);
-    expect(spec.args).toEqual(['--test', 'value', '--other']);
+    expect(spec.args).toEqual(['--test=value', '--other']);
     expect(spec.action).toBe(ZTaskSpec.groupAction);
   });
   it('throws on unrecognized option', async () => {
