@@ -16,7 +16,12 @@ import type { ZTaskSpec } from '../task-spec';
 export function zTaskSpecParser(
     setup: ZSetup,
     { options }: ZTaskParser.Config,
-): (this: void, builder: ZTaskBuilder, entries: readonly string[]) => Promise<ZTaskBuilder> {
+): (
+    this: void,
+    builder: ZTaskBuilder,
+    entries: readonly string[],
+    fromIndex?: number,
+) => Promise<ZTaskBuilder> {
 
   const parser: ZOptionsParser<DraftZTask> = customZOptionsParser({
     options: zTaskSpecOptions(options),
@@ -81,8 +86,11 @@ export function zTaskSpecParser(
     },
   });
 
-  return (builder, entries) => parser(new DraftZTask(builder), entries)
-      .then(builder => builder.done());
+  return (builder, entries, fromIndex = 0) => parser(
+      new DraftZTask(builder),
+      entries,
+      fromIndex,
+  ).then(builder => builder.done());
 }
 
 /**
