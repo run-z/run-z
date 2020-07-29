@@ -14,7 +14,7 @@ export class SystemZShell implements ZShell {
   }
 
   execCommand(command: string, params: ZTaskParams): Promise<void> {
-    return this._run(command, [...params.actionArgs, ...params.args]);
+    return this._run(command, params.args);
   }
 
   execScript(name: string, params: ZTaskParams): Promise<void> {
@@ -30,9 +30,7 @@ export class SystemZShell implements ZShell {
     if (!isYarn) {
       args.push('--');
     }
-    args.push(name);
-    args.push(...params.actionArgs);
-    args.push(...params.args);
+    args.push(name, ...params.args);
 
     return this._run(command, args);
   }

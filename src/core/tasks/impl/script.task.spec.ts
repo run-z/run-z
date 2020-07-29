@@ -31,7 +31,6 @@ describe('ScriptZTask', () => {
 
     expect(params.attrs).toEqual({});
     expect(params.args).toHaveLength(0);
-    expect(params.actionArgs).toHaveLength(0);
   });
 
   describe('exec', () => {

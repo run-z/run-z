@@ -19,7 +19,6 @@ describe('ZCall', () => {
     initParams = {
       attrs: { attr1: ['attr1-val'] },
       args: ['arg1'],
-      actionArgs: ['cmd-arg1'],
     };
 
     task = setup.taskFactory
@@ -30,7 +29,7 @@ describe('ZCall', () => {
           type: 'command',
           command: 'test-command',
           parallel: false,
-          args: initParams.actionArgs,
+          args: ['cmd-arg1'],
         })
         .task();
   });
@@ -41,7 +40,7 @@ describe('ZCall', () => {
       const call = await plan({ attrs: { attr1: ['attr1-val2'] } });
 
       expect(call.params()).toEqual({
-        ...initParams,
+        args: ['cmd-arg1', 'arg1'],
         attrs: { ...initParams.attrs, attr1: ['attr1-val', 'attr1-val2'] },
       });
     });
@@ -50,7 +49,7 @@ describe('ZCall', () => {
       const call = await plan({ attrs: { attr2: ['attr2-val'] } });
 
       expect(call.params()).toEqual({
-        ...initParams,
+        args: ['cmd-arg1', 'arg1'],
         attrs: { ...initParams.attrs, attr2: ['attr2-val'] },
       });
     });
@@ -60,16 +59,7 @@ describe('ZCall', () => {
 
       expect(call.params()).toEqual({
         ...initParams,
-        args: [...initParams.args, 'arg2'],
-      });
-    });
-    it('appends action args', async () => {
-
-      const call = await plan({ actionArgs: ['cmd-arg2'] });
-
-      expect(call.params()).toEqual({
-        ...initParams,
-        actionArgs: [...initParams.actionArgs, 'cmd-arg2'],
+        args: ['cmd-arg1', 'arg1', 'arg2'],
       });
     });
   });
@@ -116,12 +106,10 @@ describe('ZCall', () => {
       expect(call.extendParams({
         attrs: { attr1: ['attr1-val2'] },
         args: ['arg2'],
-        actionArgs: ['cmd-arg2'],
       })()).toEqual({
         ...initParams,
         attrs: { ...initParams.attrs, attr1: ['attr1-val', 'attr1-val2'] },
-        args: [...initParams.args, 'arg2'],
-        actionArgs: [...initParams.actionArgs, 'cmd-arg2'],
+        args: ['cmd-arg1', 'arg1', 'arg2'],
       });
     });
   });
