@@ -55,8 +55,8 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
     return this;
   }
 
-  async applyOptions(args: readonly string[]): Promise<this> {
-    await this.target.setup.taskParser.applyOptions(this, args);
+  async applyOptions(args: readonly string[], fromIndex?: number): Promise<this> {
+    await this.target.setup.taskParser.applyOptions(this, args, fromIndex);
     return this;
   }
 
