@@ -148,7 +148,7 @@ describe('CommandZTask', () => {
 
       const params = shell.execCommand.mock.calls[0][1];
 
-      expect(params.args).toEqual(['--arg2', '--arg1']);
+      expect(params.args).toEqual(['--arg1', '--arg2']);
       expect(params.actionArgs).toEqual(['--arg3']);
     });
   });

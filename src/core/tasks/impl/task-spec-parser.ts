@@ -43,6 +43,10 @@ export function zTaskSpecParser(
           _draft.moveTo(this);
         }
 
+        get preTask(): string | undefined {
+          return this._draft.preTask;
+        }
+
         addPre(pre: ZTaskSpec.Pre): void {
           this._draft.finishPre();
           this._draft.builder.addPre(pre);
@@ -53,7 +57,7 @@ export function zTaskSpecParser(
           this._draft.preTask = name;
         }
 
-        addPreArgs(...args: readonly string[]): void {
+        addPreArg(...args: string[]): void {
           this._draft.addPreArgs(args);
         }
 
@@ -103,8 +107,11 @@ const defaultZTaskSpecOptions: SupportedZOptions.Map<ZTaskOption> = {
   '--and': readZTaskCommand.bind(undefined, true),
   '--then': readZTaskCommand.bind(undefined, false),
 
-  '-*': readNamedZTaskArg,
+  '--*=*': readNameValueZTaskArg,
+  '-*=*': readNameValueZTaskArg,
+
   '--*': readNamedZTaskArg,
+  '-*': readNamedZTaskArg,
 
   './*'(option: ZTaskOption): void {
     option.addPre({ selector: option.name });
@@ -126,13 +133,13 @@ const defaultZTaskSpecOptions: SupportedZOptions.Map<ZTaskOption> = {
     const preArg = name.substr(1);
 
     if (preArg) {
-      option.addPreArgs(preArg);
+      option.addPreArg(preArg);
     }
     option.values(0);
   },
 
   '//*'(option: ZTaskOption): void {
-    option.addPreArgs(...option.values().slice(0, -1));
+    option.addPreArg(...option.values().slice(0, -1));
   },
 
   ','(option: ZTaskOption): void {
@@ -169,9 +176,22 @@ function zTaskSpecOptions(
  * @internal
  */
 function readNamedZTaskArg(option: ZTaskOption): void {
-  option.addArg(option.name);
-  for (const arg of option.values()) {
-    option.addArg(arg);
+  if (option.preTask) {
+    option.addPreArg(option.name);
+  } else {
+    option.addArg(option.name);
+  }
+  option.values(0);
+}
+
+/**
+ * @internal
+ */
+function readNameValueZTaskArg(option: ZTaskOption): void {
+  if (option.preTask) {
+    option.addPreArg(option.name, ...option.values());
+  } else {
+    option.addArg(option.name, ...option.values());
   }
 }
 

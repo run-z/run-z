@@ -62,7 +62,7 @@ describe('ScriptZTask', () => {
 
       const params = shell.execScript.mock.calls[0][1];
 
-      expect(params.args).toEqual(['--arg2', '--arg1']);
+      expect(params.args).toEqual(['--arg1', '--arg2']);
     });
   });
 });
