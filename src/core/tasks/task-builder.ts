@@ -90,12 +90,13 @@ export interface ZTaskBuilder<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
    * Recognized options from command line arguments and applies them to the task.
    *
    * @param args  Arguments to apply.
+   * @param fromIndex  An index of command line argument to start processing from. `0` by default.
    *
    * @returns A promise resolved to `this` instance when command line options applied.
    *
    * @see TaskFactory.applyOptions
    */
-  applyOptions(args: readonly string[]): Promise<this>;
+  applyOptions(args: readonly string[], fromIndex?: number): Promise<this>;
 
   /**
    * Builds a task specifier with the data added to the builder.

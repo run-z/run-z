@@ -88,7 +88,7 @@ export class ZTaskParser {
       return builder.setAction(ZTaskSpec.scriptAction);
     }
 
-    return this.applyOptions(builder, args);
+    return this.applyOptions(builder, args, 1);
   }
 
   /**
@@ -96,14 +96,15 @@ export class ZTaskParser {
    *
    * @param builder  Target task builder to apply recognized task options with.
    * @param args  Arguments to apply.
+   * @param fromIndex  An index of command line argument to start processing from. `0` by default.
    *
    * @returns A promise resolved to task builder when command line options applied.
    */
-  applyOptions(builder: ZTaskBuilder, args: readonly string[]): Promise<ZTaskBuilder> {
+  applyOptions(builder: ZTaskBuilder, args: readonly string[], fromIndex?: number): Promise<ZTaskBuilder> {
     if (!this._specParser) {
       this._specParser = zTaskSpecParser(builder.target.setup, this._config);
     }
-    return this._specParser(builder, args);
+    return this._specParser(builder, args, fromIndex);
   }
 
 }
@@ -148,7 +149,7 @@ function parseZTaskEntries(commandLine: string): string[] | undefined {
     return; // Environment variable substitution supported in NPM scripts only.
   }
   if (entries.every(entry => typeof entry === 'string')) {
-    return entries.slice(1) as string[];
+    return entries as string[];
   }
 
   return; // Special shell command present.
