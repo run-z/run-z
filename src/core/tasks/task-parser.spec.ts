@@ -2,16 +2,15 @@ import { asis } from '@proc7ts/primitives';
 import { ZPackage, ZPackageTree } from '../packages';
 import { ZSetup } from '../setup';
 import { InvalidZTaskError } from './invalid-task-error';
+import { ZTaskParser } from './task-parser';
 import { ZTaskSpec } from './task-spec';
 
 describe('ZTaskParser', () => {
 
   let setup: ZSetup;
-  let target: ZPackage;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     setup = new ZSetup();
-    target = await setup.packageResolver.get(new ZPackageTree('root', { packageJson: { name: 'root' } }));
   });
 
   it('recognizes NPM script task', async () => {
@@ -420,16 +419,46 @@ describe('ZTaskParser', () => {
     expect(error.position).toBe(8);
   });
 
+  describe('with custom options', () => {
+    it('recognizes custom options', async () => {
+
+      const taskParser = new ZTaskParser({
+        options: {
+          '--custom'(option) {
+
+            const [name, value] = option.values(2);
+
+            option.addAttrs({
+              [name]: value ? [value] : undefined,
+            });
+          },
+        },
+      });
+
+      setup = new ZSetup({ taskParser });
+
+      const spec = await parseSpec('run-z --custom attr1 val1 --custom attr2');
+
+      expect(spec.attrs).toEqual({
+        attr1: ['val1'],
+      });
+    });
+  });
+
+  function target(): Promise<ZPackage> {
+    return setup.packageResolver.get(new ZPackageTree('root', { packageJson: { name: 'root' } }));
+  }
+
   async function parseSpec(commandLine: string): Promise<ZTaskSpec> {
 
-    const builder = await setup.taskFactory.newTask(target, 'test').parse(commandLine);
+    const builder = await setup.taskFactory.newTask(await target(), 'test').parse(commandLine);
 
     return builder.spec();
   }
 
   async function applyOptions(args: readonly string[]): Promise<ZTaskSpec> {
 
-    const builder = await setup.taskFactory.newTask(target, 'test').applyOptions(args);
+    const builder = await setup.taskFactory.newTask(await target(), 'test').applyOptions(args);
 
     return builder.spec();
   }

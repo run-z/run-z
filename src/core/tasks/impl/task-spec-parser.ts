@@ -1,5 +1,6 @@
 import { thruIt } from '@proc7ts/a-iterable';
 import { nextSkip } from '@proc7ts/call-thru';
+import { arrayOfElements, valueByRecipe } from '@proc7ts/primitives';
 import type { ZOption, ZOptionsParser } from '@run-z/optionz';
 import { customZOptionsParser, SupportedZOptions, ZOptionInput, ZOptionSyntax } from '@run-z/optionz';
 import type { ZSetup } from '../../setup';
@@ -14,10 +15,11 @@ import type { ZTaskSpec } from '../task-spec';
  */
 export function zTaskSpecParser(
     setup: ZSetup,
+    { options }: ZTaskParser.Config,
 ): (this: void, builder: ZTaskBuilder, entries: readonly string[]) => Promise<ZTaskBuilder> {
 
   const parser: ZOptionsParser<DraftZTask> = customZOptionsParser({
-    options: zTaskCLOptions(),
+    options: zTaskSpecOptions(options),
     syntax: zTaskSpecSyntax(setup),
     optionClass<TArgs extends any[]>(
         base: ZOption.BaseClass<TArgs>,
@@ -86,60 +88,71 @@ export function zTaskSpecParser(
 /**
  * @internal
  */
-function zTaskCLOptions(): SupportedZOptions<ZTaskOption, DraftZTask> {
-  return {
+const defaultZTaskSpecOptions: SupportedZOptions.Map<ZTaskOption> = {
 
-    '--and': readZTaskCommand.bind(undefined, true),
-    '--then': readZTaskCommand.bind(undefined, false),
+  '--and': readZTaskCommand.bind(undefined, true),
+  '--then': readZTaskCommand.bind(undefined, false),
 
-    '-*': readNamedZTaskArg,
-    '--*': readNamedZTaskArg,
+  '-*': readNamedZTaskArg,
+  '--*': readNamedZTaskArg,
 
-    './*'(option: ZTaskOption): void {
-      option.addPre({ selector: option.name });
+  './*'(option: ZTaskOption): void {
+    option.addPre({ selector: option.name });
+    option.values(0);
+  },
+
+  '*=*'(option: ZTaskOption): void {
+
+    const { name, setup: { taskParser } } = option;
+
+    if (taskParser.parseAttr(name, (n, v) => !n.includes('/') && option.addAttr(n, v))) {
       option.values(0);
-    },
+    }
+  },
 
-    '*=*'(option: ZTaskOption): void {
+  '/*'(option: ZTaskOption): void {
 
-      const { name, setup: { taskParser } } = option;
+    const { name } = option;
+    const preArg = name.substr(1);
 
-      if (taskParser.parseAttr(name, (n, v) => !n.includes('/') && option.addAttr(n, v))) {
-        option.values(0);
-      }
-    },
+    if (preArg) {
+      option.addPreArgs(preArg);
+    }
+    option.values(0);
+  },
 
-    '/*'(option: ZTaskOption): void {
+  '//*'(option: ZTaskOption): void {
+    option.addPreArgs(...option.values().slice(0, -1));
+  },
 
-      const { name } = option;
-      const preArg = name.substr(1);
+  ','(option: ZTaskOption): void {
+    option.parallelPre();
+    option.values(0);
+  },
 
-      if (preArg) {
-        option.addPreArgs(preArg);
-      }
-      option.values(0);
-    },
+  '*'(option: ZTaskOption): void {
 
-    '//*'(option: ZTaskOption): void {
-      option.addPreArgs(...option.values().slice(0, -1));
-    },
+    const { name } = option;
 
-    ','(option: ZTaskOption): void {
-      option.parallelPre();
-      option.values(0);
-    },
+    if (name) {
+      option.addPreTask(name);
+    }
+    option.values(0);
+  },
 
-    '*'(option: ZTaskOption): void {
+};
 
-      const { name } = option;
+/**
+ * @internal
+ */
+function zTaskSpecOptions(
+    options: ZTaskParser.SupportedOptions = [],
+): SupportedZOptions<ZTaskOption, DraftZTask> {
 
-      if (name) {
-        option.addPreTask(name);
-      }
-      option.values(0);
-    },
+  const providers: SupportedZOptions.Provider<ZTaskOption, DraftZTask>[] = arrayOfElements(options)
+      .map(o => ({ builder }) => valueByRecipe(o, builder));
 
-  };
+  return [defaultZTaskSpecOptions, ...providers];
 }
 
 /**

@@ -3,11 +3,11 @@
  * @module run-z
  */
 import { noop } from '@proc7ts/primitives';
-import { ZOptionInput } from '@run-z/optionz';
+import { SupportedZOptions, ZOptionInput } from '@run-z/optionz';
 import { parse } from 'shell-quote';
-import type { ZSetup } from '../setup';
 import { recordZTaskAttr, zTaskSpecParser } from './impl/task-spec-parser';
 import type { ZTaskBuilder } from './task-builder';
+import type { ZTaskOption } from './task-option';
 import { ZTaskSpec } from './task-spec';
 
 /**
@@ -15,14 +15,23 @@ import { ZTaskSpec } from './task-spec';
  */
 export class ZTaskParser {
 
+  /**
+   * @internal
+   */
   private _specParser?: ReturnType<typeof zTaskSpecParser>;
+
+  /**
+   * @internal
+   */
+  private readonly _config: ZTaskParser.Config;
 
   /**
    * Constructs task parser.
    *
-   * @param setup  Task execution setup.
+   * @param config  Task parser configuration.
    */
-  constructor(readonly setup: ZSetup) {
+  constructor(config: ZTaskParser.Config = {}) {
+    this._config = config;
   }
 
   /**
@@ -92,9 +101,30 @@ export class ZTaskParser {
    */
   applyOptions(builder: ZTaskBuilder, args: readonly string[]): Promise<ZTaskBuilder> {
     if (!this._specParser) {
-      this._specParser = zTaskSpecParser(this.setup);
+      this._specParser = zTaskSpecParser(builder.target.setup, this._config);
     }
     return this._specParser(builder, args);
+  }
+
+}
+
+export namespace ZTaskParser {
+
+  /**
+   * A set of supported task options.
+   */
+  export type SupportedOptions = SupportedZOptions<ZTaskOption, ZTaskBuilder>;
+
+  /**
+   * {@link ZTaskParser Task parser} configuration.
+   */
+  export interface Config {
+
+    /**
+     * Additional task options to support.
+     */
+    readonly options?: SupportedOptions;
+
   }
 
 }
