@@ -15,7 +15,7 @@ describe('ZSetup', () => {
     });
     it('is taken from config', () => {
 
-      const taskParser = new ZTaskParser(new ZSetup());
+      const taskParser = new ZTaskParser();
       const setup = new ZSetup({ taskParser });
 
       expect(setup.taskParser).toBe(taskParser);
@@ -25,7 +25,7 @@ describe('ZSetup', () => {
 
       let taskParser!: ZTaskParser;
       const setup = new ZSetup({
-        taskParser: s => taskParser = new ZTaskParser(s),
+        taskParser: taskParser = new ZTaskParser(),
       });
 
       expect(setup.taskParser).toBe(taskParser);

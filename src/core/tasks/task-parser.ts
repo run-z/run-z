@@ -3,10 +3,11 @@
  * @module run-z
  */
 import { noop } from '@proc7ts/primitives';
-import { ZOptionInput } from '@run-z/optionz';
+import { SupportedZOptions, ZOptionInput } from '@run-z/optionz';
 import { parse } from 'shell-quote';
-import type { ZSetup } from '../setup';
 import { recordZTaskAttr, zTaskSpecParser } from './impl/task-spec-parser';
+import type { ZTaskBuilder } from './task-builder';
+import type { ZTaskOption } from './task-option';
 import { ZTaskSpec } from './task-spec';
 
 /**
@@ -14,14 +15,23 @@ import { ZTaskSpec } from './task-spec';
  */
 export class ZTaskParser {
 
+  /**
+   * @internal
+   */
   private _specParser?: ReturnType<typeof zTaskSpecParser>;
+
+  /**
+   * @internal
+   */
+  private readonly _config: ZTaskParser.Config;
 
   /**
    * Constructs task parser.
    *
-   * @param setup  Task execution setup.
+   * @param config  Task parser configuration.
    */
-  constructor(readonly setup: ZSetup) {
+  constructor(config: ZTaskParser.Config = {}) {
+    this._config = config;
   }
 
   /**
@@ -63,24 +73,58 @@ export class ZTaskParser {
   }
 
   /**
-   * Builds task specifier by its command line.
+   * Parses a command line and applies recognized options to the task.
    *
-   * @param commandLine  Task command line.
+   * @param builder  Target task builder to apply recognized task options with.
+   * @param commandLine  Task command line to parse.
    *
-   * @returns A promise resolved to parsed task specifier.
+   * @returns A promise resolved to task builder when command line parsed.
    */
-  async parse(commandLine: string): Promise<ZTaskSpec> {
+  async parse(builder: ZTaskBuilder, commandLine: string): Promise<ZTaskBuilder> {
 
-    const entries = parseZTaskEntries(commandLine);
+    const args = parseZTaskEntries(commandLine);
 
-    if (!entries) {
-      return Promise.resolve(ZTaskSpec.script);
+    if (!args) {
+      return builder.setAction(ZTaskSpec.scriptAction);
     }
+
+    return this.applyOptions(builder, args);
+  }
+
+  /**
+   * Recognized options from command line arguments and applies them to the task.
+   *
+   * @param builder  Target task builder to apply recognized task options with.
+   * @param args  Arguments to apply.
+   *
+   * @returns A promise resolved to task builder when command line options applied.
+   */
+  applyOptions(builder: ZTaskBuilder, args: readonly string[]): Promise<ZTaskBuilder> {
     if (!this._specParser) {
-      this._specParser = zTaskSpecParser(this.setup);
+      this._specParser = zTaskSpecParser(builder.target.setup, this._config);
     }
+    return this._specParser(builder, args);
+  }
 
-    return this._specParser(entries);
+}
+
+export namespace ZTaskParser {
+
+  /**
+   * A set of supported task options.
+   */
+  export type SupportedOptions = SupportedZOptions<ZTaskOption, ZTaskBuilder>;
+
+  /**
+   * {@link ZTaskParser Task parser} configuration.
+   */
+  export interface Config {
+
+    /**
+     * Additional task options to support.
+     */
+    readonly options?: SupportedOptions;
+
   }
 
 }

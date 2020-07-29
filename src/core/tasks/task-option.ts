@@ -53,14 +53,21 @@ export interface ZTaskOption extends ZOption {
   addAttr(name: string, value: string): void;
 
   /**
-   * Add raw command line argument.
+   * Appends task attributes.
    *
-   * @param arg  Command line argument to add.
+   * @param attrs  Attributes to append.
    */
-  addArg(arg: string): void;
+  addAttrs(attrs: ZTaskSpec.Attrs): void;
 
   /**
-   * Assigns action to the task.
+   * Appends raw command line argument(s) to the task.
+   *
+   * @param args  Command line argument(s) to append.
+   */
+  addArg(...args: string[]): void;
+
+  /**
+   * Assigns a task action.
    *
    * The task action defaults to {@link Group grouping task} unless reassigned by this call.
    *

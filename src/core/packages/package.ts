@@ -6,6 +6,7 @@ import { filterIt, mapIt } from '@proc7ts/a-iterable';
 import { isPresent } from '@proc7ts/primitives';
 import type { ZSetup } from '../setup';
 import type { ZTask } from '../tasks';
+import { ZTaskSpec } from '../tasks';
 import type { ZPackageLocation } from './package-location';
 import { ZPackageSet } from './package-set';
 import type { ZPackageJson } from './package.json';
@@ -164,19 +165,18 @@ export class ZPackage extends ZPackageSet {
 
     if (script) {
 
-      const parsed = this.setup.taskParser.parse(script)
-          .then(spec => this.setup.taskFactory.createTask(
-              this,
-              name,
-              spec,
-          ));
+      const parsed = this.setup.taskFactory.newTask(this, name)
+          .parse(script)
+          .then(builder => builder.task());
 
       this._tasks.set(name, parsed);
 
       return parsed;
     }
 
-    const absent = Promise.resolve(this.setup.taskFactory.createUnknown(this, name));
+    const absent = Promise.resolve(this.setup.taskFactory.newTask(this, name)
+        .setAction(ZTaskSpec.unknownAction)
+        .task());
 
     this._tasks.set(name, absent);
 
