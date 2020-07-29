@@ -17,7 +17,7 @@ describe('CommandZTask', () => {
         {
           packageJson: {
             scripts: {
-              test: 'run-z attr=b --arg --then exec --cmd',
+              test: 'run-z attr=b --then exec --cmd',
             },
           },
         },
@@ -27,7 +27,7 @@ describe('CommandZTask', () => {
     const params = call.params();
 
     expect(call.task).toBeInstanceOf(CommandZTask);
-    expect(params.args).toEqual(['--arg']);
+    expect(params.args).toHaveLength(0);
     expect(params.attrs).toEqual({ attr: ['b'] });
     expect(params.actionArgs).toEqual(['--cmd']);
   });

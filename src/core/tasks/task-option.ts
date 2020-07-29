@@ -72,7 +72,9 @@ export interface ZTaskOption extends ZOption {
   addAttrs(attrs: ZTaskSpec.Attrs): void;
 
   /**
-   * Appends raw command line argument(s) to the task.
+   * Appends raw command line argument(s) to the task action.
+   *
+   * It is illegal to add arguments without {@link setAction action set}.
    *
    * @param args  Command line argument(s) to append.
    */

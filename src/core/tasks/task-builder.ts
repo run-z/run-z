@@ -27,6 +27,11 @@ export interface ZTaskBuilder<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
   readonly name: string;
 
   /**
+   * Action specifier set by {@link setAction}.
+   */
+  readonly action?: TAction;
+
+  /**
    * Appends a task prerequisite.
    *
    * @param pre  Prerequisite specifier to append.

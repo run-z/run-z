@@ -1,5 +1,5 @@
 import { TestPlan } from '../../spec';
-import { UnknownZTask } from './impl';
+import { GroupZTask, UnknownZTask } from './impl';
 import { ZTaskSpec } from './task-spec';
 
 describe('ZTaskFactory', () => {
@@ -10,7 +10,15 @@ describe('ZTaskFactory', () => {
     testPlan = new TestPlan();
   });
 
-  it('constructs unknown task by default', async () => {
+  it('constructs grouping task by default', async () => {
+
+    const target = await testPlan.target();
+    const task = testPlan.setup.taskFactory.newTask(target, 'test').task();
+
+    expect(task.spec.action).toBe(ZTaskSpec.groupAction);
+    expect(task).toBeInstanceOf(GroupZTask);
+  });
+  it('constructs unknown task for illegal spec', async () => {
 
     const target = await testPlan.target();
     const task = testPlan.setup.taskFactory.newTask(target, 'test').setAction({ type: 'wrong' } as any).task();

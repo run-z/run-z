@@ -9,7 +9,7 @@ import { InvalidZTaskError } from '../invalid-task-error';
 import type { ZTaskBuilder } from '../task-builder';
 import type { ZTaskOption } from '../task-option';
 import type { ZTaskParser } from '../task-parser';
-import type { ZTaskSpec } from '../task-spec';
+import { ZTaskSpec } from '../task-spec';
 
 /**
  * @internal
@@ -77,6 +77,12 @@ export function zTaskSpecParser(
         }
 
         addArg(...args: string[]): void {
+          if (!args.length) {
+            return;
+          }
+          if (!this._draft.builder.action) {
+            this._draft.parseError(`Unrecognized option: "${args[0]}"`);
+          }
           this._draft.finishPre();
           this._draft.builder.addArg(...args);
         }
@@ -474,11 +480,15 @@ export class DraftZTask {
       this.preParallel = false;
       this.preTask = undefined;
     } else if (this._preArgs.length) {
-      this.parseError('Prerequisite arguments specified, but not the task');
+      this.preArgsError('Prerequisite arguments specified, but not the task');
     }
   }
 
-  parseError(message: string): never {
+  preArgsError(message: string): never {
+    this.parseError(message, this._preArgsAt);
+  }
+
+  parseError(message: string, argIndex = this._option.argIndex): never {
 
     const { args } = this._option;
     let position = 0;
@@ -491,7 +501,7 @@ export class DraftZTask {
 
       const arg = args[i];
 
-      if (i === this._preArgsAt) {
+      if (i === argIndex) {
         position = reconstructedCmd.length;
       }
 
@@ -503,6 +513,9 @@ export class DraftZTask {
 
   done(): ZTaskBuilder {
     this.finishPre();
+    if (!this.builder.action) {
+      this.builder.setAction(ZTaskSpec.groupAction);
+    }
     return this.builder;
   }
 

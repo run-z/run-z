@@ -21,6 +21,10 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
   constructor(readonly target: ZPackage, readonly name: string) {
   }
 
+  get action(): TAction | undefined {
+    return this._action as TAction;
+  }
+
   addPre(pre: ZTaskSpec.Pre): this {
     this._pre.push(pre);
     return this;
