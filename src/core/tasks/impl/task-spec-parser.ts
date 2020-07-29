@@ -9,7 +9,7 @@ import { InvalidZTaskError } from '../invalid-task-error';
 import type { ZTaskBuilder } from '../task-builder';
 import type { ZTaskOption } from '../task-option';
 import type { ZTaskParser } from '../task-parser';
-import type { ZTaskSpec } from '../task-spec';
+import { ZTaskSpec } from '../task-spec';
 
 /**
  * @internal
@@ -43,6 +43,10 @@ export function zTaskSpecParser(
           _draft.moveTo(this);
         }
 
+        get preTask(): string | undefined {
+          return this._draft.preTask;
+        }
+
         addPre(pre: ZTaskSpec.Pre): void {
           this._draft.finishPre();
           this._draft.builder.addPre(pre);
@@ -53,7 +57,7 @@ export function zTaskSpecParser(
           this._draft.preTask = name;
         }
 
-        addPreArgs(...args: readonly string[]): void {
+        addPreArg(...args: string[]): void {
           this._draft.addPreArgs(args);
         }
 
@@ -73,6 +77,12 @@ export function zTaskSpecParser(
         }
 
         addArg(...args: string[]): void {
+          if (!args.length) {
+            return;
+          }
+          if (!this._draft.builder.action) {
+            this._draft.parseError(`Unrecognized option: "${args[0]}"`);
+          }
           this._draft.finishPre();
           this._draft.builder.addArg(...args);
         }
@@ -103,8 +113,11 @@ const defaultZTaskSpecOptions: SupportedZOptions.Map<ZTaskOption> = {
   '--and': readZTaskCommand.bind(undefined, true),
   '--then': readZTaskCommand.bind(undefined, false),
 
-  '-*': readNamedZTaskArg,
+  '--*=*': readNameValueZTaskArg,
+  '-*=*': readNameValueZTaskArg,
+
   '--*': readNamedZTaskArg,
+  '-*': readNamedZTaskArg,
 
   './*'(option: ZTaskOption): void {
     option.addPre({ selector: option.name });
@@ -126,13 +139,13 @@ const defaultZTaskSpecOptions: SupportedZOptions.Map<ZTaskOption> = {
     const preArg = name.substr(1);
 
     if (preArg) {
-      option.addPreArgs(preArg);
+      option.addPreArg(preArg);
     }
     option.values(0);
   },
 
   '//*'(option: ZTaskOption): void {
-    option.addPreArgs(...option.values().slice(0, -1));
+    option.addPreArg(...option.values().slice(0, -1));
   },
 
   ','(option: ZTaskOption): void {
@@ -169,8 +182,25 @@ function zTaskSpecOptions(
  * @internal
  */
 function readNamedZTaskArg(option: ZTaskOption): void {
-  option.addArg(option.name);
-  for (const arg of option.values()) {
+  if (option.preTask) {
+    option.addPreArg(option.name);
+  } else {
+    option.addArg(option.name);
+  }
+  option.values(0);
+}
+
+/**
+ * @internal
+ */
+function readNameValueZTaskArg(option: ZTaskOption): void {
+
+  const [value] = option.values(1);
+  const arg = `${option.name}=${value}`;
+
+  if (option.preTask) {
+    option.addPreArg(arg);
+  } else {
     option.addArg(arg);
   }
 }
@@ -454,11 +484,15 @@ export class DraftZTask {
       this.preParallel = false;
       this.preTask = undefined;
     } else if (this._preArgs.length) {
-      this.parseError('Prerequisite arguments specified, but not the task');
+      this.preArgsError('Prerequisite arguments specified, but not the task');
     }
   }
 
-  parseError(message: string): never {
+  preArgsError(message: string): never {
+    this.parseError(message, this._preArgsAt);
+  }
+
+  parseError(message: string, argIndex = this._option.argIndex): never {
 
     const { args } = this._option;
     let position = 0;
@@ -471,7 +505,7 @@ export class DraftZTask {
 
       const arg = args[i];
 
-      if (i === this._preArgsAt) {
+      if (i === argIndex) {
         position = reconstructedCmd.length;
       }
 
@@ -483,6 +517,9 @@ export class DraftZTask {
 
   done(): ZTaskBuilder {
     this.finishPre();
+    if (!this.builder.action) {
+      this.builder.setAction(ZTaskSpec.groupAction);
+    }
     return this.builder;
   }
 

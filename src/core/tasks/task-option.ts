@@ -24,6 +24,11 @@ export interface ZTaskOption extends ZOption {
   readonly taskName: string;
 
   /**
+   * The name of prerequisite added by the most recent call to {@link addPreTask}, unless it is already complete.
+   */
+  readonly preTask?: string;
+
+  /**
    * Appends a task prerequisite.
    *
    * @param pre  Prerequisite specifier to append.
@@ -31,18 +36,20 @@ export interface ZTaskOption extends ZOption {
   addPre(pre: ZTaskSpec.Pre): void;
 
   /**
-   * Appends a task prerequisite.
+   * Initiates a call to prerequisite task.
+   *
+   * The prerequisite will be added as soon as task specification modified by any method but {@link addPreArgs()}.
    *
    * @param name  Prerequisite task name to append.
    */
   addPreTask(name: string): void
 
   /**
-   * Appends arguments to prerequisite task added by the most recent call to {@link addPreTask}.
+   * Appends argument(s) to prerequisite task call initiated by the most recent call to {@link addPreTask}.
    *
    * @param args  Prerequisite arguments to add. May contain attributes.
    */
-  addPreArgs(...args: readonly string[]): void;
+  addPreArg(...args: string[]): void;
 
   /**
    * Makes a prerequisite added by the most recent call to {@link addPreTask} run in parallel with the next one.
@@ -65,7 +72,9 @@ export interface ZTaskOption extends ZOption {
   addAttrs(attrs: ZTaskSpec.Attrs): void;
 
   /**
-   * Appends raw command line argument(s) to the task.
+   * Appends raw command line argument(s) to the task action.
+   *
+   * It is illegal to add arguments without {@link setAction action set}.
    *
    * @param args  Command line argument(s) to append.
    */

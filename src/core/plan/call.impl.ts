@@ -118,7 +118,7 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
     );
 
     // Evaluate parameters.
-    const result: ZTaskParams.Mutable = { attrs: {}, args: [], actionArgs: [] };
+    const result: ZTaskParams.Mutable = { attrs: {}, args: [] };
 
     ZTaskParams.update(result, this.task.params());
     for (const [, params] of allParams) {

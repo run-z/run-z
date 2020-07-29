@@ -31,7 +31,7 @@ export class ZTaskParams {
       update: ZTaskParams.Partial,
   ): ZTaskParams.Mutable {
 
-    const { attrs = {}, args = [], actionArgs = [] } = update;
+    const { attrs = {}, args = [] } = update;
 
     for (const [k, v] of Object.entries(attrs)) {
       if (!v) {
@@ -47,7 +47,6 @@ export class ZTaskParams {
       }
     }
     params.args.push(...args);
-    params.actionArgs.push(...actionArgs);
 
     return params;
   }
@@ -63,21 +62,13 @@ export class ZTaskParams {
   readonly args: readonly string[];
 
   /**
-   * Command line arguments to pass to task action.
-   *
-   * E.g. {@link ZTaskSpec.Command.args command arguments}.
-   */
-  readonly actionArgs: readonly string[];
-
-  /**
    * Constructs task execution parameters.
    *
-   * @param init  Initial task execution parameter values.
+   * @param values  Task execution parameter values.
    */
-  constructor(init: ZTaskParams.Values) {
-    this.attrs = init.attrs;
-    this.args = init.args;
-    this.actionArgs = init.actionArgs;
+  constructor(values: ZTaskParams.Values) {
+    this.attrs = values.attrs;
+    this.args = values.args;
   }
 
   /**
@@ -116,7 +107,7 @@ export class ZTaskParams {
    */
   mutate(): ZTaskParams.Mutable {
 
-    const result: ZTaskParams.Mutable = { attrs: {}, args: [], actionArgs: [] };
+    const result: ZTaskParams.Mutable = { attrs: {}, args: [] };
 
     ZTaskParams.update(result, this);
 
@@ -158,13 +149,6 @@ export namespace ZTaskParams {
      */
     readonly args?: readonly string[];
 
-    /**
-     * Command line arguments to pass to task action.
-     *
-     * E.g. {@link ZTaskSpec.Command.args command arguments}.
-     */
-    readonly actionArgs?: readonly string[];
-
   }
 
   /**
@@ -181,11 +165,6 @@ export namespace ZTaskParams {
      * Command line arguments to pass to the task.
      */
     args: string[];
-
-    /**
-     * Command line arguments to pass to task action.
-     */
-    actionArgs: string[];
 
   }
 

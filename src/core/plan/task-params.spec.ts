@@ -9,12 +9,10 @@ describe('ZTaskParams', () => {
     initial = {
       attrs: { attr: ['val'] },
       args: ['arg1'],
-      actionArgs: ['cmd1'],
     };
     mutable = {
       attrs: {},
       args: [],
-      actionArgs: [],
     };
     ZTaskParams.update(mutable, initial);
   });
@@ -36,13 +34,6 @@ describe('ZTaskParams', () => {
       expect(mutable).toEqual({
         ...initial,
         args: ['arg1', 'arg2'],
-      });
-    });
-    it('appends action arguments', () => {
-      ZTaskParams.update(mutable, { actionArgs: ['cmd2'] });
-      expect(mutable).toEqual({
-        ...initial,
-        actionArgs: ['cmd1', 'cmd2'],
       });
     });
   });

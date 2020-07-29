@@ -17,7 +17,7 @@ describe('CommandZTask', () => {
         {
           packageJson: {
             scripts: {
-              test: 'run-z attr=b --arg --then exec --cmd',
+              test: 'run-z attr=b --then exec --cmd',
             },
           },
         },
@@ -27,9 +27,8 @@ describe('CommandZTask', () => {
     const params = call.params();
 
     expect(call.task).toBeInstanceOf(CommandZTask);
-    expect(params.args).toEqual(['--arg']);
+    expect(params.args).toEqual(['--cmd']);
     expect(params.attrs).toEqual({ attr: ['b'] });
-    expect(params.actionArgs).toEqual(['--cmd']);
   });
 
   it('calls prerequisites', async () => {
@@ -148,8 +147,7 @@ describe('CommandZTask', () => {
 
       const params = shell.execCommand.mock.calls[0][1];
 
-      expect(params.args).toEqual(['--arg2', '--arg1']);
-      expect(params.actionArgs).toEqual(['--arg3']);
+      expect(params.args).toEqual(['--arg3', '--arg1', '--arg2']);
     });
   });
 });

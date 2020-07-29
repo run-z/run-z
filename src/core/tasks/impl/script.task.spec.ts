@@ -31,7 +31,6 @@ describe('ScriptZTask', () => {
 
     expect(params.attrs).toEqual({});
     expect(params.args).toHaveLength(0);
-    expect(params.actionArgs).toHaveLength(0);
   });
 
   describe('exec', () => {
@@ -62,7 +61,7 @@ describe('ScriptZTask', () => {
 
       const params = shell.execScript.mock.calls[0][1];
 
-      expect(params.args).toEqual(['--arg2', '--arg1']);
+      expect(params.args).toEqual(['--arg1', '--arg2']);
     });
   });
 });

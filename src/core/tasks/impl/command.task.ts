@@ -10,9 +10,9 @@ export class CommandZTask extends AbstractZTask<ZTaskSpec.Command> {
 
   params(): ZTaskParams.Partial {
 
-    const { spec: { attrs, args, action: { args: actionArgs } } } = this;
+    const { spec: { attrs, args, action: { args: commandArgs } } } = this;
 
-    return { attrs, args, actionArgs };
+    return { attrs, args: [...commandArgs, ...args] };
   }
 
   exec(execution: ZTaskExecution<ZTaskSpec.Command>): Promise<void> {
