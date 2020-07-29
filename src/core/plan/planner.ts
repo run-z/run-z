@@ -22,7 +22,7 @@ export class ZPlanner {
   }
 
   /**
-   * Builds a task execution plan.
+   * Plans a task execution.
    *
    * The plan would execute the task after executing all of its prerequisites.
    *
