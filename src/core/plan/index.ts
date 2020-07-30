@@ -4,4 +4,6 @@ export * from './call-planner';
 export * from './job';
 export * from './plan';
 export * from './planner';
+export * from './pre-planner';
+export * from './task-execution';
 export * from './task-params';

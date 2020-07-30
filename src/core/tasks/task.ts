@@ -3,8 +3,7 @@
  * @module run-z
  */
 import type { ZPackage } from '../packages';
-import type { ZCall, ZCallDetails, ZCallPlanner } from '../plan';
-import type { ZTaskExecution } from '../plan/task-execution';
+import type { ZCall, ZCallDetails, ZPrePlanner, ZTaskExecution } from '../plan';
 import type { ZTaskSpec } from './task-spec';
 
 /**
@@ -35,20 +34,17 @@ export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> exte
   readonly callDetails: Required<ZCallDetails<TAction>>;
 
   /**
-   * Represents this task as a prerequisite of another one.
+   * Plans a call to this task as a prerequisite of another one.
    *
    * By default a {@link ZTaskSpec.Group grouping task} treats the first argument as a sub-task name and the rest of
-   * arguments as arguments to this sub-task. A task of any other type returns a call to itself.
+   * arguments as arguments to this sub-task. A task of any other type calls to itself.
    *
-   * @param planner  Depending task planner.
+   * @param planner  A planner to record prerequisite call(s) to.
    * @param ref  Prerequisite task reference.
    *
-   * @returns A promise resolved to iterable of prerequisite calls.
+   * @returns A promise resolved when prerequisite call planning completes.
    */
-  asPre(
-      planner: ZCallPlanner,
-      ref: ZTaskSpec.TaskRef,
-  ): Promise<Iterable<ZCall>>;
+  callAsPre(planner: ZPrePlanner, ref: ZTaskSpec.TaskRef): PromiseLike<void>;
 
   /**
    * Plans this task execution as a top-level task.
