@@ -3,8 +3,9 @@
  * @module run-z
  */
 import type { ZSetup } from '../setup';
-import { ZPackage } from './package';
+import type { ZPackage } from './package';
 import type { ZPackageLocation } from './package-location';
+import { ZPackage$ } from './package.impl';
 import { UnknownZPackageError } from './unknown-package-error';
 
 /**
@@ -12,7 +13,10 @@ import { UnknownZPackageError } from './unknown-package-error';
  */
 export class ZPackageResolver {
 
-  private readonly _packages = new Map<string, Promise<ZPackage | undefined>>();
+  /**
+   * @internal
+   */
+  private readonly _packages = new Map<string, Promise<ZPackage$ | undefined>>();
 
   /**
    * Constructs NPM package resolver.
@@ -51,13 +55,13 @@ export class ZPackageResolver {
       return existing;
     }
 
-    const discoverPackage = async (): Promise<ZPackage | undefined> => {
+    const discoverPackage = async (): Promise<ZPackage$ | undefined> => {
 
       const parentLocation = location.parent;
       const parent = parentLocation && await this.find(parentLocation);
       const packageJson = await location.load();
 
-      return packageJson ? new ZPackage(this.setup, location, packageJson, parent) : undefined;
+      return packageJson ? new ZPackage$(this.setup, location, packageJson, parent) : undefined;
     };
 
     const discovered = discoverPackage();
