@@ -25,7 +25,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   }
 
   async callAsPre(planner: ZPrePlanner, { attrs, args }: ZTaskSpec.TaskRef): Promise<void> {
-    await planner.preCall(
+    await planner.callPre(
         this,
         {
           params: planner.dependent.plannedCall.extendParams({ attrs, args }),
@@ -89,7 +89,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
         const calledTasks: ZTask[] = [];
         const prePlanner: ZPrePlanner = {
           dependent: planner,
-          async preCall<TAction extends ZTaskSpec.Action>(
+          async callPre<TAction extends ZTaskSpec.Action>(
               task: ZTask<TAction>,
               details?: ZCallDetails<TAction>,
           ): Promise<ZCall> {
