@@ -14,21 +14,15 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   readonly target: ZPackage;
   readonly name: string;
   readonly taskQN: string;
+  readonly callDetails: Required<ZCallDetails<TAction>>;
 
   constructor(builder: ZTaskBuilder$, readonly spec: ZTaskSpec<TAction>) {
     this.target = builder.target;
     this.taskQN = this.name = builder.name;
-  }
-
-  params(): ZTaskParams.Partial {
-
-    const { spec: { attrs, args } } = this;
-
-    return { attrs, args };
-  }
-
-  async plan(planner: ZCallPlanner<TAction>): Promise<void> {
-    await this.planDeps(planner);
+    this.callDetails = {
+      params: this.callParams.bind(this),
+      plan: this.planCall.bind(this),
+    };
   }
 
   asPre(
@@ -48,6 +42,32 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   }
 
   abstract exec(execution: ZTaskExecution<TAction>): void | PromiseLike<unknown>;
+
+  /**
+   * Builds initial task execution parameters.
+   *
+   * @returns Partial task execution parameters.
+   */
+  protected callParams(): ZTaskParams.Partial {
+
+    const { spec: { attrs, args } } = this;
+
+    return { attrs, args };
+  }
+
+  /**
+   * Plans this task execution.
+   *
+   * Records initial task execution instructions.
+   *
+   * @param planner  Task execution planner to record instructions to.
+   *
+   * @returns Either nothing when instructions recorded synchronously, or a promise-like instance resolved when
+   * instructions recorded asynchronously.
+   */
+  protected async planCall(planner: ZCallPlanner<TAction>): Promise<void> {
+    await this.planDeps(planner);
+  }
 
   protected async planDeps(planner: ZCallPlanner<TAction>): Promise<void> {
 

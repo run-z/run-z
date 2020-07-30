@@ -3,7 +3,7 @@
  * @module run-z
  */
 import type { ZPackage } from '../packages';
-import type { ZCall, ZCallDetails, ZCallPlanner, ZTaskParams } from '../plan';
+import type { ZCall, ZCallDetails, ZCallPlanner } from '../plan';
 import type { ZTaskExecution } from '../plan/task-execution';
 import type { ZTaskSpec } from './task-spec';
 
@@ -30,23 +30,9 @@ export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> exte
   readonly spec: ZTaskSpec<TAction>;
 
   /**
-   * Builds initial task execution parameters.
-   *
-   * @returns Partial task execution parameters.
+   * Initial details for {@link call calling} this task.
    */
-  params(): ZTaskParams.Partial;
-
-  /**
-   * Plans this task execution.
-   *
-   * Records initial task execution instructions.
-   *
-   * @param planner  Task execution planner to record instructions to.
-   *
-   * @returns Either nothing when instructions recorded synchronously, or a promise-like instance resolved when
-   * instructions recorded asynchronously.
-   */
-  plan(planner: ZCallPlanner<TAction>): void | PromiseLike<unknown>;
+  readonly callDetails: Required<ZCallDetails<TAction>>;
 
   /**
    * Represents this task as a prerequisite of another one.
