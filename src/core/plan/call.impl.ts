@@ -1,7 +1,7 @@
 import { valueProvider } from '@proc7ts/primitives';
 import type { ZTask, ZTaskSpec } from '../tasks';
 import type { ZCall } from './call';
-import type { ZCallInstruction } from './call-instruction';
+import type { ZCallDetails } from './call-details';
 import type { ZExecutionJob } from './job.impl';
 import type { ZPlan } from './plan';
 import type { ZInstructionRecords } from './planner.impl';
@@ -37,7 +37,6 @@ export type ZCallDepth =
  */
 export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> implements ZCall<TAction> {
 
-  readonly task: ZTask<TAction>;
   private _currDepth: ZCallDepth;
   private readonly _params: (readonly [ZCallParams, ZCallDepth])[] = [];
   private _builtParams: readonly [number, ZTaskParams] | [] = [];
@@ -45,11 +44,11 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
   constructor(
       private readonly _records: ZInstructionRecords,
       private readonly _parent: ZCallRecord | undefined,
-      instruction: ZCallInstruction<TAction>,
+      readonly task: ZTask<TAction>,
+      details: ZCallDetails<TAction>,
   ) {
-    this.task = instruction.task;
     this._currDepth = _parent ? () => _parent._depth() + 1 : valueProvider(0);
-    this._addParams(instruction, this._depth.bind(this));
+    this._addParams(details, this._depth.bind(this));
   }
 
   get plan(): ZPlan {
@@ -64,7 +63,7 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
     return this._currDepth();
   }
 
-  _call(instruction: ZCallInstruction, by: ZCallRecord): this {
+  _call(details: ZCallDetails<TAction>, by: ZCallRecord): this {
 
     const paramDepth: ZCallDepth = () => by._depth() + 1;
 
@@ -75,28 +74,28 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
       this._currDepth = () => Math.min(prevDepth(), paramDepth());
     }
 
-    this._addParams(instruction, paramDepth);
+    this._addParams(details, paramDepth);
 
     return this;
   }
 
-  private _addParams(instruction: ZCallInstruction, depth: ZCallDepth): void {
+  private _addParams(details: ZCallDetails<TAction>, depth: ZCallDepth): void {
 
-    const params = instruction.params ? instruction.params.bind(instruction) : valueProvider({});
+    const params = details.params ? details.params.bind(details) : valueProvider({});
 
     this._params.push([params, depth]);
   }
 
-  async _plan(instruction: ZCallInstruction<TAction> | ZTask<TAction>): Promise<void> {
-    if (!instruction.plan) {
+  async _plan(details: ZCallDetails<TAction>): Promise<void> {
+    if (!details.plan) {
       return;
     }
 
-    await instruction.plan({
+    await details.plan({
       setup: this._records.setup,
       plannedCall: this,
       qualify: this._records.qualify.bind(this._records),
-      call: instr => this._records.call(instr, this),
+      call: (task, details) => this._records.call(task, details, this),
       order: this._records.order.bind(this._records),
       makeParallel: this._records.makeParallel.bind(this._records),
     });
@@ -120,7 +119,7 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
     // Evaluate parameters.
     const result: ZTaskParams.Mutable = { attrs: {}, args: [] };
 
-    ZTaskParams.update(result, this.task.params());
+    ZTaskParams.update(result, this.task.callDetails.params());
     for (const [, params] of allParams) {
       ZTaskParams.update(result, params());
     }

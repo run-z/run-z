@@ -1,7 +1,6 @@
 import { mapIt } from '@proc7ts/a-iterable';
 import type { ZPackage, ZPackageSet } from '../../packages';
-import type { ZCall, ZCallPlanner, ZTaskParams } from '../../plan';
-import type { ZTaskExecution } from '../../plan/task-execution';
+import type { ZCall, ZCallDetails, ZCallPlanner, ZPrePlanner, ZTaskExecution, ZTaskParams } from '../../plan';
 import type { ZTask, ZTaskQualifier } from '../task';
 import type { ZTaskSpec } from '../task-spec';
 import type { ZTaskBuilder$ } from './task-builder';
@@ -14,34 +13,57 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   readonly target: ZPackage;
   readonly name: string;
   readonly taskQN: string;
+  readonly callDetails: Required<ZCallDetails<TAction>>;
 
   constructor(builder: ZTaskBuilder$, readonly spec: ZTaskSpec<TAction>) {
     this.target = builder.target;
     this.taskQN = this.name = builder.name;
+    this.callDetails = {
+      params: this.callParams.bind(this),
+      plan: this.planCall.bind(this),
+    };
   }
 
-  params(): ZTaskParams.Partial {
+  async callAsPre(planner: ZPrePlanner, { attrs, args }: ZTaskSpec.TaskRef): Promise<void> {
+    await planner.callPre(
+        this,
+        {
+          params: planner.dependent.plannedCall.extendParams({ attrs, args }),
+        },
+    );
+  }
+
+  call(details?: ZCallDetails<TAction>): Promise<ZCall> {
+    return this.target.setup.planner.call(this, details);
+  }
+
+  abstract exec(execution: ZTaskExecution<TAction>): void | PromiseLike<unknown>;
+
+  /**
+   * Builds initial task execution parameters.
+   *
+   * @returns Partial task execution parameters.
+   */
+  protected callParams(): ZTaskParams.Partial {
 
     const { spec: { attrs, args } } = this;
 
     return { attrs, args };
   }
 
-  async plan(planner: ZCallPlanner<TAction>): Promise<void> {
+  /**
+   * Plans this task execution.
+   *
+   * Records initial task execution instructions.
+   *
+   * @param planner  Task execution planner to record instructions to.
+   *
+   * @returns Either nothing when instructions recorded synchronously, or a promise-like instance resolved when
+   * instructions recorded asynchronously.
+   */
+  protected async planCall(planner: ZCallPlanner<TAction>): Promise<void> {
     await this.planDeps(planner);
   }
-
-  asPre(
-      planner: ZCallPlanner,
-      { attrs, args }: ZTaskSpec.TaskRef,
-  ): Promise<Iterable<ZCall>> {
-    return Promise.all([planner.call({
-      task: this,
-      params: planner.plannedCall.extendParams({ attrs, args }),
-    })]);
-  }
-
-  abstract exec(execution: ZTaskExecution<TAction>): void | PromiseLike<unknown>;
 
   protected async planDeps(planner: ZCallPlanner<TAction>): Promise<void> {
 
@@ -65,17 +87,27 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
         const preTarget = targets || target;
         const preTasks = await resolveZTaskRef(preTarget, pre);
         const calledTasks: ZTask[] = [];
+        const prePlanner: ZPrePlanner = {
+          dependent: planner,
+          async callPre<TAction extends ZTaskSpec.Action>(
+              task: ZTask<TAction>,
+              details?: ZCallDetails<TAction>,
+          ): Promise<ZCall> {
 
-        for (const preTask of preTasks) {
+            const preCall = await planner.call(task, details);
+            const preTask = preCall.task;
 
-          const preCalls = await preTask.asPre(planner, pre);
-
-          for (const { task: preTask } of preCalls) {
             calledTasks.push(preTask);
             for (const prevTask of prevTasks) {
               planner.order(prevTask, preTask);
             }
-          }
+
+            return preCall;
+          },
+        };
+
+        for (const preTask of preTasks) {
+          await preTask.callAsPre(prePlanner, pre);
         }
 
         if (calledTasks.length === 1) {

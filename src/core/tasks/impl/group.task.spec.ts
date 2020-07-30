@@ -23,7 +23,7 @@ describe('GroupZTask', () => {
         },
     );
 
-    const call = await testPlan.plan('test');
+    const call = await testPlan.call('test');
 
     expect(call.task).toBeInstanceOf(GroupZTask);
 
@@ -57,7 +57,7 @@ describe('GroupZTask', () => {
         },
     );
 
-    const call = await testPlan.plan('test');
+    const call = await testPlan.call('test');
     const plan = call.plan;
     const target = call.task.target;
     const dep1 = plan.callOf(await target.task('dep1'));
@@ -120,7 +120,7 @@ describe('GroupZTask', () => {
 
     await testPlan.target(target);
 
-    const call = await testPlan.plan('test');
+    const call = await testPlan.call('test');
     const plan = call.plan;
     const dep11 = plan.callOf(await nested1.task('dep1'));
     const dep12 = plan.callOf(await nested1.task('dep2'));
@@ -185,7 +185,7 @@ describe('GroupZTask', () => {
 
     await testPlan.target(target);
 
-    const call = await testPlan.plan('test');
+    const call = await testPlan.call('test');
     const plan = call.plan;
     const dep0 = plan.callOf(await call.task.target.task('dep0'));
     const dep1 = plan.callOf(await nested1.task('dep'));
@@ -243,7 +243,7 @@ describe('GroupZTask', () => {
 
     await testPlan.target(target);
 
-    const call = await testPlan.plan('test');
+    const call = await testPlan.call('test');
     const plan = call.plan;
     const dep1 = plan.callOf(await nested1.task('dep'));
     const dep2 = plan.callOf(await nested2.task('dep'));
@@ -300,7 +300,7 @@ describe('GroupZTask', () => {
 
     await testPlan.target(target);
 
-    const call = await testPlan.plan('test');
+    const call = await testPlan.call('test');
     const plan = call.plan;
     const dep1 = plan.callOf(await nested1.task('dep'));
     const sub1 = plan.callOf(await nested1.task('sub-task'));
@@ -364,7 +364,7 @@ describe('GroupZTask', () => {
     const nested2 = await testPlan.target();
 
     const target = await testPlan.target(targetLocation);
-    const call = await testPlan.plan('test');
+    const call = await testPlan.call('test');
     const plan = call.plan;
     const dep = plan.callOf(await target.task('dep'));
     const sub1 = plan.callOf(await nested1.task('sub-task'));
@@ -399,7 +399,7 @@ describe('GroupZTask', () => {
           },
       );
 
-      const call = await testPlan.plan('test');
+      const call = await testPlan.call('test');
 
       expect(await call.exec().whenDone()).toBeUndefined();
     });
@@ -417,7 +417,7 @@ describe('GroupZTask', () => {
           },
       );
 
-      const call = await testPlan.plan('test');
+      const call = await testPlan.call('test');
 
       expect(await call.exec().whenDone()).toBeUndefined();
     });

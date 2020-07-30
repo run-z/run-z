@@ -10,7 +10,7 @@ async function runZ(): Promise<void> {
   const target = await setup.packageResolver.get(currentDir);
   const builder = await setup.taskFactory.newTask(target, 'run-z').applyOptions(process.argv, 2);
   const task = builder.task();
-  const call = await setup.planner.plan({ task });
+  const call = await task.call();
 
   return await call.exec().whenDone();
 }

@@ -13,7 +13,7 @@ describe('UnknownZTask', () => {
 
   it('is constructed by default', async () => {
 
-    const call = await testPlan.plan('absent');
+    const call = await testPlan.call('absent');
 
     expect(call.task).toBeInstanceOf(UnknownZTask);
   });
@@ -21,7 +21,7 @@ describe('UnknownZTask', () => {
   describe('exec', () => {
     it('throws when absent', async () => {
 
-      const call = await testPlan.plan('absent');
+      const call = await testPlan.call('absent');
       const error = await call.exec().whenDone().catch(asis);
 
       expect(error).toBeInstanceOf(UnknownZTaskError);
@@ -39,7 +39,7 @@ describe('UnknownZTask', () => {
           },
       );
 
-      const call = await testPlan.plan('test');
+      const call = await testPlan.call('test');
 
       expect(await call.exec().whenDone()).toBeUndefined();
     });
@@ -56,7 +56,7 @@ describe('UnknownZTask', () => {
           },
       );
 
-      const call = await testPlan.plan('test');
+      const call = await testPlan.call('test');
       const error = await call.exec().whenDone().catch(asis);
 
       expect(error).toBeInstanceOf(UnknownZTaskError);

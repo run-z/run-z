@@ -1,4 +1,4 @@
-import type { ZTaskExecution } from '../../plan/task-execution';
+import type { ZTaskExecution } from '../../plan';
 import { ZTaskSpec } from '../task-spec';
 import { UnknownZTaskError } from '../unknown-task-error';
 import { AbstractZTask } from './abstract.task';

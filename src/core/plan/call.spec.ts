@@ -77,16 +77,12 @@ describe('ZCall', () => {
       let params1!: ZTaskParams;
       let call2!: ZCall;
       let params2!: ZTaskParams;
-      const call = await setup.planner.plan({
-        task,
+      const call = await task.call({
         params: valueProvider({ attrs: { attr1: ['attr1-val2'] } }),
         async plan(planner) {
           call1 = planner.plannedCall;
           params1 = call1.params();
-          call2 = await planner.call({
-            task,
-            params: valueProvider({ attrs: { attr2: ['attr2-val2'] } }),
-          });
+          call2 = await planner.call(task, { params: valueProvider({ attrs: { attr2: ['attr2-val2'] } }) });
           params2 = call1.params();
         },
       });
@@ -115,9 +111,6 @@ describe('ZCall', () => {
   });
 
   function plan(params: ZTaskParams.Partial = {}): Promise<ZCall> {
-    return setup.planner.plan({
-      task,
-      params: valueProvider(params),
-    });
+    return task.call({ params: valueProvider(params) });
   }
 });

@@ -1,6 +1,6 @@
-import { ZSetup, ZShell } from '../core';
+import { ZCallDetails, ZSetup, ZShell } from '../core';
 import { ZPackage, ZPackageJson, ZPackageTree } from '../core/packages';
-import type { ZCall, ZCallInstruction } from '../core/plan';
+import type { ZCall } from '../core/plan';
 
 export class TestPlan {
 
@@ -40,12 +40,12 @@ export class TestPlan {
     return this._target = this.root.put(name, { packageJson, shell });
   }
 
-  async plan(taskName: string, instruction: Omit<ZCallInstruction, 'task'> = {}): Promise<ZCall> {
+  async call(taskName: string, details?: ZCallDetails): Promise<ZCall> {
 
     const target = await this.target();
     const task = await target.task(taskName);
 
-    return this.setup.planner.plan({ ...instruction, task });
+    return task.call(details);
   }
 
 }

@@ -3,8 +3,7 @@
  * @module run-z
  */
 import type { ZPackage } from '../packages';
-import type { ZCall, ZCallPlanner, ZTaskParams } from '../plan';
-import type { ZTaskExecution } from '../plan/task-execution';
+import type { ZCall, ZCallDetails, ZPrePlanner, ZTaskExecution } from '../plan';
 import type { ZTaskSpec } from './task-spec';
 
 /**
@@ -30,39 +29,36 @@ export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> exte
   readonly spec: ZTaskSpec<TAction>;
 
   /**
-   * Builds initial task execution parameters.
-   *
-   * @returns Partial task execution parameters.
+   * Initial details for {@link call calling} this task.
    */
-  params(): ZTaskParams.Partial;
+  readonly callDetails: Required<ZCallDetails<TAction>>;
 
   /**
-   * Plans this task execution.
-   *
-   * Records initial task execution instructions.
-   *
-   * @param planner  Task execution planner to record instructions to.
-   *
-   * @returns Either nothing when instructions recorded synchronously, or a promise-like instance resolved when
-   * instructions recorded asynchronously.
-   */
-  plan(planner: ZCallPlanner<TAction>): void | PromiseLike<unknown>;
-
-  /**
-   * Represents this task as a prerequisite of another one.
+   * Plans a call to this task as a prerequisite of another one.
    *
    * By default a {@link ZTaskSpec.Group grouping task} treats the first argument as a sub-task name and the rest of
-   * arguments as arguments to this sub-task. A task of any other type returns a call to itself.
+   * arguments as arguments to this sub-task. A task of any other type calls to itself.
    *
-   * @param planner  Depending task planner.
+   * @param planner  A planner to record prerequisite call(s) to.
    * @param ref  Prerequisite task reference.
    *
-   * @returns A promise resolved to iterable of prerequisite calls.
+   * @returns A promise resolved when prerequisite call planning completes.
    */
-  asPre(
-      planner: ZCallPlanner,
-      ref: ZTaskSpec.TaskRef,
-  ): Promise<Iterable<ZCall>>;
+  callAsPre(planner: ZPrePlanner, ref: ZTaskSpec.TaskRef): PromiseLike<void>;
+
+  /**
+   * Plans this task execution as a top-level task.
+   *
+   * The plan would execute the task after executing all of its prerequisites.
+   *
+   * @typeparam TAction  Task action type.
+   * @param details  Task call details.
+   *
+   * @returns A promise resolved to execution call of this task.
+   *
+   * @see ZPlanner.call
+   */
+  call(details?: ZCallDetails<TAction>): Promise<ZCall>;
 
   /**
    * Performs task execution.
