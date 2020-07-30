@@ -1,6 +1,6 @@
 import { mapIt } from '@proc7ts/a-iterable';
 import type { ZPackage, ZPackageSet } from '../../packages';
-import type { ZCall, ZCallPlanner, ZTaskParams } from '../../plan';
+import type { ZCall, ZCallDetails, ZCallPlanner, ZTaskParams } from '../../plan';
 import type { ZTaskExecution } from '../../plan/task-execution';
 import type { ZTask, ZTaskQualifier } from '../task';
 import type { ZTaskSpec } from '../task-spec';
@@ -41,6 +41,10 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
           params: planner.plannedCall.extendParams({ attrs, args }),
         },
     )]);
+  }
+
+  call(details?: ZCallDetails<TAction>): Promise<ZCall> {
+    return this.target.setup.planner.call(this, details);
   }
 
   abstract exec(execution: ZTaskExecution<TAction>): void | PromiseLike<unknown>;

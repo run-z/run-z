@@ -31,7 +31,7 @@ describe('SystemZShell', () => {
   it('executes NPM script', async () => {
 
     const task = await pkg.task('test:script');
-    const call = await pkg.setup.planner.call(task);
+    const call = await task.call();
 
     expect(await call.exec().whenDone()).toBeUndefined();
   });
@@ -39,7 +39,7 @@ describe('SystemZShell', () => {
     delete process.env.npm_execpath;
 
     const task = await pkg.task('test:script');
-    const call = await pkg.setup.planner.call(task);
+    const call = await task.call();
 
     expect(await call.exec().whenDone()).toBeUndefined();
   });
@@ -47,7 +47,7 @@ describe('SystemZShell', () => {
     process.env.npm_execpath = 'yarn';
 
     const task = await pkg.task('test:script');
-    const call = await pkg.setup.planner.call(task);
+    const call = await task.call();
 
     expect(await call.exec().whenDone()).toBeUndefined();
   });
@@ -55,35 +55,35 @@ describe('SystemZShell', () => {
     process.env.npm_execpath = './src/spec/bin/yarn.js';
 
     const task = await pkg.task('test:script');
-    const call = await pkg.setup.planner.call(task);
+    const call = await task.call();
 
     expect(await call.exec().whenDone()).toBeUndefined();
   });
   it('executes command', async () => {
 
     const task = await pkg.task('test:command');
-    const call = await pkg.setup.planner.call(task);
+    const call = await task.call();
 
     expect(await call.exec().whenDone()).toBeUndefined();
   });
   it('executes all tasks', async () => {
 
     const task = await pkg.task('test:all');
-    const call = await pkg.setup.planner.call(task);
+    const call = await task.call();
 
     expect(await call.exec().whenDone()).toBeUndefined();
   });
   it('fails on command failure', async () => {
 
     const task = await pkg.task('test:fail');
-    const call = await pkg.setup.planner.call(task);
+    const call = await task.call();
 
     expect(await call.exec().whenDone().catch(asis)).toBe(13);
   });
   it('fails on command kill', async () => {
 
     const task = await pkg.task('test:kill');
-    const call = await pkg.setup.planner.call(task);
+    const call = await task.call();
 
     expect(await call.exec().whenDone().catch(asis)).toBeDefined();
   });

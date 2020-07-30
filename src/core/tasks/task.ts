@@ -3,7 +3,7 @@
  * @module run-z
  */
 import type { ZPackage } from '../packages';
-import type { ZCall, ZCallPlanner, ZTaskParams } from '../plan';
+import type { ZCall, ZCallDetails, ZCallPlanner, ZTaskParams } from '../plan';
 import type { ZTaskExecution } from '../plan/task-execution';
 import type { ZTaskSpec } from './task-spec';
 
@@ -63,6 +63,20 @@ export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> exte
       planner: ZCallPlanner,
       ref: ZTaskSpec.TaskRef,
   ): Promise<Iterable<ZCall>>;
+
+  /**
+   * Plans this task execution as a top-level task.
+   *
+   * The plan would execute the task after executing all of its prerequisites.
+   *
+   * @typeparam TAction  Task action type.
+   * @param details  Task call details.
+   *
+   * @returns A promise resolved to execution call of this task.
+   *
+   * @see ZPlanner.call
+   */
+  call(details?: ZCallDetails<TAction>): Promise<ZCall>;
 
   /**
    * Performs task execution.

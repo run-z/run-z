@@ -45,7 +45,7 @@ export class TestPlan {
     const target = await this.target();
     const task = await target.task(taskName);
 
-    return this.setup.planner.call(task, details);
+    return task.call(details);
   }
 
 }

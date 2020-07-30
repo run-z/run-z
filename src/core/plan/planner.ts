@@ -22,7 +22,7 @@ export class ZPlanner {
   }
 
   /**
-   * Plans a task execution.
+   * Plans a top-level task execution.
    *
    * The plan would execute the task after executing all of its prerequisites.
    *
@@ -30,7 +30,7 @@ export class ZPlanner {
    * @param task  Top-level task to call.
    * @param details  Task call details.
    *
-   * @returns Top-level task execution call.
+   * @returns A promise resolved to top-level task execution call.
    */
   async call<TAction extends ZTaskSpec.Action>(
       task: ZTask<TAction>,
