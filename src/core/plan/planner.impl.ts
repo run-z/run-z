@@ -4,7 +4,7 @@ import type { ZSetup } from '../setup';
 import type { ZTask, ZTaskQualifier, ZTaskSpec } from '../tasks';
 import { UnknownZTaskError } from '../tasks';
 import type { ZCall } from './call';
-import type { ZCallInstruction } from './call-instruction';
+import type { ZCallDetails } from './call-details';
 import { ZCallRecord } from './call.impl';
 import { ZExecutor } from './job.impl';
 import type { ZPlan } from './plan';
@@ -58,22 +58,22 @@ export class ZInstructionRecords {
   }
 
   async call<TAction extends ZTaskSpec.Action>(
-      instruction: ZCallInstruction<TAction>,
+      task: ZTask<TAction>,
+      details: ZCallDetails<TAction> = {},
       by?: ZCallRecord,
   ): Promise<ZCall<TAction>> {
     ++this.rev;
 
-    const { task } = instruction;
     let call = this._calls.get(task) as ZCallRecord<TAction> | undefined;
 
     if (call) {
-      call._call(instruction, by!); // `by` always known here
+      call._call(details, by!); // `by` always known here
     } else {
-      call = new ZCallRecord(this, by, instruction);
+      call = new ZCallRecord(this, by, task, details);
       this._calls.set(task, call);
       await call._plan(task);
     }
-    await call._plan(instruction);
+    await call._plan(details);
 
     return call;
   }

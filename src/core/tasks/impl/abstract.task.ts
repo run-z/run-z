@@ -35,10 +35,12 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
       planner: ZCallPlanner,
       { attrs, args }: ZTaskSpec.TaskRef,
   ): Promise<Iterable<ZCall>> {
-    return Promise.all([planner.call({
-      task: this,
-      params: planner.plannedCall.extendParams({ attrs, args }),
-    })]);
+    return Promise.all([planner.call(
+        this,
+        {
+          params: planner.plannedCall.extendParams({ attrs, args }),
+        },
+    )]);
   }
 
   abstract exec(execution: ZTaskExecution<TAction>): void | PromiseLike<unknown>;

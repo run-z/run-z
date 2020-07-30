@@ -2,23 +2,16 @@
  * @packageDocumentation
  * @module run-z
  */
-import type { ZTask, ZTaskSpec } from '../tasks';
+import type { ZTaskSpec } from '../tasks';
 import type { ZCallPlanner } from './call-planner';
 import type { ZTaskParams } from './task-params';
 
 /**
- * An instruction for calling the task.
- *
- * Such instructions {@link ZCallPlanner.call recorded to execution plans}.
+ * Details of the {@link ZCallPlanner.call task call}.
  *
  * @typeparam TAction  Task action type.
  */
-export interface ZCallInstruction<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
-
-  /**
-   * The task to call.
-   */
-  readonly task: ZTask<TAction>;
+export interface ZCallDetails<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
 
   /**
    * Evaluates parameters of the call.

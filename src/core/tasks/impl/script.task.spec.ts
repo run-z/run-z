@@ -23,7 +23,7 @@ describe('ScriptZTask', () => {
         },
     );
 
-    const call = await testPlan.plan('test');
+    const call = await testPlan.call('test');
 
     expect(call.task).toBeInstanceOf(ScriptZTask);
 
@@ -53,7 +53,7 @@ describe('ScriptZTask', () => {
           },
       );
 
-      const call = await testPlan.plan('test');
+      const call = await testPlan.call('test');
 
       await call.exec().whenDone();
 

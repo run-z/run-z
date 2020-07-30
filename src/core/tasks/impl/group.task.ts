@@ -23,10 +23,7 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
 
     // There is a sub-task(s) to execute.
     // Call prerequisite. Pass call parameters to sub-task(s) rather then to this prerequisite.
-    await planner.call({
-      task: this,
-      params: () => planner.plannedCall.params(),
-    });
+    await planner.call(this, { params: () => planner.plannedCall.params() });
 
     // Delegate to sub-task(s).
     const subTaskRef: ZTaskSpec.TaskRef = { ...ref, args: subArgs };

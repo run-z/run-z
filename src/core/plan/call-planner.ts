@@ -5,7 +5,7 @@
 import type { ZSetup } from '../setup';
 import type { ZTask, ZTaskQualifier, ZTaskSpec } from '../tasks';
 import type { ZCall } from './call';
-import type { ZCallInstruction } from './call-instruction';
+import type { ZCallDetails } from './call-details';
 
 /**
  * Task execution planner.
@@ -39,16 +39,20 @@ export interface ZCallPlanner<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
   qualify(task: ZTask, qualifier: ZTaskQualifier): void;
 
   /**
-   * Records a call to a task.
+   * Records a call to the task.
    *
    * Updates already recorded call to the same task.
    *
    * @typeparam TAction  Task action type.
-   * @param instruction  An instruction for the task call to record.
+   * @param task  The task to call.
+   * @param details  The details of the call.
    *
    * @returns A promise resolved to the task call when it is recorded.
    */
-  call<TAction extends ZTaskSpec.Action>(instruction: ZCallInstruction<TAction>): Promise<ZCall<TAction>>;
+  call<TAction extends ZTaskSpec.Action>(
+      task: ZTask<TAction>,
+      details?: ZCallDetails<TAction>,
+  ): Promise<ZCall<TAction>>;
 
   /**
    * Establishes the task execution order.

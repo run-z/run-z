@@ -23,7 +23,7 @@ describe('CommandZTask', () => {
         },
     );
 
-    const call = await testPlan.plan('test');
+    const call = await testPlan.call('test');
     const params = call.params();
 
     expect(call.task).toBeInstanceOf(CommandZTask);
@@ -44,7 +44,7 @@ describe('CommandZTask', () => {
         },
     );
 
-    const call = await testPlan.plan('test');
+    const call = await testPlan.call('test');
     const dep = call.plan.callOf(await call.task.target.task('dep'));
 
     expect(prerequisitesOf(call)).toEqual(taskIds([dep]));
@@ -64,7 +64,7 @@ describe('CommandZTask', () => {
         },
     );
 
-    const call = await testPlan.plan('test');
+    const call = await testPlan.call('test');
     const target = call.task.target;
     const plan = call.plan;
     const dep1 = plan.callOf(await target.task('dep1'));
@@ -94,7 +94,7 @@ describe('CommandZTask', () => {
         },
     );
 
-    const call = await testPlan.plan('test');
+    const call = await testPlan.call('test');
     const target = call.task.target;
     const plan = call.plan;
     const dep1 = plan.callOf(await target.task('dep1'));
@@ -139,7 +139,7 @@ describe('CommandZTask', () => {
           },
       );
 
-      const call = await testPlan.plan('test');
+      const call = await testPlan.call('test');
 
       await call.exec().whenDone();
 

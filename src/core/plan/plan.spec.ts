@@ -11,7 +11,7 @@ describe('ZPlan', () => {
 
   beforeEach(async () => {
     testPlan = new TestPlan('root', { packageJson: { scripts: { test: 'test', other: 'other' } } });
-    call = await testPlan.plan('test');
+    call = await testPlan.call('test');
     plan = call.plan;
   });
 
@@ -44,7 +44,7 @@ describe('ZPlan', () => {
         },
     );
 
-    const call = await testPlan.plan('test');
+    const call = await testPlan.call('test');
     const target = call.task.target;
 
     plan = call.plan;
@@ -71,7 +71,7 @@ describe('ZPlan', () => {
         },
     );
 
-    const call = await testPlan.plan(
+    const call = await testPlan.call(
         'test',
         {
           async plan(planner) {
@@ -105,7 +105,7 @@ describe('ZPlan', () => {
         },
     );
 
-    const call = await testPlan.plan(
+    const call = await testPlan.call(
         'test',
         {
           async plan(planner) {
@@ -143,7 +143,7 @@ describe('ZPlan', () => {
         },
     );
 
-    const call = await testPlan.plan('test');
+    const call = await testPlan.call('test');
     const target = call.task.target;
 
     plan = call.plan;
@@ -177,7 +177,7 @@ describe('ZPlan', () => {
         },
     );
 
-    const call = await testPlan.plan('test');
+    const call = await testPlan.call('test');
     const target = call.task.target;
 
     plan = call.plan;
