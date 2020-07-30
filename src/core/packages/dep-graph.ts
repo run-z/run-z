@@ -10,14 +10,14 @@ import type { ZPackage } from './package';
 export interface ZDepGraph {
 
   /**
-   * Iterates over package dependencies in deepest-first order.
+   * Iterates over package dependencies in dependencies-first order.
    *
    * @returns An iterable of dependency packages.
    */
   dependencies(): Iterable<ZPackage>;
 
   /**
-   * Iterates over package dependants in deepest-last order.
+   * Iterates over package dependants in dependencies-last order.
    *
    * @returns An iterable of dependent packages.
    */

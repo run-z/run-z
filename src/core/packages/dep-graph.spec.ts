@@ -99,6 +99,54 @@ describe('ZDepGraph', () => {
     ]);
   });
 
+  it('prefers dev dependencies over peer ones', async () => {
+
+    const packageA = await addPackage('packageA', { name: 'packageA' });
+    const packageB1 = await addPackage(
+        'packageB1',
+        {
+          name: 'packageB1',
+          devDependencies: {
+            packageA: '*',
+          },
+        },
+    );
+    const packageB2 = await addPackage(
+        'packageB2',
+        {
+          name: 'packageB2',
+          devDependencies: {
+            packageA: '*',
+          },
+        },
+    );
+    const packageC = await addPackage(
+        'packageC',
+        {
+          name: 'packageC',
+          peerDependencies: {
+            packageB1: '*',
+          },
+          devDependencies: {
+            packageB2: '*',
+          },
+        },
+    );
+
+    expect(dependantsOf(packageA)).toEqual([
+      'packageB1',
+      'packageB2',
+      'packageC',
+    ]);
+    expect(dependenciesOf(packageB1)).toEqual(['packageA']);
+    expect(dependenciesOf(packageB2)).toEqual(['packageA']);
+    expect(dependenciesOf(packageC)).toEqual([
+      'packageA',
+      'packageB2',
+      'packageB1',
+    ]);
+  });
+
   function addPackage(path: string, packageJson: ZPackageJson): Promise<ZPackage> {
 
     const pkg = root.put(path, { packageJson });
