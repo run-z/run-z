@@ -46,6 +46,8 @@ describe('ZPackageResolver', () => {
 
     it('is resolved', () => {
       expect(pkg.name).toBe('anonymous');
+      expect(pkg.isAnonymous).toBe(true);
+      expect(resolver.byName(pkg.name)).toBeUndefined();
     });
 
     describe('parent', () => {
@@ -95,7 +97,9 @@ describe('ZPackageResolver', () => {
 
     it('is resolved', () => {
       expect(nested.name).toBe('named-nested');
+      expect(resolver.byName(nested.name)).toBe(nested);
       expect(deeplyNested.name).toBe('named-nested/deeply-nested');
+      expect(resolver.byName(deeplyNested.name)).toBe(deeplyNested);
     });
 
     describe('parent', () => {
@@ -155,8 +159,11 @@ describe('ZPackageResolver', () => {
 
     it('is resolved', () => {
       expect(pkg.name).toBe('@scope-name/package-name');
+      expect(resolver.byName(pkg.name)).toBe(pkg);
       expect(nested.name).toBe('@scope-name/package-name/nested');
+      expect(resolver.byName(nested.name)).toBe(nested);
       expect(deeplyNested.name).toBe('@scope-name/package-name/nested/deeper');
+      expect(resolver.byName(deeplyNested.name)).toBe(deeplyNested);
     });
 
     describe('parent', () => {

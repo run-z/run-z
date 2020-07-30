@@ -1,3 +1,4 @@
+export * from './dep-graph';
 export * from './package.json';
 export * from './package';
 export * from './package-location';
