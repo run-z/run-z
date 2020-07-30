@@ -24,7 +24,7 @@ export class ZPackageResolver {
   constructor(readonly setup: ZSetup) {
 
     const byName = new Map<string, ZPackage$>();
-    let depGraphInitRev = 0;
+    let depGraphRev = 0;
 
     this._impl = {
       setup,
@@ -34,10 +34,10 @@ export class ZPackageResolver {
       },
       byName: name => byName.get(name),
       buildDepGraph() {
-        if (this.rev !== depGraphInitRev) {
-          depGraphInitRev = this.rev;
+        if (this.rev !== depGraphRev) {
+          depGraphRev = this.rev;
           for (const pkg of byName.values()) {
-            pkg.depGraph().directDependencies();// Initialize dependency graph
+            pkg.depGraph()._init();
           }
         }
       },

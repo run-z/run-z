@@ -31,7 +31,7 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
   private _hostPackage?: ZPackage;
   private _subPackageName: string | null | undefined = null;
 
-  readonly _dependants = new Map<string, ZDepGraph$.Node>();
+  readonly _dependants: ZPackage$[] = [];
   private _depGraph: [number, ZDepGraph$];
 
   private readonly _tasks = new Map<string, Promise<ZTask>>();
@@ -175,8 +175,8 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
     return this.name;
   }
 
-  _addDependant(node: ZDepGraph$.Node): void {
-    this._dependants.set(node[0].name, node);
+  _addDependant(dependant: ZPackage$): void {
+    this._dependants.push(dependant);
   }
 
 }
