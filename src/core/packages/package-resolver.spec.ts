@@ -46,7 +46,8 @@ describe('ZPackageResolver', () => {
 
     it('is resolved', () => {
       expect(pkg.name).toBe('anonymous');
-      expect(resolver.byName(pkg.name)).toBe(pkg);
+      expect(pkg.isAnonymous).toBe(true);
+      expect(resolver.byName(pkg.name)).toBeUndefined();
     });
 
     describe('parent', () => {

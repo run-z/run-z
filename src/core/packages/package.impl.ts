@@ -25,6 +25,7 @@ export interface ZPackageResolver$ {
  */
 export class ZPackage$ extends ZPackageSet implements ZPackage {
 
+  readonly isAnonymous: boolean;
   readonly name: string;
   private _scopeName: string | null | undefined = null;
   private _unscopedName?: string;
@@ -48,13 +49,16 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
 
     if (packageName) {
       this.name = packageName;
+      this.isAnonymous = false;
     } else if (parent) {
 
       const dirName = location.path.substr(parent.location.path.length);
 
       this.name = `${parent.name}${dirName}`;
+      this.isAnonymous = parent.isAnonymous;
     } else {
       this.name = location.baseName;
+      this.isAnonymous = true;
     }
 
     this._depGraph = [_resolver.rev, new ZDepGraph$(this)];

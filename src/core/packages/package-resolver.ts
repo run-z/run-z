@@ -30,7 +30,9 @@ export class ZPackageResolver {
       setup,
       rev: 0,
       addPackage(pkg: ZPackage$): void {
-        byName.set(pkg.name, pkg);
+        if (!pkg.isAnonymous) {
+          byName.set(pkg.name, pkg);
+        }
       },
       byName: name => byName.get(name),
       buildDepGraph() {

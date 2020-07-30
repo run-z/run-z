@@ -35,6 +35,13 @@ export interface ZPackage extends ZPackageSet {
   readonly name: string;
 
   /**
+   * Whether this package is anonymous.
+   *
+   * The package is anonymous when it has no `name` in `package.json`, has no parent or has anonymous one.
+   */
+  readonly isAnonymous: boolean;
+
+  /**
    * `package.json` contents.
    */
   readonly packageJson: ZPackageJson;
