@@ -3,6 +3,7 @@ import { isPresent } from '@proc7ts/primitives';
 import type { ZSetup } from '../setup';
 import type { ZTask } from '../tasks';
 import { ZTaskSpec } from '../tasks';
+import { ZDepGraph$ } from './dep-graph.impl';
 import type { ZPackage } from './package';
 import type { ZPackageLocation } from './package-location';
 import { ZPackageSet } from './package-set';
@@ -11,30 +12,32 @@ import type { ZPackageJson } from './package.json';
 /**
  * @internal
  */
+export interface ZPackageResolver$ {
+  readonly setup: ZSetup;
+  rev: number;
+  addPackage(pkg: ZPackage$): void;
+  byName(name: string): ZPackage$ | undefined;
+  buildDepGraph(): void;
+}
+
+/**
+ * @internal
+ */
 export class ZPackage$ extends ZPackageSet implements ZPackage {
 
-  /**
-   * Full package name.
-   */
   readonly name: string;
-
   private _scopeName: string | null | undefined = null;
   private _unscopedName?: string;
   private _hostPackage?: ZPackage;
   private _subPackageName: string | null | undefined = null;
 
+  readonly _dependants = new Map<string, ZDepGraph$.Node>();
+  private _depGraph: [number, ZDepGraph$];
+
   private readonly _tasks = new Map<string, Promise<ZTask>>();
 
-  /**
-   * Constructs a package.
-   *
-   * @param setup  Task execution setup.
-   * @param location  Package location.
-   * @param packageJson  `package.json` contents.
-   * @param parent  Parent NPM package.
-   */
   constructor(
-      readonly setup: ZSetup,
+      readonly _resolver: ZPackageResolver$,
       readonly location: ZPackageLocation,
       readonly packageJson: ZPackageJson,
       readonly parent?: ZPackage,
@@ -53,11 +56,14 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
     } else {
       this.name = location.baseName;
     }
+
+    this._depGraph = [_resolver.rev, new ZDepGraph$(this)];
   }
 
-  /**
-   * Package scope name including leading `@` for scoped packages, or `undefined` for unscoped ones.
-   */
+  get setup(): ZSetup {
+    return this._resolver.setup;
+  }
+
   get scopeName(): string | undefined {
     if (this._scopeName !== null) {
       return this._scopeName;
@@ -77,9 +83,6 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
     return this._scopeName = undefined;
   }
 
-  /**
-   * Unscoped package name for scoped packages, or full package names for unscoped ones.
-   */
   get unscopedName(): string {
     if (this._unscopedName != null) {
       return this._unscopedName;
@@ -92,9 +95,6 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
         : name.substr(scopeName.length + 1);
   }
 
-  /**
-   * Host package for sub-packages, or this package for top-level ones.
-   */
   get hostPackage(): ZPackage {
     if (this._hostPackage) {
       return this._hostPackage;
@@ -104,9 +104,6 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
         : this.parent!.hostPackage;
   }
 
-  /**
-   * Sub-package name for nested packages, or `undefined` for top-level ones.
-   */
   get subPackageName(): string | undefined {
     if (this._subPackageName !== null) {
       return this._subPackageName;
@@ -120,36 +117,30 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
         : unscopedName.substr(slashIdx + 1);
   }
 
-  /**
-   * An iterable consisting of this package.
-   */
   packages(): Iterable<this> {
     return [this];
   }
 
-  /**
-   * Selects packages matching the given selector relatively to this one.
-   *
-   * The selector uses `/` symbols as path separator.
-   *
-   * It may include `//` to include all immediately nested packages, or `///` to include all deeply nested packages.
-   *
-   * @param selector  Package selector.
-   *
-   * @returns Selected package set.
-   */
+  depGraph(): ZDepGraph$ {
+
+    const [rev, deps] = this._depGraph;
+    const newRev = this._resolver.rev;
+
+    if (rev === newRev) {
+      return deps;
+    }
+
+    const newDeps = new ZDepGraph$(this);
+
+    this._depGraph = [newRev, newDeps];
+
+    return newDeps;
+  }
+
   select(selector: string): ZPackageSet {
     return new SelectedZPackages(this, selector);
   }
 
-  /**
-   * Returns a task by its name.
-   *
-   * @param name  Task name.
-   *
-   * @returns A promise resolved to task instance. May have {@link ZTaskSpec.Unknown unknown action} if the task is not
-   * present in `scripts` section of {@link packageJson `package.json`}.
-   */
   task(name: string): Promise<ZTask> {
 
     const existing = this._tasks.get(name);
@@ -182,6 +173,10 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
 
   toString(): string {
     return this.name;
+  }
+
+  _addDependant(node: ZDepGraph$.Node): void {
+    this._dependants.set(node[0].name, node);
   }
 
 }

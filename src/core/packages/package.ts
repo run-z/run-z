@@ -4,6 +4,7 @@
  */
 import type { ZSetup } from '../setup';
 import type { ZTask } from '../tasks';
+import type { ZDepGraph } from './dep-graph';
 import type { ZPackageLocation } from './package-location';
 import type { ZPackageSet } from './package-set';
 import type { ZPackageJson } from './package.json';
@@ -62,6 +63,13 @@ export interface ZPackage extends ZPackageSet {
    * An iterable consisting of this package.
    */
   packages(): Iterable<this>;
+
+  /**
+   * Builds a dependency graph of this package.
+   *
+   * @returns Package dependency graph.
+   */
+  depGraph(): ZDepGraph;
 
   /**
    * Selects packages matching the given selector relatively to this one.
