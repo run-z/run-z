@@ -5,7 +5,7 @@ import type { AbstractZTask } from './abstract.task';
 import { CommandZTask } from './command.task';
 import { GroupZTask } from './group.task';
 import { ScriptZTask } from './script.task';
-import { recordZTaskAttr } from './task-spec-parser';
+import { addZTaskAttr, addZTaskAttrs } from './task-spec-parser';
 import { UnknownZTask } from './unknown.task';
 
 /**
@@ -31,16 +31,12 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
   }
 
   addAttr(name: string, value: string): this {
-    recordZTaskAttr(this._attrs, name, value);
+    addZTaskAttr(this._attrs, name, value);
     return this;
   }
 
   addAttrs(attrs: ZTaskSpec.Attrs): this {
-    Object.entries(attrs).forEach(
-        ([name, values]) => values?.forEach(
-            value => this.addAttr(name, value),
-        ),
-    );
+    addZTaskAttrs(this._attrs, attrs);
     return this;
   }
 

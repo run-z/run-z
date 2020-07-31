@@ -5,7 +5,7 @@
 import { noop } from '@proc7ts/primitives';
 import { SupportedZOptions, ZOptionInput } from '@run-z/optionz';
 import { parse } from 'shell-quote';
-import { recordZTaskAttr, zTaskSpecParser } from './impl/task-spec-parser';
+import { zTaskSpecParser } from './impl/task-spec-parser';
 import type { ZTaskBuilder } from './task-builder';
 import type { ZTaskOption } from './task-option';
 import { ZTaskSpec } from './task-spec';
@@ -49,23 +49,22 @@ export class ZTaskParser {
    * Parses attribute and adds it to attributes collection.
    *
    * @param value  A string value potentially containing attribute.
-   * @param attrs  Attributes collection to add attribute to, or a function that accepts attribute name and value
-   * as parameters and returns `false` when attribute ignored.
+   * @param onAttr  A function that accepts attribute name and value as parameters and returns `false` when attribute
+   * ignored.
    *
    * @returns `true` if attribute is added to target attributes collection, or `false` if the given string `value` does
    * not contain attribute specifier or it is ignored.
    */
   parseAttr(
       value: string,
-      attrs: Record<string, string[]> | ((this: void, name: string, value: string) => boolean | void) = noop,
+      onAttr: (this: void, name: string, value: string) => boolean | void = noop,
   ): readonly [string, string] | undefined {
     if (ZOptionInput.isOptionValue(value)) {
 
-      const addAttr = typeof attrs === 'function' ? attrs : recordZTaskAttr.bind(undefined, attrs);
       const eqIdx = value.indexOf('=');
 
       if (eqIdx >= 0) {
-        return addZTaskAttr(addAttr, value, eqIdx);
+        return extractZTaskAttr(value, eqIdx, onAttr);
       }
     }
 
@@ -165,10 +164,10 @@ export namespace ZTaskParser {
 /**
  * @internal
  */
-function addZTaskAttr(
-    addAttr: (this: void, name: string, value: string) => boolean | void,
+function extractZTaskAttr(
     arg: string,
     eqIdx: number,
+    onAttr: (this: void, name: string, value: string) => boolean | void,
 ): readonly [string, string] | undefined {
 
   let name: string;
@@ -182,5 +181,5 @@ function addZTaskAttr(
     value = 'on';
   }
 
-  return addAttr(name, value) !== false ? [name, value] : undefined;
+  return onAttr(name, value) !== false ? [name, value] : undefined;
 }

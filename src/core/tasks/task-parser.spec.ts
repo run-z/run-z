@@ -455,15 +455,38 @@ describe('ZTaskParser', () => {
               [name]: value ? [value] : undefined,
             });
           },
+          '--pre'(option) {
+
+            const [name, value] = option.values(2);
+
+            option.addPreTask('prerequisite');
+            option.addPreAttrs({
+              [name]: value ? [value] : undefined,
+            });
+          },
         },
       });
 
       setup = new ZSetup({ taskParser });
 
-      const spec = await parseSpec('run-z --custom attr1 val1 --custom attr2');
+      const spec = await parseSpec('run-z --custom attr1 val1 --custom attr2 --pre attr2 val2');
 
-      expect(spec.attrs).toEqual({
-        attr1: ['val1'],
+      expect(spec).toEqual({
+        pre: [{
+          task: 'prerequisite',
+          parallel: false,
+          attrs: {
+            attr2: ['val2'],
+          },
+          args: [],
+        }],
+        attrs: {
+          attr1: ['val1'],
+        },
+        args: [],
+        action: {
+          type: 'group',
+        },
       });
     });
     it('always allows empty arguments', async () => {

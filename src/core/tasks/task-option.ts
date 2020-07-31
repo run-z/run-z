@@ -38,18 +38,41 @@ export interface ZTaskOption extends ZOption {
   /**
    * Initiates a call to prerequisite task.
    *
-   * The prerequisite will be added as soon as task specification modified by any method but {@link addPreArgs()}.
+   * The prerequisite will be added as soon as task specification modified by any method but [addPreArgs], [addPreAttr],
+   * [addPreAttrs], or [addToPre].
    *
    * @param name  Prerequisite task name to append.
    */
   addPreTask(name: string): void
 
   /**
-   * Appends argument(s) to prerequisite task call initiated by the most recent call to {@link addPreTask}.
+   * Appends argument(s) to prerequisite task call initiated by the most recent call to [addPreTask].
    *
-   * @param args  Prerequisite arguments to add. May contain attributes.
+   * @param args  Prerequisite arguments to add.
    */
   addPreArg(...args: string[]): void;
+
+  /**
+   * Appends attribute to prerequisite task call initiated by the most recent call to [addPreTask].
+   *
+   * @param name  Target attribute name.
+   * @param value  Attribute value to append.
+   */
+  addPreAttr(name: string, value: string): void;
+
+  /**
+   * Appends attributes to prerequisite task call initiated by the most recent call to [addPreTask].
+   *
+   * @param attrs  Attributes to append.
+   */
+  addPreAttrs(attrs: ZTaskSpec.Attrs): void;
+
+  /**
+   * Appends argument or attribute to prerequisite task call initiated by the most recent call to [addPreTask].
+   *
+   * @param value  Argument or specifier of attribute to append.
+   */
+  addToPre(value: string): void;
 
   /**
    * Makes a prerequisite added by the most recent call to {@link addPreTask} run in parallel with the next one.
@@ -57,7 +80,7 @@ export interface ZTaskOption extends ZOption {
   parallelPre(): void;
 
   /**
-   * Appends a task attribute.
+   * Appends task attribute.
    *
    * @param name  Target attribute name.
    * @param value  Attribute value to append.
