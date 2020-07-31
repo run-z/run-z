@@ -64,6 +64,45 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
     return this;
   }
 
+  async applyArgv(
+      taskName: string | undefined,
+      argv: readonly string[],
+      fromIndex = 2,
+  ): Promise<this> {
+    if (!taskName) {
+      // Task name is unknown
+      return this.applyOptions(argv, fromIndex);
+    }
+
+    const script = this.target.packageJson.scripts?.[taskName];
+
+    if (!script) {
+      // No such script
+      return this.applyOptions(argv, fromIndex);
+    }
+
+    const args = this.target.setup.taskParser.parseCommandLine(script);
+
+    // Consider the first script argument is either `run-z` or something acceptable
+    if (!args || args.length - 1 > argv.length - fromIndex) {
+      return this.applyOptions(argv, fromIndex);
+    }
+
+    // Ensure the script is a prefix of the process command line
+    for (let i = 1; i < args.length; ++i) {
+      if (args[i] !== argv[i - 1 + fromIndex]) {
+        // Script is not a prefix of process command line
+        return this.applyOptions(argv, fromIndex);
+      }
+    }
+
+    // Apply script options first
+    await this.applyOptions(args, 1);
+
+    // Then apply explicit options
+    return this.applyOptions(argv, args.length - 1 + fromIndex);
+  }
+
   spec(): ZTaskSpec<TAction> {
     return {
       pre: this._pre,

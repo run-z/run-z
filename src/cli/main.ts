@@ -8,7 +8,8 @@ async function runZ(): Promise<void> {
   const setup = new ZSetup();
   const currentDir = ZPackageDirectory.open();
   const target = await setup.packageResolver.get(currentDir);
-  const builder = await setup.taskFactory.newTask(target, 'run-z').applyOptions(process.argv, 2);
+  const builder = await setup.taskFactory.newTask(target, 'run-z')
+      .applyArgv(process.env.npm_lifecycle_event, process.argv);
   const task = builder.task();
   const call = await task.call();
 

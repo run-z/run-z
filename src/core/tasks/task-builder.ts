@@ -104,6 +104,30 @@ export interface ZTaskBuilder<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
   applyOptions(args: readonly string[], fromIndex?: number): Promise<this>;
 
   /**
+   * Recognizes options from process command line argument and {@link applyOptions applies} them to the task.
+   *
+   * This is a method to be executed from CLI.
+   *
+   * When the task name specified (typically by `npm_lifecycle_event` environment variable), finds the corresponding
+   * script in `package.json`, and detects the options specified explicitly. I.e. the ones following the script ones.
+   * Then {@link applyOptions applies} explicit options after script options. This makes it possible to specify global
+   * options even though the script contains `--then` or `--and` option.
+   *
+   * If the above fails, just {@link applyOptions applies command line options} as they are.
+   *
+   * @param taskName  Known task name.
+   * @param argv  Command line arguments of the process.
+   * @param fromIndex  An index of command line argument to start processing from. `2` by default.
+   *
+   * @returns A promise resolved to `this` instance when command line options applied.
+   */
+  applyArgv(
+      taskName: string | undefined,
+      argv: readonly string[],
+      fromIndex?: number,
+  ): Promise<this>;
+
+  /**
    * Builds a task specifier with the data added to the builder.
    *
    * @returns New task specifier.

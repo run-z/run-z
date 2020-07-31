@@ -73,6 +73,38 @@ export class ZTaskParser {
   }
 
   /**
+   * Tries to parse a command line such as NPM package script.
+   *
+   * The command line can not be parsed properly when it contains a special shell sequence such as glob pattern,
+   * environment variable substitution, or comment.
+   *
+   * @param commandLine  A command line to parse.
+   *
+   * @returns Either parsed command line arguments, or `undefined` if target script can not be parsed.
+   */
+  parseCommandLine(commandLine: string): readonly string[] | undefined {
+
+    let withEnv = false;
+    const detectEnv = (): undefined => {
+      withEnv = true;
+      return;
+    };
+    const entries = parse(commandLine, detectEnv);
+
+    if (entries[0] !== 'run-z') {
+      return; // Not a run-z script.
+    }
+    if (withEnv) {
+      return; // Environment variable substitution supported in NPM scripts only.
+    }
+    if (entries.every(entry => typeof entry === 'string')) {
+      return entries as string[];
+    }
+
+    return; // Special shell command present.
+  }
+
+  /**
    * Parses a command line and applies recognized options to the task.
    *
    * @param builder  Target task builder to apply recognized task options with.
@@ -82,7 +114,7 @@ export class ZTaskParser {
    */
   async parse(builder: ZTaskBuilder, commandLine: string): Promise<ZTaskBuilder> {
 
-    const args = parseZTaskEntries(commandLine);
+    const args = this.parseCommandLine(commandLine);
 
     if (!args) {
       return builder.setAction(ZTaskSpec.scriptAction);
@@ -128,31 +160,6 @@ export namespace ZTaskParser {
 
   }
 
-}
-
-/**
- * @internal
- */
-function parseZTaskEntries(commandLine: string): string[] | undefined {
-
-  let withEnv = false;
-  const detectEnv = (): undefined => {
-    withEnv = true;
-    return;
-  };
-  const entries = parse(commandLine, detectEnv);
-
-  if (entries[0] !== 'run-z') {
-    return; // Not a run-z script.
-  }
-  if (withEnv) {
-    return; // Environment variable substitution supported in NPM scripts only.
-  }
-  if (entries.every(entry => typeof entry === 'string')) {
-    return entries as string[];
-  }
-
-  return; // Special shell command present.
 }
 
 /**
