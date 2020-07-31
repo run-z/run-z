@@ -71,7 +71,6 @@
 								<li class="tsd-kind-class"><a href="classes/InvalidZTaskError.html" class="tsd-kind-icon">InvalidZTask<wbr>Error</a></li>
 								<li class="tsd-kind-class"><a href="classes/UnknownZPackageError.html" class="tsd-kind-icon">UnknownZPackage<wbr>Error</a></li>
 								<li class="tsd-kind-class"><a href="classes/UnknownZTaskError.html" class="tsd-kind-icon">UnknownZTask<wbr>Error</a></li>
-								<li class="tsd-kind-class"><a href="classes/ZPackage.html" class="tsd-kind-icon">ZPackage</a></li>
 								<li class="tsd-kind-class"><a href="classes/ZPackageDirectory.html" class="tsd-kind-icon">ZPackage<wbr>Directory</a></li>
 								<li class="tsd-kind-class"><a href="classes/ZPackageLocation.html" class="tsd-kind-icon">ZPackage<wbr>Location</a></li>
 								<li class="tsd-kind-class"><a href="classes/ZPackageResolver.html" class="tsd-kind-icon">ZPackage<wbr>Resolver</a></li>
@@ -88,12 +87,15 @@
 							<h3>Interfaces</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-interface tsd-has-type-parameter"><a href="interfaces/ZCall.html" class="tsd-kind-icon">ZCall</a></li>
-								<li class="tsd-kind-interface tsd-has-type-parameter"><a href="interfaces/ZCallInstruction.html" class="tsd-kind-icon">ZCall<wbr>Instruction</a></li>
+								<li class="tsd-kind-interface tsd-has-type-parameter"><a href="interfaces/ZCallDetails.html" class="tsd-kind-icon">ZCall<wbr>Details</a></li>
 								<li class="tsd-kind-interface tsd-has-type-parameter"><a href="interfaces/ZCallPlanner.html" class="tsd-kind-icon">ZCall<wbr>Planner</a></li>
 								<li class="tsd-kind-interface"><a href="interfaces/ZConfig.html" class="tsd-kind-icon">ZConfig</a></li>
+								<li class="tsd-kind-interface"><a href="interfaces/ZDepGraph.html" class="tsd-kind-icon">ZDep<wbr>Graph</a></li>
 								<li class="tsd-kind-interface tsd-has-type-parameter"><a href="interfaces/ZJob.html" class="tsd-kind-icon">ZJob</a></li>
+								<li class="tsd-kind-interface"><a href="interfaces/ZPackage.html" class="tsd-kind-icon">ZPackage</a></li>
 								<li class="tsd-kind-interface"><a href="interfaces/ZPackageJson.html" class="tsd-kind-icon">ZPackage<wbr>Json</a></li>
 								<li class="tsd-kind-interface"><a href="interfaces/ZPlan.html" class="tsd-kind-icon">ZPlan</a></li>
+								<li class="tsd-kind-interface"><a href="interfaces/ZPrePlanner.html" class="tsd-kind-icon">ZPre<wbr>Planner</a></li>
 								<li class="tsd-kind-interface"><a href="interfaces/ZShell.html" class="tsd-kind-icon">ZShell</a></li>
 								<li class="tsd-kind-interface tsd-has-type-parameter"><a href="interfaces/ZTask.html" class="tsd-kind-icon">ZTask</a></li>
 								<li class="tsd-kind-interface tsd-has-type-parameter"><a href="interfaces/ZTaskBuilder.html" class="tsd-kind-icon">ZTask<wbr>Builder</a></li>
@@ -126,7 +128,7 @@
 					<div class="tsd-signature tsd-kind-icon">ZTask<wbr>Option<wbr>Reader<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ZOptionReader</span><span class="tsd-signature-symbol">&lt;</span><a href="interfaces/ZTaskOption.html" class="tsd-signature-type">ZTaskOption</a><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-option.ts#L97">run-z/run-z/src/core/tasks/task-option.ts:97</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-option.ts#L120">run-z/run-z/src/core/tasks/task-option.ts:120</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -144,7 +146,7 @@
 					<div class="tsd-signature tsd-kind-icon">ZShell<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/packages/shell.ts#L52">run-z/run-z/src/core/packages/shell.ts:52</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/packages/shell.ts#L52">run-z/run-z/src/core/packages/shell.ts:52</a></li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-object-literal">
@@ -157,7 +159,7 @@
 							<li class="tsd-description">
 								<aside class="tsd-sources">
 									<ul>
-										<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/packages/shell.ts#L57">run-z/run-z/src/core/packages/shell.ts:57</a></li>
+										<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/packages/shell.ts#L57">run-z/run-z/src/core/packages/shell.ts:57</a></li>
 									</ul>
 								</aside>
 								<div class="tsd-comment tsd-typography">
@@ -176,9 +178,9 @@
 					<div class="tsd-signature tsd-kind-icon">ZTask<wbr>Spec&lt;TAction&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L11">run-z/run-z/src/core/tasks/task-spec.ts:11</a></li>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L37">run-z/run-z/src/core/tasks/task-spec.ts:37</a></li>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L194">run-z/run-z/src/core/tasks/task-spec.ts:194</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L11">run-z/run-z/src/core/tasks/task-spec.ts:11</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L37">run-z/run-z/src/core/tasks/task-spec.ts:37</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L194">run-z/run-z/src/core/tasks/task-spec.ts:194</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -199,7 +201,7 @@
 						<div class="tsd-signature tsd-kind-icon">Attrs<span class="tsd-signature-symbol">:</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L95">run-z/run-z/src/core/tasks/task-spec.ts:95</a></li>
+								<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L95">run-z/run-z/src/core/tasks/task-spec.ts:95</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -213,7 +215,7 @@
 							<div class="tsd-signature tsd-kind-icon">if-<wbr>present<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]</span></div>
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L100">run-z/run-z/src/core/tasks/task-spec.ts:100</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L100">run-z/run-z/src/core/tasks/task-spec.ts:100</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -229,7 +231,7 @@
 						<div class="tsd-signature tsd-kind-icon">Command<span class="tsd-signature-symbol">:</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L117">run-z/run-z/src/core/tasks/task-spec.ts:117</a></li>
+								<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L117">run-z/run-z/src/core/tasks/task-spec.ts:117</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -243,7 +245,7 @@
 							<div class="tsd-signature tsd-kind-icon">args<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L134">run-z/run-z/src/core/tasks/task-spec.ts:134</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L134">run-z/run-z/src/core/tasks/task-spec.ts:134</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -258,7 +260,7 @@
 							<div class="tsd-signature tsd-kind-icon">command<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L124">run-z/run-z/src/core/tasks/task-spec.ts:124</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L124">run-z/run-z/src/core/tasks/task-spec.ts:124</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -273,7 +275,7 @@
 							<div class="tsd-signature tsd-kind-icon">parallel<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L129">run-z/run-z/src/core/tasks/task-spec.ts:129</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L129">run-z/run-z/src/core/tasks/task-spec.ts:129</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -288,7 +290,7 @@
 							<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"command"</span></div>
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L119">run-z/run-z/src/core/tasks/task-spec.ts:119</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L119">run-z/run-z/src/core/tasks/task-spec.ts:119</a></li>
 								</ul>
 							</aside>
 						</section>
@@ -299,7 +301,7 @@
 						<div class="tsd-signature tsd-kind-icon">Group<span class="tsd-signature-symbol">:</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L152">run-z/run-z/src/core/tasks/task-spec.ts:152</a></li>
+								<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L152">run-z/run-z/src/core/tasks/task-spec.ts:152</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -313,7 +315,7 @@
 							<div class="tsd-signature tsd-kind-icon">command<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span></div>
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L156">run-z/run-z/src/core/tasks/task-spec.ts:156</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L156">run-z/run-z/src/core/tasks/task-spec.ts:156</a></li>
 								</ul>
 							</aside>
 						</section>
@@ -323,7 +325,7 @@
 							<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"group"</span></div>
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L154">run-z/run-z/src/core/tasks/task-spec.ts:154</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L154">run-z/run-z/src/core/tasks/task-spec.ts:154</a></li>
 								</ul>
 							</aside>
 						</section>
@@ -334,7 +336,7 @@
 						<div class="tsd-signature tsd-kind-icon">Package<wbr>Ref<span class="tsd-signature-symbol">:</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L52">run-z/run-z/src/core/tasks/task-spec.ts:52</a></li>
+								<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L52">run-z/run-z/src/core/tasks/task-spec.ts:52</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -350,7 +352,7 @@
 							<div class="tsd-signature tsd-kind-icon">selector<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L59">run-z/run-z/src/core/tasks/task-spec.ts:59</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L59">run-z/run-z/src/core/tasks/task-spec.ts:59</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -365,7 +367,7 @@
 							<div class="tsd-signature tsd-kind-icon">task<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span></div>
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L54">run-z/run-z/src/core/tasks/task-spec.ts:54</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L54">run-z/run-z/src/core/tasks/task-spec.ts:54</a></li>
 								</ul>
 							</aside>
 						</section>
@@ -376,7 +378,7 @@
 						<div class="tsd-signature tsd-kind-icon">Script<span class="tsd-signature-symbol">:</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L141">run-z/run-z/src/core/tasks/task-spec.ts:141</a></li>
+								<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L141">run-z/run-z/src/core/tasks/task-spec.ts:141</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -390,7 +392,7 @@
 							<div class="tsd-signature tsd-kind-icon">command<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L145">run-z/run-z/src/core/tasks/task-spec.ts:145</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L145">run-z/run-z/src/core/tasks/task-spec.ts:145</a></li>
 								</ul>
 							</aside>
 						</section>
@@ -400,7 +402,7 @@
 							<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"script"</span></div>
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L143">run-z/run-z/src/core/tasks/task-spec.ts:143</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L143">run-z/run-z/src/core/tasks/task-spec.ts:143</a></li>
 								</ul>
 							</aside>
 						</section>
@@ -411,7 +413,7 @@
 						<div class="tsd-signature tsd-kind-icon">Task<wbr>Ref<span class="tsd-signature-symbol">:</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L66">run-z/run-z/src/core/tasks/task-spec.ts:66</a></li>
+								<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L66">run-z/run-z/src/core/tasks/task-spec.ts:66</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -425,7 +427,7 @@
 							<div class="tsd-signature tsd-kind-icon">args<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L88">run-z/run-z/src/core/tasks/task-spec.ts:88</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L88">run-z/run-z/src/core/tasks/task-spec.ts:88</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -440,7 +442,7 @@
 							<div class="tsd-signature tsd-kind-icon">attrs<span class="tsd-signature-symbol">:</span> <a href="globals.html#ZTaskSpec.Attrs" class="tsd-signature-type">Attrs</a></div>
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L83">run-z/run-z/src/core/tasks/task-spec.ts:83</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L83">run-z/run-z/src/core/tasks/task-spec.ts:83</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -455,7 +457,7 @@
 							<div class="tsd-signature tsd-kind-icon">parallel<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L78">run-z/run-z/src/core/tasks/task-spec.ts:78</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L78">run-z/run-z/src/core/tasks/task-spec.ts:78</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -470,7 +472,7 @@
 							<div class="tsd-signature tsd-kind-icon">selector<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span></div>
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L73">run-z/run-z/src/core/tasks/task-spec.ts:73</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L73">run-z/run-z/src/core/tasks/task-spec.ts:73</a></li>
 								</ul>
 							</aside>
 						</section>
@@ -480,7 +482,7 @@
 							<div class="tsd-signature tsd-kind-icon">task<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L71">run-z/run-z/src/core/tasks/task-spec.ts:71</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L71">run-z/run-z/src/core/tasks/task-spec.ts:71</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -496,7 +498,7 @@
 						<div class="tsd-signature tsd-kind-icon">Unknown<span class="tsd-signature-symbol">:</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L163">run-z/run-z/src/core/tasks/task-spec.ts:163</a></li>
+								<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L163">run-z/run-z/src/core/tasks/task-spec.ts:163</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -510,7 +512,7 @@
 							<div class="tsd-signature tsd-kind-icon">command<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span></div>
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L167">run-z/run-z/src/core/tasks/task-spec.ts:167</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L167">run-z/run-z/src/core/tasks/task-spec.ts:167</a></li>
 								</ul>
 							</aside>
 						</section>
@@ -520,7 +522,7 @@
 							<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"unknown"</span></div>
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L165">run-z/run-z/src/core/tasks/task-spec.ts:165</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L165">run-z/run-z/src/core/tasks/task-spec.ts:165</a></li>
 								</ul>
 							</aside>
 						</section>
@@ -531,7 +533,7 @@
 						<div class="tsd-signature tsd-kind-icon">Action<span class="tsd-signature-symbol">:</span> <a href="globals.html#ZTaskSpec.Command" class="tsd-signature-type">Command</a><span class="tsd-signature-symbol"> | </span><a href="globals.html#ZTaskSpec.Script" class="tsd-signature-type">Script</a><span class="tsd-signature-symbol"> | </span><a href="globals.html#ZTaskSpec.Group" class="tsd-signature-type">Group</a><span class="tsd-signature-symbol"> | </span><a href="globals.html#ZTaskSpec.Unknown" class="tsd-signature-type">Unknown</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L112">run-z/run-z/src/core/tasks/task-spec.ts:112</a></li>
+								<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L112">run-z/run-z/src/core/tasks/task-spec.ts:112</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -546,7 +548,7 @@
 						<div class="tsd-signature tsd-kind-icon">Pre<span class="tsd-signature-symbol">:</span> <a href="globals.html#ZTaskSpec.PackageRef" class="tsd-signature-type">PackageRef</a><span class="tsd-signature-symbol"> | </span><a href="globals.html#ZTaskSpec.TaskRef" class="tsd-signature-type">TaskRef</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L44">run-z/run-z/src/core/tasks/task-spec.ts:44</a></li>
+								<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L44">run-z/run-z/src/core/tasks/task-spec.ts:44</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -562,7 +564,7 @@
 						<div class="tsd-signature tsd-kind-icon">action<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">TAction</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L33">run-z/run-z/src/core/tasks/task-spec.ts:33</a></li>
+								<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L33">run-z/run-z/src/core/tasks/task-spec.ts:33</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -577,7 +579,7 @@
 						<div class="tsd-signature tsd-kind-icon">args<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L28">run-z/run-z/src/core/tasks/task-spec.ts:28</a></li>
+								<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L28">run-z/run-z/src/core/tasks/task-spec.ts:28</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -592,7 +594,7 @@
 						<div class="tsd-signature tsd-kind-icon">attrs<span class="tsd-signature-symbol">:</span> <a href="globals.html#ZTaskSpec.Attrs" class="tsd-signature-type">Attrs</a></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L23">run-z/run-z/src/core/tasks/task-spec.ts:23</a></li>
+								<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L23">run-z/run-z/src/core/tasks/task-spec.ts:23</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -607,7 +609,7 @@
 						<div class="tsd-signature tsd-kind-icon">pre<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">keyof </span><a href="globals.html#ZTaskSpec.Pre" class="tsd-signature-type">Pre</a><span class="tsd-signature-symbol">[]</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L18">run-z/run-z/src/core/tasks/task-spec.ts:18</a></li>
+								<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L18">run-z/run-z/src/core/tasks/task-spec.ts:18</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -627,7 +629,7 @@
 							<li class="tsd-description">
 								<aside class="tsd-sources">
 									<ul>
-										<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L199">run-z/run-z/src/core/tasks/task-spec.ts:199</a></li>
+										<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L199">run-z/run-z/src/core/tasks/task-spec.ts:199</a></li>
 									</ul>
 								</aside>
 								<div class="tsd-comment tsd-typography">
@@ -649,7 +651,7 @@
 							<li class="tsd-description">
 								<aside class="tsd-sources">
 									<ul>
-										<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L213">run-z/run-z/src/core/tasks/task-spec.ts:213</a></li>
+										<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L213">run-z/run-z/src/core/tasks/task-spec.ts:213</a></li>
 									</ul>
 								</aside>
 								<div class="tsd-comment tsd-typography">
@@ -671,7 +673,7 @@
 							<li class="tsd-description">
 								<aside class="tsd-sources">
 									<ul>
-										<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-spec.ts#L206">run-z/run-z/src/core/tasks/task-spec.ts:206</a></li>
+										<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-spec.ts#L206">run-z/run-z/src/core/tasks/task-spec.ts:206</a></li>
 									</ul>
 								</aside>
 								<div class="tsd-comment tsd-typography">
@@ -704,9 +706,6 @@
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="classes/UnknownZTaskError.html" class="tsd-kind-icon">UnknownZTask<wbr>Error</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/ZPackage.html" class="tsd-kind-icon">ZPackage</a>
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="classes/ZPackageDirectory.html" class="tsd-kind-icon">ZPackage<wbr>Directory</a>
@@ -742,7 +741,7 @@
 						<a href="interfaces/ZCall.html" class="tsd-kind-icon">ZCall</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-has-type-parameter">
-						<a href="interfaces/ZCallInstruction.html" class="tsd-kind-icon">ZCall<wbr>Instruction</a>
+						<a href="interfaces/ZCallDetails.html" class="tsd-kind-icon">ZCall<wbr>Details</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-has-type-parameter">
 						<a href="interfaces/ZCallPlanner.html" class="tsd-kind-icon">ZCall<wbr>Planner</a>
@@ -750,14 +749,23 @@
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/ZConfig.html" class="tsd-kind-icon">ZConfig</a>
 					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ZDepGraph.html" class="tsd-kind-icon">ZDep<wbr>Graph</a>
+					</li>
 					<li class=" tsd-kind-interface tsd-has-type-parameter">
 						<a href="interfaces/ZJob.html" class="tsd-kind-icon">ZJob</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ZPackage.html" class="tsd-kind-icon">ZPackage</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/ZPackageJson.html" class="tsd-kind-icon">ZPackage<wbr>Json</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/ZPlan.html" class="tsd-kind-icon">ZPlan</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ZPrePlanner.html" class="tsd-kind-icon">ZPre<wbr>Planner</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/ZShell.html" class="tsd-kind-icon">ZShell</a>

@@ -98,7 +98,7 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="ZPlanner.html#plan" class="tsd-kind-icon">plan</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="ZPlanner.html#call" class="tsd-kind-icon">call</a></li>
 							</ul>
 						</section>
 					</div>
@@ -116,7 +116,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/plan/planner.ts#L14">run-z/run-z/src/core/plan/planner.ts:14</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/plan/planner.ts#L14">run-z/run-z/src/core/plan/planner.ts:14</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -148,7 +148,7 @@
 					<div class="tsd-signature tsd-kind-icon">setup<span class="tsd-signature-symbol">:</span> <a href="ZSetup.html" class="tsd-signature-type">ZSetup</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/plan/planner.ts#L21">run-z/run-z/src/core/plan/planner.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/plan/planner.ts#L21">run-z/run-z/src/core/plan/planner.ts:21</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -161,21 +161,21 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
-					<a name="plan" class="tsd-anchor"></a>
-					<h3>plan</h3>
+					<a name="call" class="tsd-anchor"></a>
+					<h3>call</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">plan&lt;TAction&gt;<span class="tsd-signature-symbol">(</span>instruction<span class="tsd-signature-symbol">: </span><a href="../interfaces/ZCallInstruction.html" class="tsd-signature-type">ZCallInstruction</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAction</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ZCall.html" class="tsd-signature-type">ZCall</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAction</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">call&lt;TAction&gt;<span class="tsd-signature-symbol">(</span>task<span class="tsd-signature-symbol">: </span><a href="../interfaces/ZTask.html" class="tsd-signature-type">ZTask</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAction</span><span class="tsd-signature-symbol">&gt;</span>, details<span class="tsd-signature-symbol">?: </span><a href="../interfaces/ZCallDetails.html" class="tsd-signature-type">ZCallDetails</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAction</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ZCall.html" class="tsd-signature-type">ZCall</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAction</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/plan/planner.ts#L34">run-z/run-z/src/core/plan/planner.ts:34</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/plan/planner.ts#L35">run-z/run-z/src/core/plan/planner.ts:35</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Plans a task execution.</p>
+									<p>Plans a top-level task execution.</p>
 								</div>
 								<p>The plan would execute the task after executing all of its prerequisites.</p>
 							</div>
@@ -191,14 +191,20 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>instruction: <a href="../interfaces/ZCallInstruction.html" class="tsd-signature-type">ZCallInstruction</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAction</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5>task: <a href="../interfaces/ZTask.html" class="tsd-signature-type">ZTask</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAction</span><span class="tsd-signature-symbol">&gt;</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>Top-level task call instruction.</p>
+										<p>Top-level task to call.</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> details: <a href="../interfaces/ZCallDetails.html" class="tsd-signature-type">ZCallDetails</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAction</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Task call details.</p>
 									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ZCall.html" class="tsd-signature-type">ZCall</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAction</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>Top-level task execution call.</p>
+							<p>A promise resolved to top-level task execution call.</p>
 						</li>
 					</ul>
 				</section>
@@ -222,9 +228,6 @@
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="UnknownZTaskError.html" class="tsd-kind-icon">UnknownZTask<wbr>Error</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="ZPackage.html" class="tsd-kind-icon">ZPackage</a>
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="ZPackageDirectory.html" class="tsd-kind-icon">ZPackage<wbr>Directory</a>
@@ -253,7 +256,7 @@
 								<a href="ZPlanner.html#setup" class="tsd-kind-icon">setup</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
-								<a href="ZPlanner.html#plan" class="tsd-kind-icon">plan</a>
+								<a href="ZPlanner.html#call" class="tsd-kind-icon">call</a>
 							</li>
 						</ul>
 					</li>
@@ -275,7 +278,7 @@
 						<a href="../interfaces/ZCall.html" class="tsd-kind-icon">ZCall</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-has-type-parameter">
-						<a href="../interfaces/ZCallInstruction.html" class="tsd-kind-icon">ZCall<wbr>Instruction</a>
+						<a href="../interfaces/ZCallDetails.html" class="tsd-kind-icon">ZCall<wbr>Details</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-has-type-parameter">
 						<a href="../interfaces/ZCallPlanner.html" class="tsd-kind-icon">ZCall<wbr>Planner</a>
@@ -283,14 +286,23 @@
 					<li class=" tsd-kind-interface">
 						<a href="../interfaces/ZConfig.html" class="tsd-kind-icon">ZConfig</a>
 					</li>
+					<li class=" tsd-kind-interface">
+						<a href="../interfaces/ZDepGraph.html" class="tsd-kind-icon">ZDep<wbr>Graph</a>
+					</li>
 					<li class=" tsd-kind-interface tsd-has-type-parameter">
 						<a href="../interfaces/ZJob.html" class="tsd-kind-icon">ZJob</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="../interfaces/ZPackage.html" class="tsd-kind-icon">ZPackage</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="../interfaces/ZPackageJson.html" class="tsd-kind-icon">ZPackage<wbr>Json</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="../interfaces/ZPlan.html" class="tsd-kind-icon">ZPlan</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="../interfaces/ZPrePlanner.html" class="tsd-kind-icon">ZPre<wbr>Planner</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="../interfaces/ZShell.html" class="tsd-kind-icon">ZShell</a>

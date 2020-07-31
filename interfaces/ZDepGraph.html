@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ZCallInstruction | Run Z</title>
+	<title>ZDepGraph | Run Z</title>
 	<meta name="description" content="Documentation for Run Z">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,10 +54,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="ZCallInstruction.html">ZCallInstruction</a>
+					<a href="ZDepGraph.html">ZDepGraph</a>
 				</li>
 			</ul>
-			<h1>Interface ZCallInstruction&lt;TAction&gt;</h1>
+			<h1>Interface ZDepGraph</h1>
 		</div>
 	</div>
 </header>
@@ -67,29 +67,15 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>An instruction for calling the task.</p>
+						<p>Package dependency graph.</p>
 					</div>
-					<p>Such instructions <a href="ZCallPlanner.html#call">recorded to execution plans</a>.</p>
 				</div>
-			</section>
-			<section class="tsd-panel tsd-type-parameters">
-				<h3>Type parameters</h3>
-				<ul class="tsd-type-parameters">
-					<li>
-						<h4>TAction<span class="tsd-signature-symbol">: </span><a href="../globals.html#ZTaskSpec.Action" class="tsd-signature-type">Action</a></h4>
-						<div class="tsd-comment tsd-typography">
-							<div class="lead">
-								<p>Task action type.</p>
-							</div>
-						</div>
-					</li>
-				</ul>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">ZCallInstruction</span>
+						<span class="target">ZDepGraph</span>
 					</li>
 				</ul>
 			</section>
@@ -98,94 +84,60 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Properties</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ZCallInstruction.html#task" class="tsd-kind-icon">task</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="ZCallInstruction.html#params" class="tsd-kind-icon">params</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="ZCallInstruction.html#plan" class="tsd-kind-icon">plan</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="ZDepGraph.html#dependants" class="tsd-kind-icon">dependants</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="ZDepGraph.html#dependencies" class="tsd-kind-icon">dependencies</a></li>
 							</ul>
 						</section>
-					</div>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="task" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> task</h3>
-					<div class="tsd-signature tsd-kind-icon">task<span class="tsd-signature-symbol">:</span> <a href="ZTask.html" class="tsd-signature-type">ZTask</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAction</span><span class="tsd-signature-symbol">&gt;</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/plan/call-instruction.ts#L21">run-z/run-z/src/core/plan/call-instruction.ts:21</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>The task to call.</p>
-						</div>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="params" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> params</h3>
+					<a name="dependants" class="tsd-anchor"></a>
+					<h3>dependants</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">params<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ZTaskParams.Partial.html" class="tsd-signature-type">Partial</a></li>
+						<li class="tsd-signature tsd-kind-icon">dependants<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterable</span><span class="tsd-signature-symbol">&lt;</span><a href="ZPackage.html" class="tsd-signature-type">ZPackage</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/plan/call-instruction.ts#L26">run-z/run-z/src/core/plan/call-instruction.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/packages/dep-graph.ts#L24">run-z/run-z/src/core/packages/dep-graph.ts:24</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Evaluates parameters of the call.</p>
+									<p>Iterates over package dependants in dependencies-last order.</p>
 								</div>
 							</div>
-							<h4 class="tsd-returns-title">Returns <a href="ZTaskParams.Partial.html" class="tsd-signature-type">Partial</a></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterable</span><span class="tsd-signature-symbol">&lt;</span><a href="ZPackage.html" class="tsd-signature-type">ZPackage</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>An iterable of dependent packages.</p>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="plan" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> plan</h3>
+					<a name="dependencies" class="tsd-anchor"></a>
+					<h3>dependencies</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">plan<span class="tsd-signature-symbol">(</span>planner<span class="tsd-signature-symbol">: </span><a href="ZCallPlanner.html" class="tsd-signature-type">ZCallPlanner</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAction</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">PromiseLike</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">dependencies<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterable</span><span class="tsd-signature-symbol">&lt;</span><a href="ZPackage.html" class="tsd-signature-type">ZPackage</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/plan/call-instruction.ts#L38">run-z/run-z/src/core/plan/call-instruction.ts:38</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/packages/dep-graph.ts#L17">run-z/run-z/src/core/packages/dep-graph.ts:17</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Plans the call execution.</p>
+									<p>Iterates over package dependencies in dependencies-first order.</p>
 								</div>
-								<p>Records further task execution instructions.</p>
 							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>planner: <a href="ZCallPlanner.html" class="tsd-signature-type">ZCallPlanner</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAction</span><span class="tsd-signature-symbol">&gt;</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Task execution planner to record instructions to.</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">PromiseLike</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>Either nothing when instructions recorded synchronously, or a promise-like instance resolved when
-							instructions recorded asynchronously.</p>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterable</span><span class="tsd-signature-symbol">&lt;</span><a href="ZPackage.html" class="tsd-signature-type">ZPackage</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>An iterable of dependency packages.</p>
 						</li>
 					</ul>
 				</section>
@@ -209,9 +161,6 @@
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="../classes/UnknownZTaskError.html" class="tsd-kind-icon">UnknownZTask<wbr>Error</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="../classes/ZPackage.html" class="tsd-kind-icon">ZPackage</a>
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="../classes/ZPackageDirectory.html" class="tsd-kind-icon">ZPackage<wbr>Directory</a>
@@ -246,38 +195,44 @@
 					<li class=" tsd-kind-interface tsd-has-type-parameter">
 						<a href="ZCall.html" class="tsd-kind-icon">ZCall</a>
 					</li>
-				</ul>
-				<ul class="current">
-					<li class="current tsd-kind-interface tsd-has-type-parameter">
-						<a href="ZCallInstruction.html" class="tsd-kind-icon">ZCall<wbr>Instruction</a>
-						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="ZCallInstruction.html#task" class="tsd-kind-icon">task</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="ZCallInstruction.html#params" class="tsd-kind-icon">params</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="ZCallInstruction.html#plan" class="tsd-kind-icon">plan</a>
-							</li>
-						</ul>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="ZCallDetails.html" class="tsd-kind-icon">ZCall<wbr>Details</a>
 					</li>
-				</ul>
-				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-has-type-parameter">
 						<a href="ZCallPlanner.html" class="tsd-kind-icon">ZCall<wbr>Planner</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="ZConfig.html" class="tsd-kind-icon">ZConfig</a>
 					</li>
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-interface">
+						<a href="ZDepGraph.html" class="tsd-kind-icon">ZDep<wbr>Graph</a>
+						<ul>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="ZDepGraph.html#dependants" class="tsd-kind-icon">dependants</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="ZDepGraph.html#dependencies" class="tsd-kind-icon">dependencies</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-has-type-parameter">
 						<a href="ZJob.html" class="tsd-kind-icon">ZJob</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="ZPackage.html" class="tsd-kind-icon">ZPackage</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="ZPackageJson.html" class="tsd-kind-icon">ZPackage<wbr>Json</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="ZPlan.html" class="tsd-kind-icon">ZPlan</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="ZPrePlanner.html" class="tsd-kind-icon">ZPre<wbr>Planner</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="ZShell.html" class="tsd-kind-icon">ZShell</a>

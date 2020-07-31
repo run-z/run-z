@@ -108,6 +108,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ZTaskParser.html#isPackageSelector" class="tsd-kind-icon">is<wbr>Package<wbr>Selector</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ZTaskParser.html#parse" class="tsd-kind-icon">parse</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ZTaskParser.html#parseAttr" class="tsd-kind-icon">parse<wbr>Attr</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ZTaskParser.html#parseCommandLine" class="tsd-kind-icon">parse<wbr>Command<wbr>Line</a></li>
 							</ul>
 						</section>
 					</div>
@@ -121,7 +122,7 @@
 					<div class="tsd-signature tsd-kind-icon">Supported<wbr>Options<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">SupportedZOptions</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ZTaskOption.html" class="tsd-signature-type">ZTaskOption</a><span class="tsd-signature-symbol">, </span><a href="../interfaces/ZTaskBuilder.html" class="tsd-signature-type">ZTaskBuilder</a><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-parser.ts#L117">run-z/run-z/src/core/tasks/task-parser.ts:117</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-parser.ts#L148">run-z/run-z/src/core/tasks/task-parser.ts:148</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -143,7 +144,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-parser.ts#L26">run-z/run-z/src/core/tasks/task-parser.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-parser.ts#L26">run-z/run-z/src/core/tasks/task-parser.ts:26</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -179,7 +180,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-parser.ts#L103">run-z/run-z/src/core/tasks/task-parser.ts:103</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-parser.ts#L134">run-z/run-z/src/core/tasks/task-parser.ts:134</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -223,7 +224,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-parser.ts#L44">run-z/run-z/src/core/tasks/task-parser.ts:44</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-parser.ts#L44">run-z/run-z/src/core/tasks/task-parser.ts:44</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -255,7 +256,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-parser.ts#L83">run-z/run-z/src/core/tasks/task-parser.ts:83</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-parser.ts#L114">run-z/run-z/src/core/tasks/task-parser.ts:114</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -287,13 +288,13 @@
 					<a name="parseAttr" class="tsd-anchor"></a>
 					<h3>parse<wbr>Attr</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">parse<wbr>Attr<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, attrs<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
+						<li class="tsd-signature tsd-kind-icon">parse<wbr>Attr<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, onAttr<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/3df090d/src/core/tasks/task-parser.ts#L58">run-z/run-z/src/core/tasks/task-parser.ts:58</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-parser.ts#L58">run-z/run-z/src/core/tasks/task-parser.ts:58</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -310,16 +311,74 @@
 									</div>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> attrs: <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> = noop</span></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> onAttr: <span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> = noop</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>Attributes collection to add attribute to, or a function that accepts attribute name and value
-										as parameters and returns <code>false</code> when attribute ignored.</p>
+										<p>A function that accepts attribute name and value as parameters and returns <code>false</code> when attribute
+										ignored.</p>
 									</div>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>this: <span class="tsd-signature-type">void</span></h5>
+														</li>
+														<li>
+															<h5>name: <span class="tsd-signature-type">string</span></h5>
+														</li>
+														<li>
+															<h5>value: <span class="tsd-signature-type">string</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h4>
 							<p><code>true</code> if attribute is added to target attributes collection, or <code>false</code> if the given string <code>value</code> does
 							not contain attribute specifier or it is ignored.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="parseCommandLine" class="tsd-anchor"></a>
+					<h3>parse<wbr>Command<wbr>Line</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">parse<wbr>Command<wbr>Line<span class="tsd-signature-symbol">(</span>commandLine<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2812dfc/src/core/tasks/task-parser.ts#L84">run-z/run-z/src/core/tasks/task-parser.ts:84</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Tries to parse a command line such as NPM package script.</p>
+								</div>
+								<p>The command line can not be parsed properly when it contains a special shell sequence such as glob pattern,
+								environment variable substitution, or comment.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>commandLine: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>A command line to parse.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h4>
+							<p>Either parsed command line arguments, or <code>undefined</code> if target script can not be parsed.</p>
 						</li>
 					</ul>
 				</section>
@@ -343,9 +402,6 @@
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="UnknownZTaskError.html" class="tsd-kind-icon">UnknownZTask<wbr>Error</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="ZPackage.html" class="tsd-kind-icon">ZPackage</a>
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="ZPackageDirectory.html" class="tsd-kind-icon">ZPackage<wbr>Directory</a>
@@ -400,6 +456,9 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="ZTaskParser.html#parseAttr" class="tsd-kind-icon">parse<wbr>Attr</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="ZTaskParser.html#parseCommandLine" class="tsd-kind-icon">parse<wbr>Command<wbr>Line</a>
+							</li>
 						</ul>
 					</li>
 				</ul>
@@ -408,7 +467,7 @@
 						<a href="../interfaces/ZCall.html" class="tsd-kind-icon">ZCall</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-has-type-parameter">
-						<a href="../interfaces/ZCallInstruction.html" class="tsd-kind-icon">ZCall<wbr>Instruction</a>
+						<a href="../interfaces/ZCallDetails.html" class="tsd-kind-icon">ZCall<wbr>Details</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-has-type-parameter">
 						<a href="../interfaces/ZCallPlanner.html" class="tsd-kind-icon">ZCall<wbr>Planner</a>
@@ -416,14 +475,23 @@
 					<li class=" tsd-kind-interface">
 						<a href="../interfaces/ZConfig.html" class="tsd-kind-icon">ZConfig</a>
 					</li>
+					<li class=" tsd-kind-interface">
+						<a href="../interfaces/ZDepGraph.html" class="tsd-kind-icon">ZDep<wbr>Graph</a>
+					</li>
 					<li class=" tsd-kind-interface tsd-has-type-parameter">
 						<a href="../interfaces/ZJob.html" class="tsd-kind-icon">ZJob</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="../interfaces/ZPackage.html" class="tsd-kind-icon">ZPackage</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="../interfaces/ZPackageJson.html" class="tsd-kind-icon">ZPackage<wbr>Json</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="../interfaces/ZPlan.html" class="tsd-kind-icon">ZPlan</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="../interfaces/ZPrePlanner.html" class="tsd-kind-icon">ZPre<wbr>Planner</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="../interfaces/ZShell.html" class="tsd-kind-icon">ZShell</a>
