@@ -75,7 +75,7 @@ export interface ZTaskOption extends ZOption {
    *
    * The task action defaults to {@link Group grouping task} unless reassigned by this call.
    *
-   * @param action  Action to assign to the task.
+   * @param action  The action to assign to the task.
    *
    * @returns `this` instance.
    */
@@ -91,14 +91,14 @@ export namespace ZTaskOption {
   export type Reader = ZOptionReader<ZTaskOption>;
 
   /**
-   * A representation of current prerequisite task call specifier.
+   * Current prerequisite task call specifier to fill from {@link ZTaskOption command line}.
    *
-   * The call specifier is started by {@link ZTaskOption.PreTask.start} and concluded either
-   * {@link conclude explicitly}, or by any task modification. Once concluded it is {@link ZTaskOption.addPre added}
-   * to the task.
+   * The call specification is started by {@link ZTaskOption.PreTask.start} method, and concluded either
+   * {@link conclude explicitly} or by any task specifier modification. Once concluded it is {@link ZTaskOption.addPre
+   * added to the task specifier}.
    *
-   * It is an error to call the methods of this object before the prerequisite task call specification {@link start
-   * started} or after it is {@link conclude concluded}.
+   * It is an error to modify this specifier before the specification {@link start started} or after it is
+   * {@link conclude concluded}.
    *
    * Available via {@link ZTaskOption.preTask} property.
    */
@@ -118,7 +118,7 @@ export namespace ZTaskOption {
     readonly taskName?: string;
 
     /**
-     * Starts a specification of prerequisite task call.
+     * Starts specification of prerequisite task call.
      *
      * {@link conclude Concludes} previously started specification.
      *
@@ -172,7 +172,7 @@ export namespace ZTaskOption {
     /**
      * Makes a prerequisite task call run in parallel with the next one.
      *
-     * Concludes current prerequisite task call.
+     * {@link conclude Concludes} current prerequisite task call.
      */
     parallelToNext(): void;
 
