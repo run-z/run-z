@@ -2,8 +2,8 @@ import { mapIt } from '@proc7ts/a-iterable';
 import type { ZPackage, ZPackageSet } from '../../packages';
 import type { ZCall, ZCallDetails, ZCallPlanner, ZPrePlanner, ZTaskExecution, ZTaskParams } from '../../plan';
 import type { ZTask, ZTaskQualifier } from '../task';
+import type { ZTaskBuilder$ } from '../task-builder.impl';
 import type { ZTaskSpec } from '../task-spec';
-import type { ZTaskBuilder$ } from './task-builder';
 
 /**
  * @internal

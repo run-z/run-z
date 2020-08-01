@@ -5,7 +5,7 @@
 import { noop } from '@proc7ts/primitives';
 import { SupportedZOptions, ZOptionInput } from '@run-z/optionz';
 import { parse } from 'shell-quote';
-import { zTaskSpecParser } from './impl/task-spec-parser';
+import { zTaskSpecParser } from './impl/parser';
 import type { ZTaskBuilder } from './task-builder';
 import type { ZTaskOption } from './task-option';
 import { ZTaskSpec } from './task-spec';

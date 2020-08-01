@@ -1,8 +1,8 @@
 import type { ZTaskExecution } from '../../plan';
+import type { ZTaskBuilder$ } from '../task-builder.impl';
 import { ZTaskSpec } from '../task-spec';
 import { UnknownZTaskError } from '../unknown-task-error';
 import { AbstractZTask } from './abstract.task';
-import type { ZTaskBuilder$ } from './task-builder';
 
 /**
  * @internal

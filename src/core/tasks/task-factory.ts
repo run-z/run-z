@@ -3,8 +3,8 @@
  * @module run-z
  */
 import type { ZPackage } from '../packages';
-import { ZTaskBuilder$ } from './impl/task-builder';
 import type { ZTaskBuilder } from './task-builder';
+import { ZTaskBuilder$ } from './task-builder.impl';
 
 /**
  * Task factory.

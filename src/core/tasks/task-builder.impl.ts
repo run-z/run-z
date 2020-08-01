@@ -1,12 +1,9 @@
-import type { ZPackage } from '../../packages';
-import type { ZTaskBuilder } from '../task-builder';
-import type { ZTaskSpec } from '../task-spec';
-import type { AbstractZTask } from './abstract.task';
-import { CommandZTask } from './command.task';
-import { GroupZTask } from './group.task';
-import { ScriptZTask } from './script.task';
-import { addZTaskAttr, addZTaskAttrs } from './task-spec-parser';
-import { UnknownZTask } from './unknown.task';
+import type { ZPackage } from '../packages';
+import type { AbstractZTask } from './impl';
+import { CommandZTask, GroupZTask, ScriptZTask, UnknownZTask } from './impl';
+import type { ZTaskBuilder } from './task-builder';
+import type { ZTaskSpec } from './task-spec';
+import { addZTaskAttr, addZTaskAttrs } from './task-spec.impl';
 
 /**
  * @internal
@@ -126,3 +123,4 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
   }
 
 }
+
