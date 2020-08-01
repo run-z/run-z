@@ -1,7 +1,7 @@
 import { spawn } from 'child_process';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
-import type { ZShell } from '../core/packages';
+import type { ZShell } from '../core/jobs';
 import type { ZTaskParams } from '../core/plan';
 import type { ZPackageDirectory } from './package-directory';
 

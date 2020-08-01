@@ -1,5 +1,5 @@
 import { TestPlan } from '../../../spec';
-import type { ZShell } from '../../packages';
+import type { ZShell } from '../../jobs';
 import { ZTaskParams } from '../../plan';
 import { ScriptZTask } from './script.task';
 

@@ -1,5 +1,5 @@
 import { prerequisitesOf, taskIds, TestPlan } from '../../../spec';
-import type { ZShell } from '../../packages';
+import type { ZShell } from '../../jobs';
 import { ZTaskParams } from '../../plan';
 import { CommandZTask } from './command.task';
 
