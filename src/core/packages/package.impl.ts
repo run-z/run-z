@@ -145,6 +145,18 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
     return new SelectedZPackages(this, selector);
   }
 
+  selectTargets(targets: readonly ZTaskSpec.Target[]): ZPackageSet {
+    return targets.reduce<ZPackageSet | null>(
+        (prev, { selector }) => {
+
+          const selected = this.select(selector);
+
+          return prev ? prev.andPackages(selected) : selected;
+        },
+        null,
+    ) || this;
+  }
+
   task(name: string): Promise<ZTask> {
 
     const existing = this._tasks.get(name);

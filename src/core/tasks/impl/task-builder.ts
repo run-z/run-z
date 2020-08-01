@@ -1,6 +1,6 @@
 import type { ZPackage } from '../../packages';
 import type { ZTaskBuilder } from '../task-builder';
-import { ZTaskSpec } from '../task-spec';
+import type { ZTaskSpec } from '../task-spec';
 import type { AbstractZTask } from './abstract.task';
 import { CommandZTask } from './command.task';
 import { GroupZTask } from './group.task';
@@ -104,7 +104,7 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
       pre: this._pre,
       attrs: this._attrs,
       args: this._args,
-      action: this._action || ZTaskSpec.groupAction,
+      action: this._action || { type: 'group', targets: [] },
     } as ZTaskSpec<any>;
   }
 

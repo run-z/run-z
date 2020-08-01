@@ -37,40 +37,42 @@ export interface ZTaskSpec<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
 export namespace ZTaskSpec {
 
   /**
-   * Prerequisite of the task.
+   * A reference to target package to apply a task to.
    *
-   * Either task or package reference.
-   */
-  export type Pre = PackageRef | TaskRef;
-
-  /**
-   * A reference to package of prerequisite tasks.
+   * I.e. a reference to package of prerequisite tasks.
    *
    * When present among {@link ZTaskSpec.pre task prerequisites} the subsequent tasks are searched in selected
    * packages.
    */
-  export interface PackageRef {
-
-    readonly task?: undefined;
+  export interface Target {
 
     /**
-     * Relative {@link ZTaskParser.isPackageSelector path to package}.
+     * Relative {@link ZTaskParser.isPackageSelector package selector}.
      */
     readonly selector: string;
 
   }
 
   /**
-   * Prerequisite task reference.
+   * Task prerequisite.
+   *
+   * I.e. another task to call before the task.
    */
-  export interface TaskRef {
+  export interface Pre {
 
     /**
-     * Task name.
+     * Prerequisite targets.
+     *
+     * Prerequisite task is searched and applies to each of these targets.
+     *
+     * When empty the prerequisite is applied to the target of dependent task.
+     */
+    readonly targets: readonly Target[];
+
+    /**
+     * Prerequisite task name.
      */
     readonly task: string;
-
-    readonly selector?: undefined;
 
     /**
      * Whether the referenced task can be executed in parallel with preceding one.
@@ -142,7 +144,7 @@ export namespace ZTaskSpec {
 
     readonly type: 'script';
 
-    readonly command?: string;
+    readonly command?: undefined;
 
   }
 
@@ -154,6 +156,13 @@ export namespace ZTaskSpec {
     readonly type: 'group';
 
     readonly command?: undefined;
+
+    /**
+     * Default sub-task targets.
+     *
+     * When empty sub-tasks are searched and applied to the target of dependent task.
+     */
+    readonly targets: readonly Target[];
 
   }
 
@@ -173,13 +182,6 @@ export namespace ZTaskSpec {
 /**
  * @internal
  */
-const groupZTaskAction: ZTaskSpec.Group = {
-  type: 'group',
-};
-
-/**
- * @internal
- */
 const unknownZTaskAction: ZTaskSpec.Unknown = {
   type: 'unknown',
 };
@@ -192,13 +194,6 @@ const scriptZTaskAction: ZTaskSpec.Script = {
 };
 
 export const ZTaskSpec = {
-
-  /**
-   * Grouping task action specifier.
-   */
-  get groupAction(): ZTaskSpec.Group {
-    return groupZTaskAction;
-  },
 
   /**
    * Unknown task action specifier.

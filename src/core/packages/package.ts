@@ -3,7 +3,7 @@
  * @module run-z
  */
 import type { ZSetup } from '../setup';
-import type { ZTask } from '../tasks';
+import type { ZTask, ZTaskSpec } from '../tasks';
 import type { ZDepGraph } from './dep-graph';
 import type { ZPackageLocation } from './package-location';
 import type { ZPackageSet } from './package-set';
@@ -90,6 +90,15 @@ export interface ZPackage extends ZPackageSet {
    * @returns Selected package set.
    */
   select(selector: string): ZPackageSet;
+
+  /**
+   * Selects packages corresponding to the given target specifiers.
+   *
+   * @param targets  Array of target package specifiers.
+   *
+   * @returns Either a package set containing target packages, or this package is targets array is empty.
+   */
+  selectTargets(targets: readonly ZTaskSpec.Target[]): ZPackageSet;
 
   /**
    * Returns a task by its name.

@@ -24,12 +24,12 @@ export interface ZTaskOption extends ZOption {
   readonly taskName: string;
 
   /**
-   * Prerequisite task call specification instance.
+   * Prerequisite specification instance.
    *
-   * This instance is always available, but it is illegal to call its modification methods unless the task call
-   * specification {@link ZTaskOption.PreTask.start started}.
+   * This instance is always available, but it is illegal to call its modification methods unless prerequisite
+   * specification {@link ZTaskOption.Pre.start started}.
    */
-  readonly preTask: ZTaskOption.PreTask;
+  readonly pre: ZTaskOption.Pre;
 
   /**
    * Appends a task prerequisite.
@@ -91,23 +91,23 @@ export namespace ZTaskOption {
   export type Reader = ZOptionReader<ZTaskOption>;
 
   /**
-   * Current prerequisite task call specifier to fill from {@link ZTaskOption command line}.
+   * Current prerequisite specifier to fill from {@link ZTaskOption command line}.
    *
-   * The call specification is started by {@link ZTaskOption.PreTask.start} method, and concluded either
+   * Prerequisite specification is started by {@link ZTaskOption.Pre.start} method, and concluded either
    * {@link conclude explicitly} or by any task specifier modification. Once concluded it is {@link ZTaskOption.addPre
    * added to the task specifier}.
    *
    * It is an error to modify this specifier before the specification {@link start started} or after it is
    * {@link conclude concluded}.
    *
-   * Available via {@link ZTaskOption.preTask} property.
+   * Available via {@link ZTaskOption.pre} property.
    */
-  export interface PreTask {
+  export interface Pre {
 
     /**
-     * Whether the task call specification {@link start started} and not {@link conclude concluded} yet.
+     * Whether the prerequisite specification {@link start started} and not {@link conclude concluded} yet.
      *
-     * It is illegal to modify the task call specifier when this property value is `false`.
+     * It is illegal to modify the prerequisite specifier when this property value is `false`.
      */
     readonly isStarted: boolean;
 
@@ -118,20 +118,20 @@ export namespace ZTaskOption {
     readonly taskName?: string;
 
     /**
-     * Starts specification of prerequisite task call.
+     * Starts the next prerequisite specification.
      *
-     * {@link conclude Concludes} previously started specification.
+     * {@link conclude Concludes} previously started one.
      *
-     * The prerequisite will be added as soon as this task specification is {@link conclude concluded}.
+     * The prerequisite will be added as soon as its specification {@link conclude concluded}.
      *
-     * @param taskName  The name of prerequisite task to call.
+     * @param taskName  The name of prerequisite task.
      *
      * @returns `this` instance.
      */
     start(taskName: string): this;
 
     /**
-     * Appends attribute to prerequisite task call.
+     * Appends prerequisite attribute.
      *
      * @param name  Target attribute name.
      * @param value  Attribute value to append.
@@ -141,7 +141,7 @@ export namespace ZTaskOption {
     addAttr(name: string, value: string): this;
 
     /**
-     * Appends attributes to prerequisite task call.
+     * Appends prerequisite attributes.
      *
      * @param attrs  Attributes to append.
      *
@@ -150,7 +150,7 @@ export namespace ZTaskOption {
     addAttrs(attrs: ZTaskSpec.Attrs): this;
 
     /**
-     * Appends argument(s) to prerequisite task call.
+     * Appends raw prerequisite argument(s).
      *
      * @param args  Prerequisite arguments to add.
      *
@@ -159,29 +159,39 @@ export namespace ZTaskOption {
     addArg(...args: string[]): this;
 
     /**
-     * Appends arbitrary option to prerequisite task call.
+     * Appends arbitrary prerequisite option.
      *
-     * This can be either an {@link addAttr attribute} specifier, or an {@link addArg argument}.
-     *
-     * @param option  The option to append.
+     * @param option  The option to append. This can be either an {@link addAttr attribute} specifier, or an
+     * {@link addArg argument}.
      *
      * @returns `this` instance.
      */
     addOption(option: string): this;
 
     /**
-     * Makes a prerequisite task call run in parallel with the next one.
+     * Makes a prerequisite to run in parallel with the next one.
      *
-     * {@link conclude Concludes} current prerequisite task call.
+     * {@link conclude Concludes} current prerequisite.
      */
     parallelToNext(): void;
 
     /**
-     * Concludes current prerequisite task call specification.
+     * Sets the target(s) for the next prerequisite(s).
      *
-     * Does nothing if specification is not {@link start started}.
+     * {@link conclude Concludes} current prerequisite.
+     *
+     * @param targets  Task target specifier(s) to add.
      */
-    conclude(): void;
+    nextTarget(...targets: ZTaskSpec.Target[]): void;
+
+    /**
+     * Concludes current prerequisite specification.
+     *
+     * Does nothing if specification is not {@link isStarted started}.
+     *
+     * @returns Concluded prerequisite specifier, or `undefined` if prerequisite specification is not started.
+     */
+    conclude(): ZTaskSpec.Pre | undefined;
 
   }
 

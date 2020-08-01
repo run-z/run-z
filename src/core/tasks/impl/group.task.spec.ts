@@ -275,7 +275,7 @@ describe('GroupZTask', () => {
         {
           packageJson: {
             scripts: {
-              dep: 'run-z attr3=1',
+              dep: 'run-z . attr3=1',
               'sub-task': 'exec1',
             },
           },

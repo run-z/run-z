@@ -9,7 +9,7 @@ import { InvalidZTaskError } from '../invalid-task-error';
 import type { ZTaskBuilder } from '../task-builder';
 import type { ZTaskOption } from '../task-option';
 import type { ZTaskParser } from '../task-parser';
-import { ZTaskSpec } from '../task-spec';
+import type { ZTaskSpec } from '../task-spec';
 
 /**
  * @internal
@@ -43,24 +43,24 @@ export function zTaskSpecParser(
           _draft.moveTo(this);
         }
 
-        get preTask(): ZTaskOption.PreTask {
-          return this._draft.preTask;
+        get pre(): ZTaskOption.Pre {
+          return this._draft.pre;
         }
 
         addPre(pre: ZTaskSpec.Pre): this {
-          this.preTask.conclude();
+          this.pre.conclude();
           this._draft.builder.addPre(pre);
           return this;
         }
 
         addAttr(name: string, value: string): this {
-          this.preTask.conclude();
+          this.pre.conclude();
           this._draft.builder.addAttr(name, value);
           return this;
         }
 
         addAttrs(attrs: ZTaskSpec.Attrs): this {
-          this.preTask.conclude();
+          this.pre.conclude();
           this._draft.builder.addAttrs(attrs);
           return this;
         }
@@ -72,13 +72,13 @@ export function zTaskSpecParser(
           if (!this._draft.builder.action) {
             this._draft.parseError(`Unrecognized option: "${args[0]}"`);
           }
-          this.preTask.conclude();
+          this.pre.conclude();
           this._draft.builder.addArg(...args);
           return this;
         }
 
         setAction(action: ZTaskSpec.Action): this {
-          this.preTask.conclude();
+          this.pre.conclude();
           this._draft.builder.setAction(action);
           return this;
         }
@@ -111,7 +111,7 @@ const defaultZTaskSpecOptions: SupportedZOptions.Map<ZTaskOption> = {
   '-*': readNamedZTaskArg,
 
   './*'(option: ZTaskOption): void {
-    option.addPre({ selector: option.name });
+    option.pre.nextTarget({ selector: option.name });
     option.values(0);
   },
 
@@ -130,17 +130,17 @@ const defaultZTaskSpecOptions: SupportedZOptions.Map<ZTaskOption> = {
     const preOption = name.substr(1);
 
     if (preOption) {
-      option.preTask.addOption(preOption);
+      option.pre.addOption(preOption);
     }
     option.values(0);
   },
 
   '//*'(option: ZTaskOption): void {
-    option.values().slice(0, -1).forEach(preOption => option.preTask.addOption(preOption));
+    option.values().slice(0, -1).forEach(preOption => option.pre.addOption(preOption));
   },
 
   ','(option: ZTaskOption): void {
-    option.preTask.parallelToNext();
+    option.pre.parallelToNext();
     option.values(0);
   },
 
@@ -149,7 +149,7 @@ const defaultZTaskSpecOptions: SupportedZOptions.Map<ZTaskOption> = {
     const { name } = option;
 
     if (name) {
-      option.preTask.start(name);
+      option.pre.start(name);
     }
     option.values(0);
   },
@@ -173,8 +173,8 @@ function zTaskSpecOptions(
  * @internal
  */
 function readNamedZTaskArg(option: ZTaskOption): void {
-  if (option.preTask.isStarted) {
-    option.preTask.addArg(option.name);
+  if (option.pre.isStarted) {
+    option.pre.addArg(option.name);
   } else {
     option.addArg(option.name);
   }
@@ -189,8 +189,8 @@ function readNameValueZTaskArg(option: ZTaskOption): void {
   const [value] = option.values(1);
   const arg = `${option.name}=${value}`;
 
-  if (option.preTask.isStarted) {
-    option.preTask.addArg(arg);
+  if (option.pre.isStarted) {
+    option.pre.addArg(arg);
   } else {
     option.addArg(arg);
   }
@@ -443,13 +443,19 @@ function zTaskShorthandPreArgSyntax(args: readonly [string, ...string[]]): Itera
 export class DraftZTask {
 
   private _option!: ZTaskOption;
-  readonly preTask: ZTaskOption.PreTask;
+  private _nextTargets: ZTaskSpec.Target[];
+  readonly pre: ZTaskOption.Pre;
   preParallel = false;
 
   constructor(readonly builder: ZTaskBuilder) {
 
+    const { action: prevAction } = builder.spec();
+
+    this._nextTargets = prevAction.type === 'group' ? [...prevAction.targets] : [];
+
     const draft = this;
 
+    let preTargets: readonly ZTaskSpec.Target[] = [];
     let parallelPre = false;
     let preTaskName: string | undefined;
     let preOptionAt = -1;
@@ -462,7 +468,7 @@ export class DraftZTask {
       }
     };
 
-    this.preTask = {
+    this.pre = {
       get isStarted() {
         return this.taskName != null;
       },
@@ -471,6 +477,10 @@ export class DraftZTask {
       },
       start(taskName: string) {
         this.conclude();
+        if (draft._nextTargets.length) {
+          preTargets = draft._nextTargets;
+          draft._nextTargets = [];
+        }
         preTaskName = taskName;
         return this;
       },
@@ -504,23 +514,37 @@ export class DraftZTask {
         this.conclude();
         parallelPre = true;
       },
-      conclude() {
-        if (this.taskName) {
-          // Finish the task.
-          builder.addPre({
+      nextTarget(...targets: ZTaskSpec.Target[]) {
+        this.conclude();
+        draft._nextTargets.push(...targets);
+      },
+      conclude(): ZTaskSpec.Pre | undefined {
+        if (this.taskName != null) {
+
+          const pre: ZTaskSpec.Pre = {
+            targets: preTargets,
             task: this.taskName,
             parallel: parallelPre,
             attrs: preAttrs,
             args: preArgs,
-          });
+          };
+
           preTaskName = undefined;
           parallelPre = false;
           preOptionAt = -1;
           preAttrs = {};
           preArgs = [];
-        } else if (preOptionAt >= 0) {
+
+          draft._option.addPre(pre);
+
+          return pre;
+        }
+
+        if (preOptionAt >= 0) {
           draft.parseError('Prerequisite arguments specified, but not the task', preOptionAt);
         }
+
+        return;
       },
     };
   }
@@ -553,9 +577,21 @@ export class DraftZTask {
   }
 
   done(): ZTaskBuilder {
-    this.preTask.conclude();
+
+    const lastSpec = this.pre.conclude();
+
     if (!this.builder.action) {
-      this.builder.setAction(ZTaskSpec.groupAction);
+
+      let targets: readonly ZTaskSpec.Target[] = this._nextTargets;
+
+      if (!targets.length && lastSpec) {
+        targets = lastSpec.targets;
+      }
+
+      this.builder.setAction({
+        type: 'group',
+        targets,
+      });
     }
     return this.builder;
   }

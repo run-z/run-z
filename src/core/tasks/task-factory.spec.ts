@@ -15,7 +15,7 @@ describe('ZTaskFactory', () => {
     const target = await testPlan.target();
     const task = testPlan.setup.taskFactory.newTask(target, 'test').task();
 
-    expect(task.spec.action).toBe(ZTaskSpec.groupAction);
+    expect(task.spec.action).toEqual({ type: 'group', targets: [] });
     expect(task).toBeInstanceOf(GroupZTask);
   });
   it('constructs unknown task for illegal spec', async () => {

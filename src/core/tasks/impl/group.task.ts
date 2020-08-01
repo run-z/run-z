@@ -9,13 +9,13 @@ import { AbstractZTask } from './abstract.task';
  */
 export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
 
-  async callAsPre(planner: ZPrePlanner, ref: ZTaskSpec.TaskRef): Promise<void> {
+  async callAsPre(planner: ZPrePlanner, pre: ZTaskSpec.Pre): Promise<void> {
 
     const { dependent } = planner;
-    const [subTaskName, ...subArgs] = ref.args;
+    const [subTaskName, ...subArgs] = pre.args;
 
     if (!subTaskName || !ZOptionInput.isOptionValue(subTaskName)) {
-      return super.callAsPre(planner, ref);
+      return super.callAsPre(planner, pre);
     }
 
     // There is a sub-task(s) to execute.
@@ -23,7 +23,7 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
     await dependent.call(this, { params: () => dependent.plannedCall.params() });
 
     // Delegate to sub-task(s).
-    const subTaskRef: ZTaskSpec.TaskRef = { ...ref, args: subArgs };
+    const subTaskRef: ZTaskSpec.Pre = { ...pre, args: subArgs };
 
     for (const subTarget of await this._subTaskTargets().packages()) {
 
@@ -41,24 +41,9 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
 
   private _subTaskTargets(): ZPackageSet {
 
-    const { target, spec: { pre } } = this;
-    let result: ZPackageSet | undefined;
+    const { target, spec: { action: { targets } } } = this;
 
-    for (let i = pre.length - 1; i >= 0; --i) {
-
-      const dep = pre[i];
-
-      if (dep.selector) {
-
-        const selected = target.select(dep.selector);
-
-        result = result ? selected.andPackages(result) : selected;
-      } else if (result) {
-        break;
-      }
-    }
-
-    return result || target;
+    return target.selectTargets(targets);
   }
 
 }

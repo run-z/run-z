@@ -24,7 +24,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
     };
   }
 
-  async callAsPre(planner: ZPrePlanner, { attrs, args }: ZTaskSpec.TaskRef): Promise<void> {
+  async callAsPre(planner: ZPrePlanner, { attrs, args }: ZTaskSpec.Pre): Promise<void> {
     await planner.callPre(
         this,
         {
@@ -62,70 +62,62 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
    * instructions recorded asynchronously.
    */
   protected async planCall(planner: ZCallPlanner<TAction>): Promise<void> {
-    await this.planDeps(planner);
+    await this.planPres(planner);
   }
 
-  protected async planDeps(planner: ZCallPlanner<TAction>): Promise<void> {
+  protected async planPres(planner: ZCallPlanner<TAction>): Promise<void> {
 
     const { target, spec } = this;
-    let hasTasks = false;
-    let targets: ZPackageSet | undefined;
     let parallel: ZTaskQualifier[] = [];
     let prevTasks: ZTask[] = [];
 
     for (const pre of spec.pre) {
-      if (pre.selector != null) {
-        targets = selectZTaskPreTargets(target, hasTasks ? undefined : targets, pre);
-        hasTasks = false;
+      if (!pre.parallel) {
+        planner.makeParallel(parallel);
+        parallel = [];
+      }
+
+      const preTargets = target.selectTargets(pre.targets);
+      const preTasks = await resolveZTaskPre(preTargets, pre);
+      const calledTasks: ZTask[] = [];
+      const prePlanner: ZPrePlanner = {
+        dependent: planner,
+        async callPre<TAction extends ZTaskSpec.Action>(
+            task: ZTask<TAction>,
+            details?: ZCallDetails<TAction>,
+        ): Promise<ZCall> {
+
+          const preCall = await planner.call(task, details);
+          const preTask = preCall.task;
+
+          calledTasks.push(preTask);
+          for (const prevTask of prevTasks) {
+            planner.order(prevTask, preTask);
+          }
+
+          return preCall;
+        },
+      };
+
+      for (const preTask of preTasks) {
+        await preTask.callAsPre(prePlanner, pre);
+      }
+
+      if (calledTasks.length === 1) {
+        parallel.push(calledTasks[0]);
       } else {
-        hasTasks = true;
-        if (!pre.parallel) {
-          planner.makeParallel(parallel);
-          parallel = [];
-        }
 
-        const preTarget = targets || target;
-        const preTasks = await resolveZTaskRef(preTarget, pre);
-        const calledTasks: ZTask[] = [];
-        const prePlanner: ZPrePlanner = {
-          dependent: planner,
-          async callPre<TAction extends ZTaskSpec.Action>(
-              task: ZTask<TAction>,
-              details?: ZCallDetails<TAction>,
-          ): Promise<ZCall> {
-
-            const preCall = await planner.call(task, details);
-            const preTask = preCall.task;
-
-            calledTasks.push(preTask);
-            for (const prevTask of prevTasks) {
-              planner.order(prevTask, preTask);
-            }
-
-            return preCall;
-          },
+        const qualifier: ZTaskQualifier = {
+          taskQN: `${String(preTargets)} */${pre.task}`,
         };
 
-        for (const preTask of preTasks) {
-          await preTask.callAsPre(prePlanner, pre);
+        parallel.push(qualifier);
+        for (const calledTask of calledTasks) {
+          planner.qualify(calledTask, qualifier);
         }
-
-        if (calledTasks.length === 1) {
-          parallel.push(calledTasks[0]);
-        } else {
-
-          const qualifier: ZTaskQualifier = {
-            taskQN: `${String(preTarget)} */${pre.task}`,
-          };
-
-          parallel.push(qualifier);
-          for (const calledTask of calledTasks) {
-            planner.qualify(calledTask, qualifier);
-          }
-        }
-
-        prevTasks = calledTasks;
       }
+
+      prevTasks = calledTasks;
     }
 
     for (const prevTask of prevTasks) {
@@ -150,27 +142,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
 /**
  * @internal
  */
-function selectZTaskPreTargets(
-    target: ZPackage,
-    targets: ZPackageSet | undefined,
-    packageRef: ZTaskSpec.PackageRef,
-): ZPackageSet {
-
-  const selected = target.select(packageRef.selector);
-
-  if (!targets) {
-    targets = selected;
-  } else {
-    targets = targets.andPackages(selected);
-  }
-
-  return targets;
-}
-
-/**
- * @internal
- */
-async function resolveZTaskRef(targets: ZPackageSet, { task }: ZTaskSpec.TaskRef): Promise<Iterable<ZTask>> {
+async function resolveZTaskPre(targets: ZPackageSet, { task }: ZTaskSpec.Pre): Promise<Iterable<ZTask>> {
   return Promise.all(mapIt(
       await targets.packages(),
       target => target.task(task),
