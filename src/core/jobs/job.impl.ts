@@ -1,6 +1,6 @@
 import { noop } from '@proc7ts/primitives';
+import type { ZCallRecord } from '../plan/call.impl';
 import type { ZTask, ZTaskSpec } from '../tasks';
-import type { ZCallRecord } from './call.impl';
 import type { ZJob } from './job';
 
 /**

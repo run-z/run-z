@@ -1,4 +1,4 @@
-import type { ZTaskExecution } from '../../plan';
+import type { ZTaskExecution } from '../../jobs';
 import type { ZTaskSpec } from '../task-spec';
 import { AbstractZTask } from './abstract.task';
 

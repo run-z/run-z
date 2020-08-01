@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module run-z
  */
+import type { ZCall } from '../plan';
 import type { ZTaskSpec } from '../tasks';
-import type { ZCall } from './call';
 
 /**
  * Task execution context.

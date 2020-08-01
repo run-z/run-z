@@ -1,8 +1,8 @@
 import { valueProvider } from '@proc7ts/primitives';
+import type { ZExecutionJob } from '../jobs/job.impl';
 import type { ZTask, ZTaskSpec } from '../tasks';
 import type { ZCall } from './call';
 import type { ZCallDetails } from './call-details';
-import type { ZExecutionJob } from './job.impl';
 import type { ZPlan } from './plan';
 import type { ZInstructionRecords } from './planner.impl';
 import { ZTaskParams } from './task-params';

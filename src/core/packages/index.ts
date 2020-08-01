@@ -5,5 +5,4 @@ export * from './package-location';
 export * from './package-resolver';
 export * from './package-set';
 export * from './package-tree';
-export * from './shell';
 export * from './unknown-package-error';

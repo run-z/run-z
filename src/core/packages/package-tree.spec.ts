@@ -1,5 +1,5 @@
+import { ZShell } from '../jobs';
 import { ZPackageTree } from './package-tree';
-import { ZShell } from './shell';
 
 describe('ZPackageTree', () => {
 
