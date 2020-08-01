@@ -43,70 +43,44 @@ export function zTaskSpecParser(
           _draft.moveTo(this);
         }
 
-        get preTask(): string | undefined {
+        get preTask(): ZTaskOption.PreTask {
           return this._draft.preTask;
         }
 
-        addPre(pre: ZTaskSpec.Pre): void {
-          this._draft.finishPre();
+        addPre(pre: ZTaskSpec.Pre): this {
+          this.preTask.conclude();
           this._draft.builder.addPre(pre);
+          return this;
         }
 
-        addPreTask(name: string): void {
-          this._draft.finishPre();
-          this._draft.preTask = name;
-        }
-
-        addPreArg(...args: string[]): void {
-          this._draft.addPreArgs(args);
-        }
-
-        addPreAttr(name: string, value: string): void {
-          this._draft.addPreAttr(name, value);
-        }
-
-        addPreAttrs(attrs: ZTaskSpec.Attrs): void {
-          this._draft.addPreAttrs(attrs);
-        }
-
-        addToPre(value: string): void {
-
-          const { taskParser } = this.taskTarget.setup;
-
-          if (!taskParser.parseAttr(value, (name, value) => this.addPreAttr(name, value))) {
-            this.addPreArg(value);
-          }
-        }
-
-        parallelPre(): void {
-          this._draft.finishPre();
-          this._draft.preParallel = true;
-        }
-
-        addAttr(name: string, value: string): void {
-          this._draft.finishPre();
+        addAttr(name: string, value: string): this {
+          this.preTask.conclude();
           this._draft.builder.addAttr(name, value);
+          return this;
         }
 
-        addAttrs(attrs: ZTaskSpec.Attrs): void {
-          this._draft.finishPre();
+        addAttrs(attrs: ZTaskSpec.Attrs): this {
+          this.preTask.conclude();
           this._draft.builder.addAttrs(attrs);
+          return this;
         }
 
-        addArg(...args: string[]): void {
+        addArg(...args: string[]): this {
           if (!args.length) {
-            return;
+            return this;
           }
           if (!this._draft.builder.action) {
             this._draft.parseError(`Unrecognized option: "${args[0]}"`);
           }
-          this._draft.finishPre();
+          this.preTask.conclude();
           this._draft.builder.addArg(...args);
+          return this;
         }
 
-        setAction(action: ZTaskSpec.Action): void {
-          this._draft.finishPre();
+        setAction(action: ZTaskSpec.Action): this {
+          this.preTask.conclude();
           this._draft.builder.setAction(action);
+          return this;
         }
 
       }
@@ -145,7 +119,7 @@ const defaultZTaskSpecOptions: SupportedZOptions.Map<ZTaskOption> = {
 
     const { name, taskTarget: { setup: { taskParser } } } = option;
 
-    if (taskParser.parseAttr(name, (n, v) => !n.includes('/') && option.addAttr(n, v))) {
+    if (taskParser.parseAttr(name, (n, v) => !n.includes('/') && !!option.addAttr(n, v))) {
       option.values(0);
     }
   },
@@ -153,20 +127,20 @@ const defaultZTaskSpecOptions: SupportedZOptions.Map<ZTaskOption> = {
   '/*'(option: ZTaskOption): void {
 
     const { name } = option;
-    const preArg = name.substr(1);
+    const preOption = name.substr(1);
 
-    if (preArg) {
-      option.addToPre(preArg);
+    if (preOption) {
+      option.preTask.addOption(preOption);
     }
     option.values(0);
   },
 
   '//*'(option: ZTaskOption): void {
-    option.values().slice(0, -1).forEach(value => option.addToPre(value));
+    option.values().slice(0, -1).forEach(preOption => option.preTask.addOption(preOption));
   },
 
   ','(option: ZTaskOption): void {
-    option.parallelPre();
+    option.preTask.parallelToNext();
     option.values(0);
   },
 
@@ -175,7 +149,7 @@ const defaultZTaskSpecOptions: SupportedZOptions.Map<ZTaskOption> = {
     const { name } = option;
 
     if (name) {
-      option.addPreTask(name);
+      option.preTask.start(name);
     }
     option.values(0);
   },
@@ -199,8 +173,8 @@ function zTaskSpecOptions(
  * @internal
  */
 function readNamedZTaskArg(option: ZTaskOption): void {
-  if (option.preTask) {
-    option.addPreArg(option.name);
+  if (option.preTask.isStarted) {
+    option.preTask.addArg(option.name);
   } else {
     option.addArg(option.name);
   }
@@ -215,8 +189,8 @@ function readNameValueZTaskArg(option: ZTaskOption): void {
   const [value] = option.values(1);
   const arg = `${option.name}=${value}`;
 
-  if (option.preTask) {
-    option.addPreArg(arg);
+  if (option.preTask.isStarted) {
+    option.preTask.addArg(arg);
   } else {
     option.addArg(arg);
   }
@@ -469,61 +443,90 @@ function zTaskShorthandPreArgSyntax(args: readonly [string, ...string[]]): Itera
 export class DraftZTask {
 
   private _option!: ZTaskOption;
-  preTask: string | undefined;
+  readonly preTask: ZTaskOption.PreTask;
   preParallel = false;
-  private _preArgsAt = -1;
-  private _preAttrs: Record<string, [string, ...string[]]> = {};
-  private _preArgs: string[] = [];
 
   constructor(readonly builder: ZTaskBuilder) {
+
+    const draft = this;
+
+    let parallelPre = false;
+    let preTaskName: string | undefined;
+    let preOptionAt = -1;
+    let preAttrs: Record<string, [string, ...string[]]> = {};
+    let preArgs: string[] = [];
+
+    const addPreOption = (): void => {
+      if (preOptionAt < 0) {
+        preOptionAt = this._option.argIndex;
+      }
+    };
+
+    this.preTask = {
+      get isStarted() {
+        return this.taskName != null;
+      },
+      get taskName() {
+        return preTaskName;
+      },
+      start(taskName: string) {
+        this.conclude();
+        preTaskName = taskName;
+        return this;
+      },
+      addAttr(name: string, value: string) {
+        addPreOption();
+        addZTaskAttr(preAttrs, name, value);
+        return this;
+      },
+      addAttrs(attrs: ZTaskSpec.Attrs) {
+        addPreOption();
+        addZTaskAttrs(preAttrs, attrs);
+        return this;
+      },
+      addArg(...args: readonly string[]) {
+        addPreOption();
+        preArgs.push(...args);
+        return this;
+      },
+      addOption(value: string) {
+        addPreOption();
+
+        const { taskParser } = draft._option.taskTarget.setup;
+
+        if (!taskParser.parseAttr(value, (name, value) => !!this.addAttr(name, value))) {
+          this.addArg(value);
+        }
+
+        return this;
+      },
+      parallelToNext(): void {
+        this.conclude();
+        parallelPre = true;
+      },
+      conclude() {
+        if (this.taskName) {
+          // Finish the task.
+          builder.addPre({
+            task: this.taskName,
+            parallel: parallelPre,
+            attrs: preAttrs,
+            args: preArgs,
+          });
+          preTaskName = undefined;
+          parallelPre = false;
+          preOptionAt = -1;
+          preAttrs = {};
+          preArgs = [];
+        } else if (preOptionAt >= 0) {
+          draft.parseError('Prerequisite arguments specified, but not the task', preOptionAt);
+        }
+      },
+    };
   }
 
   moveTo(option: ZTaskOption): void {
     this._option = option;
-  }
-
-  addPreArgs(args: readonly string[]): void {
-    this._addPreArgs();
-    this._preArgs.push(...args);
-  }
-
-  addPreAttr(name: string, value: string): void {
-    this._addPreArgs();
-    addZTaskAttr(this._preAttrs, name, value);
-  }
-
-  addPreAttrs(attrs: ZTaskSpec.Attrs): void {
-    this._addPreArgs();
-    addZTaskAttrs(this._preAttrs, attrs);
-  }
-
-  private _addPreArgs(): void {
-    if (this._preArgsAt < 0) {
-      this._preArgsAt = this._option.argIndex;
-    }
-  }
-
-  finishPre(): void {
-    if (this.preTask) {
-      // Finish the task.
-      this.builder.addPre({
-        task: this.preTask,
-        parallel: this.preParallel,
-        attrs: this._preAttrs,
-        args: this._preArgs,
-      });
-      this.preTask = undefined;
-      this.preParallel = false;
-      this._preArgsAt = -1;
-      this._preAttrs = {};
-      this._preArgs = [];
-    } else if (this._preArgsAt >= 0) {
-      this.preArgsError('Prerequisite arguments specified, but not the task');
-    }
-  }
-
-  preArgsError(message: string): never {
-    this.parseError(message, this._preArgsAt);
   }
 
   parseError(message: string, argIndex = this._option.argIndex): never {
@@ -550,7 +553,7 @@ export class DraftZTask {
   }
 
   done(): ZTaskBuilder {
-    this.finishPre();
+    this.preTask.conclude();
     if (!this.builder.action) {
       this.builder.setAction(ZTaskSpec.groupAction);
     }

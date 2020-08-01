@@ -9,7 +9,7 @@ import type { ZTaskSpec } from './task-spec';
 /**
  * An option of the command line containing a task specifier.
  *
- * This is passed to {@link ZTaskOptionReader option reader}.
+ * This is passed to {@link ZTaskOption.Reader option reader}.
  */
 export interface ZTaskOption extends ZOption {
 
@@ -24,75 +24,40 @@ export interface ZTaskOption extends ZOption {
   readonly taskName: string;
 
   /**
-   * The name of prerequisite added by the most recent call to {@link addPreTask}, unless it is already complete.
+   * Prerequisite task call specification instance.
+   *
+   * This instance is always available, but it is illegal to call its modification methods unless the task call
+   * specification {@link ZTaskOption.PreTask.start started}.
    */
-  readonly preTask?: string;
+  readonly preTask: ZTaskOption.PreTask;
 
   /**
    * Appends a task prerequisite.
    *
    * @param pre  Prerequisite specifier to append.
-   */
-  addPre(pre: ZTaskSpec.Pre): void;
-
-  /**
-   * Initiates a call to prerequisite task.
    *
-   * The prerequisite will be added as soon as task specification modified by any method but [addPreArgs], [addPreAttr],
-   * [addPreAttrs], or [addToPre].
-   *
-   * @param name  Prerequisite task name to append.
+   * @returns `this` instance.
    */
-  addPreTask(name: string): void
-
-  /**
-   * Appends argument(s) to prerequisite task call initiated by the most recent call to [addPreTask].
-   *
-   * @param args  Prerequisite arguments to add.
-   */
-  addPreArg(...args: string[]): void;
-
-  /**
-   * Appends attribute to prerequisite task call initiated by the most recent call to [addPreTask].
-   *
-   * @param name  Target attribute name.
-   * @param value  Attribute value to append.
-   */
-  addPreAttr(name: string, value: string): void;
-
-  /**
-   * Appends attributes to prerequisite task call initiated by the most recent call to [addPreTask].
-   *
-   * @param attrs  Attributes to append.
-   */
-  addPreAttrs(attrs: ZTaskSpec.Attrs): void;
-
-  /**
-   * Appends argument or attribute to prerequisite task call initiated by the most recent call to [addPreTask].
-   *
-   * @param value  Argument or specifier of attribute to append.
-   */
-  addToPre(value: string): void;
-
-  /**
-   * Makes a prerequisite added by the most recent call to {@link addPreTask} run in parallel with the next one.
-   */
-  parallelPre(): void;
+  addPre(pre: ZTaskSpec.Pre): this;
 
   /**
    * Appends task attribute.
    *
    * @param name  Target attribute name.
    * @param value  Attribute value to append.
+   *
+   * @returns `this` instance.
    */
-  addAttr(name: string, value: string): void;
+  addAttr(name: string, value: string): this;
 
   /**
    * Appends task attributes.
    *
    * @param attrs  Attributes to append.
+   *
+   * @returns `this` instance.
    */
-  addAttrs(attrs: ZTaskSpec.Attrs): void;
+  addAttrs(attrs: ZTaskSpec.Attrs): this;
 
   /**
    * Appends raw command line argument(s) to the task action.
@@ -100,8 +65,10 @@ export interface ZTaskOption extends ZOption {
    * It is illegal to add arguments without {@link setAction action set}.
    *
    * @param args  Command line argument(s) to append.
+   *
+   * @returns `this` instance.
    */
-  addArg(...args: string[]): void;
+  addArg(...args: string[]): this;
 
   /**
    * Assigns a task action.
@@ -109,12 +76,113 @@ export interface ZTaskOption extends ZOption {
    * The task action defaults to {@link Group grouping task} unless reassigned by this call.
    *
    * @param action  Action to assign to the task.
+   *
+   * @returns `this` instance.
    */
-  setAction(action: ZTaskSpec.Action): void;
+  setAction(action: ZTaskSpec.Action): this;
 
 }
 
-/**
- * A signature of the reader of the command line containing a task specifier.
- */
-export type ZTaskOptionReader = ZOptionReader<ZTaskOption>;
+export namespace ZTaskOption {
+
+  /**
+   * A signature of the reader of the command line containing a task specifier.
+   */
+  export type Reader = ZOptionReader<ZTaskOption>;
+
+  /**
+   * A representation of current prerequisite task call specifier.
+   *
+   * The call specifier is started by {@link ZTaskOption.PreTask.start} and concluded either
+   * {@link conclude explicitly}, or by any task modification. Once concluded it is {@link ZTaskOption.addPre added}
+   * to the task.
+   *
+   * It is an error to call the methods of this object before the prerequisite task call specification {@link start
+   * started} or after it is {@link conclude concluded}.
+   *
+   * Available via {@link ZTaskOption.preTask} property.
+   */
+  export interface PreTask {
+
+    /**
+     * Whether the task call specification {@link start started} and not {@link conclude concluded} yet.
+     *
+     * It is illegal to modify the task call specifier when this property value is `false`.
+     */
+    readonly isStarted: boolean;
+
+    /**
+     * The name of prerequisite task passed to the most recent call to {@link start} method, unless it is already
+     * {@link conclude concluded}.
+     */
+    readonly taskName?: string;
+
+    /**
+     * Starts a specification of prerequisite task call.
+     *
+     * {@link conclude Concludes} previously started specification.
+     *
+     * The prerequisite will be added as soon as this task specification is {@link conclude concluded}.
+     *
+     * @param taskName  The name of prerequisite task to call.
+     *
+     * @returns `this` instance.
+     */
+    start(taskName: string): this;
+
+    /**
+     * Appends attribute to prerequisite task call.
+     *
+     * @param name  Target attribute name.
+     * @param value  Attribute value to append.
+     *
+     * @returns `this` instance.
+     */
+    addAttr(name: string, value: string): this;
+
+    /**
+     * Appends attributes to prerequisite task call.
+     *
+     * @param attrs  Attributes to append.
+     *
+     * @returns `this` instance.
+     */
+    addAttrs(attrs: ZTaskSpec.Attrs): this;
+
+    /**
+     * Appends argument(s) to prerequisite task call.
+     *
+     * @param args  Prerequisite arguments to add.
+     *
+     * @returns `this` instance.
+     */
+    addArg(...args: string[]): this;
+
+    /**
+     * Appends arbitrary option to prerequisite task call.
+     *
+     * This can be either an {@link addAttr attribute} specifier, or an {@link addArg argument}.
+     *
+     * @param option  The option to append.
+     *
+     * @returns `this` instance.
+     */
+    addOption(option: string): this;
+
+    /**
+     * Makes a prerequisite task call run in parallel with the next one.
+     *
+     * Concludes current prerequisite task call.
+     */
+    parallelToNext(): void;
+
+    /**
+     * Concludes current prerequisite task call specification.
+     *
+     * Does nothing if specification is not {@link start started}.
+     */
+    conclude(): void;
+
+  }
+
+}

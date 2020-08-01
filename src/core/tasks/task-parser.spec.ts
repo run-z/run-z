@@ -459,8 +459,7 @@ describe('ZTaskParser', () => {
 
             const [name, value] = option.values(2);
 
-            option.addPreTask('prerequisite');
-            option.addPreAttrs({
+            option.preTask.start('prerequisite').addAttrs({
               [name]: value ? [value] : undefined,
             });
           },
