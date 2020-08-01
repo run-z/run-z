@@ -17,6 +17,6 @@ export interface ZTaskExecution<TAction extends ZTaskSpec.Action> {
   /**
    * Executed task call.
    */
-  readonly call: ZCall<TAction>
+  readonly call: ZCall<TAction>;
 
 }

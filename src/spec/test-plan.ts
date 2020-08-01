@@ -15,7 +15,7 @@ export class TestPlan {
         shell,
       }: {
         packageJson?: ZPackageJson;
-        shell?: ZShell,
+        shell?: ZShell;
       } = {},
   ) {
     this.setup = new ZSetup();
