@@ -20,6 +20,13 @@ export interface ZJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
   readonly call: ZCall<TAction>;
 
   /**
+   * Awaits for job to start.
+   *
+   * @returns A promise resolved when the job prerequisites satisfied and the work started.
+   */
+  whenStarted(): Promise<void>;
+
+  /**
    * Awaits for the job finish.
    *
    * @returns A promise resolved when the job succeed, or rejected when it is failed.

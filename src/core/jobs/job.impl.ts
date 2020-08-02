@@ -35,6 +35,7 @@ export class ZExecutor {
  */
 export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> implements ZJob<TAction> {
 
+  private _whenStarted!: Promise<void>;
   private _whenFinished!: ZExecutedProcess;
   private _whenDone!: ZExecutedProcess;
 
@@ -48,16 +49,27 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
     return this._whenFinished != null;
   }
 
+  whenStarted(): Promise<void> {
+    return Promise.race([this._whenStarted, this.whenFinished()]);
+  }
+
   start(): this {
 
     const whenPrerequisites = this._execPrerequisites();
+    const whenReady = this._whenReady();
 
-    this._whenFinished = execNextZProcess(
-        this._whenReady(),
-        () => this.call.task.exec({
-          call: this.call,
-        }),
-    );
+    this._whenStarted = new Promise<void>(resolve => {
+      this._whenFinished = execNextZProcess(
+          whenReady,
+          () => {
+            resolve();
+            return this.call.task.exec({
+              call: this.call,
+            });
+          },
+      );
+    });
+
     this._whenDone = execAllZProcesses([whenPrerequisites, this._whenFinished]);
 
     return this;
