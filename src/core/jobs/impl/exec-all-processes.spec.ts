@@ -24,23 +24,23 @@ describe('execAllZProcesses', () => {
       reject1 = reject;
     });
     abort1 = jest.fn();
-    proc1 = execZProcess({
+    proc1 = execZProcess(() => ({
       whenDone() {
         return whenDone1;
       },
       abort: abort1,
-    });
+    }));
 
     whenDone2 = new Promise<void>(resolve => {
       done2 = resolve;
     });
     abort2 = jest.fn();
-    proc2 = execZProcess({
+    proc2 = execZProcess(() => ({
       whenDone() {
         return whenDone2;
       },
       abort: abort2,
-    });
+    }));
 
     isDone1 = false;
     isDone2 = false;

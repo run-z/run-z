@@ -22,8 +22,8 @@ export function execAllZProcesses(executed: Iterable<ZExecutedProcess>): ZExecut
       }
       toAbort.clear();
     };
-    let done = (proc: ZExecutedProcess): void => {
-      done = noop;
+    let fail = (proc: ZExecutedProcess): void => {
+      fail = noop;
       toAbort.delete(proc);
       abort();
     };
@@ -34,7 +34,10 @@ export function execAllZProcesses(executed: Iterable<ZExecutedProcess>): ZExecut
             executed,
             proc => {
               toAbort.add(proc);
-              return proc.whenDone().finally(() => done(proc));
+              return proc.whenDone().catch(error => {
+                fail(proc);
+                return Promise.reject(error);
+              });
             },
         )).then(noop);
       },
