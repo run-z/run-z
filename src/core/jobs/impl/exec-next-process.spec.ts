@@ -12,13 +12,13 @@ describe('execNextZProcess', () => {
 
   beforeEach(() => {
     abort1 = jest.fn();
-    first = execZProcess({
+    first = execZProcess(() => ({
       whenDone: () => new Promise((resolve, reject) => {
         done1 = resolve;
         reject1 = reject;
       }),
       abort: abort1,
-    });
+    }));
   });
 
   let second: Promise<void>;

@@ -1,21 +1,5 @@
-import { asyncRecipe, noop } from '@proc7ts/primitives';
+import { asyncByRecipe, noop } from '@proc7ts/primitives';
 import type { ZExecutedProcess } from '../executed-process';
-
-/**
- * A seed of executed process.
- *
- * This can be one of:
- *
- * - executed process initializer,
- * - a promise-like instance resolving to the one, or
- * - or a starter function returning one of the above.
- *
- * @internal
- */
-export type ZExecutedProcessSeed =
-    | ZExecutedProcess
-    | PromiseLike<ZExecutedProcess>
-    | ZExecutedProcessStarter;
 
 /**
  * Executed process starter signature.
@@ -33,9 +17,8 @@ export type ZExecutedProcessStarter =
 /**
  * @internal
  */
-export function execZProcess(seed: ZExecutedProcessSeed): ZExecutedProcess {
+export function execZProcess(starter: ZExecutedProcessStarter): ZExecutedProcess {
 
-  const start = asyncRecipe(seed);
   let initialize: (init: ZExecutedProcess) => void;
   let abort = (): void => {
     abort = noop;
@@ -56,7 +39,7 @@ export function execZProcess(seed: ZExecutedProcessSeed): ZExecutedProcess {
     abort = noop;
   };
 
-  const whenDone: Promise<void> = start().then(init => {
+  const whenDone: Promise<void> = asyncByRecipe(starter).then(init => {
     initialize(init);
     return init.whenDone().finally(done);
   });

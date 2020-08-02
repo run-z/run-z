@@ -1,21 +1,23 @@
 import { noop, valueProvider } from '@proc7ts/primitives';
 import type { ZExecutedProcess } from '../executed-process';
-import { execZProcess } from './exec-process';
+import { execZProcess, ZExecutedProcessStarter } from './exec-process';
 
 /**
  * @internal
  */
 export function execNextZProcess(
     first: ZExecutedProcess,
-    next: (this: void) => ZExecutedProcess,
+    next: ZExecutedProcessStarter,
 ): ZExecutedProcess {
+
+  const whenFirstDone = first.whenDone();
+
   return execZProcess(() => {
 
-    const whenFirstDone = first.whenDone();
     let abort: () => void;
     let startNext = async (): Promise<void> => {
 
-      const proc = execZProcess(next());
+      const proc = execZProcess(next);
 
       abort = () => {
         abort = noop;

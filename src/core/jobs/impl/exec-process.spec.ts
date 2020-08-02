@@ -17,12 +17,12 @@ describe('execZProcess', () => {
     });
 
     it('is called immediately at most once', async () => {
-      proc = execZProcess({
+      proc = execZProcess(() => ({
         whenDone() {
           return Promise.resolve();
         },
         abort,
-      });
+      }));
 
       proc.abort();
       proc.abort();
@@ -35,12 +35,12 @@ describe('execZProcess', () => {
     it('is called at most once after initialization', async () => {
 
       let done!: () => void;
-      proc = execZProcess({
+      proc = execZProcess(() => ({
         whenDone() {
           return new Promise(resolve => done = resolve);
         },
         abort,
-      });
+      }));
 
       await Promise.resolve();
       await Promise.resolve();
