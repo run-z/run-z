@@ -15,7 +15,7 @@ import { execZProcess } from './exec-process';
 export function execAllZProcesses(executed: Iterable<ZExecutedProcess>): ZExecutedProcess {
   return execZProcess(() => {
 
-    const toAbort = new Set<ZExecutedProcess>();
+    const toAbort = new Set<ZExecutedProcess>(executed);
     const abort = (): void => {
       for (const proc of toAbort) {
         proc.abort();
@@ -31,14 +31,11 @@ export function execAllZProcesses(executed: Iterable<ZExecutedProcess>): ZExecut
     return {
       whenDone(): Promise<void> {
         return Promise.all(mapIt(
-            executed,
-            proc => {
-              toAbort.add(proc);
-              return proc.whenDone().catch(error => {
-                fail(proc);
-                return Promise.reject(error);
-              });
-            },
+            toAbort,
+            proc => proc.whenDone().catch(error => {
+              fail(proc);
+              return Promise.reject(error);
+            }),
         )).then(noop);
       },
       abort,
