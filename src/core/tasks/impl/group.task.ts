@@ -1,4 +1,6 @@
 import { ZOptionInput } from '@run-z/optionz';
+import type { ZExecutedProcess } from '../../jobs';
+import { noopZExecutedProcess } from '../../jobs/impl';
 import type { ZPackageSet } from '../../packages';
 import type { ZPrePlanner } from '../../plan';
 import type { ZTaskSpec } from '../task-spec';
@@ -35,8 +37,8 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
     }
   }
 
-  exec(): void {
-    // Grouping task does nothing
+  exec(): ZExecutedProcess {
+    return noopZExecutedProcess;
   }
 
   private _subTaskTargets(): ZPackageSet {

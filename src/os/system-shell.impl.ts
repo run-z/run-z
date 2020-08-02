@@ -1,7 +1,10 @@
+import { noop } from '@proc7ts/primitives';
 import { spawn } from 'child_process';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
-import type { ZShell } from '../core/packages';
+import type { ZExecutedProcess, ZShell } from '../core/jobs';
+import { ZAbortedExecutionError } from '../core/jobs';
+import { execZProcess } from '../core/jobs/impl';
 import type { ZTaskParams } from '../core/plan';
 import type { ZPackageDirectory } from './package-directory';
 
@@ -13,11 +16,11 @@ export class SystemZShell implements ZShell {
   constructor(private readonly _dir: ZPackageDirectory) {
   }
 
-  execCommand(command: string, params: ZTaskParams): Promise<void> {
+  execCommand(command: string, params: ZTaskParams): ZExecutedProcess {
     return this._run(command, params.args);
   }
 
-  execScript(name: string, params: ZTaskParams): Promise<void> {
+  execScript(name: string, params: ZTaskParams): ZExecutedProcess {
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const { npm_execpath: npmPath = 'npm' } = process.env;
@@ -35,8 +38,8 @@ export class SystemZShell implements ZShell {
     return this._run(command, args);
   }
 
-  async _run(command: string, args: readonly string[]): Promise<void> {
-    return new Promise((resolve, reject) => {
+  _run(command: string, args: readonly string[]): ZExecutedProcess {
+    return execZProcess(() => {
 
       const childProcess = spawn(
           command,
@@ -48,17 +51,37 @@ export class SystemZShell implements ZShell {
           },
       );
 
-      childProcess.on('error', reject);
-      childProcess.on('exit', (code, signal) => {
+      let abort = (): void => {
+        childProcess.kill();
+      };
+      const whenDone = new Promise<void>((resolve, reject) => {
 
-        const error = signal || code;
-
-        if (error) {
+        const reportError = (error: any): void => {
+          abort = noop;
           reject(error);
-        } else {
-          resolve();
-        }
+        };
+
+        childProcess.on('error', reportError);
+        childProcess.on('exit', (code, signal) => {
+          if (signal) {
+            reportError(new ZAbortedExecutionError(signal));
+          } else if (code) {
+            reportError(code > 127 ? new ZAbortedExecutionError(code) : code);
+          } else {
+            abort = noop;
+            resolve();
+          }
+        });
       });
+
+      return {
+        whenDone() {
+          return whenDone;
+        },
+        abort() {
+          abort();
+        },
+      };
     });
   }
 

@@ -1,6 +1,7 @@
 import { mapIt } from '@proc7ts/a-iterable';
+import type { ZExecutedProcess, ZTaskExecution } from '../../jobs';
 import type { ZPackage, ZPackageSet } from '../../packages';
-import type { ZCall, ZCallDetails, ZCallPlanner, ZPrePlanner, ZTaskExecution, ZTaskParams } from '../../plan';
+import type { ZCall, ZCallDetails, ZCallPlanner, ZPrePlanner, ZTaskParams } from '../../plan';
 import type { ZTask, ZTaskQualifier } from '../task';
 import type { ZTaskBuilder$ } from '../task-builder.impl';
 import type { ZTaskSpec } from '../task-spec';
@@ -37,7 +38,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
     return this.target.setup.planner.call(this, details);
   }
 
-  abstract exec(execution: ZTaskExecution<TAction>): void | PromiseLike<unknown>;
+  abstract exec(execution: ZTaskExecution<TAction>): ZExecutedProcess;
 
   /**
    * Builds initial task execution parameters.

@@ -29,8 +29,8 @@ export class ZPackageDirectory extends ZPackageLocation {
         url = pathToFileURL(process.cwd()),
         rootURL = new URL('file:///'),
       }: {
-        url?: URL,
-        rootURL?: URL,
+        url?: URL;
+        rootURL?: URL;
       } = {},
   ): ZPackageDirectory {
     url = urlOfFile(url);

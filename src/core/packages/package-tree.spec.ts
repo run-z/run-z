@@ -1,5 +1,5 @@
+import { ZShell } from '../jobs';
 import { ZPackageTree } from './package-tree';
-import { ZShell } from './shell';
 
 describe('ZPackageTree', () => {
 
@@ -142,13 +142,8 @@ describe('ZPackageTree', () => {
   });
 
   describe('shell', () => {
-    it('is no-op by default', async () => {
+    it('is no-op by default', () => {
       expect(root.shell).toBe(ZShell.noop);
-
-      const { execCommand, execScript }: { execCommand: any, execScript: any } = root.shell;
-
-      expect(await execCommand()).toBeUndefined();
-      expect(await execScript()).toBeUndefined();
     });
   });
 

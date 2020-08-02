@@ -1,4 +1,4 @@
-import type { ZTaskExecution } from '../../plan';
+import type { ZExecutedProcess, ZTaskExecution } from '../../jobs';
 import type { ZTaskSpec } from '../task-spec';
 import { AbstractZTask } from './abstract.task';
 
@@ -7,7 +7,7 @@ import { AbstractZTask } from './abstract.task';
  */
 export class ScriptZTask extends AbstractZTask<ZTaskSpec.Script> {
 
-  exec(execution: ZTaskExecution<ZTaskSpec.Script>): Promise<void> {
+  exec(execution: ZTaskExecution<ZTaskSpec.Script>): ZExecutedProcess {
     return this.target.location.shell.execScript(this.name, execution.call.params());
   }
 

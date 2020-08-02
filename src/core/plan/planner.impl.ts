@@ -1,12 +1,12 @@
 import { overNone, thruIt } from '@proc7ts/a-iterable';
 import { nextSkip } from '@proc7ts/call-thru';
+import { ZExecutor } from '../jobs/job.impl';
 import type { ZSetup } from '../setup';
 import type { ZTask, ZTaskQualifier, ZTaskSpec } from '../tasks';
 import { UnknownZTaskError } from '../tasks';
 import type { ZCall } from './call';
 import type { ZCallDetails } from './call-details';
 import { ZCallRecord } from './call.impl';
-import { ZExecutor } from './job.impl';
 import type { ZPlan } from './plan';
 
 /**

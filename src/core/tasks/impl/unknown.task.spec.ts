@@ -43,7 +43,7 @@ describe('UnknownZTask', () => {
 
       expect(await call.exec().whenDone()).toBeUndefined();
     });
-    it('throw when `if-present` flag unset', async () => {
+    it('throws when `if-present` flag unset', async () => {
       testPlan.addPackage(
           'test',
           {

@@ -2,8 +2,9 @@
  * @packageDocumentation
  * @module run-z
  */
+import type { ZExecutedProcess, ZTaskExecution } from '../jobs';
 import type { ZPackage } from '../packages';
-import type { ZCall, ZCallDetails, ZPrePlanner, ZTaskExecution } from '../plan';
+import type { ZCall, ZCallDetails, ZPrePlanner } from '../plan';
 import type { ZTaskSpec } from './task-spec';
 
 /**
@@ -65,10 +66,9 @@ export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> exte
    *
    * @param execution  Task execution context.
    *
-   * @returns Either nothing when the task is executed synchronously, or a promise-like instance resolved when the task
-   * executed asynchronously.
+   * @returns Executed task instance.
    */
-  exec(execution: ZTaskExecution<TAction>): void | PromiseLike<unknown>;
+  exec(execution: ZTaskExecution<TAction>): ZExecutedProcess;
 
 }
 

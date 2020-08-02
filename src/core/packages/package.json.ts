@@ -21,7 +21,7 @@ export interface ZPackageJson {
   };
   readonly scripts?: {
     readonly [name: string]: string;
-  }
+  };
   readonly [key: string]: any;
 
 }

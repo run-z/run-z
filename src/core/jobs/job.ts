@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module run-z
  */
+import type { ZCall } from '../plan';
 import type { ZTaskSpec } from '../tasks';
-import type { ZCall } from './call';
 
 /**
  * Task execution job.
@@ -20,6 +20,13 @@ export interface ZJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
   readonly call: ZCall<TAction>;
 
   /**
+   * Awaits for job to start.
+   *
+   * @returns A promise resolved when the job prerequisites satisfied and the work started.
+   */
+  whenStarted(): Promise<void>;
+
+  /**
    * Awaits for the job finish.
    *
    * @returns A promise resolved when the job succeed, or rejected when it is failed.
@@ -33,5 +40,10 @@ export interface ZJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
    * succeed, or rejected when any of them failed.
    */
   whenDone(): Promise<void>;
+
+  /**
+   * Aborts the job execution.
+   */
+  abort(): void;
 
 }

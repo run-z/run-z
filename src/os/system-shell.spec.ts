@@ -1,6 +1,6 @@
 import { asis } from '@proc7ts/primitives';
 import { pathToFileURL } from 'url';
-import { ZPackage, ZSetup } from '../core';
+import { ZAbortedExecutionError, ZPackage, ZSetup } from '../core';
 import { ZPackageDirectory } from './package-directory';
 
 describe('SystemZShell', () => {
@@ -85,6 +85,26 @@ describe('SystemZShell', () => {
     const task = await pkg.task('test:kill');
     const call = await task.call();
 
-    expect(await call.exec().whenDone().catch(asis)).toBeDefined();
+    expect(await call.exec().whenDone().catch(asis)).toBeInstanceOf(ZAbortedExecutionError);
+  });
+  it('fails on command kill with exist code', async () => {
+
+    const task = await pkg.task('test:kill-with-code');
+    const call = await task.call();
+
+    expect(await call.exec().whenDone().catch(asis)).toBeInstanceOf(ZAbortedExecutionError);
+  });
+  it('allows to abort the job', async () => {
+
+    const task = await pkg.task('test:stale');
+    const call = await task.call();
+    const job = call.exec();
+
+    await job.whenStarted();
+    job.abort();
+
+    const error = await job.whenDone().catch(asis);
+
+    expect(error).toBeInstanceOf(ZAbortedExecutionError);
   });
 });
