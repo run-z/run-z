@@ -85,7 +85,14 @@ describe('SystemZShell', () => {
     const task = await pkg.task('test:kill');
     const call = await task.call();
 
-    expect(await call.exec().whenDone().catch(asis)).toBeDefined();
+    expect(await call.exec().whenDone().catch(asis)).toBeInstanceOf(ZAbortedExecutionError);
+  });
+  it('fails on command kill with exist code', async () => {
+
+    const task = await pkg.task('test:kill-with-code');
+    const call = await task.call();
+
+    expect(await call.exec().whenDone().catch(asis)).toBeInstanceOf(ZAbortedExecutionError);
   });
   it('allows to abort the job', async () => {
 
@@ -93,6 +100,7 @@ describe('SystemZShell', () => {
     const call = await task.call();
     const job = call.exec();
 
+    await job.whenStarted();
     job.abort();
 
     const error = await job.whenDone().catch(asis);

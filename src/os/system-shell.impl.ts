@@ -52,20 +52,23 @@ export class SystemZShell implements ZShell {
       );
 
       let abort = (): void => {
-        childProcess.kill('SIGKILL');
+        childProcess.kill();
       };
       const whenDone = new Promise<void>((resolve, reject) => {
-        childProcess.on('error', error => {
+
+        const reportError = (error: any): void => {
           abort = noop;
           reject(error);
-        });
+        };
+
+        childProcess.on('error', reportError);
         childProcess.on('exit', (code, signal) => {
-          abort = noop;
           if (signal) {
-            reject(new ZAbortedExecutionError(signal));
+            reportError(new ZAbortedExecutionError(signal));
           } else if (code) {
-            reject(code > 127 ? new ZAbortedExecutionError(code) : code);
+            reportError(code > 127 ? new ZAbortedExecutionError(code) : code);
           } else {
+            abort = noop;
             resolve();
           }
         });
