@@ -1,5 +1,6 @@
 import { prerequisitesOf, taskIds, TestPlan } from '../../../spec';
 import type { ZShell } from '../../jobs';
+import { noopZExecutedProcess } from '../../jobs/impl';
 import { ZTaskParams } from '../../plan';
 import { CommandZTask } from './command.task';
 
@@ -123,7 +124,7 @@ describe('CommandZTask', () => {
     it('executes command', async () => {
 
       const shell = {
-        execCommand: jest.fn(),
+        execCommand: jest.fn(() => noopZExecutedProcess),
       } as jest.Mocked<Partial<ZShell>> as jest.Mocked<ZShell>;
 
       testPlan.addPackage(

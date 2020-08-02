@@ -3,6 +3,8 @@
  * @module run-z
  */
 import type { ZTaskParams } from '../plan';
+import type { ZExecutedProcess } from './executed-process';
+import { noopZExecutedProcess } from './impl';
 
 /**
  * Command execution shell.
@@ -18,9 +20,9 @@ export interface ZShell {
    * @param command  Command to execute.
    * @param params  Execution parameters.
    *
-   * @returns A promise resolved when command execution succeed, or rejected when it is failed.
+   * @returns Executed command instance.
    */
-  execCommand(command: string, params: ZTaskParams): Promise<void>;
+  execCommand(command: string, params: ZTaskParams): ZExecutedProcess;
 
   /**
    * Executes an {@link ZTaskSpec.Script NPM script}.
@@ -28,9 +30,9 @@ export interface ZShell {
    * @param name  The name of NPM script to execute.
    * @param params  Execution parameters.
    *
-   * @returns A promise resolved when script execution succeed, or rejected when it is failed.
+   * @returns Executed script instance.
    */
-  execScript(name: string, params: ZTaskParams): Promise<void>;
+  execScript(name: string, params: ZTaskParams): ZExecutedProcess;
 
 }
 
@@ -39,12 +41,12 @@ export interface ZShell {
  */
 const noopZShell: ZShell = {
 
-  execCommand(): Promise<void> {
-    return Promise.resolve();
+  execCommand() {
+    return noopZExecutedProcess;
   },
 
-  execScript(): Promise<void> {
-    return Promise.resolve();
+  execScript() {
+    return noopZExecutedProcess;
   },
 
 };

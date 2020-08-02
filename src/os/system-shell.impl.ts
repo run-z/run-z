@@ -1,7 +1,9 @@
 import { spawn } from 'child_process';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
-import type { ZShell } from '../core/jobs';
+import type { ZExecutedProcess, ZShell } from '../core/jobs';
+import { ZAbortedExecutionError } from '../core/jobs';
+import { execZProcess } from '../core/jobs/impl';
 import type { ZTaskParams } from '../core/plan';
 import type { ZPackageDirectory } from './package-directory';
 
@@ -13,11 +15,11 @@ export class SystemZShell implements ZShell {
   constructor(private readonly _dir: ZPackageDirectory) {
   }
 
-  execCommand(command: string, params: ZTaskParams): Promise<void> {
+  execCommand(command: string, params: ZTaskParams): ZExecutedProcess {
     return this._run(command, params.args);
   }
 
-  execScript(name: string, params: ZTaskParams): Promise<void> {
+  execScript(name: string, params: ZTaskParams): ZExecutedProcess {
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const { npm_execpath: npmPath = 'npm' } = process.env;
@@ -35,8 +37,8 @@ export class SystemZShell implements ZShell {
     return this._run(command, args);
   }
 
-  async _run(command: string, args: readonly string[]): Promise<void> {
-    return new Promise((resolve, reject) => {
+  _run(command: string, args: readonly string[]): ZExecutedProcess {
+    return execZProcess(() => {
 
       const childProcess = spawn(
           command,
@@ -48,16 +50,26 @@ export class SystemZShell implements ZShell {
           },
       );
 
-      childProcess.on('error', reject);
-      childProcess.on('exit', (code, signal) => {
+      const whenDone = new Promise<void>((resolve, reject) => {
+        childProcess.on('error', reject);
+        childProcess.on('exit', (code, signal) => {
+          if (signal) {
+            reject(new ZAbortedExecutionError(signal));
+          } else if (code) {
+            reject(code > 127 ? new ZAbortedExecutionError(code) : code);
+          } else {
+            resolve();
+          }
+        });
+      });
 
-        const error = signal || code;
-
-        if (error) {
-          reject(error);
-        } else {
-          resolve();
-        }
+      return ({
+        whenDone() {
+          return whenDone;
+        },
+        abort() {
+          childProcess.kill('SIGKILL');
+        },
       });
     });
   }

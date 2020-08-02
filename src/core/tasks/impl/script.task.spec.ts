@@ -1,5 +1,6 @@
 import { TestPlan } from '../../../spec';
 import type { ZShell } from '../../jobs';
+import { noopZExecutedProcess } from '../../jobs/impl';
 import { ZTaskParams } from '../../plan';
 import { ScriptZTask } from './script.task';
 
@@ -37,7 +38,7 @@ describe('ScriptZTask', () => {
     it('executes NPM script', async () => {
 
       const shell = {
-        execScript: jest.fn(),
+        execScript: jest.fn(() => noopZExecutedProcess),
       } as jest.Mocked<Partial<ZShell>> as jest.Mocked<ZShell>;
 
       testPlan.addPackage(

@@ -1,4 +1,4 @@
-import type { ZTaskExecution } from '../../jobs';
+import type { ZExecutedProcess, ZTaskExecution } from '../../jobs';
 import type { ZTaskParams } from '../../plan';
 import type { ZTaskSpec } from '../task-spec';
 import { AbstractZTask } from './abstract.task';
@@ -8,7 +8,7 @@ import { AbstractZTask } from './abstract.task';
  */
 export class CommandZTask extends AbstractZTask<ZTaskSpec.Command> {
 
-  exec(execution: ZTaskExecution<ZTaskSpec.Command>): Promise<void> {
+  exec(execution: ZTaskExecution<ZTaskSpec.Command>): ZExecutedProcess {
     return this.target.location.shell.execCommand(this.spec.action.command, execution.call.params());
   }
 

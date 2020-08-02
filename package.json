@@ -81,6 +81,7 @@
     "test:command": "run-z --then node ./src/spec/bin/ok.js --command1",
     "test:fail": "run-z --then node ./src/spec/bin/fail.js",
     "test:kill": "run-z --then node ./src/spec/bin/kill.js",
-    "test:script": "node ./src/spec/bin/ok.js --script1"
+    "test:script": "node ./src/spec/bin/ok.js --script1",
+    "test:stale": "node ./src/spec/bin/stale.js"
   }
 }

@@ -34,4 +34,9 @@ export interface ZJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
    */
   whenDone(): Promise<void>;
 
+  /**
+   * Aborts the job execution.
+   */
+  abort(): void;
+
 }
