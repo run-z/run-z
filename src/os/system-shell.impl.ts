@@ -1,3 +1,4 @@
+import { noop } from '@proc7ts/primitives';
 import { spawn } from 'child_process';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
@@ -50,9 +51,16 @@ export class SystemZShell implements ZShell {
           },
       );
 
+      let abort = (): void => {
+        childProcess.kill('SIGKILL');
+      };
       const whenDone = new Promise<void>((resolve, reject) => {
-        childProcess.on('error', reject);
+        childProcess.on('error', error => {
+          abort = noop;
+          reject(error);
+        });
         childProcess.on('exit', (code, signal) => {
+          abort = noop;
           if (signal) {
             reject(new ZAbortedExecutionError(signal));
           } else if (code) {
@@ -63,14 +71,14 @@ export class SystemZShell implements ZShell {
         });
       });
 
-      return ({
+      return {
         whenDone() {
           return whenDone;
         },
         abort() {
-          childProcess.kill('SIGKILL');
+          abort();
         },
-      });
+      };
     });
   }
 
