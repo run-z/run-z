@@ -1,4 +1,7 @@
-import { InvalidZTaskError, UnknownZTaskError, ZSetup } from '../core';
+import { ZOptionError } from '@run-z/optionz';
+import { EOL } from 'os';
+import { promisify } from 'util';
+import { UnknownZTaskError, ZSetup } from '../core';
 import { ZPackageDirectory } from '../os';
 
 runZ().catch(handleError);
@@ -16,11 +19,9 @@ async function runZ(): Promise<void> {
   return await call.exec().whenDone();
 }
 
-function handleError(error: any): void {
-  if (error instanceof InvalidZTaskError) {
-    console.error(error.message);
-    console.error('>', error.commandLine);
-    console.error('>', ' '.repeat(error.position) + '^');
+async function handleError(error: any): Promise<void> {
+  if (error instanceof ZOptionError) {
+    await formatZOptionError(error);
     process.exit(1);
   }
   if (error instanceof UnknownZTaskError) {
@@ -29,4 +30,50 @@ function handleError(error: any): void {
   }
   console.error('Unexpected error', error);
   process.exit(1);
+}
+
+const writeErr = promisify(process.stderr.write.bind(process.stderr));
+
+async function formatZOptionError(
+    { message, optionLocation: { args, index, endIndex, offset, endOffset } }: ZOptionError,
+): Promise<void> {
+  args = args.slice(2);
+  index -= 2;
+  endIndex -= 2;
+
+  let commandLine = '';
+  let underline = '';
+
+  for (let i = 0; i < args.length; ++i) {
+
+    const arg = args[i];
+
+    if (commandLine) {
+      commandLine += ' ';
+      if (i <= index) {
+        underline += '_';
+      } else if (i < endIndex - 1) {
+        underline += '^';
+      }
+    }
+
+    commandLine += arg;
+
+    if (i < index) {
+      underline += '_'.repeat(arg.length);
+    } else if (i === index) {
+      underline += '_'.repeat(offset);
+      if (i === endIndex - 1) {
+        underline += '^'.repeat(endOffset - offset);
+      } else {
+        underline += '^'.repeat(arg.length - offset);
+      }
+    } else if (i === endIndex - 1) {
+      underline += '^'.repeat(endOffset);
+    }
+  }
+
+  await writeErr(message + EOL);
+  await writeErr(commandLine + EOL);
+  await writeErr(underline + EOL);
 }

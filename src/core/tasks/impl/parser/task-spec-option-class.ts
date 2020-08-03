@@ -1,4 +1,5 @@
 import type { ZOption } from '@run-z/optionz';
+import { ZOptionError } from '@run-z/optionz';
 import type { ZPackage } from '../../../packages';
 import type { ZTaskOption } from '../../task-option';
 import type { ZTaskSpec } from '../../task-spec';
@@ -50,7 +51,7 @@ export function zTaskSpecOptionClass<TArgs extends any[]>(
         return this;
       }
       if (!this._draft.builder.action) {
-        this._draft.parseError(`Unrecognized option: "${args[0]}"`);
+        throw new ZOptionError(this.optionLocation(), `Unrecognized option: "${args[0]}"`);
       }
       this.pre.conclude();
       this._draft.builder.addArg(...args);
