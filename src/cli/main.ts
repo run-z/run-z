@@ -22,9 +22,6 @@ async function runZ(): Promise<void> {
 async function handleError(error: any): Promise<void> {
   if (error instanceof ZOptionError) {
     await formatZOptionError(error);
-
-    // console.error('>', error.commandLine);
-    // console.error('>', ' '.repeat(error.position) + '^');
     process.exit(1);
   }
   if (error instanceof UnknownZTaskError) {
