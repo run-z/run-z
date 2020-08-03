@@ -1,7 +1,7 @@
 import { asis } from '@proc7ts/primitives';
+import { ZOptionError } from '@run-z/optionz';
 import { ZPackage, ZPackageTree } from '../packages';
 import { ZSetup } from '../setup';
-import { InvalidZTaskError } from './invalid-task-error';
 import type { ZTaskBuilder } from './task-builder';
 import { ZTaskParser } from './task-parser';
 import { ZTaskSpec } from './task-spec';
@@ -82,11 +82,16 @@ describe('ZTaskParser', () => {
   });
   it('throws on unrecognized option', async () => {
 
-    const error: InvalidZTaskError = await parseSpec('run-z --wrong').catch(asis);
+    const error: ZOptionError = await parseSpec('run-z --wrong').catch(asis);
 
-    expect(error).toBeInstanceOf(InvalidZTaskError);
-    expect(error.commandLine).toBe('run-z --wrong');
-    expect(error.position).toBe(6);
+    expect(error).toBeInstanceOf(ZOptionError);
+    expect(error.optionLocation).toEqual({
+      args: ['run-z', '--wrong'],
+      index: 1,
+      endIndex: 2,
+      offset: 0,
+      endOffset: 7,
+    });
   });
   it('recognizes command', async () => {
 
@@ -423,67 +428,107 @@ describe('ZTaskParser', () => {
   });
   it('throws on arguments without prerequisite', async () => {
 
-    const error: InvalidZTaskError = await parseSpec('run-z   //-a//   task').catch(asis);
+    const error: ZOptionError = await parseSpec('run-z   //-a//   task').catch(asis);
 
-    expect(error).toBeInstanceOf(InvalidZTaskError);
-    expect(error.commandLine).toBe('run-z // -a // task');
-    expect(error.position).toBe(6);
+    expect(error).toBeInstanceOf(ZOptionError);
+    expect(error.optionLocation).toEqual({
+      args: ['run-z', '//', '-a', '//', 'task'],
+      index: 1,
+      endIndex: 2,
+      offset: 0,
+      endOffset: 2,
+    });
   });
   it('throws on shorthand argument without prerequisite', async () => {
 
-    const error: InvalidZTaskError = await parseSpec('run-z   /-a   task').catch(asis);
+    const error: ZOptionError = await parseSpec('run-z   /-a   task').catch(asis);
 
-    expect(error).toBeInstanceOf(InvalidZTaskError);
-    expect(error.commandLine).toBe('run-z /-a task');
-    expect(error.position).toBe(6);
+    expect(error).toBeInstanceOf(ZOptionError);
+    expect(error.optionLocation).toEqual({
+      args: ['run-z', '/-a', 'task'],
+      index: 1,
+      endIndex: 2,
+      offset: 0,
+      endOffset: 3,
+    });
   });
   it('throws on arguments after comma', async () => {
 
-    const error: InvalidZTaskError = await parseSpec('run-z  task1,  //-a//   task2').catch(asis);
+    const error: ZOptionError = await parseSpec('run-z  task1,  //-a//   task2').catch(asis);
 
-    expect(error).toBeInstanceOf(InvalidZTaskError);
-    expect(error.commandLine).toBe('run-z task1 , // -a // task2');
-    expect(error.position).toBe(14);
+    expect(error).toBeInstanceOf(ZOptionError);
+    expect(error.optionLocation).toEqual({
+      args: ['run-z', 'task1', ',', '//', '-a', '//', 'task2'],
+      index: 3,
+      endIndex: 4,
+      offset: 0,
+      endOffset: 2,
+    });
   });
   it('throws on shorthand argument after comma', async () => {
 
-    const error: InvalidZTaskError = await parseSpec('run-z  task1,  /-a   task2').catch(asis);
+    const error: ZOptionError = await parseSpec('run-z  task1,  /-a   task2').catch(asis);
 
-    expect(error).toBeInstanceOf(InvalidZTaskError);
-    expect(error.commandLine).toBe('run-z task1 , /-a task2');
-    expect(error.position).toBe(14);
+    expect(error).toBeInstanceOf(ZOptionError);
+    expect(error.optionLocation).toEqual({
+      args: ['run-z', 'task1', ',', '/-a', 'task2'],
+      index: 3,
+      endIndex: 4,
+      offset: 0,
+      endOffset: 3,
+    });
   });
   it('throws on arguments after comma within the same entry', async () => {
 
-    const error: InvalidZTaskError = await parseSpec('run-z  task1,//-a//   task2').catch(asis);
+    const error: ZOptionError = await parseSpec('run-z  task1,//-a//   task2').catch(asis);
 
-    expect(error).toBeInstanceOf(InvalidZTaskError);
-    expect(error.commandLine).toBe('run-z task1 , // -a // task2');
-    expect(error.position).toBe(14);
+    expect(error).toBeInstanceOf(ZOptionError);
+    expect(error.optionLocation).toEqual({
+      args: ['run-z', 'task1', ',', '//', '-a', '//', 'task2'],
+      index: 3,
+      endIndex: 4,
+      offset: 0,
+      endOffset: 2,
+    });
   });
   it('throws on shorthand argument after comma within the same entry', async () => {
 
-    const error: InvalidZTaskError = await parseSpec('run-z  task1,/-a   task2').catch(asis);
+    const error: ZOptionError = await parseSpec('run-z  task1,/-a   task2').catch(asis);
 
-    expect(error).toBeInstanceOf(InvalidZTaskError);
-    expect(error.commandLine).toBe('run-z task1 , /-a task2');
-    expect(error.position).toBe(14);
+    expect(error).toBeInstanceOf(ZOptionError);
+    expect(error.optionLocation).toEqual({
+      args: ['run-z', 'task1', ',', '/-a', 'task2'],
+      index: 3,
+      endIndex: 4,
+      offset: 0,
+      endOffset: 3,
+    });
   });
   it('throws on arguments after comma inside entry', async () => {
 
-    const error: InvalidZTaskError = await parseSpec('run-z  task1,//-a//task2').catch(asis);
+    const error: ZOptionError = await parseSpec('run-z  task1,//-a//task2').catch(asis);
 
-    expect(error).toBeInstanceOf(InvalidZTaskError);
-    expect(error.commandLine).toBe('run-z task1 , // -a // task2');
-    expect(error.position).toBe(14);
+    expect(error).toBeInstanceOf(ZOptionError);
+    expect(error.optionLocation).toEqual({
+      args: ['run-z', 'task1', ',', '//', '-a', '//', 'task2'],
+      index: 3,
+      endIndex: 4,
+      offset: 0,
+      endOffset: 2,
+    });
   });
   it('throws on shorthand argument after comma inside entry', async () => {
 
-    const error: InvalidZTaskError = await parseSpec('run-z  task1,/-a,task2').catch(asis);
+    const error: ZOptionError = await parseSpec('run-z  task1,/-a,task2').catch(asis);
 
-    expect(error).toBeInstanceOf(InvalidZTaskError);
-    expect(error.commandLine).toBe('run-z task1 , /-a , task2');
-    expect(error.position).toBe(14);
+    expect(error).toBeInstanceOf(ZOptionError);
+    expect(error.optionLocation).toEqual({
+      args: ['run-z', 'task1', ',', '/-a', ',', 'task2'],
+      index: 3,
+      endIndex: 4,
+      offset: 0,
+      endOffset: 3,
+    });
   });
 
   describe('with custom options', () => {

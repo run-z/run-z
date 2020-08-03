@@ -1,4 +1,4 @@
-import { InvalidZTaskError } from '../../invalid-task-error';
+import { ZOptionError } from '@run-z/optionz';
 import type { ZTaskBuilder } from '../../task-builder';
 import type { ZTaskOption } from '../../task-option';
 import type { ZTaskSpec } from '../../task-spec';
@@ -108,7 +108,10 @@ export class DraftZTask {
         }
 
         if (preOptionAt >= 0) {
-          draft.parseError('Prerequisite arguments specified, but not the task', preOptionAt);
+          throw new ZOptionError(
+              draft._option.optionLocation({ index: preOptionAt }),
+              'Prerequisite arguments specified, but not the task',
+          );
         }
 
         return;
@@ -118,29 +121,6 @@ export class DraftZTask {
 
   moveTo(option: ZTaskOption): void {
     this._option = option;
-  }
-
-  parseError(message: string, argIndex = this._option.argIndex): never {
-
-    const { args } = this._option;
-    let position = 0;
-    let reconstructedCmd = '';
-
-    for (let i = 0; i < args.length; ++i) {
-      if (reconstructedCmd) {
-        reconstructedCmd += ' ';
-      }
-
-      const arg = args[i];
-
-      if (i === argIndex) {
-        position = reconstructedCmd.length;
-      }
-
-      reconstructedCmd += arg;
-    }
-
-    throw new InvalidZTaskError(message, reconstructedCmd, position);
   }
 
   done(): ZTaskBuilder {

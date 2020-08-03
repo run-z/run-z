@@ -1,4 +1,3 @@
-export * from './invalid-task-error';
 export * from './task';
 export * from './task-builder';
 export * from './task-factory';

@@ -1,4 +1,5 @@
-import { InvalidZTaskError, UnknownZTaskError, ZSetup } from '../core';
+import { ZOptionError } from '@run-z/optionz';
+import { UnknownZTaskError, ZSetup } from '../core';
 import { ZPackageDirectory } from '../os';
 
 runZ().catch(handleError);
@@ -17,10 +18,10 @@ async function runZ(): Promise<void> {
 }
 
 function handleError(error: any): void {
-  if (error instanceof InvalidZTaskError) {
+  if (error instanceof ZOptionError) {
     console.error(error.message);
-    console.error('>', error.commandLine);
-    console.error('>', ' '.repeat(error.position) + '^');
+    // console.error('>', error.commandLine);
+    // console.error('>', ' '.repeat(error.position) + '^');
     process.exit(1);
   }
   if (error instanceof UnknownZTaskError) {
