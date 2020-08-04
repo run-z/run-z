@@ -11,7 +11,7 @@ import { AbstractZTask } from './abstract.task';
  */
 export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
 
-  async callAsPre(planner: ZPrePlanner, pre: ZTaskSpec.Pre, details: ZCallDetails): Promise<void> {
+  async callAsPre(planner: ZPrePlanner, pre: ZTaskSpec.Pre, details: ZCallDetails.Full): Promise<void> {
 
     const { dependent } = planner;
     const [subTaskName, ...subArgs] = pre.args;
@@ -25,8 +25,8 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
     await dependent.call(
         this,
         {
-          params: () => dependent.plannedCall.params().extend(details.params?.()),
-          plan: details.plan?.bind(details),
+          ...details,
+          params: () => dependent.plannedCall.params().extend(details.params()),
         },
     );
 
@@ -36,7 +36,6 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
     const subTaskPre: ZTaskSpec.Pre = { ...pre, args: subArgs };
 
     for (const subTarget of await this._subTaskTargets().packages()) {
-
       await batcher({
         dependent: planner.dependent,
         target: subTarget,
@@ -45,9 +44,13 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
             planner,
             subTaskPre,
             {
-              params: subDetails.params?.bind(subDetails),
-              plan: subPlanner => {
+              params: () => details.params().extend(subDetails.params?.()),
+              plan: async subPlanner => {
+                // Execute sub-tasks after the grouping one
                 subPlanner.order(this, subPlanner.plannedCall.task);
+                // Apply task plan
+                await details.plan(subPlanner);
+                // Apply sub-tasks plan
                 return subDetails.plan?.(subPlanner);
               },
             },

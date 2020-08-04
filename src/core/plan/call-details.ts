@@ -4,7 +4,7 @@
  */
 import type { ZTaskSpec } from '../tasks';
 import type { ZCallPlanner } from './call-planner';
-import type { ZTaskParams } from './task-params';
+import { ZTaskParams } from './task-params';
 
 /**
  * Details of the {@link ZCallPlanner.call task call}.
@@ -31,3 +31,60 @@ export interface ZCallDetails<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
   plan?(planner: ZCallPlanner<TAction>): void | PromiseLike<unknown>;
 
 }
+
+export namespace ZCallDetails {
+
+  /**
+   * Full details of the {@link ZCallPlanner.call task call}.
+   *
+   * @typeparam TAction  Task action type.
+   */
+  export interface Full<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
+
+    /**
+     * Evaluates parameters of the call.
+     */
+    params(this: void): ZTaskParams;
+
+    /**
+     * Plans the call execution.
+     *
+     * Records further task execution instructions.
+     *
+     * @param planner  Task execution planner to record instructions to.
+     *
+     * @returns A promise resolved when instructions recorded.
+     */
+    plan(this: void, planner: ZCallPlanner<TAction>): Promise<void>;
+
+  }
+
+}
+
+export const ZCallDetails = {
+
+  /**
+   * Reconstructs full details of the task call by partial one.
+   *
+   * @typeparam TAction  Task action type.
+   * @param details  Partial task call details.
+   *
+   * @returns Full task call details.
+   */
+  by<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>(
+      details: ZCallDetails<TAction> = {},
+  ): ZCallDetails.Full<TAction> {
+    return {
+      params: () => new ZTaskParams(
+          ZTaskParams.update(
+              ZTaskParams.newMutable(),
+              details.params?.(),
+          ),
+      ),
+      plan: async planner => {
+        await details.plan?.(planner);
+      },
+    };
+  },
+
+};

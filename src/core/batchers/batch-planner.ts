@@ -32,7 +32,7 @@ export interface ZBatchPlanner {
    * Records task to call in batch.
    *
    * @param task  The task to batch.
-   * @param details  Batched task call details.
+   * @param details  Call details for each of the batched tasks.
    *
    * @returns A promise resolved when task call recorded.
    */

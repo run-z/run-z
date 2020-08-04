@@ -19,6 +19,13 @@ const falseZTaskFlagValues: { [key: string]: 1 } = {
 export class ZTaskParams {
 
   /**
+   * Creates new mutable task execution parameters.
+   */
+  static newMutable(): ZTaskParams.Mutable {
+    return { attrs: {}, args: [] };
+  }
+
+  /**
    * Updates mutable task execution parameters with the given partial update.
    *
    * @param params  Parameters to update.
@@ -106,12 +113,7 @@ export class ZTaskParams {
    * @returns A mutable task execution parameters containing this parameters values.
    */
   mutate(): ZTaskParams.Mutable {
-
-    const result: ZTaskParams.Mutable = { attrs: {}, args: [] };
-
-    ZTaskParams.update(result, this);
-
-    return result;
+    return ZTaskParams.update(ZTaskParams.newMutable(), this);
   }
 
   /**

@@ -1,6 +1,7 @@
 import type { ZExecutedProcess, ZTaskExecution } from '../../jobs';
 import type { ZPackage } from '../../packages';
-import type { ZCall, ZCallDetails, ZCallPlanner, ZPrePlanner, ZTaskParams } from '../../plan';
+import type { ZCall, ZCallPlanner, ZPrePlanner, ZTaskParams } from '../../plan';
+import { ZCallDetails } from '../../plan';
 import type { ZTask, ZTaskQualifier } from '../task';
 import type { ZTaskBuilder$ } from '../task-builder.impl';
 import type { ZTaskSpec } from '../task-spec';
@@ -27,7 +28,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   async callAsPre(
       planner: ZPrePlanner,
       { attrs, args }: ZTaskSpec.Pre,
-      details: ZCallDetails,
+      details: ZCallDetails.Full,
   ): Promise<void> {
 
     const taskParams = planner.dependent.plannedCall.extendParams({ attrs, args });
@@ -35,8 +36,8 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
     await planner.callPre(
         this,
         {
-          params: () => taskParams().extend(details?.params?.()),
-          plan: details?.plan?.bind(details),
+          ...details,
+          params: () => taskParams().extend(details.params()),
         },
     );
   }
@@ -115,7 +116,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
           target: preTarget,
           taskName: pre.task,
           batch(preTask, preDetails = {}) {
-            return preTask.callAsPre(prePlanner, pre, preDetails);
+            return preTask.callAsPre(prePlanner, pre, ZCallDetails.by(preDetails));
           },
         });
       }
