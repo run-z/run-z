@@ -3,6 +3,7 @@
  * @module run-z
  */
 import type { ZOption, ZOptionReader } from '@run-z/optionz';
+import type { ZBatcher } from '../batches';
 import type { ZPackage } from '../packages';
 import type { ZTaskSpec } from './task-spec';
 
@@ -69,6 +70,20 @@ export interface ZTaskOption extends ZOption {
    * @returns `this` instance.
    */
   addArg(...args: string[]): this;
+
+  /**
+   * Sets a batcher of prerequisite tasks to execute.
+   *
+   * Each prerequisite task name represents a batch of tasks to execute. The batch execution will be planned by the
+   * given `batcher`.
+   *
+   * A single task call will be planned {@link ZBatcher.batchTask by default}.
+   *
+   * @param batcher  New batcher.
+   *
+   * @returns `this` instance.
+   */
+  setBatcher(batcher: ZBatcher): this;
 
   /**
    * Assigns a task action.
