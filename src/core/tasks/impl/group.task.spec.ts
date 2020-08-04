@@ -374,8 +374,8 @@ describe('GroupZTask', () => {
     expect(call.params().attrs).toEqual({ attr1: ['on'] });
 
     expect(prerequisitesOf(dep)).toEqual([
-        { target: 'nested1', task: 'dep3' },
-        { target: 'nested2', task: 'dep3' },
+        { target: 'root/test/nested/nested1', task: 'dep3' },
+        { target: 'root/test/nested/nested2', task: 'dep3' },
     ]);
     expect(dep.params().attrs).toEqual({ attr1: ['on'] });
 
