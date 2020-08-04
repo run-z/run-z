@@ -28,7 +28,7 @@ export class ZTaskParams {
    */
   static update(
       params: ZTaskParams.Mutable,
-      update: ZTaskParams.Partial,
+      update: ZTaskParams.Partial = {},
   ): ZTaskParams.Mutable {
 
     const { attrs = {}, args = [] } = update;
@@ -121,7 +121,7 @@ export class ZTaskParams {
    *
    * @returns Task execution parameters containing these parameter values updated with the given `extension`.
    */
-  extend(extension: ZTaskParams.Partial): ZTaskParams {
+  extend(extension: ZTaskParams.Partial | undefined): ZTaskParams {
     return new ZTaskParams(ZTaskParams.update(this.mutate(), extension));
   }
 

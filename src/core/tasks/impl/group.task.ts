@@ -2,7 +2,7 @@ import { ZOptionInput } from '@run-z/optionz';
 import type { ZExecutedProcess } from '../../jobs';
 import { noopZExecutedProcess } from '../../jobs/impl';
 import type { ZPackageSet } from '../../packages';
-import type { ZPrePlanner } from '../../plan';
+import type { ZCallDetails, ZPrePlanner } from '../../plan';
 import type { ZTaskSpec } from '../task-spec';
 import { AbstractZTask } from './abstract.task';
 
@@ -11,29 +11,48 @@ import { AbstractZTask } from './abstract.task';
  */
 export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
 
-  async callAsPre(planner: ZPrePlanner, pre: ZTaskSpec.Pre): Promise<void> {
+  async callAsPre(planner: ZPrePlanner, pre: ZTaskSpec.Pre, details: ZCallDetails): Promise<void> {
 
     const { dependent } = planner;
     const [subTaskName, ...subArgs] = pre.args;
 
     if (!subTaskName || !ZOptionInput.isOptionValue(subTaskName)) {
-      return super.callAsPre(planner, pre);
+      return super.callAsPre(planner, pre, details);
     }
 
     // There is a sub-task(s) to execute.
     // Call prerequisite. Pass call parameters to sub-task(s) rather then to this prerequisite.
-    await dependent.call(this, { params: () => dependent.plannedCall.params() });
+    await dependent.call(
+        this,
+        {
+          params: () => dependent.plannedCall.params().extend(details.params?.()),
+          plan: details.plan?.bind(details),
+        },
+    );
+
+    const { batcher } = planner;
 
     // Delegate to sub-task(s).
-    const subTaskRef: ZTaskSpec.Pre = { ...pre, args: subArgs };
+    const subTaskPre: ZTaskSpec.Pre = { ...pre, args: subArgs };
 
     for (const subTarget of await this._subTaskTargets().packages()) {
 
-      const subTask = await subTarget.task(subTaskName);
-
-      await subTask.callAsPre(planner, subTaskRef);
-
-      dependent.order(this, subTask);
+      await batcher({
+        dependent: planner.dependent,
+        target: subTarget,
+        taskName: subTaskName,
+        batch: (subTask, subDetails = {}) => subTask.callAsPre(
+            planner,
+            subTaskPre,
+            {
+              params: subDetails.params?.bind(subDetails),
+              plan: subPlanner => {
+                subPlanner.order(this, subPlanner.plannedCall.task);
+                return subDetails.plan?.(subPlanner);
+              },
+            },
+        ),
+      });
     }
   }
 

@@ -24,11 +24,19 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
     };
   }
 
-  async callAsPre(planner: ZPrePlanner, { attrs, args }: ZTaskSpec.Pre): Promise<void> {
+  async callAsPre(
+      planner: ZPrePlanner,
+      { attrs, args }: ZTaskSpec.Pre,
+      details: ZCallDetails,
+  ): Promise<void> {
+
+    const taskParams = planner.dependent.plannedCall.extendParams({ attrs, args });
+
     await planner.callPre(
         this,
         {
-          params: planner.dependent.plannedCall.extendParams({ attrs, args }),
+          params: () => taskParams().extend(details?.params?.()),
+          plan: details?.plan?.bind(details),
         },
     );
   }
@@ -62,10 +70,10 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
    * instructions recorded asynchronously.
    */
   protected async planCall(planner: ZCallPlanner<TAction>): Promise<void> {
-    await this.planPres(planner);
+    await this.planPre(planner);
   }
 
-  protected async planPres(planner: ZCallPlanner<TAction>): Promise<void> {
+  protected async planPre(planner: ZCallPlanner<TAction>): Promise<void> {
 
     const batcher = this._builder._batcher;
     const { target, spec } = this;
@@ -81,6 +89,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
       const calledTasks: ZTask[] = [];
       const prePlanner: ZPrePlanner = {
         dependent: planner,
+        batcher,
         async callPre<TAction extends ZTaskSpec.Action>(
             task: ZTask<TAction>,
             details?: ZCallDetails<TAction>,
@@ -105,8 +114,8 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
           dependent: planner,
           target: preTarget,
           taskName: pre.task,
-          batch(task) {
-            return task.callAsPre(prePlanner, pre);
+          batch(preTask, preDetails = {}) {
+            return preTask.callAsPre(prePlanner, pre, preDetails);
           },
         });
       }

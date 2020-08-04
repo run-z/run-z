@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module run-z
  */
+import type { ZBatcher } from '../batchers';
 import type { ZTask, ZTaskSpec } from '../tasks';
 import type { ZCall } from './call';
 import type { ZCallDetails } from './call-details';
@@ -18,6 +19,11 @@ export interface ZPrePlanner {
    * A planner of the call to the task depending on this prerequisite.
    */
   readonly dependent: ZCallPlanner;
+
+  /**
+   * Batcher to use to batch transient prerequisites.
+   */
+  readonly batcher: ZBatcher;
 
   /**
    * Records a call to prerequisite task.

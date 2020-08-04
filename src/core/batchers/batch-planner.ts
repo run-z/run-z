@@ -3,7 +3,7 @@
  * @module run-z
  */
 import type { ZPackage } from '../packages';
-import type { ZCallPlanner } from '../plan';
+import type { ZCallDetails, ZCallPlanner } from '../plan';
 import type { ZTask } from '../tasks';
 
 /**
@@ -32,9 +32,10 @@ export interface ZBatchPlanner {
    * Records task to call in batch.
    *
    * @param task  The task to batch.
+   * @param details  Batched task call details.
    *
    * @returns A promise resolved when task call recorded.
    */
-  batch(task: ZTask): Promise<void>;
+  batch(task: ZTask, details?: ZCallDetails): Promise<void>;
 
 }
