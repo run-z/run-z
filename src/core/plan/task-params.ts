@@ -127,6 +127,22 @@ export class ZTaskParams {
     return new ZTaskParams(ZTaskParams.update(this.mutate(), extension));
   }
 
+  /**
+   * Extends task execution attributes.
+   *
+   * @param extension  Task parameters extension.
+   *
+   * @returns Task execution parameters containing these parameter attributes updated with the given `extension`.
+   */
+  extendAttrs(extension: ZTaskParams.Partial | undefined): ZTaskParams {
+
+    const params = this.mutate();
+
+    params.args = [];
+
+    return new ZTaskParams(ZTaskParams.update(params, extension));
+  }
+
 }
 
 export namespace ZTaskParams {

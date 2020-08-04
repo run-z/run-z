@@ -49,7 +49,7 @@ describe('GroupZTask', () => {
           packageJson: {
             scripts: {
               test: 'run-z dep1/dep3/=attr1 =attr2',
-              dep1: 'run-z dep2',
+              dep1: 'run-z dep2 attr2=off',
               dep2: 'run-z --then exec2',
               dep3: 'run-z --then exec3',
             },
@@ -68,13 +68,13 @@ describe('GroupZTask', () => {
     expect(call.params().attrs).toEqual({ attr2: ['on'] });
 
     expect(prerequisitesOf(dep1)).toEqual(taskIds(dep2));
-    expect(dep1.params().attrs).toEqual({ attr2: ['on'] });
+    expect(dep1.params().attrs).toEqual({ attr2: ['off', 'on'] });
 
     expect(prerequisitesOf(dep2)).toHaveLength(0);
-    expect(dep2.params().attrs).toEqual({ attr2: ['on'] });
+    expect(dep2.params().attrs).toEqual({ attr2: ['off', 'on'] });
 
     expect(prerequisitesOf(dep3)).toEqual(taskIds(dep1));
-    expect(dep3.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'] });
+    expect(dep3.params().attrs).toEqual({ attr1: ['on'], attr2: ['on', 'off', 'on'] });
   });
 
   it('calls external prerequisites', async () => {
@@ -314,13 +314,13 @@ describe('GroupZTask', () => {
     expect(dep1.params().attrs).toEqual({ attr1: ['on'], attr3: ['1'] });
 
     expect(prerequisitesOf(sub1)).toEqual(taskIds(dep1));
-    expect(sub1.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'] });
+    expect(sub1.params().attrs).toEqual({ attr1: ['on', 'on'], attr2: ['on'], attr3: ['1'] });
 
     expect(prerequisitesOf(dep2)).toHaveLength(0);
     expect(dep2.params().attrs).toEqual({ attr1: ['on'], attr3: ['2'] });
 
     expect(prerequisitesOf(sub2)).toEqual(taskIds(dep2));
-    expect(sub2.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'] });
+    expect(sub2.params().attrs).toEqual({ attr1: ['on', 'on'], attr2: ['on'], attr3: ['2'] });
   });
 
   it('delegates to sub-tasks in other packages', async () => {
@@ -380,10 +380,10 @@ describe('GroupZTask', () => {
     expect(dep.params().attrs).toEqual({ attr1: ['on'] });
 
     expect(prerequisitesOf(sub1)).toEqual(taskIds(dep));
-    expect(sub1.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'] });
+    expect(sub1.params().attrs).toEqual({ attr1: ['on', 'on'], attr2: ['on'] });
 
     expect(prerequisitesOf(sub2)).toEqual(taskIds(dep));
-    expect(sub2.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'] });
+    expect(sub2.params().attrs).toEqual({ attr1: ['on', 'on'], attr2: ['on'] });
   });
 
   describe('exec', () => {

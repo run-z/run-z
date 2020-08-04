@@ -19,26 +19,28 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
     let subArgs: readonly string[];
 
     if (this.name === pre.task) {
-      // Task name is the same a prerequisite one.
-      // First argument contains a name of sub-task to call.
+      // Task name is the same as prerequisite one.
+      // First argument contains the name of sub-task to call.
       [subTaskName, ...subArgs] = pre.args;
       if (!subTaskName || !ZOptionInput.isOptionValue(subTaskName)) {
+        // No sub-task name.
+        // Fallback to default implementation.
         return super.callAsPre(planner, pre, details);
       }
     } else {
       // Task name differs from prerequisite one.
-      // Prerequisite name is a name of sub-task to call.
+      // Prerequisite name is the name of sub-task to call.
       subTaskName = pre.task;
       subArgs = pre.args;
     }
 
     // There is a sub-task(s) to execute.
-    // Call prerequisite. Pass call parameters to sub-task(s) rather then to this prerequisite.
-    await dependent.call(
+    // Call prerequisite. Pass prerequisite parameters to sub-task(s) rather then to this prerequisite.
+    const groupCall = await dependent.call(
         this,
         {
           ...details,
-          params: () => dependent.plannedCall.params().extend(details.params()),
+          params: () => dependent.plannedCall.params().extendAttrs(details.params()),
         },
     );
 
@@ -60,7 +62,7 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
               planner,
               subTaskPre,
               {
-                params: () => details.params().extend(params()),
+                params: () => groupCall.params().extend(params()),
                 plan: async subPlanner => {
                   // Execute sub-tasks after the grouping one
                   subPlanner.order(this, subPlanner.plannedCall.task);
