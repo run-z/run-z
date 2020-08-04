@@ -17,8 +17,8 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   readonly callDetails: Required<ZCallDetails<TAction>>;
 
   constructor(private readonly _builder: ZTaskBuilder$, readonly spec: ZTaskSpec<TAction>) {
-    this.target = _builder.target;
-    this.taskQN = this.name = _builder.name;
+    this.target = _builder.taskTarget;
+    this.taskQN = this.name = _builder.taskName;
     this.callDetails = {
       params: this.callParams.bind(this),
       plan: this.planCall.bind(this),

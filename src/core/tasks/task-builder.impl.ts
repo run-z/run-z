@@ -17,7 +17,7 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
   private readonly _args: string[] = [];
   private _action?: ZTaskSpec.Action;
 
-  constructor(readonly target: ZPackage, readonly name: string) {
+  constructor(readonly taskTarget: ZPackage, readonly taskName: string) {
   }
 
   get action(): TAction | undefined {
@@ -55,12 +55,12 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
   }
 
   async parse(commandLine: string): Promise<this> {
-    await this.target.setup.taskParser.parse(this, commandLine);
+    await this.taskTarget.setup.taskParser.parse(this, commandLine);
     return this;
   }
 
   async applyOptions(args: readonly string[], fromIndex?: number): Promise<this> {
-    await this.target.setup.taskParser.applyOptions(this, args, fromIndex);
+    await this.taskTarget.setup.taskParser.applyOptions(this, args, fromIndex);
     return this;
   }
 
@@ -74,14 +74,14 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
       return this.applyOptions(argv, fromIndex);
     }
 
-    const script = this.target.packageJson.scripts?.[taskName];
+    const script = this.taskTarget.packageJson.scripts?.[taskName];
 
     if (!script) {
       // No such script
       return this.applyOptions(argv, fromIndex);
     }
 
-    const args = this.target.setup.taskParser.parseCommandLine(script);
+    const args = this.taskTarget.setup.taskParser.parseCommandLine(script);
 
     // Consider the first script argument is either `run-z` or something acceptable
     if (!args || args.length - 1 > argv.length - fromIndex) {

@@ -20,8 +20,8 @@ export function zTaskSpecOptionClass<TArgs extends any[]>(
 
     constructor(private readonly _draft: DraftZTask, ...args: TArgs) {
       super(...args);
-      this.taskTarget = _draft.builder.target;
-      this.taskName = _draft.builder.name;
+      this.taskTarget = _draft.builder.taskTarget;
+      this.taskName = _draft.builder.taskName;
       _draft.moveTo(this);
     }
 
