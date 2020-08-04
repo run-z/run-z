@@ -1,4 +1,4 @@
-export * from './batchers';
+export * from './batches';
 export * from './jobs';
 export * from './packages';
 export * from './plan';

@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module run-z
  */
-import type { ZBatcher } from '../batchers';
+import type { ZBatcher } from '../batches';
 import type { ZTask, ZTaskSpec } from '../tasks';
 import type { ZCall } from './call';
 import type { ZCallDetails } from './call-details';

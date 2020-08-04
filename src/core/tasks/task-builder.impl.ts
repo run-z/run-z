@@ -1,4 +1,4 @@
-import { ZBatcher } from '../batchers';
+import { ZBatcher } from '../batches';
 import type { ZPackage } from '../packages';
 import type { AbstractZTask } from './impl';
 import { CommandZTask, GroupZTask, ScriptZTask, UnknownZTask } from './impl';
