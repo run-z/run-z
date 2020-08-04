@@ -1,6 +1,5 @@
-import { mapIt } from '@proc7ts/a-iterable';
 import type { ZExecutedProcess, ZTaskExecution } from '../../jobs';
-import type { ZPackage, ZPackageSet } from '../../packages';
+import type { ZPackage } from '../../packages';
 import type { ZCall, ZCallDetails, ZCallPlanner, ZPrePlanner, ZTaskParams } from '../../plan';
 import type { ZTask, ZTaskQualifier } from '../task';
 import type { ZTaskBuilder$ } from '../task-builder.impl';
@@ -16,9 +15,9 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   readonly taskQN: string;
   readonly callDetails: Required<ZCallDetails<TAction>>;
 
-  constructor(builder: ZTaskBuilder$, readonly spec: ZTaskSpec<TAction>) {
-    this.target = builder.target;
-    this.taskQN = this.name = builder.name;
+  constructor(private readonly _builder: ZTaskBuilder$, readonly spec: ZTaskSpec<TAction>) {
+    this.target = _builder.target;
+    this.taskQN = this.name = _builder.name;
     this.callDetails = {
       params: this.callParams.bind(this),
       plan: this.planCall.bind(this),
@@ -68,6 +67,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
 
   protected async planPres(planner: ZCallPlanner<TAction>): Promise<void> {
 
+    const batcher = this._builder._batcher;
     const { target, spec } = this;
     let parallel: ZTaskQualifier[] = [];
     let prevTasks: ZTask[] = [];
@@ -78,8 +78,6 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
         parallel = [];
       }
 
-      const preTargets = target.selectTargets(pre.targets);
-      const preTasks = await resolveZTaskPre(preTargets, pre);
       const calledTasks: ZTask[] = [];
       const prePlanner: ZPrePlanner = {
         dependent: planner,
@@ -100,8 +98,17 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
         },
       };
 
-      for (const preTask of preTasks) {
-        await preTask.callAsPre(prePlanner, pre);
+      const preTargets = target.selectTargets(pre.targets);
+
+      for (const preTarget of await preTargets.packages()) {
+        await batcher({
+          dependent: planner,
+          target: preTarget,
+          taskName: pre.task,
+          batch(task) {
+            return task.callAsPre(prePlanner, pre);
+          },
+        });
       }
 
       if (calledTasks.length === 1) {
@@ -139,15 +146,3 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   }
 
 }
-
-/**
- * @internal
- */
-async function resolveZTaskPre(targets: ZPackageSet, { task }: ZTaskSpec.Pre): Promise<Iterable<ZTask>> {
-  return Promise.all(mapIt(
-      await targets.packages(),
-      target => target.task(task),
-  ));
-}
-
-

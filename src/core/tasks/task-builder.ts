@@ -3,6 +3,7 @@
  * @module run-z
  */
 import type { ZPackage } from '../packages';
+import type { ZBatcher } from '../plan';
 import type { ZTask } from './task';
 import type { ZTaskSpec } from './task-spec';
 
@@ -67,6 +68,20 @@ export interface ZTaskBuilder<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
    * @returns `this` instance.
    */
   addArg(...args: string[]): this;
+
+  /**
+   * Sets a batcher of prerequisite tasks to execute.
+   *
+   * Each prerequisite task name represents a batch of tasks to execute. The batch execution will be planned by the
+   * given `batcher`.
+   *
+   * A single task call will be planned {@link ZBatcher.callTask by default}.
+   *
+   * @param batcher  New batcher.
+   *
+   * @returns `this` instance.
+   */
+  setBatcher(batcher: ZBatcher): this;
 
   /**
    * Assigns a task action.
