@@ -15,10 +15,21 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
   async callAsPre(planner: ZPrePlanner, pre: ZTaskSpec.Pre, details: ZCallDetails.Full): Promise<void> {
 
     const { dependent } = planner;
-    const [subTaskName, ...subArgs] = pre.args;
+    let subTaskName: string;
+    let subArgs: readonly string[];
 
-    if (!subTaskName || !ZOptionInput.isOptionValue(subTaskName)) {
-      return super.callAsPre(planner, pre, details);
+    if (this.name === pre.task) {
+      // Task name is the same a prerequisite one.
+      // First argument contains a name of sub-task to call.
+      [subTaskName, ...subArgs] = pre.args;
+      if (!subTaskName || !ZOptionInput.isOptionValue(subTaskName)) {
+        return super.callAsPre(planner, pre, details);
+      }
+    } else {
+      // Task name differs from prerequisite one.
+      // Prerequisite name is a name of sub-task to call.
+      subTaskName = pre.task;
+      subArgs = pre.args;
     }
 
     // There is a sub-task(s) to execute.
