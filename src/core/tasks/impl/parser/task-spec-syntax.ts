@@ -7,17 +7,17 @@ import type { ZSetup } from '../../../setup';
  * @internal
  */
 export function zTaskSpecSyntax(setup: ZSetup): readonly ZOptionSyntax[] {
-    return [
-        ZOptionSyntax.longOptions,
-        ZOptionSyntax.shortOptions,
-        zPackageRefSyntax.bind(undefined, setup),
-        zTaskAttrSyntax.bind(undefined, setup),
-        zTaskPreArgsSyntax,
-        parallelZTasksSyntax,
-        zTaskPreSyntax,
-        zTaskShorthandPreArgSyntax,
-        ZOptionSyntax.any,
-    ];
+  return [
+    ZOptionSyntax.longOptions,
+    ZOptionSyntax.shortOptions,
+    zPackageRefSyntax.bind(undefined, setup),
+    zTaskAttrSyntax.bind(undefined, setup),
+    zTaskPreArgsSyntax,
+    parallelZTasksSyntax,
+    zTaskPreSyntax,
+    zTaskShorthandPreArgSyntax,
+    ZOptionSyntax.any,
+  ];
 }
 
 /**
@@ -25,18 +25,18 @@ export function zTaskSpecSyntax(setup: ZSetup): readonly ZOptionSyntax[] {
  */
 function zPackageRefSyntax({ taskParser }: ZSetup, args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
 
-    const [name] = args;
+  const [name] = args;
 
-    if (!taskParser.isPackageSelector(name)) {
-        return [];
-    }
+  if (!taskParser.isPackageSelector(name)) {
+    return [];
+  }
 
-    const tail = args.slice(1);
+  const tail = args.slice(1);
 
-    return [
-        { name, tail },
-        { key: './*', name, tail },
-    ];
+  return [
+    { name, tail },
+    { key: './*', name, tail },
+  ];
 }
 
 /**
@@ -44,33 +44,33 @@ function zPackageRefSyntax({ taskParser }: ZSetup, args: readonly [string, ...st
  */
 function zTaskAttrSyntax({ taskParser }: ZSetup, args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
 
-    const [first] = args;
-    const attr = taskParser.parseAttr(first);
+  const [first] = args;
+  const attr = taskParser.parseAttr(first);
 
-    if (!attr) {
-        return [];
-    }
+  if (!attr) {
+    return [];
+  }
 
-    const [attrName, attrValue] = attr;
-    const name = `${attrName}=${attrValue}`;
-    const tail = args.slice(1);
+  const [attrName, attrValue] = attr;
+  const name = `${attrName}=${attrValue}`;
+  const tail = args.slice(1);
 
-    return [
-        {
-            name,
-            tail,
-        },
-        {
-            key: `${attrName}=*`,
-            name,
-            tail,
-        },
-        {
-            key: `*=*`,
-            name,
-            tail,
-        },
-    ];
+  return [
+    {
+      name,
+      tail,
+    },
+    {
+      key: `${attrName}=*`,
+      name,
+      tail,
+    },
+    {
+      key: `*=*`,
+      name,
+      tail,
+    },
+  ];
 }
 
 /**
@@ -78,92 +78,92 @@ function zTaskAttrSyntax({ taskParser }: ZSetup, args: readonly [string, ...stri
  */
 function zTaskPreArgsSyntax(args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
 
-    const [first] = args;
-    const openingIdx = first.indexOf('//');
+  const [first] = args;
+  const openingIdx = first.indexOf('//');
 
-    if (openingIdx < 0) {
-        return [];
-    }
-    if (openingIdx) {
-        // Opening delimiter is not at the first position
-        // Split and retry
-        return [
-            {
-                name: first.substr(0, openingIdx).trim(),
-                tail: [first.substr(openingIdx), ...args.slice(1)],
-                retry: true,
-            },
-        ];
-    }
-
-    let contentIdx = openingIdx + 2;
-
-    while (first[contentIdx] === '/') {
-        ++contentIdx;
-    }
-
-    const delimiter = first.substring(openingIdx, contentIdx);
-    const closingIdx = first.indexOf(delimiter, contentIdx);
-
-    if (closingIdx > 0) {
-        // First arg contains both opening and closing delimiter
-
-        const values = [first.substring(contentIdx, closingIdx), '//'];
-        const afterPreArgsIdx = closingIdx + delimiter.length;
-        const restArgs = args.slice(1);
-        const suffix = first.substr(afterPreArgsIdx).trim();
-        const tail = suffix ? [suffix, ...restArgs] : restArgs;
-
-        return [
-            {
-                key: '//*',
-                name: delimiter,
-                values,
-                tail,
-            },
-        ];
-    }
-
-    // Search for closing delimiter
-    for (let i = 1; i < args.length; ++i) {
-
-        const arg = args[i];
-        const closingIdx = arg.indexOf(delimiter);
-
-        if (closingIdx >= 0) {
-            // Closing delimiter found
-
-            const restValues = args.slice(1, i);
-            const lastValues = closingIdx ? [arg.substr(0, closingIdx)] : [];
-            const values = contentIdx < first.length
-                ? [first.substr(contentIdx), ...restValues, ...lastValues, '//']
-                : [...restValues, ...lastValues, '//'];
-            const afterPreArgsIdx = closingIdx + delimiter.length;
-            const restArgs = args.slice(i + 1);
-            const tail = afterPreArgsIdx < arg.length
-                ? [arg.substr(afterPreArgsIdx), ...restArgs]
-                : [...restArgs];
-
-            return [
-                {
-                    key: '//*',
-                    name: delimiter,
-                    values,
-                    tail,
-                },
-            ];
-        }
-    }
-
-    // No closing delimiter.
-    // Treat the rest of args as prerequisite ones.
+  if (openingIdx < 0) {
+    return [];
+  }
+  if (openingIdx) {
+    // Opening delimiter is not at the first position
+    // Split and retry
     return [
-        {
-            key: '//*',
-            name: delimiter,
-            values: [first.substr(contentIdx), ...args.slice(1), '//'],
-        },
+      {
+        name: first.substr(0, openingIdx).trim(),
+        tail: [first.substr(openingIdx), ...args.slice(1)],
+        retry: true,
+      },
     ];
+  }
+
+  let contentIdx = openingIdx + 2;
+
+  while (first[contentIdx] === '/') {
+    ++contentIdx;
+  }
+
+  const delimiter = first.substring(openingIdx, contentIdx);
+  const closingIdx = first.indexOf(delimiter, contentIdx);
+
+  if (closingIdx > 0) {
+    // First arg contains both opening and closing delimiter
+
+    const values = [first.substring(contentIdx, closingIdx), '//'];
+    const afterPreArgsIdx = closingIdx + delimiter.length;
+    const restArgs = args.slice(1);
+    const suffix = first.substr(afterPreArgsIdx).trim();
+    const tail = suffix ? [suffix, ...restArgs] : restArgs;
+
+    return [
+      {
+        key: '//*',
+        name: delimiter,
+        values,
+        tail,
+      },
+    ];
+  }
+
+  // Search for closing delimiter
+  for (let i = 1; i < args.length; ++i) {
+
+    const arg = args[i];
+    const closingIdx = arg.indexOf(delimiter);
+
+    if (closingIdx >= 0) {
+      // Closing delimiter found
+
+      const restValues = args.slice(1, i);
+      const lastValues = closingIdx ? [arg.substr(0, closingIdx)] : [];
+      const values = contentIdx < first.length
+          ? [first.substr(contentIdx), ...restValues, ...lastValues, '//']
+          : [...restValues, ...lastValues, '//'];
+      const afterPreArgsIdx = closingIdx + delimiter.length;
+      const restArgs = args.slice(i + 1);
+      const tail = afterPreArgsIdx < arg.length
+          ? [arg.substr(afterPreArgsIdx), ...restArgs]
+          : [...restArgs];
+
+      return [
+        {
+          key: '//*',
+          name: delimiter,
+          values,
+          tail,
+        },
+      ];
+    }
+  }
+
+  // No closing delimiter.
+  // Treat the rest of args as prerequisite ones.
+  return [
+    {
+      key: '//*',
+      name: delimiter,
+      values: [first.substr(contentIdx), ...args.slice(1), '//'],
+    },
+  ];
 }
 
 /**
@@ -176,10 +176,10 @@ const parallelZTaskSep = /(,)/;
  */
 function parallelZTasksSyntax(args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
 
-    const [entry] = args;
-    const [name, ...values] = entry.split(parallelZTaskSep).filter(name => !!name);
+  const [entry] = args;
+  const [name, ...values] = entry.split(parallelZTaskSep).filter(name => !!name);
 
-    return values.length ? [{ name, values, tail: args.slice(1), retry: true }] : [];
+  return values.length ? [{ name, values, tail: args.slice(1), retry: true }] : [];
 }
 
 /**
@@ -187,26 +187,26 @@ function parallelZTasksSyntax(args: readonly [string, ...string[]]): Iterable<ZO
  */
 function zTaskPreSyntax(args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
 
-    const [entry] = args;
-    const [name, ...preArgs] = entry.split('/');
+  const [entry] = args;
+  const [name, ...preArgs] = entry.split('/');
 
-    if (!name || !preArgs.length) {
-        return [];
-    }
+  if (!name || !preArgs.length) {
+    return [];
+  }
 
-    return [
-        {
-            name,
-            values: Array.from(
-                thruIt(
-                    preArgs,
-                    preArg => preArg ? '/' + preArg : nextSkip,
-                ),
-            ),
-            tail: args.slice(1),
-            retry: true,
-        },
-    ];
+  return [
+    {
+      name,
+      values: Array.from(
+          thruIt(
+              preArgs,
+              preArg => preArg ? '/' + preArg : nextSkip,
+          ),
+      ),
+      tail: args.slice(1),
+      retry: true,
+    },
+  ];
 }
 
 /**
@@ -214,23 +214,23 @@ function zTaskPreSyntax(args: readonly [string, ...string[]]): Iterable<ZOptionI
  */
 function zTaskShorthandPreArgSyntax(args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
 
-    const [name] = args;
+  const [name] = args;
 
-    if (!name.startsWith('/') || name.startsWith('//')) {
-        return [];
-    }
+  if (!name.startsWith('/') || name.startsWith('//')) {
+    return [];
+  }
 
-    const tail = args.slice(1);
+  const tail = args.slice(1);
 
-    return [
-        {
-            name,
-            tail,
-        },
-        {
-            key: '/*',
-            name,
-            tail,
-        },
-    ];
+  return [
+    {
+      name,
+      tail,
+    },
+    {
+      key: '/*',
+      name,
+      tail,
+    },
+  ];
 }
