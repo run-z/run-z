@@ -3,8 +3,8 @@
  * @module run-z
  */
 import type { ZPackage } from '../packages';
+import type { ZCallPlanner } from '../plan';
 import type { ZTask } from '../tasks';
-import type { ZCallPlanner } from './call-planner';
 
 /**
  * Batch execution planner.
