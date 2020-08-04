@@ -3,6 +3,7 @@
  * @module run-z
  */
 import { mapIt } from '@proc7ts/a-iterable';
+import type { ZPackage } from '../packages';
 import type { ZBatchPlanner } from './batch-planner';
 
 /**
@@ -41,7 +42,7 @@ export const ZBatcher = {
   },
 
   /**
-   * Batches the named task in each package belonging to named package sets defined in target task.
+   * Batches the named task in each package from each named set defined in target package.
    *
    * A named package set is a (preferably {@link ZTaskSpec.Group grouping}) task with name like `group-name/*`
    * or `group-name/task-name`. The latter is called when `task-name` matches the {@link ZBatchPlanner.taskName batched
@@ -59,6 +60,24 @@ export const ZBatcher = {
         zPackageSetNames(planner),
         packageSetName => target.task(packageSetName).then(taskName => planner.batch(taskName)),
     ));
+  },
+
+  /**
+   * Creates a task batcher for topmost package.
+   *
+   * Batches tasks in the topmost package the given `batcher` is able to batch anything.
+   *
+   * @param batcher  A task batcher the created batcher delegates batching to. By default batches the named task in
+   * {@link ZBatcher.batchSets each package from each named set} defined in that package.
+   *
+   * @returns New task batcher.
+   */
+  topmost(this: void, batcher?: ZBatcher): ZBatcher {
+    return planner => batchInZTarget(
+        batcher || ZBatcher.batchSets, // Can't use default parameter value. `ZBatcher` becomes `any` otherwise.
+        planner,
+        planner.target,
+    );
   },
 
 };
@@ -87,4 +106,32 @@ function zPackageSetNames({ target, taskName }: ZBatchPlanner): Iterable<string>
   }
 
   return groups.values();
+}
+
+/**
+ * @internal
+ */
+async function batchInZTarget(batcher: ZBatcher, planner: ZBatchPlanner, target: ZPackage): Promise<boolean> {
+
+  const { parent } = target;
+
+  if (parent) {
+    if (await batchInZTarget(batcher, planner, parent)) {
+      return true;
+    }
+  }
+
+  let batched = false;
+
+  await batcher({
+    dependent: planner.dependent,
+    target,
+    taskName: planner.taskName,
+    batch(task, details) {
+      batched = true;
+      return planner.batch(task, details);
+    },
+  });
+
+  return batched;
 }
