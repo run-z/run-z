@@ -75,7 +75,7 @@ export interface ZTaskBuilder<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
    * Each prerequisite task name represents a batch of tasks to execute. The batch execution will be planned by the
    * given `batcher`.
    *
-   * A single task call will be planned {@link ZBatcher.callTask by default}.
+   * A single task call will be planned {@link ZBatcher.batchTask by default}.
    *
    * @param batcher  New batcher.
    *

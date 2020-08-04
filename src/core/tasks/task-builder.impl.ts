@@ -11,7 +11,7 @@ import { addZTaskAttr, addZTaskAttrs } from './task-spec.impl';
  */
 export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> implements ZTaskBuilder<TAction> {
 
-  _batcher: ZBatcher = ZBatcher.callTask;
+  _batcher: ZBatcher = ZBatcher.batchTask;
   private readonly _pre: ZTaskSpec.Pre[] = [];
   private readonly _attrs: Record<string, [string, ...string[]]> = {};
   private readonly _args: string[] = [];

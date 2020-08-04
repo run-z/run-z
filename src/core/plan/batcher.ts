@@ -24,7 +24,7 @@ export type ZBatcher =
 export const ZBatcher = {
 
   /**
-   * Calls a single task in target package.
+   * Batches a named task in target package.
    *
    * This is the default {@link ZBatcher task batcher}.
    *
@@ -32,7 +32,7 @@ export const ZBatcher = {
    *
    * @returns A promise resolved when task call recorded.
    */
-  async callTask(this: void, planner: ZBatchPlanner): Promise<void> {
+  async batchTask(this: void, planner: ZBatchPlanner): Promise<void> {
 
     const task = await planner.target.task(planner.taskName);
 
