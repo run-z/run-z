@@ -40,6 +40,16 @@ export class TestPlan {
     return this._target = this.root.put(name, { packageJson, shell });
   }
 
+  async parse(commandLine: string): Promise<ZCall> {
+
+    const target = await this.target();
+    const builder = this.setup.taskFactory.newTask(target, '');
+
+    await builder.parse(commandLine);
+
+    return builder.task().call();
+  }
+
   async call(taskName: string, details?: ZCallDetails): Promise<ZCall> {
 
     const target = await this.target();

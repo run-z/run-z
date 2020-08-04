@@ -13,7 +13,7 @@ import type { ZBatchPlanner } from './batch-planner';
  */
 export type ZBatcher =
 /**
- * @param planner  Batch execution planner to record task calls to.
+ * @param planner  Batch execution planner to record batched task calls to.
  *
  * @returns Either nothing if batch execution planned synchronously, or a promise-like instance resolved when batch
  * execution planned asynchronously.
@@ -30,36 +30,46 @@ export const ZBatcher = {
    *
    * This is the default {@link ZBatcher task batcher}.
    *
-   * @param planner  Batch execution planner to record a task call to.
+   * @param planner  Batch execution planner to record batched task call to.
+   * @param ifPresent  Batch the task only if it is present in target package.
    *
    * @returns A promise resolved when task call recorded.
    */
-  async batchTask(this: void, planner: ZBatchPlanner): Promise<void> {
+  async batchTask(this: void, planner: ZBatchPlanner, ifPresent = false): Promise<void> {
 
     const task = await planner.target.task(planner.taskName);
 
-    return planner.batch(task);
+    if (!ifPresent || task.spec.action.type !== 'unknown') {
+      return planner.batch(task);
+    }
   },
 
   /**
-   * Batches the named task in each package from each named set defined in target package.
+   * Batches the named task over each package in each named set from target package.
    *
-   * A named package set is a (preferably {@link ZTaskSpec.Group grouping}) task with name like `group-name/*`
+   * A named package set is a (preferably {@link ZTaskSpec.Group grouping}) task with the name like `group-name/*`
    * or `group-name/task-name`. The latter is called when `task-name` matches the {@link ZBatchPlanner.taskName batched
    * one}. The former is called when there is no matching set in the latter form found.
    *
-   * @param planner  Batch execution planner to record task calls to.
+   * If target package has no named package sets, then batches a task with the given name if the target package has one.
+   *
+   * @param planner  Batch execution planner to record batched task calls to.
    *
    * @returns A promise resolved when batch execution planned.
    */
-  async batchSets(this: void, planner: ZBatchPlanner): Promise<void> {
+  async batchOverSets(this: void, planner: ZBatchPlanner): Promise<void> {
 
     const { target } = planner;
+    const setNames = zPackageSetNames(planner);
 
-    await Promise.all(mapIt(
-        zPackageSetNames(planner),
-        packageSetName => target.task(packageSetName).then(taskName => planner.batch(taskName)),
-    ));
+    if (setNames.length) {
+      await Promise.all(mapIt(
+          setNames,
+          packageSetName => target.task(packageSetName).then(taskName => planner.batch(taskName)),
+      ));
+    } else {
+      await ZBatcher.batchTask(planner, true);
+    }
   },
 
   /**
@@ -68,13 +78,13 @@ export const ZBatcher = {
    * Batches tasks in the topmost package the given `batcher` is able to batch anything.
    *
    * @param batcher  A task batcher the created batcher delegates batching to. By default batches the named task in
-   * {@link ZBatcher.batchSets each package from each named set} defined in that package.
+   * {@link ZBatcher.batchOverSets each package from each named set} defined in that package.
    *
    * @returns New task batcher.
    */
   topmost(this: void, batcher?: ZBatcher): ZBatcher {
     return planner => batchInZTarget(
-        batcher || ZBatcher.batchSets, // Can't use default parameter value. `ZBatcher` becomes `any` otherwise.
+        batcher || ZBatcher.batchOverSets, // Can't use default parameter value. `ZBatcher` becomes `any` otherwise.
         planner,
         planner.target,
     );
@@ -85,7 +95,7 @@ export const ZBatcher = {
 /**
  * @internal
  */
-function zPackageSetNames({ target, taskName }: ZBatchPlanner): Iterable<string> {
+function zPackageSetNames({ target, taskName }: ZBatchPlanner): readonly string[] {
 
   const { scripts = {} } = target.packageJson;
   const groups = new Map<string, string>();
@@ -105,7 +115,7 @@ function zPackageSetNames({ target, taskName }: ZBatchPlanner): Iterable<string>
     }
   }
 
-  return groups.values();
+  return Array.from(groups.values());
 }
 
 /**
