@@ -2,7 +2,8 @@ import { ZOptionInput } from '@run-z/optionz';
 import type { ZExecutedProcess } from '../../jobs';
 import { noopZExecutedProcess } from '../../jobs/impl';
 import type { ZPackageSet } from '../../packages';
-import type { ZCallDetails, ZPrePlanner } from '../../plan';
+import type { ZPrePlanner } from '../../plan';
+import { ZCallDetails } from '../../plan';
 import type { ZTaskSpec } from '../task-spec';
 import { AbstractZTask } from './abstract.task';
 
@@ -40,21 +41,26 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
         dependent: planner.dependent,
         target: subTarget,
         taskName: subTaskName,
-        batch: (subTask, subDetails = {}) => subTask.callAsPre(
-            planner,
-            subTaskPre,
-            {
-              params: () => details.params().extend(subDetails.params?.()),
-              plan: async subPlanner => {
-                // Execute sub-tasks after the grouping one
-                subPlanner.order(this, subPlanner.plannedCall.task);
-                // Apply task plan
-                await details.plan(subPlanner);
-                // Apply sub-tasks plan
-                return subDetails.plan?.(subPlanner);
+        batch: (subTask, subDetails) => {
+
+          const { params, plan } = ZCallDetails.by(subDetails);
+
+          return subTask.callAsPre(
+              planner,
+              subTaskPre,
+              {
+                params: () => details.params().extend(params()),
+                plan: async subPlanner => {
+                  // Execute sub-tasks after the grouping one
+                  subPlanner.order(this, subPlanner.plannedCall.task);
+                  // Apply task plan
+                  await details.plan(subPlanner);
+                  // Apply sub-tasks plan
+                  return plan(subPlanner);
+                },
               },
-            },
-        ),
+          );
+        },
       });
     }
   }
