@@ -32,7 +32,7 @@ export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> exte
   /**
    * Initial details for {@link call calling} this task.
    */
-  readonly callDetails: Required<ZCallDetails<TAction>>;
+  readonly callDetails: ZCallDetails.Full<TAction>;
 
   /**
    * Plans a call to this task as a prerequisite of another one.
@@ -40,12 +40,18 @@ export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> exte
    * By default a {@link ZTaskSpec.Group grouping task} treats the first argument as a sub-task name and the rest of
    * arguments as arguments to this sub-task. A task of any other type calls to itself.
    *
+   * @typeparam TAction  Task action type.
    * @param planner  A planner to record prerequisite call(s) to.
    * @param ref  Prerequisite specifier.
+   * @param details  Task call details.
    *
    * @returns A promise resolved when prerequisite call planning completes.
    */
-  callAsPre(planner: ZPrePlanner, ref: ZTaskSpec.Pre): PromiseLike<void>;
+  callAsPre<TAction extends ZTaskSpec.Action>(
+      planner: ZPrePlanner,
+      ref: ZTaskSpec.Pre,
+      details: ZCallDetails.Full<TAction>,
+  ): Promise<void>;
 
   /**
    * Plans this task execution as a top-level task.

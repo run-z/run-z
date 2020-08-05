@@ -1,7 +1,7 @@
-import { mapIt } from '@proc7ts/a-iterable';
 import type { ZExecutedProcess, ZTaskExecution } from '../../jobs';
-import type { ZPackage, ZPackageSet } from '../../packages';
-import type { ZCall, ZCallDetails, ZCallPlanner, ZPrePlanner, ZTaskParams } from '../../plan';
+import type { ZPackage } from '../../packages';
+import type { ZCall, ZCallPlanner, ZPrePlanner } from '../../plan';
+import { ZCallDetails, ZTaskParams } from '../../plan';
 import type { ZTask, ZTaskQualifier } from '../task';
 import type { ZTaskBuilder$ } from '../task-builder.impl';
 import type { ZTaskSpec } from '../task-spec';
@@ -14,22 +14,30 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   readonly target: ZPackage;
   readonly name: string;
   readonly taskQN: string;
-  readonly callDetails: Required<ZCallDetails<TAction>>;
+  readonly callDetails: ZCallDetails.Full<TAction>;
 
-  constructor(builder: ZTaskBuilder$, readonly spec: ZTaskSpec<TAction>) {
-    this.target = builder.target;
-    this.taskQN = this.name = builder.name;
+  constructor(private readonly _builder: ZTaskBuilder$, readonly spec: ZTaskSpec<TAction>) {
+    this.target = _builder.taskTarget;
+    this.taskQN = this.name = _builder.taskName;
     this.callDetails = {
       params: this.callParams.bind(this),
       plan: this.planCall.bind(this),
     };
   }
 
-  async callAsPre(planner: ZPrePlanner, { attrs, args }: ZTaskSpec.Pre): Promise<void> {
+  async callAsPre(
+      planner: ZPrePlanner,
+      { attrs, args }: ZTaskSpec.Pre,
+      details: ZCallDetails.Full,
+  ): Promise<void> {
+
+    const taskParams = planner.dependent.plannedCall.extendParams({ attrs, args });
+
     await planner.callPre(
         this,
         {
-          params: planner.dependent.plannedCall.extendParams({ attrs, args }),
+          ...details,
+          params: () => taskParams().extend(details.params()),
         },
     );
   }
@@ -45,11 +53,11 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
    *
    * @returns Partial task execution parameters.
    */
-  protected callParams(): ZTaskParams.Partial {
+  protected callParams(): ZTaskParams {
 
     const { spec: { attrs, args } } = this;
 
-    return { attrs, args };
+    return new ZTaskParams({ attrs, args });
   }
 
   /**
@@ -63,11 +71,12 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
    * instructions recorded asynchronously.
    */
   protected async planCall(planner: ZCallPlanner<TAction>): Promise<void> {
-    await this.planPres(planner);
+    await this.planPre(planner);
   }
 
-  protected async planPres(planner: ZCallPlanner<TAction>): Promise<void> {
+  protected async planPre(planner: ZCallPlanner<TAction>): Promise<void> {
 
+    const batcher = this._builder._batcher;
     const { target, spec } = this;
     let parallel: ZTaskQualifier[] = [];
     let prevTasks: ZTask[] = [];
@@ -78,11 +87,10 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
         parallel = [];
       }
 
-      const preTargets = target.selectTargets(pre.targets);
-      const preTasks = await resolveZTaskPre(preTargets, pre);
       const calledTasks: ZTask[] = [];
       const prePlanner: ZPrePlanner = {
         dependent: planner,
+        batcher,
         async callPre<TAction extends ZTaskSpec.Action>(
             task: ZTask<TAction>,
             details?: ZCallDetails<TAction>,
@@ -100,8 +108,21 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
         },
       };
 
-      for (const preTask of preTasks) {
-        await preTask.callAsPre(prePlanner, pre);
+      const preTargets = target.selectTargets(pre.targets);
+
+      for (const preTarget of await preTargets.packages()) {
+        await batcher({
+          dependent: planner,
+          target: preTarget,
+          taskName: pre.task,
+          batch(preTask, preDetails = {}) {
+            return preTask.callAsPre(
+                preDetails.batcher ? { ...prePlanner, batcher: preDetails.batcher } : prePlanner,
+                pre,
+                ZCallDetails.by(preDetails),
+            );
+          },
+        });
       }
 
       if (calledTasks.length === 1) {
@@ -139,15 +160,3 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   }
 
 }
-
-/**
- * @internal
- */
-async function resolveZTaskPre(targets: ZPackageSet, { task }: ZTaskSpec.Pre): Promise<Iterable<ZTask>> {
-  return Promise.all(mapIt(
-      await targets.packages(),
-      target => target.task(task),
-  ));
-}
-
-

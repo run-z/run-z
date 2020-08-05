@@ -3,7 +3,6 @@ import { nextSkip } from '@proc7ts/call-thru';
 import { ZExecutor } from '../jobs/job.impl';
 import type { ZSetup } from '../setup';
 import type { ZTask, ZTaskQualifier, ZTaskSpec } from '../tasks';
-import { UnknownZTaskError } from '../tasks';
 import type { ZCall } from './call';
 import type { ZCallDetails } from './call-details';
 import { ZCallRecord } from './call.impl';
@@ -30,11 +29,7 @@ export class ZInstructionRecords {
         const call = this._calls.get(task) as ZCallRecord<TAction> | undefined;
 
         if (!call) {
-          throw new UnknownZTaskError(
-              task.target.name,
-              task.name,
-              `Task "${task.name}" from <${task.target.name}> is never called`,
-          );
+          throw new TypeError(`Task "${task.name}" from <${task.target.name}> is never called`);
         }
 
         return call;

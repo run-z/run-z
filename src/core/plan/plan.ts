@@ -25,7 +25,7 @@ export interface ZPlan {
    *
    * @returns Either a call to the given task.
    *
-   * @throws UnknownZTaskError  If the given task call is not planned.
+   * @throws TypeError  If the given task call is not planned.
    */
   callOf<TAction extends ZTaskSpec.Action>(task: ZTask<TAction>): ZCall<TAction>;
 

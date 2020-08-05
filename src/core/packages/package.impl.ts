@@ -187,6 +187,13 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
     return absent;
   }
 
+  taskNames(): Iterable<string> {
+
+    const { scripts = {} } = this.packageJson;
+
+    return Object.keys(scripts);
+  }
+
   toString(): string {
     return this.name;
   }

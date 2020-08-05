@@ -19,6 +19,13 @@ const falseZTaskFlagValues: { [key: string]: 1 } = {
 export class ZTaskParams {
 
   /**
+   * Creates new mutable task execution parameters.
+   */
+  static newMutable(): ZTaskParams.Mutable {
+    return { attrs: {}, args: [] };
+  }
+
+  /**
    * Updates mutable task execution parameters with the given partial update.
    *
    * @param params  Parameters to update.
@@ -28,7 +35,7 @@ export class ZTaskParams {
    */
   static update(
       params: ZTaskParams.Mutable,
-      update: ZTaskParams.Partial,
+      update: ZTaskParams.Partial = {},
   ): ZTaskParams.Mutable {
 
     const { attrs = {}, args = [] } = update;
@@ -106,12 +113,7 @@ export class ZTaskParams {
    * @returns A mutable task execution parameters containing this parameters values.
    */
   mutate(): ZTaskParams.Mutable {
-
-    const result: ZTaskParams.Mutable = { attrs: {}, args: [] };
-
-    ZTaskParams.update(result, this);
-
-    return result;
+    return ZTaskParams.update(ZTaskParams.newMutable(), this);
   }
 
   /**
@@ -121,8 +123,24 @@ export class ZTaskParams {
    *
    * @returns Task execution parameters containing these parameter values updated with the given `extension`.
    */
-  extend(extension: ZTaskParams.Partial): ZTaskParams {
+  extend(extension: ZTaskParams.Partial | undefined): ZTaskParams {
     return new ZTaskParams(ZTaskParams.update(this.mutate(), extension));
+  }
+
+  /**
+   * Extends task execution attributes.
+   *
+   * @param extension  Task parameters extension.
+   *
+   * @returns Task execution parameters containing these parameter attributes updated with the given `extension`.
+   */
+  extendAttrs(extension: ZTaskParams.Partial | undefined): ZTaskParams {
+
+    const params = this.mutate();
+
+    params.args = [];
+
+    return new ZTaskParams(ZTaskParams.update(params, extension));
   }
 
 }

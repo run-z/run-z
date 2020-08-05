@@ -133,7 +133,7 @@ export class ZTaskParser {
    */
   applyOptions(builder: ZTaskBuilder, args: readonly string[], fromIndex?: number): Promise<ZTaskBuilder> {
     if (!this._specParser) {
-      this._specParser = zTaskSpecParser(builder.target.setup, this._config);
+      this._specParser = zTaskSpecParser(builder.taskTarget.setup, this._config);
     }
     return this._specParser(builder, args, fromIndex);
   }

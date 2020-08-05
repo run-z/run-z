@@ -3,7 +3,7 @@
  * @module run-z
  */
 import type { ZOption, ZOptionReader } from '@run-z/optionz';
-import type { ZPackage } from '../packages';
+import type { ZTaskModifier } from './task-modifier';
 import type { ZTaskSpec } from './task-spec';
 
 /**
@@ -11,17 +11,7 @@ import type { ZTaskSpec } from './task-spec';
  *
  * This is passed to {@link ZTaskOption.Reader option reader}.
  */
-export interface ZTaskOption extends ZOption {
-
-  /**
-   * Target package the task is applied to.
-   */
-  readonly taskTarget: ZPackage;
-
-  /**
-   * Task name.
-   */
-  readonly taskName: string;
+export interface ZTaskOption extends ZOption, ZTaskModifier {
 
   /**
    * Prerequisite specification instance.
@@ -30,45 +20,6 @@ export interface ZTaskOption extends ZOption {
    * specification {@link ZTaskOption.Pre.start started}.
    */
   readonly pre: ZTaskOption.Pre;
-
-  /**
-   * Appends a task prerequisite.
-   *
-   * @param pre  Prerequisite specifier to append.
-   *
-   * @returns `this` instance.
-   */
-  addPre(pre: ZTaskSpec.Pre): this;
-
-  /**
-   * Appends task attribute.
-   *
-   * @param name  Target attribute name.
-   * @param value  Attribute value to append.
-   *
-   * @returns `this` instance.
-   */
-  addAttr(name: string, value: string): this;
-
-  /**
-   * Appends task attributes.
-   *
-   * @param attrs  Attributes to append.
-   *
-   * @returns `this` instance.
-   */
-  addAttrs(attrs: ZTaskSpec.Attrs): this;
-
-  /**
-   * Appends raw command line argument(s) to the task action.
-   *
-   * It is illegal to add arguments without {@link setAction action set}.
-   *
-   * @param args  Command line argument(s) to append.
-   *
-   * @returns `this` instance.
-   */
-  addArg(...args: string[]): this;
 
   /**
    * Assigns a task action.

@@ -1,5 +1,4 @@
 import { prerequisitesOf, taskIds, TestPlan } from '../../spec';
-import { UnknownZTaskError } from '../tasks';
 import type { ZCall } from './call';
 import type { ZPlan } from './plan';
 
@@ -26,7 +25,7 @@ describe('ZPlan', () => {
 
       const otherTask = await call.task.target.task('other');
 
-      expect(() => plan.callOf(otherTask)).toThrow(UnknownZTaskError);
+      expect(() => plan.callOf(otherTask)).toThrow(TypeError);
     });
   });
 

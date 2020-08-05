@@ -1,5 +1,5 @@
 import type { ZExecutedProcess, ZTaskExecution } from '../../jobs';
-import type { ZTaskParams } from '../../plan';
+import { ZTaskParams } from '../../plan';
 import type { ZTaskSpec } from '../task-spec';
 import { AbstractZTask } from './abstract.task';
 
@@ -12,11 +12,11 @@ export class CommandZTask extends AbstractZTask<ZTaskSpec.Command> {
     return this.target.location.shell.execCommand(this.spec.action.command, execution.call.params());
   }
 
-  protected callParams(): ZTaskParams.Partial {
+  protected callParams(): ZTaskParams {
 
     const { spec: { attrs, args, action: { args: commandArgs } } } = this;
 
-    return { attrs, args: [...commandArgs, ...args] };
+    return new ZTaskParams({ attrs, args: [...commandArgs, ...args] });
   }
 
   protected isParallel(): boolean {

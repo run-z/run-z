@@ -1,5 +1,6 @@
 import type { ZOption } from '@run-z/optionz';
 import { ZOptionError } from '@run-z/optionz';
+import type { ZBatcher } from '../../../batches';
 import type { ZPackage } from '../../../packages';
 import type { ZTaskOption } from '../../task-option';
 import type { ZTaskSpec } from '../../task-spec';
@@ -19,8 +20,8 @@ export function zTaskSpecOptionClass<TArgs extends any[]>(
 
     constructor(private readonly _draft: DraftZTask, ...args: TArgs) {
       super(...args);
-      this.taskTarget = _draft.builder.target;
-      this.taskName = _draft.builder.name;
+      this.taskTarget = _draft.builder.taskTarget;
+      this.taskName = _draft.builder.taskName;
       _draft.moveTo(this);
     }
 
@@ -55,6 +56,11 @@ export function zTaskSpecOptionClass<TArgs extends any[]>(
       }
       this.pre.conclude();
       this._draft.builder.addArg(...args);
+      return this;
+    }
+
+    setBatcher(batcher: ZBatcher): this {
+      this._draft.builder.setBatcher(batcher);
       return this;
     }
 

@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module run-z
  */
+import type { ZBatcher } from '../batches';
 import type { ZTask, ZTaskSpec } from '../tasks';
 import type { ZCall } from './call';
 import type { ZCallDetails } from './call-details';
@@ -20,6 +21,11 @@ export interface ZPrePlanner {
   readonly dependent: ZCallPlanner;
 
   /**
+   * Batcher to use to batch transient prerequisites.
+   */
+  readonly batcher: ZBatcher;
+
+  /**
    * Records a call to prerequisite task.
    *
    * Updates already recorded call to the same task.
@@ -30,6 +36,10 @@ export interface ZPrePlanner {
    *
    * @returns A promise resolved to the task call when it is recorded.
    */
-  callPre<TAction extends ZTaskSpec.Action>(task: ZTask<TAction>, details?: ZCallDetails<TAction>): Promise<ZCall>;
+  callPre<TAction extends ZTaskSpec.Action>(
+      this: void,
+      task: ZTask<TAction>,
+      details?: ZCallDetails<TAction>,
+  ): Promise<ZCall>;
 
 }

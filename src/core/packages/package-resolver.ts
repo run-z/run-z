@@ -75,10 +75,15 @@ export class ZPackageResolver {
       return existing;
     }
 
+    const findParent = async (location: ZPackageLocation | undefined): Promise<ZPackage | undefined> => {
+      if (!location) {
+        return;
+      }
+      return (await this.find(location)) || findParent(location.parent);
+    };
     const discoverPackage = async (): Promise<ZPackage$ | undefined> => {
 
-      const parentLocation = location.parent;
-      const parent = parentLocation && await this.find(parentLocation);
+      const parent = await findParent(location.parent);
       const packageJson = await location.load();
 
       if (!packageJson) {
