@@ -1,6 +1,6 @@
 import { arrayOfElements, valueByRecipe } from '@proc7ts/primitives';
 import type { SupportedZOptions } from '@run-z/optionz';
-import { ZBatcher } from '../../../batches';
+import { ParallelZBatch, ZBatcher } from '../../../batches';
 import type { ZTaskOption } from '../../task-option';
 import type { ZTaskParser } from '../../task-parser';
 import type { DraftZTask } from './draft-task';
@@ -17,6 +17,11 @@ const defaultZTaskSpecOptions: SupportedZOptions.Map<ZTaskOption> = {
     option.setBatching(option.batching.batchBy(ZBatcher.topmost()));
     option.values(0);
   },
+
+  '--parallel-batch': readParallelZBatch.bind(undefined, true),
+  '--pbatch': readParallelZBatch.bind(undefined, true),
+  '--sequential-batch': readParallelZBatch.bind(undefined, false),
+  '--sbatch': readParallelZBatch.bind(undefined, false),
 
   '--*=*': readNameValueZTaskArg,
   '-*=*': readNameValueZTaskArg,
@@ -81,6 +86,14 @@ export function zTaskSpecOptions(
       .map(o => ({ builder }) => valueByRecipe(o, builder));
 
   return [defaultZTaskSpecOptions, ...providers];
+}
+
+/**
+ * @internal
+ */
+function readParallelZBatch(parallel: boolean, option: ZTaskOption): void {
+  option.setBatching(option.batching.rule(ParallelZBatch).makeParallel(parallel));
+  option.values(0);
 }
 
 /**
