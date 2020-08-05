@@ -64,31 +64,37 @@ export const ZBatcher = {
   },
 
   /**
-   * Batches the named task over each package in each named set from target package.
+   * Batches tasks in all named batches.
    *
-   * A named package set is a (preferably {@link ZTaskSpec.Group grouping}) task with the name like `group-name/*`
-   * or `group-name/task-name`. The latter is called when `task-name` matches the {@link ZBatchPlanner.taskName batched
-   * one}. The former is called when there is no matching set in the latter form found.
+   * A named batch is defined by (preferably {@link ZTaskSpec.Group grouping}) task with the name like one of:
    *
-   * If target package has no named package sets, then batches a task with the given name if the target package has one.
+   * - `batch-name/task-name`.
+   *   Such batch is processed when the {@link ZBatchPlanner.taskName batched task name} matches `task-name`.
+   *
+   * - `batch-name/*`.
+   *   Such batch is processed, unless there is another named batch `batch-name/task-name` defined with the
+   *   {@link ZBatchPlanner.taskName batched task name} matching `task-name`.
+   *
+   * If target package has no matching named batches then batches the task by {@link ZBatcher.batchTask default
+   * batcher}.
    *
    * @param planner  Batch execution planner to record batched task calls to.
    *
    * @returns A promise resolved when batch execution planned.
    */
-  async batchOverPackageSets(this: void, planner: ZBatchPlanner): Promise<void> {
+  async batchNamed(this: void, planner: ZBatchPlanner): Promise<void> {
 
     const { target } = planner;
-    const packageSetNames = zPackageSetNames(planner);
+    const batchNames = zBatchNames(planner);
 
-    if (itsEmpty(packageSetNames)) {
+    if (itsEmpty(batchNames)) {
       // No matching sets.
       // Fallback to default task batching.
       await ZBatcher.batchTask(planner);
     } else {
       await Promise.all(mapIt(
-          packageSetNames,
-          packageSetName => target.task(packageSetName).then(taskName => planner.batch(taskName)),
+          batchNames,
+          batchName => target.task(batchName).then(taskName => planner.batch(taskName)),
       ));
     }
   },
@@ -99,7 +105,7 @@ export const ZBatcher = {
    * Batches tasks in the topmost package a batcher can be created for.
    *
    * @param provider  A provider of task batcher to plan batch execution with. By default creates a batcher that batches
-   * the named task over {@link ZBatcher.batchOverPackageSets each package in each named set}, and ignores targets
+   * the named task over {@link ZBatcher.batchNamed each package in each named set}, and ignores targets
    * without matching named package sets.
    *
    * @returns New task batcher.
@@ -135,13 +141,13 @@ export const ZBatcher = {
  * @internal
  */
 function defaultZBatcherProvider(planner: ZBatchPlanner): ZBatcher | undefined {
-  return itsEmpty(zPackageSetNames(planner)) ? undefined : ZBatcher.batchOverPackageSets;
+  return itsEmpty(zBatchNames(planner)) ? undefined : ZBatcher.batchNamed;
 }
 
 /**
  * @internal
  */
-function zPackageSetNames({ target, taskName }: ZBatchPlanner): Iterable<string> {
+function zBatchNames({ target, taskName }: ZBatchPlanner): Iterable<string> {
 
   const groups = new Map<string, string>();
 
