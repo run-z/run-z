@@ -143,10 +143,9 @@ function defaultZBatcherProvider(planner: ZBatchPlanner): ZBatcher | undefined {
  */
 function zPackageSetNames({ target, taskName }: ZBatchPlanner): Iterable<string> {
 
-  const { scripts = {} } = target.packageJson;
   const groups = new Map<string, string>();
 
-  for (const script of Object.keys(scripts)) {
+  for (const script of target.taskNames()) {
 
     const slashIdx = script.lastIndexOf('/');
 

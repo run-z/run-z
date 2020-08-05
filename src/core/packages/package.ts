@@ -110,4 +110,11 @@ export interface ZPackage extends ZPackageSet {
    */
   task(name: string): Promise<ZTask>;
 
+  /**
+   * The names of tasks defined in this package.
+   *
+   * @returns An iterable of {@link packageJson script names} containing tasks.
+   */
+  taskNames(): Iterable<string>;
+
 }
