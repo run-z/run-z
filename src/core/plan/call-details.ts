@@ -64,7 +64,7 @@ export namespace ZCallDetails {
 export const ZCallDetails = {
 
   /**
-   * Reconstructs full details of the task call by partial one.
+   * Reconstructs full details of the task call by partial ones.
    *
    * @typeparam TAction  Task action type.
    * @param details  Partial task call details.

@@ -42,4 +42,13 @@ export interface ZPrePlanner {
       details?: ZCallDetails<TAction>,
   ): Promise<ZCall>;
 
+  /**
+   * Builds a new prerequisites planner based on this one, but batching prerequisites with the given batcher.
+   *
+   * @param batcher  New prerequisites batcher.
+   *
+   * @returns Either new prerequisites planner, or this one if `batcher` is not specified.
+   */
+  batchBy(batcher?: ZBatcher): ZPrePlanner;
+
 }

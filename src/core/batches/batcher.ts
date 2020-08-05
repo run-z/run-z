@@ -5,7 +5,7 @@
 import { itsEmpty, makeIt, mapIt } from '@proc7ts/a-iterable';
 import type { ZPackage } from '../packages';
 import type { ZTask, ZTaskSpec } from '../tasks';
-import type { ZBatchDetails } from './batch-details';
+import { ZBatchDetails } from './batch-details';
 import type { ZBatchPlanner } from './batch-planner';
 
 /**
@@ -123,7 +123,7 @@ export const ZBatcher = {
             task: ZTask<TAction>,
             details: ZBatchDetails<TAction> = {},
         ): Promise<void> {
-          return planner.batch(task, details.batcher ? details : { ...details, batcher });
+          return planner.batch(task, { batcher, ...ZBatchDetails.by(details) });
         },
       });
     };
@@ -190,7 +190,7 @@ async function batchInZTarget(
     target,
     taskName: planner.taskName,
     batch(task, details = {}) {
-      return planner.batch(task, batcher ? { ...details, batcher } : details);
+      return planner.batch(task, { batcher, ...ZBatchDetails.by(details) });
     },
   };
 

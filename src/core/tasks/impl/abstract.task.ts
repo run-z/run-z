@@ -1,3 +1,4 @@
+import { ZBatchDetails } from '../../batches';
 import type { ZExecutedProcess, ZTaskExecution } from '../../jobs';
 import type { ZPackage } from '../../packages';
 import type { ZCall, ZCallPlanner, ZPrePlanner } from '../../plan';
@@ -106,6 +107,9 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
 
           return preCall;
         },
+        batchBy(batcher) {
+          return batcher ? { ...this, batcher } : this;
+        },
       };
 
       const preTargets = target.selectTargets(pre.targets);
@@ -115,11 +119,14 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
           dependent: planner,
           target: preTarget,
           taskName: pre.task,
-          batch(preTask, preDetails = {}) {
+          batch(preTask, preDetails) {
+
+            const details = ZBatchDetails.by(preDetails);
+
             return preTask.callAsPre(
-                preDetails.batcher ? { ...prePlanner, batcher: preDetails.batcher } : prePlanner,
+                prePlanner.batchBy(details.batcher),
                 pre,
-                ZCallDetails.by(preDetails),
+                details,
             );
           },
         });

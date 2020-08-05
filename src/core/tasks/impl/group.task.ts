@@ -1,10 +1,9 @@
 import { ZOptionInput } from '@run-z/optionz';
-import type { ZBatchDetails } from '../../batches/batch-details';
+import { ZBatchDetails } from '../../batches';
 import type { ZExecutedProcess } from '../../jobs';
 import { noopZExecutedProcess } from '../../jobs/impl';
 import type { ZPackageSet } from '../../packages';
-import type { ZPrePlanner } from '../../plan';
-import { ZCallDetails } from '../../plan';
+import type { ZCallDetails, ZPrePlanner } from '../../plan';
 import type { ZTask } from '../task';
 import type { ZTaskSpec } from '../task-spec';
 import { AbstractZTask } from './abstract.task';
@@ -61,10 +60,10 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
             subDetails: ZBatchDetails<TAction> = {},
         ): Promise<void> => {
 
-          const { params, plan } = ZCallDetails.by(subDetails);
+          const { params, plan, batcher } = ZBatchDetails.by(subDetails);
 
           return subTask.callAsPre<TAction>(
-              subDetails.batcher ? { ...planner, batcher: subDetails.batcher } : planner,
+              planner.batchBy(batcher),
               subTaskPre,
               {
                 params: () => groupCall.params().extend(params()),
