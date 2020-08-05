@@ -45,11 +45,9 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
         },
     );
 
-    const { batching } = planner;
+    const batching = this._builder.batching.mergeWith(planner.batching);
 
     // Delegate to sub-task(s).
-    const subTaskPre: ZTaskSpec.Pre = { ...pre, args: subArgs };
-
     for (const subTarget of await this._subTaskTargets().packages()) {
       await batching.batch({
         dependent: planner.dependent,
@@ -64,7 +62,7 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
 
           return subTask.callAsPre<TAction>(
               planner.batchWith(batching),
-              subTaskPre,
+              { ...pre, args: subArgs, task: subTask.name },
               {
                 params: () => groupCall.params().extend(params()),
                 plan: async subPlanner => {

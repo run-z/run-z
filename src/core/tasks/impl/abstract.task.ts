@@ -17,7 +17,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   readonly taskQN: string;
   readonly callDetails: ZCallDetails.Full<TAction>;
 
-  constructor(private readonly _builder: ZTaskBuilder$, readonly spec: ZTaskSpec<TAction>) {
+  constructor(protected readonly _builder: ZTaskBuilder$, readonly spec: ZTaskSpec<TAction>) {
     this.target = _builder.taskTarget;
     this.taskQN = this.name = _builder.taskName;
     this.callDetails = {
