@@ -69,9 +69,12 @@ export class ZBatching {
    *
    * @param other  Batching policy to merge with this one. Its setting have precedence over the ones of this policy.
    *
-   * @returns Merged batching policy.
+   * @returns Merged batching policy, or `this` one if batching policy to merge with is unspecified.
    */
-  mergeWith(other: ZBatching): ZBatching {
+  mergeWith(other: ZBatching | null | undefined): ZBatching {
+    if (!other) {
+      return this;
+    }
 
     const { _batcher: newBatcher = this._batcher } = other;
     const newBatching = new ZBatching(newBatcher);

@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module run-z
  */
-import type { ZBatcher } from '../batches';
+import type { ZBatching } from '../batches';
 import type { ZTask, ZTaskSpec } from '../tasks';
 import type { ZCall } from './call';
 import type { ZCallDetails } from './call-details';
@@ -21,9 +21,9 @@ export interface ZPrePlanner {
   readonly dependent: ZCallPlanner;
 
   /**
-   * Batcher to use to batch transient prerequisites.
+   * Batching policy to apply when batch transient prerequisites.
    */
-  readonly batcher: ZBatcher;
+  readonly batching: ZBatching;
 
   /**
    * Records a call to prerequisite task.
@@ -43,12 +43,12 @@ export interface ZPrePlanner {
   ): Promise<ZCall>;
 
   /**
-   * Builds a new prerequisites planner based on this one, but batching prerequisites with the given batcher.
+   * Builds a new prerequisites planner based on this one with updated batching policy for prerequisites.
    *
-   * @param batcher  New prerequisites batcher.
+   * @param batching  New prerequisites batching policy.
    *
-   * @returns Either new prerequisites planner, or this one if `batcher` is not specified.
+   * @returns Either new prerequisites planner, or this one if batching policy is unspecified.
    */
-  batchBy(batcher?: ZBatcher): ZPrePlanner;
+  batchWith(batching: ZBatching | null | undefined): ZPrePlanner;
 
 }

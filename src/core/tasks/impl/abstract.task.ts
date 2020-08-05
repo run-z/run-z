@@ -77,7 +77,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
 
   protected async planPre(planner: ZCallPlanner<TAction>): Promise<void> {
 
-    const batcher = this._builder._batcher;
+    const batching = this._builder._batching;
     const { target, spec } = this;
     let parallel: ZTaskQualifier[] = [];
     let prevTasks: ZTask[] = [];
@@ -91,7 +91,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
       const calledTasks: ZTask[] = [];
       const prePlanner: ZPrePlanner = {
         dependent: planner,
-        batcher,
+        batching,
         async callPre<TAction extends ZTaskSpec.Action>(
             task: ZTask<TAction>,
             details?: ZCallDetails<TAction>,
@@ -107,15 +107,15 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
 
           return preCall;
         },
-        batchBy(batcher) {
-          return batcher ? { ...this, batcher } : this;
+        batchWith(newBatching) {
+          return { ...this, batching: batching.mergeWith(newBatching) };
         },
       };
 
       const preTargets = target.selectTargets(pre.targets);
 
       for (const preTarget of await preTargets.packages()) {
-        await batcher({
+        await batching.batch({
           dependent: planner,
           target: preTarget,
           taskName: pre.task,
@@ -124,7 +124,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
             const details = ZBatchDetails.by(preDetails);
 
             return preTask.callAsPre(
-                prePlanner.batchBy(details.batcher),
+                prePlanner.batchWith(details.batching),
                 pre,
                 details,
             );

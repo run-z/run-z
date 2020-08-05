@@ -1,4 +1,4 @@
-import { ZBatcher } from '../batches';
+import { ZBatching } from '../batches';
 import type { ZPackage } from '../packages';
 import type { AbstractZTask } from './impl';
 import { CommandZTask, GroupZTask, ScriptZTask, UnknownZTask } from './impl';
@@ -11,7 +11,7 @@ import { addZTaskAttr, addZTaskAttrs } from './task-spec.impl';
  */
 export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> implements ZTaskBuilder<TAction> {
 
-  _batcher: ZBatcher = ZBatcher.batchTask;
+  _batching: ZBatching = new ZBatching();
   private readonly _pre: ZTaskSpec.Pre[] = [];
   private readonly _attrs: Record<string, [string, ...string[]]> = {};
   private readonly _args: string[] = [];
@@ -44,8 +44,8 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
     return this;
   }
 
-  setBatcher(batcher: ZBatcher): this {
-    this._batcher = batcher;
+  setBatching(batching: ZBatching): this {
+    this._batching = batching;
     return this;
   }
 

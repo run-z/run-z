@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module run-z
  */
-import type { ZBatcher } from '../batches';
+import type { ZBatching } from '../batches';
 import type { ZPackage } from '../packages';
 import type { ZTaskSpec } from './task-spec';
 
@@ -66,18 +66,18 @@ export interface ZTaskModifier {
   addArg(...args: string[]): this;
 
   /**
-   * Sets a batcher of prerequisite tasks to execute.
+   * Sets a policy for prerequisites batching.
    *
-   * Each prerequisite task name represents a batch of tasks to execute. The batch execution will be planned by the
-   * given `batcher`.
+   * Each prerequisite task name represents a batch of tasks to execute. The batch execution will be planned with the
+   * given `batching` policy.
    *
    * A single task call will be planned {@link ZBatcher.batchTask by default}.
    *
-   * @param batcher  New batcher.
+   * @param batching  New batching policy.
    *
    * @returns `this` instance.
    */
-  setBatcher(batcher: ZBatcher): this;
+  setBatching(batching: ZBatching): this;
 
   /**
    * Assigns a task action.

@@ -7,6 +7,7 @@ import type { ZPackage } from '../packages';
 import type { ZTask, ZTaskSpec } from '../tasks';
 import { ZBatchDetails } from './batch-details';
 import type { ZBatchPlanner } from './batch-planner';
+import { ZBatching } from './batching';
 
 /**
  * A batcher of tasks to execute.
@@ -127,9 +128,16 @@ export const ZBatcher = {
         ...planner,
         batch<TAction extends ZTaskSpec.Action>(
             task: ZTask<TAction>,
-            details: ZBatchDetails<TAction> = {},
+            details: ZBatchDetails<TAction>,
         ): Promise<void> {
-          return planner.batch(task, { batcher, ...ZBatchDetails.by(details) });
+          details = ZBatchDetails.by(details);
+          return planner.batch(
+              task,
+              {
+                ...details,
+                batching: new ZBatching(batcher).mergeWith(details.batching),
+              },
+          );
         },
       });
     };
@@ -195,8 +203,15 @@ async function batchInZTarget(
     dependent: planner.dependent,
     target,
     taskName: planner.taskName,
-    batch(task, details = {}) {
-      return planner.batch(task, { batcher, ...ZBatchDetails.by(details) });
+    batch(task, details) {
+      details = ZBatchDetails.by(details);
+      return planner.batch(
+          task,
+          {
+            ...details,
+            batching: new ZBatching(batcher).mergeWith(details.batching),
+          },
+      );
     },
   };
 
