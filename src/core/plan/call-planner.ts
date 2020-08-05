@@ -36,7 +36,7 @@ export interface ZCallPlanner<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
    * @param task  Target task to add qualifier to.
    * @param qualifier  Qualifier to add to the task.
    */
-  qualify(task: ZTask, qualifier: ZTaskQualifier): void;
+  qualify(this: void, task: ZTask, qualifier: ZTaskQualifier): void;
 
   /**
    * Records a call to the task.
@@ -50,6 +50,7 @@ export interface ZCallPlanner<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
    * @returns A promise resolved to the task call when it is recorded.
    */
   call<TAction extends ZTaskSpec.Action>(
+      this: void,
       task: ZTask<TAction>,
       details?: ZCallDetails<TAction>,
   ): Promise<ZCall<TAction>>;
@@ -68,7 +69,7 @@ export interface ZCallPlanner<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
    * @param first  The task executed first.
    * @param second  The task executed after the first one.
    */
-  order(first: ZTask, second: ZTask): void;
+  order(this: void, first: ZTask, second: ZTask): void;
 
   /**
    * Allow parallel tasks execution.
@@ -77,6 +78,6 @@ export interface ZCallPlanner<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
    *
    * @param tasks  Array of qualifiers of the tasks that can be executed in parallel to each other.
    */
-  makeParallel(tasks: readonly ZTaskQualifier[]): void;
+  makeParallel(this: void, tasks: readonly ZTaskQualifier[]): void;
 
 }

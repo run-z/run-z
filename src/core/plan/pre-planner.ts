@@ -36,6 +36,10 @@ export interface ZPrePlanner {
    *
    * @returns A promise resolved to the task call when it is recorded.
    */
-  callPre<TAction extends ZTaskSpec.Action>(task: ZTask<TAction>, details?: ZCallDetails<TAction>): Promise<ZCall>;
+  callPre<TAction extends ZTaskSpec.Action>(
+      this: void,
+      task: ZTask<TAction>,
+      details?: ZCallDetails<TAction>,
+  ): Promise<ZCall>;
 
 }

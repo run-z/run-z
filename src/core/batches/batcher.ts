@@ -4,6 +4,8 @@
  */
 import { itsEmpty, makeIt, mapIt } from '@proc7ts/a-iterable';
 import type { ZPackage } from '../packages';
+import type { ZTask, ZTaskSpec } from '../tasks';
+import type { ZBatchDetails } from './batch-details';
 import type { ZBatchPlanner } from './batch-planner';
 
 /**
@@ -106,23 +108,25 @@ export const ZBatcher = {
       this: void,
       provider: ZBatcher.Provider = defaultZBatcherProvider,
   ): ZBatcher {
-
-    let batcher: ZBatcher = async planner => {
-
-      const found = await batcherForZTarget(provider, planner, planner.target);
-
-      if (found) {
-        batcher = found[0];
-        return batcher(found[1]);
+    return async planner => {
+      if (await batchInZTarget(provider, planner, planner.target)) {
+        // Batched in parent
+        return;
       }
 
       // Fallback to default batcher.
-      batcher = ZBatcher.batchTask;
+      const batcher = ZBatcher.batchTask;
 
-      return batcher(planner);
+      return batcher({
+        ...planner,
+        batch<TAction extends ZTaskSpec.Action>(
+            task: ZTask<TAction>,
+            details: ZBatchDetails<TAction> = {},
+        ): Promise<void> {
+          return planner.batch(task, details.batcher ? details : { ...details, batcher });
+        },
+      });
     };
-
-    return planner => batcher(planner);
   },
 
 };
@@ -163,37 +167,41 @@ function zPackageSetNames({ target, taskName }: ZBatchPlanner): Iterable<string>
 /**
  * @internal
  */
-async function batcherForZTarget(
+async function batchInZTarget(
     provider: ZBatcher.Provider,
     planner: ZBatchPlanner,
     target: ZPackage,
-): Promise<[ZBatcher, ZBatchPlanner] | undefined> {
+): Promise<boolean> {
 
   const { parent } = target;
 
   // Try parent package first.
-  if (parent) {
-
-    const forParent = await batcherForZTarget(provider, planner, parent);
-
-    if (forParent) {
-      // Batch in parent.
-      return forParent;
-    }
+  if (parent && await batchInZTarget(provider, planner, parent)) {
+    // Batched in parent.
+    return true;
   }
+
+  // eslint-disable-next-line prefer-const
+  let batcher: ZBatcher | undefined;
 
   // Parent package can not be batched.
   // Try here.
-  const batchPlanner: ZBatchPlanner = {
+  const targetPlanner: ZBatchPlanner = {
     dependent: planner.dependent,
     target,
     taskName: planner.taskName,
-    batch(task, details) {
-      return planner.batch(task, details);
+    batch(task, details = {}) {
+      return planner.batch(task, batcher ? { ...details, batcher } : details);
     },
   };
 
-  const batcher = await provider(batchPlanner);
+  batcher = await provider(targetPlanner);
 
-  return batcher && [batcher, batchPlanner];
+  if (!batcher) {
+    return false;
+  }
+
+  await batcher(targetPlanner);
+
+  return true;
 }

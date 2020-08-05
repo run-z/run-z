@@ -71,7 +71,7 @@ export const ZCallDetails = {
    *
    * @returns Full task call details.
    */
-  by<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>(
+  by<TAction extends ZTaskSpec.Action>(
       details: ZCallDetails<TAction> = {},
   ): ZCallDetails.Full<TAction> {
     return {

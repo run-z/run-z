@@ -1,7 +1,7 @@
 import type { ZExecutedProcess, ZTaskExecution } from '../../jobs';
 import type { ZPackage } from '../../packages';
-import type { ZCall, ZCallPlanner, ZPrePlanner, ZTaskParams } from '../../plan';
-import { ZCallDetails } from '../../plan';
+import type { ZCall, ZCallPlanner, ZPrePlanner } from '../../plan';
+import { ZCallDetails, ZTaskParams } from '../../plan';
 import type { ZTask, ZTaskQualifier } from '../task';
 import type { ZTaskBuilder$ } from '../task-builder.impl';
 import type { ZTaskSpec } from '../task-spec';
@@ -14,7 +14,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   readonly target: ZPackage;
   readonly name: string;
   readonly taskQN: string;
-  readonly callDetails: Required<ZCallDetails<TAction>>;
+  readonly callDetails: ZCallDetails.Full<TAction>;
 
   constructor(private readonly _builder: ZTaskBuilder$, readonly spec: ZTaskSpec<TAction>) {
     this.target = _builder.taskTarget;
@@ -53,11 +53,11 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
    *
    * @returns Partial task execution parameters.
    */
-  protected callParams(): ZTaskParams.Partial {
+  protected callParams(): ZTaskParams {
 
     const { spec: { attrs, args } } = this;
 
-    return { attrs, args };
+    return new ZTaskParams({ attrs, args });
   }
 
   /**
@@ -116,7 +116,11 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
           target: preTarget,
           taskName: pre.task,
           batch(preTask, preDetails = {}) {
-            return preTask.callAsPre(prePlanner, pre, ZCallDetails.by(preDetails));
+            return preTask.callAsPre(
+                preDetails.batcher ? { ...prePlanner, batcher: preDetails.batcher } : prePlanner,
+                pre,
+                ZCallDetails.by(preDetails),
+            );
           },
         });
       }

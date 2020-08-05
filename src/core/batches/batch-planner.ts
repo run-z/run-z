@@ -3,8 +3,9 @@
  * @module run-z
  */
 import type { ZPackage } from '../packages';
-import type { ZCallDetails, ZCallPlanner } from '../plan';
-import type { ZTask } from '../tasks';
+import type { ZCallPlanner } from '../plan';
+import type { ZTask, ZTaskSpec } from '../tasks';
+import type { ZBatchDetails } from './batch-details';
 
 /**
  * Batch execution planner.
@@ -31,11 +32,16 @@ export interface ZBatchPlanner {
   /**
    * Records task to call in batch.
    *
+   * @typeparam TAction  Batched task action type.
    * @param task  The task to batch.
    * @param details  Call details for each of the batched tasks.
    *
    * @returns A promise resolved when task call recorded.
    */
-  batch(task: ZTask, details?: ZCallDetails): Promise<void>;
+  batch<TAction extends ZTaskSpec.Action>(
+      this: void,
+      task: ZTask<TAction>,
+      details?: ZBatchDetails<TAction>,
+  ): Promise<void>;
 
 }
