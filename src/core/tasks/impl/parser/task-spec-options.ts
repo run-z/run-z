@@ -1,6 +1,6 @@
 import { arrayOfElements, valueByRecipe } from '@proc7ts/primitives';
 import type { SupportedZOptions } from '@run-z/optionz';
-import { ZBatcher, ZBatching } from '../../../batches';
+import { ZBatcher } from '../../../batches';
 import type { ZTaskOption } from '../../task-option';
 import type { ZTaskParser } from '../../task-parser';
 import type { DraftZTask } from './draft-task';
@@ -14,7 +14,7 @@ const defaultZTaskSpecOptions: SupportedZOptions.Map<ZTaskOption> = {
   '--then': readZTaskCommand.bind(undefined, false),
 
   '--all'(option) {
-    option.setBatching(new ZBatching(ZBatcher.topmost()));
+    option.setBatching(option.batching.batchBy(ZBatcher.topmost()));
     option.values(0);
   },
 

@@ -25,6 +25,10 @@ export function zTaskSpecOptionClass<TArgs extends any[]>(
       _draft.moveTo(this);
     }
 
+    get batching(): ZBatching {
+      return this._draft.builder.batching;
+    }
+
     get pre(): ZTaskOption.Pre {
       return this._draft.pre;
     }

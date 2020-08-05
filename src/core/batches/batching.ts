@@ -40,7 +40,7 @@ export class ZBatching {
       return this;
     }
 
-    const newBatcher = new ZBatching(this._batcher);
+    const newBatcher = new ZBatching(batcher);
 
     newBatcher._by(this);
 

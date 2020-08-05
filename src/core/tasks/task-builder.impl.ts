@@ -11,7 +11,7 @@ import { addZTaskAttr, addZTaskAttrs } from './task-spec.impl';
  */
 export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> implements ZTaskBuilder<TAction> {
 
-  _batching: ZBatching = new ZBatching();
+  batching: ZBatching = new ZBatching();
   private readonly _pre: ZTaskSpec.Pre[] = [];
   private readonly _attrs: Record<string, [string, ...string[]]> = {};
   private readonly _args: string[] = [];
@@ -45,7 +45,7 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
   }
 
   setBatching(batching: ZBatching): this {
-    this._batching = batching;
+    this.batching = batching;
     return this;
   }
 

@@ -24,6 +24,11 @@ export interface ZTaskModifier {
   readonly taskName: string;
 
   /**
+   * Prerequisites batching policy.
+   */
+  readonly batching: ZBatching;
+
+  /**
    * Action specifier set by {@link setAction}.
    */
   readonly action?: ZTaskSpec.Action;
