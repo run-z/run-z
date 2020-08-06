@@ -5,8 +5,10 @@
 import { arrayOfElements } from '@proc7ts/primitives';
 import { ZConfig, ZExtension, ZSetup } from '../core';
 import { ZCommandExecutionBuiltin } from './command-execution.builtin';
+import { ZParallelBatchBuiltin } from './parallel-batches';
 
 const builtinZExtensions: readonly ZExtension[] = [
+    ZParallelBatchBuiltin,
     ZCommandExecutionBuiltin,
 ];
 

@@ -1,8 +1,8 @@
-import { TestPlan } from '../../../spec';
-import type { ZPackage, ZPackageTree } from '../../packages';
-import { ZSetup } from '../../setup';
-import { ZTaskParser } from '../../tasks';
-import { ParallelZBatch } from './parallel-batch.rule';
+import type { ZPackage, ZPackageTree } from '../../core/packages';
+import { ZSetup } from '../../core/setup';
+import { ZTaskParser } from '../../core/tasks';
+import { TestPlan } from '../../spec';
+import { ZParallelBatch } from './parallel-batch.rule';
 
 describe('ParallelZBatch', () => {
 
@@ -82,7 +82,7 @@ describe('ParallelZBatch', () => {
       taskParser: new ZTaskParser({
         options: {
           '--test-parallel'(option) {
-            option.setBatching(option.batching.rule(ParallelZBatch).makeParallel());
+            option.setBatching(option.batching.rule(ZParallelBatch).makeParallel());
             option.values(0);
           },
         },

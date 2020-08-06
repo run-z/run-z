@@ -2,27 +2,26 @@
  * @packageDocumentation
  * @module run-z
  */
-import type { ZBatchRule } from '../batch-rule';
-import type { ZBatching } from '../batching';
+import type { ZBatching, ZBatchRule } from '../../core/batches';
 
 /**
  * Controller of parallel execution of batched rules.
  *
  * This class is a batch processing rule.
  */
-export class ParallelZBatch {
+export class ZParallelBatch {
 
   static newInstance(
-      context: ZBatchRule.Context<ParallelZBatch>,
+      context: ZBatchRule.Context<ZParallelBatch>,
       parallel = false,
-  ): ZBatchRule.Instance<ParallelZBatch> {
+  ): ZBatchRule.Instance<ZParallelBatch> {
 
-    const control = new ParallelZBatch(context, parallel);
+    const control = new ZParallelBatch(context, parallel);
 
     return {
       control,
       moveTo(context, transiently) {
-        return !transiently && ParallelZBatch.newInstance(context, control.isParallel);
+        return !transiently && ZParallelBatch.newInstance(context, control.isParallel);
       },
       processBatch({ dependent, batched }) {
         dependent.makeParallel(Array.from(batched, call => call.task));
@@ -31,7 +30,7 @@ export class ParallelZBatch {
   }
 
   private constructor(
-      private readonly _context: ZBatchRule.Context<ParallelZBatch>,
+      private readonly _context: ZBatchRule.Context<ZParallelBatch>,
       private readonly _parallel: boolean,
   ) {
   }
@@ -51,7 +50,7 @@ export class ParallelZBatch {
    */
   makeParallel(parallel = true): ZBatching {
     return this._context.updateInstance(
-        context => parallel ? ParallelZBatch.newInstance(context, parallel) : undefined,
+        context => parallel ? ZParallelBatch.newInstance(context, parallel) : undefined,
     );
   }
 
