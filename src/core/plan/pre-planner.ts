@@ -47,8 +47,8 @@ export interface ZPrePlanner {
    *
    * @param batching  New prerequisites batching policy.
    *
-   * @returns Either new prerequisites planner, or this one if batching policy is unspecified.
+   * @returns New prerequisites planner.
    */
-  batchWith(batching: ZBatching | null | undefined): ZPrePlanner;
+  batchWith(batching: ZBatching): ZPrePlanner;
 
 }

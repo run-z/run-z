@@ -8,7 +8,8 @@ import type { ZBatch } from './batch';
 import type { ZBatchDetails } from './batch-details';
 import type { ZBatchPlanner } from './batch-planner';
 import type { ZBatchRule } from './batch-rule';
-import { ZBatcher } from './batcher';
+import type { ZBatcher } from './batcher';
+import { batchZTask } from './batcher.impl';
 
 /**
  * Task batching policy.
@@ -30,16 +31,13 @@ export class ZBatching {
   }
 
   /**
-   * Updates batcher to use.
+   * Updates a batcher to use.
    *
-   * @param batcher  Either new batcher or nothing.
+   * @param batcher  New batcher.
    *
-   * @returns New batcher policy, or `this` instance if new batcher is omitted.
+   * @returns New batcher policy using the given batcher.
    */
-  batchBy(batcher: ZBatcher | null | undefined): ZBatching {
-    if (!batcher) {
-      return this;
-    }
+  batchBy(batcher: ZBatcher): ZBatching {
 
     const newBatcher = new ZBatching(batcher);
 
@@ -68,14 +66,11 @@ export class ZBatching {
   /**
    * Merges batching policies.
    *
-   * @param other  Batching policy to merge with this one. Its setting have precedence over the ones of this policy.
+   * @param other  Batching policy to merge with this one. Its settings have precedence over the ones of this policy.
    *
-   * @returns Merged batching policy, or `this` one if batching policy to merge with is unspecified.
+   * @returns Merged batching policy.
    */
-  mergeWith(other: ZBatching | null | undefined): ZBatching {
-    if (!other) {
-      return this;
-    }
+  mergeWith(other: ZBatching): ZBatching {
 
     const { _batcher: newBatcher = this._batcher } = other;
     const newBatching = new ZBatching(newBatcher);
@@ -143,7 +138,7 @@ export class ZBatching {
       },
     };
 
-    await (this._batcher || ZBatcher.batchTask)(batchPlanner);
+    await (this._batcher || batchZTask)(batchPlanner);
 
     const batch: ZBatch = {
       dependent: planner.dependent,

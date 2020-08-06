@@ -8,6 +8,7 @@ import type { ZCall } from '../plan';
 import type { ZTask, ZTaskSpec } from '../tasks';
 import { ZBatchDetails } from './batch-details';
 import type { ZBatchPlanner } from './batch-planner';
+import { batchZTask } from './batcher.impl';
 import { ZBatching } from './batching';
 
 /**
@@ -60,11 +61,8 @@ export const ZBatcher = {
    *
    * @returns A promise resolved when task call recorded.
    */
-  async batchTask(this: void, planner: ZBatchPlanner): Promise<void> {
-    await Promise.all(mapIt(
-        await planner.targets.packages(),
-        target => target.task(planner.taskName).then(task => planner.batch(task)),
-    ));
+  batchTask(this: void, planner: ZBatchPlanner): Promise<void> {
+    return batchZTask(planner);
   },
 
   /**
@@ -140,12 +138,14 @@ export const ZBatcher = {
             task: ZTask<TAction>,
             details: ZBatchDetails<TAction>,
         ): Promise<ZCall> {
-          details = ZBatchDetails.by(details);
+
+          const batchDetails = ZBatchDetails.by(details);
+
           return planner.batch(
               task,
               {
-                ...details,
-                batching: new ZBatching(batcher).mergeWith(details.batching),
+                ...batchDetails,
+                batching: new ZBatching(batcher).mergeWith(batchDetails.batching),
               },
           );
         },
@@ -214,12 +214,14 @@ async function batchInZTarget(
     targets: target,
     taskName: planner.taskName,
     batch(task, details) {
-      details = ZBatchDetails.by(details);
+
+      const batchDetails = ZBatchDetails.by(details);
+
       return planner.batch(
           task,
           {
-            ...details,
-            batching: new ZBatching(batcher).mergeWith(details.batching),
+            ...batchDetails,
+            batching: new ZBatching(batcher).mergeWith(batchDetails.batching),
           },
       );
     },

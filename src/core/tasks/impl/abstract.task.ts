@@ -120,12 +120,12 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
         taskName: pre.task,
         batch(preTask, preDetails) {
 
-          const details = ZBatchDetails.by(preDetails);
+          const batchDetails = ZBatchDetails.by(preDetails);
 
           return preTask.callAsPre(
-              prePlanner.batchWith(details.batching),
+              prePlanner.batchWith(batchDetails.batching),
               pre,
-              details,
+              batchDetails,
           );
         },
       });
