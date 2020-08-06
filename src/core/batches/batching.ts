@@ -71,12 +71,28 @@ export class ZBatching {
    * @returns Merged batching policy.
    */
   mergeWith(other: ZBatching): ZBatching {
+    return this._mergeWith(other, false);
+  }
+
+  /**
+   * Merges batching policy with transient one.
+   *
+   * @param other  Transient batching policy to merge with this one. Its settings have precedence over the ones of this
+   * policy.
+   *
+   * @returns Merged batching policy.
+   */
+  mergeWithTransient(other: ZBatching): ZBatching {
+    return this._mergeWith(other, true);
+  }
+
+  private _mergeWith(other: ZBatching, transiently: boolean): ZBatching {
 
     const { _batcher: newBatcher = this._batcher } = other;
     const newBatching = new ZBatching(newBatcher);
 
-    newBatching._by(this);
-    newBatching._by(other);
+    newBatching._by(this, undefined, transiently);
+    newBatching._by(other, undefined, transiently);
 
     return newBatching;
   }
@@ -103,10 +119,15 @@ export class ZBatching {
     };
   }
 
-  private _by(proto: ZBatching, exceptRule?: ZBatchRule<unknown>): void {
+  private _by(proto: ZBatching, exceptRule?: ZBatchRule<unknown>, transiently = false): void {
     for (const [rule, ruleInstance] of proto._rules) {
       if (rule !== exceptRule && !this._rules.has(rule)) {
-        this._rules.set(rule, ruleInstance.moveTo(this._ruleContext(rule)));
+
+        const newInstance = ruleInstance.moveTo(this._ruleContext(rule), transiently);
+
+        if (newInstance) {
+          this._rules.set(rule, newInstance);
+        }
       }
     }
   }

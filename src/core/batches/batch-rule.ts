@@ -72,10 +72,12 @@ export namespace ZBatchRule {
      * Applies this instance to another batch processing policy.
      *
      * @param context  Batch processing rule context bound to another processing policy instance.
+     * @param transiently  Whether to move to transient policy. E.g. to task prerequisites.
      *
-     * @returns Batch processing rule instance bound to new context.
+     * @returns Batch processing rule instance bound to new context, or `false` or nothing nothing if the instance
+     * is not applicable to new context.
      */
-    moveTo(context: Context<TControl>): Instance<TControl>;
+    moveTo(context: Context<TControl>, transiently: boolean): Instance<TControl> | false | null | undefined;
 
     /**
      * Processes the batch.

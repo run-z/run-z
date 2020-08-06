@@ -108,7 +108,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
           return preCall;
         },
         batchWith(newBatching) {
-          return { ...this, batching: batching.mergeWith(newBatching) };
+          return { ...this, batching: batching.mergeWithTransient(newBatching) };
         },
       };
 

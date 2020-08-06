@@ -13,13 +13,73 @@ describe('ParallelZBatch', () => {
   let nested1: ZPackage;
   let nested2: ZPackage;
 
-  beforeEach(async () => {
+  describe('--parallel-batch', () => {
+    it('executes tasks in parallel', async () => {
+      await init();
+      await testPlan.parse('run-z ./nested// --parallel-batch test');
+
+      const call1 = await testPlan.callOf(nested1, 'test');
+      const call2 = await testPlan.callOf(nested2, 'test');
+
+      expect(call1.isParallelTo(call2.task)).toBe(true);
+    });
+    it('executes tasks in parallel when specified after `--sequential-batch`', async () => {
+      await init();
+      await testPlan.parse('run-z ./nested// --sequential-batch --parallel-batch test');
+
+      const call1 = await testPlan.callOf(nested1, 'test');
+      const call2 = await testPlan.callOf(nested2, 'test');
+
+      expect(call1.isParallelTo(call2.task)).toBe(true);
+    });
+    it('is ignored by transient prerequisites', async () => {
+      await init();
+      await testPlan.parse('run-z --all --parallel-batch test');
+
+      const call1 = await testPlan.callOf(nested1, 'test');
+      const call2 = await testPlan.callOf(nested2, 'test');
+
+      expect(call1.isParallelTo(call2.task)).toBe(false);
+    });
+  });
+
+  describe('--sequential-batch', () => {
+    it('executes tasks sequentially', async () => {
+      await init();
+      await testPlan.parse('run-z ./nested// --sequential-batch test');
+
+      const call1 = await testPlan.callOf(nested1, 'test');
+      const call2 = await testPlan.callOf(nested2, 'test');
+
+      expect(call1.isParallelTo(call2.task)).toBe(false);
+    });
+    it('executes tasks sequentially when specified after `--parallel-batch`', async () => {
+      await init();
+      await testPlan.parse('run-z ./nested// --parallel-batch --sequential-batch test');
+
+      const call1 = await testPlan.callOf(nested1, 'test');
+      const call2 = await testPlan.callOf(nested2, 'test');
+
+      expect(call1.isParallelTo(call2.task)).toBe(false);
+    });
+    it('is ignored by transient prerequisites', async () => {
+      await init('run-z test=main ./nested// --parallel-batch');
+      await testPlan.parse('run-z --all --sequential-batch test');
+
+      const call1 = await testPlan.callOf(nested1, 'test');
+      const call2 = await testPlan.callOf(nested2, 'test');
+
+      expect(call1.isParallelTo(call2.task)).toBe(true);
+    });
+  });
+
+  async function init(script = 'run-z test=main ./nested//'): Promise<void> {
     main = testPlan.addPackage(
         'main',
         {
           packageJson: {
             scripts: {
-              'group/*': 'run-z test=main ./nested//',
+              'group/*': script,
             },
           },
         },
@@ -52,28 +112,6 @@ describe('ParallelZBatch', () => {
     nested2 = await testPlan.target();
 
     await testPlan.target(main);
-  });
-
-  describe('--parallel-batch', () => {
-    it('executes tasks in parallel', async () => {
-      await testPlan.parse('run-z --all --parallel-batch test');
-
-      const call1 = await testPlan.callOf(nested1, 'test');
-      const call2 = await testPlan.callOf(nested2, 'test');
-
-      expect(call1.isParallelTo(call2.task)).toBe(true);
-    });
-  });
-
-  describe('--sequential-batch', () => {
-    it('executes tasks in parallel', async () => {
-      await testPlan.parse('run-z --all --sequential-batch test');
-
-      const call1 = await testPlan.callOf(nested1, 'test');
-      const call2 = await testPlan.callOf(nested2, 'test');
-
-      expect(call1.isParallelTo(call2.task)).toBe(false);
-    });
-  });
+  }
 
 });
