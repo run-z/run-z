@@ -1,20 +1,21 @@
 import { ZBatchDetails } from './batch-details';
 import { ZBatcher } from './batcher';
+import { ZBatching } from './batching';
 
 describe('ZBatchDetails', () => {
   describe('by', () => {
-    it('removes undefined batcher', () => {
+    it('reconstructs undefined batcher', () => {
 
-      const full = ZBatchDetails.by({ batcher: undefined });
+      const full = ZBatchDetails.by();
 
-      expect(full).not.toHaveProperty('batcher');
+      expect(full.batching).toBeInstanceOf(ZBatching);
     });
     it('preserves specified batcher', () => {
 
-      const batcher = ZBatcher.batchTask;
-      const full = ZBatchDetails.by({ batcher });
+      const batching = new ZBatching(ZBatcher.batchTask);
+      const full = ZBatchDetails.by({ batching });
 
-      expect(full.batcher).toBe(batcher);
+      expect(full.batching).toBe(batching);
     });
   });
 });

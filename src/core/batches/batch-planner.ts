@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module run-z
  */
-import type { ZPackage } from '../packages';
-import type { ZCallPlanner } from '../plan';
+import type { ZPackageSet } from '../packages';
+import type { ZCall, ZCallPlanner } from '../plan';
 import type { ZTask, ZTaskSpec } from '../tasks';
 import type { ZBatchDetails } from './batch-details';
 
@@ -20,9 +20,9 @@ export interface ZBatchPlanner {
   readonly dependent: ZCallPlanner;
 
   /**
-   * Target package to apply batched tasks to.
+   * Target packages to batch the named tasks of.
    */
-  readonly target: ZPackage;
+  readonly targets: ZPackageSet;
 
   /**
    * Batched tasks name.
@@ -42,6 +42,6 @@ export interface ZBatchPlanner {
       this: void,
       task: ZTask<TAction>,
       details?: ZBatchDetails<TAction>,
-  ): Promise<void>;
+  ): Promise<ZCall>;
 
 }

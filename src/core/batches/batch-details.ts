@@ -4,7 +4,7 @@
  */
 import { ZCallDetails } from '../plan';
 import type { ZTaskSpec } from '../tasks';
-import type { ZBatcher } from './batcher';
+import { ZBatching } from './batching';
 
 /**
  * Details of the {@link ZBatchPlanner.batch task batching}.
@@ -14,11 +14,11 @@ import type { ZBatcher } from './batcher';
 export interface ZBatchDetails<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> extends ZCallDetails<TAction> {
 
   /**
-   * The batcher to batch transient calls with.
+   * A policy to apply when batching transient calls.
    *
-   * @default Current batcher.
+   * @default Current batching policy.
    */
-  readonly batcher?: ZBatcher;
+  readonly batching?: ZBatching;
 
 }
 
@@ -32,11 +32,9 @@ export namespace ZBatchDetails {
   export interface Full<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> extends ZCallDetails.Full<TAction> {
 
     /**
-     * The batcher to batch transient calls with.
-     *
-     * @default Current batcher.
+     * A policy to apply when batching transient calls.
      */
-    readonly batcher?: ZBatcher;
+    readonly batching: ZBatching;
 
   }
 
@@ -53,14 +51,15 @@ export const ZBatchDetails = {
    * @returns Full task batching details.
    */
   by<TAction extends ZTaskSpec.Action>(
-      details?: ZBatchDetails<TAction>,
+      details: ZBatchDetails<TAction> = {},
   ): ZBatchDetails.Full<TAction> {
-    return details?.batcher
-        ? {
-          ...ZCallDetails.by(details),
-          batcher: details.batcher,
-        }
-        : ZCallDetails.by(details);
+
+    const { batching = new ZBatching() } = details;
+
+    return {
+      ...ZCallDetails.by(details),
+      batching,
+    };
   },
 
 };

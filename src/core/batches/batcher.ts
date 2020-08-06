@@ -4,9 +4,12 @@
  */
 import { itsEmpty, makeIt, mapIt } from '@proc7ts/a-iterable';
 import type { ZPackage } from '../packages';
+import type { ZCall } from '../plan';
 import type { ZTask, ZTaskSpec } from '../tasks';
 import { ZBatchDetails } from './batch-details';
 import type { ZBatchPlanner } from './batch-planner';
+import { batchZTask } from './batcher.impl';
+import { ZBatching } from './batching';
 
 /**
  * A batcher of tasks to execute.
@@ -30,10 +33,11 @@ export namespace ZBatcher {
   /**
    * Task batcher provider signature.
    *
-   * Tries to create a batcher for the given batch execution planner.
+   * Tries to create a batcher for the given batch execution planner in the given package.
    */
   export type Provider =
   /**
+   * @param target  Target package.
    * @param planner  Target batch execution planner.
    *
    * @returns Either nothing if batch planning is impossible, a batcher instance to plan batch execution by, or
@@ -41,6 +45,7 @@ export namespace ZBatcher {
    */
       (
           this: void,
+          target: ZPackage,
           planner: ZBatchPlanner,
       ) => undefined | ZBatcher | Promise<undefined | ZBatcher>;
 }
@@ -48,7 +53,7 @@ export namespace ZBatcher {
 export const ZBatcher = {
 
   /**
-   * Batches the named task in target package.
+   * Batches the named tasks in target packages.
    *
    * This is the default {@link ZBatcher task batcher}.
    *
@@ -56,11 +61,8 @@ export const ZBatcher = {
    *
    * @returns A promise resolved when task call recorded.
    */
-  async batchTask(this: void, planner: ZBatchPlanner): Promise<void> {
-
-    const task = await planner.target.task(planner.taskName);
-
-    return planner.batch(task);
+  batchTask(this: void, planner: ZBatchPlanner): Promise<void> {
+    return batchZTask(planner);
   },
 
   /**
@@ -84,19 +86,26 @@ export const ZBatcher = {
    */
   async batchNamed(this: void, planner: ZBatchPlanner): Promise<void> {
 
-    const { target } = planner;
-    const batchNames = zBatchNames(planner);
+    const { taskName } = planner;
 
-    if (itsEmpty(batchNames)) {
-      // No matching sets.
-      // Fallback to default task batching.
-      await ZBatcher.batchTask(planner);
-    } else {
-      await Promise.all(mapIt(
-          batchNames,
-          batchName => target.task(batchName).then(taskName => planner.batch(taskName)),
-      ));
-    }
+    await Promise.all(mapIt(
+        await planner.targets.packages(),
+        (target: ZPackage): Promise<unknown> => {
+
+          const batchNames = zBatchNames(target, taskName);
+
+          if (itsEmpty(batchNames)) {
+            // No matching sets.
+            // Fallback to default task batching.
+            return ZBatcher.batchTask({ ...planner, targets: target });
+          }
+
+          return Promise.all(mapIt(
+              batchNames,
+              batchName => target.task(batchName).then(taskName => planner.batch(taskName)),
+          ));
+        },
+    ));
   },
 
   /**
@@ -115,8 +124,8 @@ export const ZBatcher = {
       provider: ZBatcher.Provider = defaultZBatcherProvider,
   ): ZBatcher {
     return async planner => {
-      if (await batchInZTarget(provider, planner, planner.target)) {
-        // Batched in parent
+      if (await batchInZTarget(provider, planner, planner.dependent.plannedCall.task.target)) {
+        // Try to batch in topmost target.
         return;
       }
 
@@ -127,9 +136,18 @@ export const ZBatcher = {
         ...planner,
         batch<TAction extends ZTaskSpec.Action>(
             task: ZTask<TAction>,
-            details: ZBatchDetails<TAction> = {},
-        ): Promise<void> {
-          return planner.batch(task, { batcher, ...ZBatchDetails.by(details) });
+            details: ZBatchDetails<TAction>,
+        ): Promise<ZCall> {
+
+          const batchDetails = ZBatchDetails.by(details);
+
+          return planner.batch(
+              task,
+              {
+                ...batchDetails,
+                batching: new ZBatching(batcher).mergeWith(batchDetails.batching),
+              },
+          );
         },
       });
     };
@@ -140,14 +158,14 @@ export const ZBatcher = {
 /**
  * @internal
  */
-function defaultZBatcherProvider(planner: ZBatchPlanner): ZBatcher | undefined {
-  return itsEmpty(zBatchNames(planner)) ? undefined : ZBatcher.batchNamed;
+function defaultZBatcherProvider(target: ZPackage, planner: ZBatchPlanner): ZBatcher | undefined {
+  return itsEmpty(zBatchNames(target, planner.taskName)) ? undefined : ZBatcher.batchNamed;
 }
 
 /**
  * @internal
  */
-function zBatchNames({ target, taskName }: ZBatchPlanner): Iterable<string> {
+function zBatchNames(target: ZPackage, taskName: string): Iterable<string> {
 
   const groups = new Map<string, string>();
 
@@ -193,14 +211,23 @@ async function batchInZTarget(
   // Try here.
   const targetPlanner: ZBatchPlanner = {
     dependent: planner.dependent,
-    target,
+    targets: target,
     taskName: planner.taskName,
-    batch(task, details = {}) {
-      return planner.batch(task, { batcher, ...ZBatchDetails.by(details) });
+    batch(task, details) {
+
+      const batchDetails = ZBatchDetails.by(details);
+
+      return planner.batch(
+          task,
+          {
+            ...batchDetails,
+            batching: new ZBatching(batcher).mergeWith(batchDetails.batching),
+          },
+      );
     },
   };
 
-  batcher = await provider(targetPlanner);
+  batcher = await provider(target, targetPlanner);
 
   if (!batcher) {
     return false;

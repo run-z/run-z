@@ -3,7 +3,7 @@ import { ZBatchDetails } from '../../batches';
 import type { ZExecutedProcess } from '../../jobs';
 import { noopZExecutedProcess } from '../../jobs/impl';
 import type { ZPackageSet } from '../../packages';
-import type { ZCallDetails, ZPrePlanner } from '../../plan';
+import type { ZCall, ZCallDetails, ZPrePlanner } from '../../plan';
 import type { ZTask } from '../task';
 import type { ZTaskSpec } from '../task-spec';
 import { AbstractZTask } from './abstract.task';
@@ -13,7 +13,7 @@ import { AbstractZTask } from './abstract.task';
  */
 export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
 
-  async callAsPre(planner: ZPrePlanner, pre: ZTaskSpec.Pre, details: ZCallDetails.Full): Promise<void> {
+  async callAsPre(planner: ZPrePlanner, pre: ZTaskSpec.Pre, details: ZCallDetails.Full): Promise<ZCall> {
 
     const { dependent } = planner;
     let subTaskName: string;
@@ -45,41 +45,38 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
         },
     );
 
-    const { batcher } = planner;
+    const batching = this._builder.batching.mergeWith(planner.batching);
 
-    // Delegate to sub-task(s).
-    const subTaskPre: ZTaskSpec.Pre = { ...pre, args: subArgs };
+    await batching.batchAll({
+      dependent: planner.dependent,
+      targets: this._subTaskTargets(),
+      taskName: subTaskName,
+      batch: <TAction extends ZTaskSpec.Action>(
+          subTask: ZTask<TAction>,
+          subDetails: ZBatchDetails<TAction> = {},
+      ): Promise<ZCall> => {
 
-    for (const subTarget of await this._subTaskTargets().packages()) {
-      await batcher({
-        dependent: planner.dependent,
-        target: subTarget,
-        taskName: subTaskName,
-        batch: <TAction extends ZTaskSpec.Action>(
-            subTask: ZTask<TAction>,
-            subDetails: ZBatchDetails<TAction> = {},
-        ): Promise<void> => {
+        const { params, plan, batching } = ZBatchDetails.by(subDetails);
 
-          const { params, plan, batcher } = ZBatchDetails.by(subDetails);
-
-          return subTask.callAsPre<TAction>(
-              planner.batchBy(batcher),
-              subTaskPre,
-              {
-                params: () => groupCall.params().extend(params()),
-                plan: async subPlanner => {
-                  // Execute sub-tasks after the grouping one
-                  subPlanner.order(this, subPlanner.plannedCall.task);
-                  // Apply task plan
-                  await details.plan(subPlanner);
-                  // Apply sub-tasks plan
-                  return plan(subPlanner);
-                },
+        return subTask.callAsPre<TAction>(
+            planner.transient(batching),
+            { ...pre, args: subArgs, task: subTask.name },
+            {
+              params: () => groupCall.params().extend(params()),
+              plan: async subPlanner => {
+                // Execute sub-tasks after the grouping one
+                subPlanner.order(this, subPlanner.plannedCall.task);
+                // Apply task plan
+                await details.plan(subPlanner);
+                // Apply sub-tasks plan
+                return plan(subPlanner);
               },
-          );
-        },
-      });
-    }
+            },
+        );
+      },
+    });
+
+    return groupCall;
   }
 
   exec(): ZExecutedProcess {

@@ -17,7 +17,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   readonly taskQN: string;
   readonly callDetails: ZCallDetails.Full<TAction>;
 
-  constructor(private readonly _builder: ZTaskBuilder$, readonly spec: ZTaskSpec<TAction>) {
+  constructor(protected readonly _builder: ZTaskBuilder$, readonly spec: ZTaskSpec<TAction>) {
     this.target = _builder.taskTarget;
     this.taskQN = this.name = _builder.taskName;
     this.callDetails = {
@@ -30,11 +30,11 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
       planner: ZPrePlanner,
       { attrs, args }: ZTaskSpec.Pre,
       details: ZCallDetails.Full,
-  ): Promise<void> {
+  ): Promise<ZCall> {
 
     const taskParams = planner.dependent.plannedCall.extendParams({ attrs, args });
 
-    await planner.callPre(
+    return planner.callPre(
         this,
         {
           ...details,
@@ -77,7 +77,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
 
   protected async planPre(planner: ZCallPlanner<TAction>): Promise<void> {
 
-    const batcher = this._builder._batcher;
+    const batching = this._builder.batching;
     const { target, spec } = this;
     let parallel: ZTaskQualifier[] = [];
     let prevTasks: ZTask[] = [];
@@ -91,7 +91,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
       const calledTasks: ZTask[] = [];
       const prePlanner: ZPrePlanner = {
         dependent: planner,
-        batcher,
+        batching,
         async callPre<TAction extends ZTaskSpec.Action>(
             task: ZTask<TAction>,
             details?: ZCallDetails<TAction>,
@@ -107,30 +107,28 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
 
           return preCall;
         },
-        batchBy(batcher) {
-          return batcher ? { ...this, batcher } : this;
+        transient(newBatching) {
+          return { ...this, batching: batching.mergeWithTransient(newBatching) };
         },
       };
 
       const preTargets = target.selectTargets(pre.targets);
 
-      for (const preTarget of await preTargets.packages()) {
-        await batcher({
-          dependent: planner,
-          target: preTarget,
-          taskName: pre.task,
-          batch(preTask, preDetails) {
+      await batching.batchAll({
+        dependent: planner,
+        targets: preTargets,
+        taskName: pre.task,
+        batch(preTask, preDetails) {
 
-            const details = ZBatchDetails.by(preDetails);
+          const batchDetails = ZBatchDetails.by(preDetails);
 
-            return preTask.callAsPre(
-                prePlanner.batchBy(details.batcher),
-                pre,
-                details,
-            );
-          },
-        });
-      }
+          return preTask.callAsPre(
+              prePlanner.transient(batchDetails.batching),
+              pre,
+              batchDetails,
+          );
+        },
+      });
 
       if (calledTasks.length === 1) {
         parallel.push(calledTasks[0]);
