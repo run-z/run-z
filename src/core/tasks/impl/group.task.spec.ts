@@ -1,4 +1,4 @@
-import { prerequisitesOf, taskIds, TestPlan } from '../../../spec';
+import { prerequisitesOf, taskId, taskIds, TestPlan } from '../../../spec';
 import { GroupZTask } from './group.task';
 
 describe('GroupZTask', () => {
@@ -307,7 +307,10 @@ describe('GroupZTask', () => {
     const dep2 = plan.callOf(await nested2.task('dep'));
     const sub2 = plan.callOf(await nested2.task('sub-task'));
 
-    expect(prerequisitesOf(call)).toEqual(taskIds(sub1, sub2));
+    const callPre = prerequisitesOf(call);
+
+    expect(callPre).toContainEqual(taskId(sub1));
+    expect(callPre).toContainEqual(taskId(sub2));
     expect(call.params().attrs).toEqual({ attr1: ['on'] });
 
     expect(prerequisitesOf(dep1)).toHaveLength(0);

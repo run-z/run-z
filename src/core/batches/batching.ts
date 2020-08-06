@@ -124,7 +124,7 @@ export class ZBatching {
    *
    * @returns A promise resolved when batch execution planned.
    */
-  async batch(planner: ZBatchPlanner): Promise<void> {
+  async batchAll(planner: ZBatchPlanner): Promise<void> {
 
     const batched: ZTask[] = [];
     const batchPlanner: ZBatchPlanner = {

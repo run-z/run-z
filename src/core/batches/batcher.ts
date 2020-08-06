@@ -31,10 +31,11 @@ export namespace ZBatcher {
   /**
    * Task batcher provider signature.
    *
-   * Tries to create a batcher for the given batch execution planner.
+   * Tries to create a batcher for the given batch execution planner in the given package.
    */
   export type Provider =
   /**
+   * @param target  Target package.
    * @param planner  Target batch execution planner.
    *
    * @returns Either nothing if batch planning is impossible, a batcher instance to plan batch execution by, or
@@ -42,6 +43,7 @@ export namespace ZBatcher {
    */
       (
           this: void,
+          target: ZPackage,
           planner: ZBatchPlanner,
       ) => undefined | ZBatcher | Promise<undefined | ZBatcher>;
 }
@@ -49,7 +51,7 @@ export namespace ZBatcher {
 export const ZBatcher = {
 
   /**
-   * Batches the named task in target package.
+   * Batches the named tasks in target packages.
    *
    * This is the default {@link ZBatcher task batcher}.
    *
@@ -58,10 +60,10 @@ export const ZBatcher = {
    * @returns A promise resolved when task call recorded.
    */
   async batchTask(this: void, planner: ZBatchPlanner): Promise<void> {
-
-    const task = await planner.target.task(planner.taskName);
-
-    return planner.batch(task);
+    await Promise.all(mapIt(
+        await planner.targets.packages(),
+        target => target.task(planner.taskName).then(task => planner.batch(task)),
+    ));
   },
 
   /**
@@ -85,19 +87,26 @@ export const ZBatcher = {
    */
   async batchNamed(this: void, planner: ZBatchPlanner): Promise<void> {
 
-    const { target } = planner;
-    const batchNames = zBatchNames(planner);
+    const { taskName } = planner;
 
-    if (itsEmpty(batchNames)) {
-      // No matching sets.
-      // Fallback to default task batching.
-      await ZBatcher.batchTask(planner);
-    } else {
-      await Promise.all(mapIt(
-          batchNames,
-          batchName => target.task(batchName).then(taskName => planner.batch(taskName)),
-      ));
-    }
+    await Promise.all(mapIt(
+        await planner.targets.packages(),
+        (target: ZPackage): Promise<unknown> => {
+
+          const batchNames = zBatchNames(target, taskName);
+
+          if (itsEmpty(batchNames)) {
+            // No matching sets.
+            // Fallback to default task batching.
+            return ZBatcher.batchTask({ ...planner, targets: target });
+          }
+
+          return Promise.all(mapIt(
+              batchNames,
+              batchName => target.task(batchName).then(taskName => planner.batch(taskName)),
+          ));
+        },
+    ));
   },
 
   /**
@@ -116,8 +125,8 @@ export const ZBatcher = {
       provider: ZBatcher.Provider = defaultZBatcherProvider,
   ): ZBatcher {
     return async planner => {
-      if (await batchInZTarget(provider, planner, planner.target)) {
-        // Batched in parent
+      if (await batchInZTarget(provider, planner, planner.dependent.plannedCall.task.target)) {
+        // Try to batch in topmost target.
         return;
       }
 
@@ -148,14 +157,14 @@ export const ZBatcher = {
 /**
  * @internal
  */
-function defaultZBatcherProvider(planner: ZBatchPlanner): ZBatcher | undefined {
-  return itsEmpty(zBatchNames(planner)) ? undefined : ZBatcher.batchNamed;
+function defaultZBatcherProvider(target: ZPackage, planner: ZBatchPlanner): ZBatcher | undefined {
+  return itsEmpty(zBatchNames(target, planner.taskName)) ? undefined : ZBatcher.batchNamed;
 }
 
 /**
  * @internal
  */
-function zBatchNames({ target, taskName }: ZBatchPlanner): Iterable<string> {
+function zBatchNames(target: ZPackage, taskName: string): Iterable<string> {
 
   const groups = new Map<string, string>();
 
@@ -201,7 +210,7 @@ async function batchInZTarget(
   // Try here.
   const targetPlanner: ZBatchPlanner = {
     dependent: planner.dependent,
-    target,
+    targets: target,
     taskName: planner.taskName,
     batch(task, details) {
       details = ZBatchDetails.by(details);
@@ -215,7 +224,7 @@ async function batchInZTarget(
     },
   };
 
-  batcher = await provider(targetPlanner);
+  batcher = await provider(target, targetPlanner);
 
   if (!batcher) {
     return false;

@@ -47,37 +47,34 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
 
     const batching = this._builder.batching.mergeWith(planner.batching);
 
-    // Delegate to sub-task(s).
-    for (const subTarget of await this._subTaskTargets().packages()) {
-      await batching.batch({
-        dependent: planner.dependent,
-        target: subTarget,
-        taskName: subTaskName,
-        batch: <TAction extends ZTaskSpec.Action>(
-            subTask: ZTask<TAction>,
-            subDetails: ZBatchDetails<TAction> = {},
-        ): Promise<void> => {
+    await batching.batchAll({
+      dependent: planner.dependent,
+      targets: this._subTaskTargets(),
+      taskName: subTaskName,
+      batch: <TAction extends ZTaskSpec.Action>(
+          subTask: ZTask<TAction>,
+          subDetails: ZBatchDetails<TAction> = {},
+      ): Promise<void> => {
 
-          const { params, plan, batching } = ZBatchDetails.by(subDetails);
+        const { params, plan, batching } = ZBatchDetails.by(subDetails);
 
-          return subTask.callAsPre<TAction>(
-              planner.batchWith(batching),
-              { ...pre, args: subArgs, task: subTask.name },
-              {
-                params: () => groupCall.params().extend(params()),
-                plan: async subPlanner => {
-                  // Execute sub-tasks after the grouping one
-                  subPlanner.order(this, subPlanner.plannedCall.task);
-                  // Apply task plan
-                  await details.plan(subPlanner);
-                  // Apply sub-tasks plan
-                  return plan(subPlanner);
-                },
+        return subTask.callAsPre<TAction>(
+            planner.batchWith(batching),
+            { ...pre, args: subArgs, task: subTask.name },
+            {
+              params: () => groupCall.params().extend(params()),
+              plan: async subPlanner => {
+                // Execute sub-tasks after the grouping one
+                subPlanner.order(this, subPlanner.plannedCall.task);
+                // Apply task plan
+                await details.plan(subPlanner);
+                // Apply sub-tasks plan
+                return plan(subPlanner);
               },
-          );
-        },
-      });
-    }
+            },
+        );
+      },
+    });
   }
 
   exec(): ZExecutedProcess {

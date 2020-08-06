@@ -114,23 +114,21 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
 
       const preTargets = target.selectTargets(pre.targets);
 
-      for (const preTarget of await preTargets.packages()) {
-        await batching.batch({
-          dependent: planner,
-          target: preTarget,
-          taskName: pre.task,
-          batch(preTask, preDetails) {
+      await batching.batchAll({
+        dependent: planner,
+        targets: preTargets,
+        taskName: pre.task,
+        batch(preTask, preDetails) {
 
-            const details = ZBatchDetails.by(preDetails);
+          const details = ZBatchDetails.by(preDetails);
 
-            return preTask.callAsPre(
-                prePlanner.batchWith(details.batching),
-                pre,
-                details,
-            );
-          },
-        });
-      }
+          return preTask.callAsPre(
+              prePlanner.batchWith(details.batching),
+              pre,
+              details,
+          );
+        },
+      });
 
       if (calledTasks.length === 1) {
         parallel.push(calledTasks[0]);
