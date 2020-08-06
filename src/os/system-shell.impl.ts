@@ -2,10 +2,9 @@ import { noop } from '@proc7ts/primitives';
 import { spawn } from 'child_process';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
-import type { ZExecutedProcess, ZShell } from '../core/jobs';
-import { ZAbortedExecutionError } from '../core/jobs';
+import type { ZExecutedProcess, ZShell, ZTaskParams } from '../core';
+import { ZAbortedExecutionError } from '../core';
 import { execZProcess } from '../core/jobs/impl';
-import type { ZTaskParams } from '../core/plan';
 import type { ZPackageDirectory } from './package-directory';
 
 /**

@@ -1,6 +1,5 @@
 import { isIterable } from '@proc7ts/primitives';
-import type { ZCall } from '../core/plan';
-import type { ZTask } from '../core/tasks';
+import type { ZCall, ZTask } from '../core';
 
 export interface TaskId {
   readonly target: string;

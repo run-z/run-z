@@ -1,7 +1,7 @@
-import type { ZPackage, ZPackageTree } from '../../core/packages';
-import { ZSetup } from '../../core/setup';
-import { ZTaskParser } from '../../core/tasks';
+import type { ZPackage, ZPackageTree } from '../../core';
+import { ZSetup } from '../../core';
 import { TestPlan } from '../../spec';
+import { ZAllBatchBuiltin } from '../all-batch.builtin';
 import { ZParallelBatch } from './parallel-batch.rule';
 
 describe('ParallelZBatch', () => {
@@ -79,14 +79,17 @@ describe('ParallelZBatch', () => {
   it('may be set by custom option', async () => {
 
     const setup = new ZSetup({
-      taskParser: new ZTaskParser({
-        options: {
-          '--test-parallel'(option) {
-            option.setBatching(option.batching.rule(ZParallelBatch).makeParallel());
-            option.values(0);
+      extensions: [
+        ZAllBatchBuiltin,
+        {
+          options: {
+            '--test-parallel'(option) {
+              option.setBatching(option.batching.rule(ZParallelBatch).makeParallel());
+              option.values(0);
+            },
           },
         },
-      }),
+      ],
     });
 
     testPlan = new TestPlan('root', { setup });

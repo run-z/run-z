@@ -1,6 +1,5 @@
 import { arrayOfElements, valueByRecipe } from '@proc7ts/primitives';
 import type { SupportedZOptions } from '@run-z/optionz';
-import { ZBatcher } from '../../../batches';
 import type { ZTaskOption } from '../../task-option';
 import type { ZTaskParser } from '../../task-parser';
 import type { DraftZTask } from './draft-task';
@@ -8,12 +7,7 @@ import type { DraftZTask } from './draft-task';
 /**
  * @internal
  */
-const defaultZTaskSpecOptions: SupportedZOptions.Map<ZTaskOption> = {
-
-  '--all'(option) {
-    option.setBatching(option.batching.batchBy(ZBatcher.topmost()));
-    option.values(0);
-  },
+const fallbackZTaskSpecOptions: SupportedZOptions.Map<ZTaskOption> = {
 
   '--*=*': readNameValueZTaskArg,
   '-*=*': readNameValueZTaskArg,
@@ -77,7 +71,7 @@ export function zTaskSpecOptions(
   const providers: SupportedZOptions.Provider<ZTaskOption, DraftZTask>[] = arrayOfElements(options)
       .map(o => ({ builder }) => valueByRecipe(o, builder));
 
-  return [defaultZTaskSpecOptions, ...providers];
+  return [fallbackZTaskSpecOptions, ...providers];
 }
 
 /**

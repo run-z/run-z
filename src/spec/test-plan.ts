@@ -1,8 +1,7 @@
 import { asis } from '@proc7ts/primitives';
 import { StandardZSetup } from '../builtins';
-import type { ZCallDetails, ZPackageLocation, ZPlan, ZSetup, ZShell } from '../core';
-import { ZPackage, ZPackageJson, ZPackageTree } from '../core/packages';
-import type { ZCall } from '../core/plan';
+import type { ZCall, ZCallDetails, ZPackageLocation, ZPlan, ZSetup, ZShell } from '../core';
+import { ZPackage, ZPackageJson, ZPackageTree } from '../core';
 
 export class TestPlan {
 

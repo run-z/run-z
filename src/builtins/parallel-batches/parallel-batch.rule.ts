@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module run-z
  */
-import type { ZBatching, ZBatchRule } from '../../core/batches';
+import type { ZBatching, ZBatchRule } from '../../core';
 
 /**
  * Controller of parallel execution of batched rules.
