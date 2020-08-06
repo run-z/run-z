@@ -4,6 +4,7 @@
  */
 import { itsEmpty, makeIt, mapIt } from '@proc7ts/a-iterable';
 import type { ZPackage } from '../packages';
+import type { ZCall } from '../plan';
 import type { ZTask, ZTaskSpec } from '../tasks';
 import { ZBatchDetails } from './batch-details';
 import type { ZBatchPlanner } from './batch-planner';
@@ -138,7 +139,7 @@ export const ZBatcher = {
         batch<TAction extends ZTaskSpec.Action>(
             task: ZTask<TAction>,
             details: ZBatchDetails<TAction>,
-        ): Promise<void> {
+        ): Promise<ZCall> {
           details = ZBatchDetails.by(details);
           return planner.batch(
               task,

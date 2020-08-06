@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module run-z
  */
+import type { ZCall } from '../plan';
 import type { ZTask, ZTaskSpec } from '../tasks';
 import type { ZBatch } from './batch';
 import type { ZBatchDetails } from './batch-details';
@@ -126,15 +127,19 @@ export class ZBatching {
    */
   async batchAll(planner: ZBatchPlanner): Promise<void> {
 
-    const batched: ZTask[] = [];
+    const batched: ZCall[] = [];
     const batchPlanner: ZBatchPlanner = {
       ...planner,
-      batch<TAction extends ZTaskSpec.Action>(
+      async batch<TAction extends ZTaskSpec.Action>(
           task: ZTask<TAction>,
           details?: ZBatchDetails<TAction>,
-      ): Promise<void> {
-        batched.push(task);
-        return planner.batch(task, details);
+      ): Promise<ZCall> {
+
+        const call = await planner.batch(task, details);
+
+        batched.push(call);
+
+        return call;
       },
     };
 

@@ -3,7 +3,7 @@ import { ZBatchDetails } from '../../batches';
 import type { ZExecutedProcess } from '../../jobs';
 import { noopZExecutedProcess } from '../../jobs/impl';
 import type { ZPackageSet } from '../../packages';
-import type { ZCallDetails, ZPrePlanner } from '../../plan';
+import type { ZCall, ZCallDetails, ZPrePlanner } from '../../plan';
 import type { ZTask } from '../task';
 import type { ZTaskSpec } from '../task-spec';
 import { AbstractZTask } from './abstract.task';
@@ -13,7 +13,7 @@ import { AbstractZTask } from './abstract.task';
  */
 export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
 
-  async callAsPre(planner: ZPrePlanner, pre: ZTaskSpec.Pre, details: ZCallDetails.Full): Promise<void> {
+  async callAsPre(planner: ZPrePlanner, pre: ZTaskSpec.Pre, details: ZCallDetails.Full): Promise<ZCall> {
 
     const { dependent } = planner;
     let subTaskName: string;
@@ -54,7 +54,7 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
       batch: <TAction extends ZTaskSpec.Action>(
           subTask: ZTask<TAction>,
           subDetails: ZBatchDetails<TAction> = {},
-      ): Promise<void> => {
+      ): Promise<ZCall> => {
 
         const { params, plan, batching } = ZBatchDetails.by(subDetails);
 
@@ -75,6 +75,8 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
         );
       },
     });
+
+    return groupCall;
   }
 
   exec(): ZExecutedProcess {

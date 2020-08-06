@@ -25,7 +25,7 @@ export class ParallelZBatch {
         return ParallelZBatch.newInstance(context, control.isParallel);
       },
       processBatch({ dependent, batched }) {
-        dependent.makeParallel(Array.from(batched));
+        dependent.makeParallel(Array.from(batched, call => call.task));
       },
     };
   }

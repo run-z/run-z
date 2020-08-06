@@ -2,11 +2,10 @@
  * @packageDocumentation
  * @module run-z
  */
-import type { ZCallPlanner } from '../plan';
-import type { ZTask } from '../tasks';
+import type { ZCall, ZCallPlanner } from '../plan';
 
 /**
- * A batch of tasks.
+ * A batch of task calls.
  */
 export interface ZBatch {
 
@@ -21,8 +20,8 @@ export interface ZBatch {
   readonly taskName: string;
 
   /**
-   * Batched tasks.
+   * Batched task calls.
    */
-  readonly batched: Iterable<ZTask>;
+  readonly batched: Iterable<ZCall>;
 
 }

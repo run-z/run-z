@@ -30,11 +30,11 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
       planner: ZPrePlanner,
       { attrs, args }: ZTaskSpec.Pre,
       details: ZCallDetails.Full,
-  ): Promise<void> {
+  ): Promise<ZCall> {
 
     const taskParams = planner.dependent.plannedCall.extendParams({ attrs, args });
 
-    await planner.callPre(
+    return planner.callPre(
         this,
         {
           ...details,
