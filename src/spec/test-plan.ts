@@ -13,14 +13,16 @@ export class TestPlan {
   constructor(
       name = 'root',
       {
+        setup = new ZSetup(),
         packageJson = {},
         shell,
       }: {
+        setup?: ZSetup;
         packageJson?: ZPackageJson;
         shell?: ZShell;
       } = {},
   ) {
-    this.setup = new ZSetup();
+    this.setup = setup;
     this._target = this.root = new ZPackageTree(name, { packageJson, shell });
   }
 

@@ -1,5 +1,8 @@
 import { TestPlan } from '../../../spec';
 import type { ZPackage, ZPackageTree } from '../../packages';
+import { ZSetup } from '../../setup';
+import { ZTaskParser } from '../../tasks';
+import { ParallelZBatch } from './parallel-batch.rule';
 
 describe('ParallelZBatch', () => {
 
@@ -71,6 +74,30 @@ describe('ParallelZBatch', () => {
 
       expect(call1.isParallelTo(call2.task)).toBe(true);
     });
+  });
+
+  it('may be set by custom option', async () => {
+
+    const setup = new ZSetup({
+      taskParser: new ZTaskParser({
+        options: {
+          '--test-parallel'(option) {
+            option.setBatching(option.batching.rule(ParallelZBatch).makeParallel());
+            option.values(0);
+          },
+        },
+      }),
+    });
+
+    testPlan = new TestPlan('root', { setup });
+
+    await init('run-z test=main ./nested// --test-parallel');
+    await testPlan.parse('run-z --all test');
+
+    const call1 = await testPlan.callOf(nested1, 'test');
+    const call2 = await testPlan.callOf(nested2, 'test');
+
+    expect(call1.isParallelTo(call2.task)).toBe(true);
   });
 
   async function init(script = 'run-z test=main ./nested//'): Promise<void> {
