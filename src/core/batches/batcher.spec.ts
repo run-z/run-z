@@ -1,7 +1,5 @@
-import { asis } from '@proc7ts/primitives';
 import { TestPlan } from '../../spec';
 import type { ZPackage, ZPackageTree } from '../packages';
-import type { ZCall } from '../plan';
 
 describe('ZBatcher', () => {
 
@@ -74,13 +72,12 @@ describe('ZBatcher', () => {
     });
 
     it('prefers matching task group', async () => {
+      await testPlan.parse('run-z --all other');
 
-      const call = await testPlan.parse('run-z --all other');
-
-      expect((await callOf(call, nested1, 'other')).params().attr('test')).toBe('other');
-      expect(await noCallOf(call, nested1, 'test')).toBeInstanceOf(TypeError);
-      expect(await noCallOf(call, nested2, 'other')).toBeInstanceOf(TypeError);
-      expect(await noCallOf(call, nested2, 'test')).toBeInstanceOf(TypeError);
+      expect((await testPlan.callOf(nested1, 'other')).params().attr('test')).toBe('other');
+      expect(await testPlan.noCallOf(nested1, 'test')).toBeInstanceOf(TypeError);
+      expect(await testPlan.noCallOf(nested2, 'other')).toBeInstanceOf(TypeError);
+      expect(await testPlan.noCallOf(nested2, 'test')).toBeInstanceOf(TypeError);
     });
 
     it('falls back to default batcher if no package sets defined', async () => {
@@ -102,21 +99,12 @@ describe('ZBatcher', () => {
     });
   });
 
-  async function callOf(call: ZCall, target: ZPackage, taskName: string): Promise<ZCall> {
-    return call.plan.callOf(await target.task(taskName));
-  }
-
-  function noCallOf(call: ZCall, target: ZPackage, taskName: string): Promise<any> {
-    return callOf(call, target, taskName).catch(asis);
-  }
-
   async function ensureTasksCalled(): Promise<void> {
+    await testPlan.parse('run-z --all test');
 
-    const call = await testPlan.parse('run-z --all test');
-
-    expect((await callOf(call, nested1, 'test')).params().attr('test')).toBe('main');
-    expect(await noCallOf(call, nested1, 'other')).toBeInstanceOf(TypeError);
-    expect((await callOf(call, nested2, 'test')).params().attr('test')).toBe('main');
-    expect(await noCallOf(call, nested2, 'other')).toBeInstanceOf(TypeError);
+    expect((await testPlan.callOf(nested1, 'test')).params().attr('test')).toBe('main');
+    expect(await testPlan.noCallOf(nested1, 'other')).toBeInstanceOf(TypeError);
+    expect((await testPlan.callOf(nested2, 'test')).params().attr('test')).toBe('main');
+    expect(await testPlan.noCallOf(nested2, 'other')).toBeInstanceOf(TypeError);
   }
 });

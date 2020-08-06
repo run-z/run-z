@@ -1,4 +1,5 @@
-import { ZCallDetails, ZPackageLocation, ZSetup, ZShell } from '../core';
+import { asis } from '@proc7ts/primitives';
+import { ZCallDetails, ZPackageLocation, ZPlan, ZSetup, ZShell } from '../core';
 import { ZPackage, ZPackageJson, ZPackageTree } from '../core/packages';
 import type { ZCall } from '../core/plan';
 
@@ -6,6 +7,7 @@ export class TestPlan {
 
   readonly setup: ZSetup;
   readonly root: ZPackageTree;
+  lastCall!: ZCall;
   private _target: ZPackageLocation;
 
   constructor(
@@ -20,6 +22,10 @@ export class TestPlan {
   ) {
     this.setup = new ZSetup();
     this._target = this.root = new ZPackageTree(name, { packageJson, shell });
+  }
+
+  get lastPlan(): ZPlan {
+    return this.lastCall.plan;
   }
 
   target(location: ZPackageLocation = this._target): Promise<ZPackage> {
@@ -51,7 +57,7 @@ export class TestPlan {
 
     await builder.parse(commandLine);
 
-    return builder.task().call();
+    return this.lastCall = await builder.task().call();
   }
 
   async call(taskName: string, details?: ZCallDetails): Promise<ZCall> {
@@ -59,7 +65,15 @@ export class TestPlan {
     const target = await this.target();
     const task = await target.task(taskName);
 
-    return task.call(details);
+    return this.lastCall = await task.call(details);
+  }
+
+  async callOf(target: ZPackage, taskName: string): Promise<ZCall> {
+    return this.lastPlan.callOf(await target.task(taskName));
+  }
+
+  noCallOf(target: ZPackage, taskName: string): Promise<any> {
+    return this.callOf(target, taskName).catch(asis);
   }
 
 }
