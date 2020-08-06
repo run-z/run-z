@@ -1,4 +1,4 @@
-import { ZSetup } from '../setup';
+import { StandardZSetup } from '../../builtins';
 import type { ZPackage } from './package';
 import type { ZPackageResolver } from './package-resolver';
 import type { ZPackageSet } from './package-set';
@@ -22,7 +22,7 @@ describe('ZPackage', () => {
           },
         },
     );
-    resolver = new ZSetup({}).packageResolver;
+    resolver = new StandardZSetup({}).packageResolver;
     pkg = await resolver.get(tree);
   });
 

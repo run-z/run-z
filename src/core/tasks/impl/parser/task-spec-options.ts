@@ -10,9 +10,6 @@ import type { DraftZTask } from './draft-task';
  */
 const defaultZTaskSpecOptions: SupportedZOptions.Map<ZTaskOption> = {
 
-  '--and': readZTaskCommand.bind(undefined, true),
-  '--then': readZTaskCommand.bind(undefined, false),
-
   '--all'(option) {
     option.setBatching(option.batching.batchBy(ZBatcher.topmost()));
     option.values(0);
@@ -79,7 +76,7 @@ const defaultZTaskSpecOptions: SupportedZOptions.Map<ZTaskOption> = {
  * @internal
  */
 export function zTaskSpecOptions(
-    options: ZTaskParser.SupportedOptions = [],
+    options?: ZTaskParser.SupportedOptions,
 ): SupportedZOptions<ZTaskOption, DraftZTask> {
 
   const providers: SupportedZOptions.Provider<ZTaskOption, DraftZTask>[] = arrayOfElements(options)
@@ -123,19 +120,4 @@ function readNameValueZTaskArg(option: ZTaskOption): void {
   }
 }
 
-/**
- * @internal
- */
-function readZTaskCommand(parallel: boolean, option: ZTaskOption): void {
 
-  const [command, ...args] = option.rest();
-
-  if (command) {
-    option.setAction({
-      type: 'command',
-      command,
-      parallel,
-      args,
-    });
-  }
-}

@@ -1,5 +1,6 @@
 import { asis } from '@proc7ts/primitives';
 import { ZOptionError } from '@run-z/optionz';
+import { StandardZSetup } from '../../builtins';
 import { ZPackage, ZPackageTree } from '../packages';
 import { ZSetup } from '../setup';
 import type { ZTaskBuilder } from './task-builder';
@@ -11,7 +12,7 @@ describe('ZTaskParser', () => {
   let setup: ZSetup;
 
   beforeEach(() => {
-    setup = new ZSetup();
+    setup = new StandardZSetup();
   });
 
   it('recognizes NPM script task', async () => {

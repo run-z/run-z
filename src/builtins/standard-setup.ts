@@ -4,9 +4,10 @@
  */
 import { arrayOfElements } from '@proc7ts/primitives';
 import { ZConfig, ZExtension, ZSetup } from '../core';
+import { ZCommandExecutionBuiltin } from './command-execution.builtin';
 
 const builtinZExtensions: readonly ZExtension[] = [
-
+    ZCommandExecutionBuiltin,
 ];
 
 /**
