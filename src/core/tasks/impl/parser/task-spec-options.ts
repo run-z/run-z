@@ -1,6 +1,5 @@
 import { arrayOfElements, valueByRecipe } from '@proc7ts/primitives';
 import type { SupportedZOptions } from '@run-z/optionz';
-import { ParallelZBatch, ZBatcher } from '../../../batches';
 import type { ZTaskOption } from '../../task-option';
 import type { ZTaskParser } from '../../task-parser';
 import type { DraftZTask } from './draft-task';
@@ -8,20 +7,7 @@ import type { DraftZTask } from './draft-task';
 /**
  * @internal
  */
-const defaultZTaskSpecOptions: SupportedZOptions.Map<ZTaskOption> = {
-
-  '--and': readZTaskCommand.bind(undefined, true),
-  '--then': readZTaskCommand.bind(undefined, false),
-
-  '--all'(option) {
-    option.setBatching(option.batching.batchBy(ZBatcher.topmost()));
-    option.values(0);
-  },
-
-  '--parallel-batch': readParallelZBatch.bind(undefined, true),
-  '--pbatch': readParallelZBatch.bind(undefined, true),
-  '--sequential-batch': readParallelZBatch.bind(undefined, false),
-  '--sbatch': readParallelZBatch.bind(undefined, false),
+const fallbackZTaskSpecOptions: SupportedZOptions.Map<ZTaskOption> = {
 
   '--*=*': readNameValueZTaskArg,
   '-*=*': readNameValueZTaskArg,
@@ -79,21 +65,13 @@ const defaultZTaskSpecOptions: SupportedZOptions.Map<ZTaskOption> = {
  * @internal
  */
 export function zTaskSpecOptions(
-    options: ZTaskParser.SupportedOptions = [],
+    options?: ZTaskParser.SupportedOptions,
 ): SupportedZOptions<ZTaskOption, DraftZTask> {
 
   const providers: SupportedZOptions.Provider<ZTaskOption, DraftZTask>[] = arrayOfElements(options)
       .map(o => ({ builder }) => valueByRecipe(o, builder));
 
-  return [defaultZTaskSpecOptions, ...providers];
-}
-
-/**
- * @internal
- */
-function readParallelZBatch(parallel: boolean, option: ZTaskOption): void {
-  option.setBatching(option.batching.rule(ParallelZBatch).makeParallel(parallel));
-  option.values(0);
+  return [fallbackZTaskSpecOptions, ...providers];
 }
 
 /**
@@ -123,19 +101,4 @@ function readNameValueZTaskArg(option: ZTaskOption): void {
   }
 }
 
-/**
- * @internal
- */
-function readZTaskCommand(parallel: boolean, option: ZTaskOption): void {
 
-  const [command, ...args] = option.rest();
-
-  if (command) {
-    option.setAction({
-      type: 'command',
-      command,
-      parallel,
-      args,
-    });
-  }
-}

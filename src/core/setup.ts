@@ -2,7 +2,10 @@
  * @packageDocumentation
  * @module run-z
  */
-import { valueByRecipe } from '@proc7ts/primitives';
+import { flatMapIt } from '@proc7ts/a-iterable';
+import { arrayOfElements, valueByRecipe } from '@proc7ts/primitives';
+import type { ZConfig } from './config';
+import type { ZExtension } from './extension';
 import { ZPackageResolver } from './packages';
 import { ZPlanner } from './plan';
 import { ZTaskFactory, ZTaskParser } from './tasks';
@@ -55,7 +58,12 @@ export class ZSetup {
     return this._taskParser || (
         this._taskParser = this._config.taskParser
             ? valueByRecipe(this._config.taskParser, this)
-            : new ZTaskParser()
+            : new ZTaskParser({
+              options: Array.from(flatMapIt(
+                  this.extensions,
+                  extension => arrayOfElements(extension.options),
+              )),
+            })
     );
   }
 
@@ -92,41 +100,11 @@ export class ZSetup {
     );
   }
 
-}
-
-/**
- * Task execution configuration.
- *
- * Configures {@link ZSetup task execution setup} by providing services to use.
- */
-export interface ZConfig {
-
   /**
-   * Task specifier parser to use.
-   *
-   * @default New {@link ZTaskParser} instance.
+   * Task execution functionality extensions.
    */
-  readonly taskParser?: ZTaskParser | ((this: void, setup: ZSetup) => ZTaskParser);
-
-  /**
-   * Task factory to use.
-   *
-   * @default New {@link ZTaskFactory} instance.
-   */
-  readonly taskFactory?: ZTaskFactory | ((this: void, setup: ZSetup) => ZTaskFactory);
-
-  /**
-   * A resolver of all discovered {@link ZPackage NPM packages} to use.
-   *
-   * @default New {@link ZPackageResolver} instance.
-   */
-  readonly packageResolver?: ZPackageResolver | ((this: void, setup: ZSetup) => ZPackageResolver);
-
-  /**
-   * Task execution planner to use.
-   *
-   * @default New {@lin ZPlanner} instance.
-   */
-  readonly planner?: ZPlanner | ((this: void, setup: ZSetup) => ZPlanner);
+  get extensions(): readonly ZExtension[] {
+    return arrayOfElements(this._config.extensions);
+  }
 
 }

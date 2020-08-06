@@ -145,7 +145,7 @@ export namespace ZTaskParser {
   /**
    * A set of supported task options.
    */
-  export type SupportedOptions = SupportedZOptions<ZTaskOption, ZTaskBuilder>;
+  export type SupportedOptions = SupportedZOptions<ZTaskOption>;
 
   /**
    * {@link ZTaskParser Task parser} configuration.

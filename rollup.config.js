@@ -9,6 +9,7 @@ import typescript from 'typescript';
 export default {
   input: {
     'run-z': './src/index.ts',
+    'run-z.builtins': './src/builtins/index.ts',
     'run-z.cli': './src/cli/main.ts',
     'run-z.core': './src/core/index.ts',
     'run-z.os': './src/os/index.ts',
@@ -26,6 +27,9 @@ export default {
   ],
   external: externalModules(),
   manualChunks(id) {
+    if (id.startsWith(path.join(__dirname, 'src', 'builtins') + path.sep)) {
+      return 'run-z.builtins';
+    }
     if (id.startsWith(path.join(__dirname, 'src', 'cli') + path.sep)) {
       return 'run-z.cli';
     }

@@ -1,6 +1,7 @@
 import { asis } from '@proc7ts/primitives';
 import { pathToFileURL } from 'url';
-import { ZAbortedExecutionError, ZPackage, ZSetup } from '../core';
+import { StandardZSetup } from '../builtins';
+import { ZAbortedExecutionError, ZPackage } from '../core';
 import { ZPackageDirectory } from './package-directory';
 
 describe('SystemZShell', () => {
@@ -10,7 +11,7 @@ describe('SystemZShell', () => {
   beforeEach(async () => {
 
     const dir = ZPackageDirectory.open({ rootURL: pathToFileURL(process.cwd()) });
-    const setup = new ZSetup();
+    const setup = new StandardZSetup();
 
     pkg = await setup.packageResolver.get(dir);
   });

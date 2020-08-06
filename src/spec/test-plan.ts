@@ -1,7 +1,7 @@
 import { asis } from '@proc7ts/primitives';
-import { ZCallDetails, ZPackageLocation, ZPlan, ZSetup, ZShell } from '../core';
-import { ZPackage, ZPackageJson, ZPackageTree } from '../core/packages';
-import type { ZCall } from '../core/plan';
+import { StandardZSetup } from '../builtins';
+import type { ZCall, ZCallDetails, ZPackageLocation, ZPlan, ZSetup, ZShell } from '../core';
+import { ZPackage, ZPackageJson, ZPackageTree } from '../core';
 
 export class TestPlan {
 
@@ -13,7 +13,7 @@ export class TestPlan {
   constructor(
       name = 'root',
       {
-        setup = new ZSetup(),
+        setup = new StandardZSetup(),
         packageJson = {},
         shell,
       }: {

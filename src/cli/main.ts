@@ -1,14 +1,15 @@
 import { ZOptionError } from '@run-z/optionz';
 import { EOL } from 'os';
 import { promisify } from 'util';
-import { UnknownZTaskError, ZSetup } from '../core';
+import { StandardZSetup } from '../builtins';
+import { UnknownZTaskError } from '../core';
 import { ZPackageDirectory } from '../os';
 
 runZ().catch(handleError);
 
 async function runZ(): Promise<void> {
 
-  const setup = new ZSetup();
+  const setup = new StandardZSetup();
   const currentDir = ZPackageDirectory.open();
   const target = await setup.packageResolver.get(currentDir);
   const builder = await setup.taskFactory.newTask(target, 'run-z')
