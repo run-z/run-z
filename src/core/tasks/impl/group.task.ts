@@ -59,7 +59,7 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
         const { params, plan, batching } = ZBatchDetails.by(subDetails);
 
         return subTask.callAsPre<TAction>(
-            planner.batchWith(batching),
+            planner.transient(batching),
             { ...pre, args: subArgs, task: subTask.name },
             {
               params: () => groupCall.params().extend(params()),

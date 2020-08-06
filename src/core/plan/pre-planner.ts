@@ -43,12 +43,12 @@ export interface ZPrePlanner {
   ): Promise<ZCall>;
 
   /**
-   * Builds a new prerequisites planner based on this one with updated batching policy for prerequisites.
+   * Builds a transient prerequisites planner based on this one with updated batching policy for prerequisites.
    *
-   * @param batching  New prerequisites batching policy.
+   * @param batching  Transient prerequisites batching policy.
    *
    * @returns New prerequisites planner.
    */
-  batchWith(batching: ZBatching): ZPrePlanner;
+  transient(batching: ZBatching): ZPrePlanner;
 
 }

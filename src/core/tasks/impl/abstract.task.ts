@@ -107,7 +107,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
 
           return preCall;
         },
-        batchWith(newBatching) {
+        transient(newBatching) {
           return { ...this, batching: batching.mergeWithTransient(newBatching) };
         },
       };
@@ -123,7 +123,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
           const batchDetails = ZBatchDetails.by(preDetails);
 
           return preTask.callAsPre(
-              prePlanner.batchWith(batchDetails.batching),
+              prePlanner.transient(batchDetails.batching),
               pre,
               batchDetails,
           );
