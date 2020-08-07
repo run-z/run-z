@@ -12,7 +12,7 @@ describe('ZBatchDetails', () => {
     });
     it('preserves specified batcher', () => {
 
-      const batching = new ZBatching(ZBatcher.batchTask);
+      const batching = ZBatching.newBatching(ZBatcher.batchTask);
       const full = ZBatchDetails.by({ batching });
 
       expect(full.batching).toBe(batching);

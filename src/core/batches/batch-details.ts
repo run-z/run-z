@@ -54,7 +54,7 @@ export const ZBatchDetails = {
       details: ZBatchDetails<TAction> = {},
   ): ZBatchDetails.Full<TAction> {
 
-    const { batching = new ZBatching() } = details;
+    const { batching = ZBatching.unprocessedBatching() } = details;
 
     return {
       ...ZCallDetails.by(details),
