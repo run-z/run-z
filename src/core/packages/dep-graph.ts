@@ -12,15 +12,15 @@ export interface ZDepGraph {
   /**
    * Iterates over package dependencies in dependencies-first order.
    *
-   * @returns An iterable of dependency packages.
+   * @returns A read-only set of dependency packages.
    */
-  dependencies(): Iterable<ZPackage>;
+  dependencies(): ReadonlySet<ZPackage>;
 
   /**
    * Iterates over package dependants in dependencies-last order.
    *
-   * @returns An iterable of dependent packages.
+   * @returns A read-only set of dependent packages.
    */
-  dependants(): Iterable<ZPackage>;
+  dependants(): ReadonlySet<ZPackage>;
 
 }

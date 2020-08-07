@@ -5,7 +5,7 @@
 import { mapIt } from '@proc7ts/a-iterable';
 import { noop } from '@proc7ts/primitives';
 import type { ZBatching, ZBatchRule } from '../../core/batches';
-import type { ZDepGraph, ZPackage } from '../../core/packages';
+import type { ZPackage } from '../../core/packages';
 import type { ZTaskParams } from '../../core/plan';
 
 /**
@@ -70,24 +70,11 @@ class ZDepGraphBatches$ implements ZDepGraphBatches {
       async processBatch({ dependent, batched }) {
 
         const original = dependent.plannedCall.task.target;
-        let cache: [ZDepGraph, Set<ZPackage>] | undefined;
-        const included = (): Set<ZPackage> => {
+        const included = (): ReadonlySet<ZPackage> => {
 
           const depGraph = original.depGraph();
 
-          if (cache && cache[0] === depGraph) {
-            return cache[1];
-          }
-
-          const packages = new Set(dependants ? depGraph.dependants() : depGraph.dependencies());
-
-          if (includeSelf) {
-            packages.add(original);
-          }
-
-          cache = [depGraph, packages];
-
-          return packages;
+          return dependants ? depGraph.dependants() : depGraph.dependencies();
         };
 
         await Promise.all(mapIt(
@@ -96,7 +83,9 @@ class ZDepGraphBatches$ implements ZDepGraphBatches {
                 task,
                 {
                   params(): ZTaskParams.Partial {
-                    return included().has(task.target) ? {} : { attrs: { skip: [reason] } };
+                    return (includeSelf && task.target === original) || included().has(task.target)
+                        ? {}
+                        : { attrs: { skip: [reason] } };
                   },
                 },
             ),

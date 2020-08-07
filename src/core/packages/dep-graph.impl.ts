@@ -2,7 +2,6 @@
  * @packageDocumentation
  * @module run-z
  */
-import { filterIt } from '@proc7ts/a-iterable';
 import { valueProvider } from '@proc7ts/primitives';
 import type { ZDepGraph } from './dep-graph';
 import type { ZPackage$, ZPackageResolver$ } from './package.impl';
@@ -12,41 +11,65 @@ import type { ZPackage$, ZPackageResolver$ } from './package.impl';
  */
 export class ZDepGraph$ implements ZDepGraph {
 
+  private _dependencies?: Set<ZPackage$>;
+  private _dependants?: Set<ZPackage$>;
+
   constructor(readonly target: ZPackage$) {
   }
 
   _init(): void {
 
     const reported = new Set<string>();
+    const collected = new Set<ZPackage$>();
 
-    for (const dep of zPackageDeps(reported, this.target, false)) {
+    zPackageDeps(reported, collected, this.target, false);
+
+    for (const dep of collected) {
       dep._addDependant(this.target);
     }
   }
 
-  dependencies(): Iterable<ZPackage$> {
+  dependencies(): ReadonlySet<ZPackage$> {
+    if (this._dependencies) {
+      return this._dependencies;
+    }
 
     const reported = new Set<string>();
+    const collected = new Set<ZPackage$>();
 
-    return zPackageDeps(reported, this.target);
+    zPackageDeps(reported, collected, this.target);
+
+    return this._dependencies = collected;
   }
 
-  *dependants(): Iterable<ZPackage$> {
+  dependants(): Set<ZPackage$> {
+    if (this._dependants) {
+      return this._dependants;
+    }
+
     this.target._resolver.buildDepGraph();
 
     const allDependants = this._allDependants();
     const reported = new Set<string>();
+    const collected = new Set<ZPackage$>();
 
     for (const dep of allDependants) {
       if (!reported.has(dep.name)) {
         reported.add(dep.name);
-        yield* filterIt(
-            zPackageDeps(reported, dep),
-            d => allDependants.has(d),
-        );
-        yield dep;
+
+        const depCollected = new Set<ZPackage$>();
+
+        zPackageDeps(reported, depCollected, dep, true);
+        for (const d of depCollected) {
+          if (allDependants.has(d)) {
+            collected.add(d);
+          }
+        }
+        collected.add(dep);
       }
     }
+
+    return this._dependants = collected;
   }
 
   private _allDependants(): Set<ZPackage$> {
@@ -65,40 +88,43 @@ export class ZDepGraph$ implements ZDepGraph {
 /**
  * @internal
  */
-function *zPackageDeps(
+function zPackageDeps(
     reported: Set<string>,
+    collected: Set<ZPackage$>,
     target: ZPackage$,
     deep = true,
-): Iterable<ZPackage$> {
+): void {
 
   const { _resolver: resolver } = target;
   const { packageJson } = target;
   const { devDependencies } = packageJson;
 
-  yield* zPackageDepsOfKind(resolver, reported, packageJson.dependencies, deep);
+  zPackageDepsOfKind(resolver, reported, collected, packageJson.dependencies, deep);
   if (devDependencies) {
-    yield* zPackageDepsOfKind(
+    zPackageDepsOfKind(
         resolver,
         reported,
+        collected,
         packageJson.peerDependencies,
         deep,
         depName => devDependencies[depName] != null,
     );
-    yield* zPackageDepsOfKind(resolver, reported, devDependencies, deep);
+    zPackageDepsOfKind(resolver, reported, collected, devDependencies, deep);
   }
-  yield* zPackageDepsOfKind(resolver, reported, packageJson.peerDependencies, deep);
+  zPackageDepsOfKind(resolver, reported, collected, packageJson.peerDependencies, deep);
 }
 
 /**
  * @internal
  */
-function *zPackageDepsOfKind(
+function zPackageDepsOfKind(
     resolver: ZPackageResolver$,
     reported: Set<string>,
+    collected: Set<ZPackage$>,
     deps: Readonly<Record<string, string>> | undefined,
     deep: boolean,
     filter: (depName: string) => boolean = valueProvider(true),
-): Iterable<ZPackage$> {
+): void {
   if (!deps) {
     return;
   }
@@ -116,9 +142,9 @@ function *zPackageDepsOfKind(
 
     if (dep) {
       if (deep) {
-        yield* zPackageDeps(reported, dep);
+        zPackageDeps(reported, collected, dep);
       }
-      yield dep;
+      collected.add(dep);
     }
   }
 }
