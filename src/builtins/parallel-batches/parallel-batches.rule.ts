@@ -31,7 +31,7 @@ export interface ZParallelBatches {
  */
 class ZParallelBatches$ implements ZParallelBatches {
 
-  static newInstance(
+  static newBatchRule(
       context: ZBatchRule.Context<ZParallelBatches>,
       parallel = false,
   ): ZBatchRule.Instance<ZParallelBatches> {
@@ -41,7 +41,7 @@ class ZParallelBatches$ implements ZParallelBatches {
     return {
       control,
       moveTo(context, transiently) {
-        return !transiently && ZParallelBatches$.newInstance(context, control.isParallel);
+        return !transiently && ZParallelBatches$.newBatchRule(context, control.isParallel);
       },
       processBatch({ dependent, batched }) {
         dependent.makeParallel(Array.from(batched, call => call.task));
@@ -61,7 +61,7 @@ class ZParallelBatches$ implements ZParallelBatches {
 
   makeParallel(parallel = true): ZBatching {
     return this._context.updateInstance(
-        context => parallel ? ZParallelBatches$.newInstance(context, parallel) : undefined,
+        context => parallel ? ZParallelBatches$.newBatchRule(context, parallel) : undefined,
     );
   }
 

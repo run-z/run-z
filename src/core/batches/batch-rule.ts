@@ -22,7 +22,7 @@ export interface ZBatchRule<TControl> {
    *
    * @returns New batch processing rule instance.
    */
-  newInstance(context: ZBatchRule.Context<TControl>): ZBatchRule.Instance<TControl>;
+  newBatchRule(context: ZBatchRule.Context<TControl>): ZBatchRule.Instance<TControl>;
 
 }
 
@@ -56,7 +56,7 @@ export namespace ZBatchRule {
    *
    * Processes batched tasks in arbitrary way. E.g. by making them run in parallel.
    *
-   * Instances {@link ZBatchRule.newInstance created} by rules. They should be {@link Context.updateInstance applied}
+   * Instances {@link ZBatchRule.newBatchRule created} by rules. They should be {@link Context.updateInstance applied}
    * to the policy in order to have effect.
    *
    * @typeparam TControl  A type of batch processing rule control.

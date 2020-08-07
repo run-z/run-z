@@ -35,7 +35,7 @@ export interface ZDepsFirstBatches {
  */
 class ZDepsFirstBatches$ implements ZDepsFirstBatches {
 
-  static newInstance(
+  static newBatchRule(
       context: ZBatchRule.Context<ZDepsFirstBatches>,
       parallel = false,
   ): ZBatchRule.Instance<ZDepsFirstBatches> {
@@ -45,7 +45,7 @@ class ZDepsFirstBatches$ implements ZDepsFirstBatches {
     return {
       control,
       moveTo(context) {
-        return ZDepsFirstBatches$.newInstance(context, control.isDepsFirst);
+        return ZDepsFirstBatches$.newBatchRule(context, control.isDepsFirst);
       },
       processBatch({ dependent, batched }) {
 
@@ -87,7 +87,7 @@ class ZDepsFirstBatches$ implements ZDepsFirstBatches {
 
   depsFirst(depsFirst = true): ZBatching {
     return this._context.updateInstance(
-        context => depsFirst ? ZDepsFirstBatches$.newInstance(context, depsFirst) : undefined,
+        context => depsFirst ? ZDepsFirstBatches$.newBatchRule(context, depsFirst) : undefined,
     );
   }
 

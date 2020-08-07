@@ -79,7 +79,7 @@ export class ZBatching {
 
     return instance
         ? instance.control as TControl
-        : rule.newInstance(this._ruleContext(rule)).control;
+        : rule.newBatchRule(this._ruleContext(rule)).control;
   }
 
   /**
