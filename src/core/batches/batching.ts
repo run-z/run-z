@@ -10,6 +10,7 @@ import type { ZBatchPlanner } from './batch-planner';
 import type { ZBatchRule } from './batch-rule';
 import type { ZBatcher } from './batcher';
 import { batchZTask } from './batcher.impl';
+import { ZDepsFirstBatches } from './deps-first-batches.rule';
 
 /**
  * Task batching policy.
@@ -18,15 +19,33 @@ import { batchZTask } from './batcher.impl';
  */
 export class ZBatching {
 
+  /**
+   * Creates new task batching policy with default batch processing rules enabled.
+   *
+   * @param batcher  Task batcher to use.
+   *
+   * @returns New task batching policy.
+   */
+  static newBatching(batcher?: ZBatcher): ZBatching {
+    return ZBatching.unprocessedBatching(batcher)
+        .rule(ZDepsFirstBatches).depsFirst();
+  }
+
+  /**
+   * Creates new task batching policy without any batch processing rules enabled.
+   *
+   * @param batcher  Task batcher to use.
+   *
+   * @returns New task batching policy with default batch processing rules enabled.
+   */
+  static unprocessedBatching(batcher?: ZBatcher): ZBatching {
+    return new ZBatching(batcher);
+  }
+
   private readonly _batcher?: ZBatcher;
   private readonly _rules = new Map<ZBatchRule<unknown>, ZBatchRule.Instance<unknown>>();
 
-  /**
-   * Constructs task batching policy.
-   *
-   * @param batcher  Task batcher to use.
-   */
-  constructor(batcher?: ZBatcher) {
+  private constructor(batcher?: ZBatcher) {
     this._batcher = batcher;
   }
 

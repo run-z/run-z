@@ -60,11 +60,10 @@ export interface ZCallPlanner<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
    *
    * The call to this method does not cause any of the tasks to be executed.
    *
-   * When any of the tasks executed it first executes its prerequisites. I.e. the tasks ordered before it.
-   * The task itself will be executed only after each prerequisite completes, unless that prerequisite can be executed
+   * Whenever a `second` task executed, the `first` one executed before it, unless they allowed to be executed
    * {@link makeParallel in parallel}.
    *
-   * Contradictory execution order causes one of the tasks to be executed before prerequisite.
+   * Contradictory execution order leads to unpredictable execution order.
    *
    * @param first  The task executed first.
    * @param second  The task executed after the first one.

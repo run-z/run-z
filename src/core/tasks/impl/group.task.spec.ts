@@ -121,11 +121,10 @@ describe('GroupZTask', () => {
     await testPlan.target(target);
 
     const call = await testPlan.call('test');
-    const plan = call.plan;
-    const dep11 = plan.callOf(await nested1.task('dep1'));
-    const dep12 = plan.callOf(await nested1.task('dep2'));
-    const dep21 = plan.callOf(await nested2.task('dep1'));
-    const dep22 = plan.callOf(await nested2.task('dep2'));
+    const dep11 = await testPlan.callOf(nested1, 'dep1');
+    const dep12 = await testPlan.callOf(nested1, 'dep2');
+    const dep21 = await testPlan.callOf(nested2, 'dep1');
+    const dep22 = await testPlan.callOf(nested2, 'dep2');
 
     expect(prerequisitesOf(call)).toEqual(taskIds(dep12, dep22));
     expect(call.params().attrs).toEqual({ test: ['on'] });

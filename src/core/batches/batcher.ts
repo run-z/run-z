@@ -145,7 +145,7 @@ export const ZBatcher = {
               task,
               {
                 ...batchDetails,
-                batching: new ZBatching(batcher).mergeWith(batchDetails.batching),
+                batching: ZBatching.unprocessedBatching(batcher).mergeWith(batchDetails.batching),
               },
           );
         },
@@ -221,7 +221,7 @@ async function batchInZTarget(
           task,
           {
             ...batchDetails,
-            batching: new ZBatching(batcher).mergeWith(batchDetails.batching),
+            batching: ZBatching.unprocessedBatching(batcher).mergeWith(batchDetails.batching),
           },
       );
     },
