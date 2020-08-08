@@ -1,3 +1,5 @@
 import { runZ } from './cli';
 
-runZ(); // eslint-disable-line @typescript-eslint/no-floating-promises
+runZ()
+    .then(() => process.exit(0))
+    .catch(() => process.exit(1));

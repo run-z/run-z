@@ -14,8 +14,9 @@ export function formatZOptionError(
         endOffset,
       },
     }: ZOptionError,
+    fromIndex = 2,
 ): readonly string[] {
-  args = args.slice(2);
+  args = args.slice(fromIndex);
   index -= 2;
   endIndex -= 2;
 

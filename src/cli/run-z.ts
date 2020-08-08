@@ -4,8 +4,8 @@ import { UnknownZTaskError } from '../core/tasks';
 import { ZPackageDirectory } from '../os';
 import { formatZOptionError } from './impl';
 
-export function runZ(): Promise<never> {
-  return doRunZ().then(() => process.exit(0), handleZError);
+export function runZ(): Promise<void> {
+  return doRunZ().catch(logZError);
 }
 
 /**
@@ -27,17 +27,15 @@ async function doRunZ(): Promise<void> {
 /**
  * @internal
  */
-function handleZError(error: any): never {
+function logZError(error: any): Promise<void> {
   if (error instanceof ZOptionError) {
     for (const line of formatZOptionError(error)) {
       console.error(line);
     }
-    process.exit(1);
-  }
-  if (error instanceof UnknownZTaskError) {
+  } else if (error instanceof UnknownZTaskError) {
     console.error(error.message);
-    process.exit(1);
+  } else {
+    console.error('Unexpected error', error);
   }
-  console.error('Unexpected error', error);
-  process.exit(1);
+  return Promise.reject(error);
 }
