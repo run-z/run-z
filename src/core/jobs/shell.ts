@@ -4,7 +4,7 @@
  */
 import type { ZTaskParams } from '../plan';
 import type { ZExecutedProcess } from './executed-process';
-import { noopZExecutedProcess } from './impl';
+import { execNoopZProcess } from './impl';
 
 /**
  * Command execution shell.
@@ -42,11 +42,11 @@ export interface ZShell {
 const noopZShell: ZShell = {
 
   execCommand() {
-    return noopZExecutedProcess;
+    return execNoopZProcess();
   },
 
   execScript() {
-    return noopZExecutedProcess;
+    return execNoopZProcess();
   },
 
 };

@@ -1,5 +1,6 @@
 import { ZBatchDetails } from '../../batches';
 import type { ZExecutedProcess, ZTaskExecution } from '../../jobs';
+import { execNoopZProcess } from '../../jobs/impl';
 import type { ZPackage } from '../../packages';
 import type { ZCall, ZCallPlanner, ZPrePlanner } from '../../plan';
 import { ZCallDetails, ZTaskParams } from '../../plan';
@@ -21,8 +22,8 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
     this.target = _builder.taskTarget;
     this.taskQN = this.name = _builder.taskName;
     this.callDetails = {
-      params: this.callParams.bind(this),
-      plan: this.planCall.bind(this),
+      params: this._callParams.bind(this),
+      plan: this._planCall.bind(this),
     };
   }
 
@@ -47,14 +48,19 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
     return this.target.setup.planner.call(this, details);
   }
 
-  abstract exec(execution: ZTaskExecution<TAction>): ZExecutedProcess;
+  exec(execution: ZTaskExecution<TAction>): ZExecutedProcess {
+    if (execution.call.params().flag('skip')) {
+      return execNoopZProcess();
+    }
+    return this._execTask(execution);
+  }
 
   /**
    * Builds initial task execution parameters.
    *
    * @returns Partial task execution parameters.
    */
-  protected callParams(): ZTaskParams {
+  protected _callParams(): ZTaskParams {
 
     const { spec: { attrs, args } } = this;
 
@@ -71,11 +77,11 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
    * @returns Either nothing when instructions recorded synchronously, or a promise-like instance resolved when
    * instructions recorded asynchronously.
    */
-  protected async planCall(planner: ZCallPlanner<TAction>): Promise<void> {
-    await this.planPre(planner);
+  protected async _planCall(planner: ZCallPlanner<TAction>): Promise<void> {
+    await this._planPre(planner);
   }
 
-  protected async planPre(planner: ZCallPlanner<TAction>): Promise<void> {
+  private async _planPre(planner: ZCallPlanner<TAction>): Promise<void> {
 
     const batching = this._builder.batching;
     const { target, spec } = this;
@@ -151,7 +157,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
       planner.order(prevTask, this);
     }
 
-    if (this.isParallel()) {
+    if (this._isParallel()) {
       parallel.push(this);
     }
     planner.makeParallel(parallel);
@@ -160,8 +166,10 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   /**
    * Whether this task can be called in parallel to its prerequisites.
    */
-  protected isParallel(): boolean {
+  protected _isParallel(): boolean {
     return false;
   }
+
+  protected abstract _execTask(execution: ZTaskExecution<TAction>): ZExecutedProcess;
 
 }

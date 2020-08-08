@@ -1,6 +1,7 @@
+import { valueProvider } from '@proc7ts/primitives';
 import { prerequisitesOf, taskIds, TestPlan } from '../../../spec';
 import type { ZShell } from '../../jobs';
-import { noopZExecutedProcess } from '../../jobs/impl';
+import { execNoopZProcess } from '../../jobs/impl';
 import { ZTaskParams } from '../../plan';
 import { CommandZTask } from './command.task';
 
@@ -124,7 +125,7 @@ describe('CommandZTask', () => {
     it('executes command', async () => {
 
       const shell = {
-        execCommand: jest.fn(() => noopZExecutedProcess),
+        execCommand: jest.fn(execNoopZProcess),
       } as jest.Mocked<Partial<ZShell>> as jest.Mocked<ZShell>;
 
       testPlan.addPackage(
@@ -150,5 +151,29 @@ describe('CommandZTask', () => {
 
       expect(params.args).toEqual(['--arg3', '--arg1', '--arg2']);
     });
+  });
+  it('does not execute command when `skip` flag is set', async () => {
+
+    const shell = {
+      execCommand: jest.fn(execNoopZProcess),
+    } as jest.Mocked<Partial<ZShell>> as jest.Mocked<ZShell>;
+
+    testPlan.addPackage(
+        'test',
+        {
+          packageJson: {
+            scripts: {
+              exec: 'run-z --then start --arg3',
+            },
+          },
+          shell,
+        },
+    );
+
+    const call = await testPlan.call('exec', { params: valueProvider({ attrs: { skip: ['on'] } }) });
+
+    await call.exec().whenDone();
+
+    expect(shell.execCommand).not.toHaveBeenCalled();
   });
 });
