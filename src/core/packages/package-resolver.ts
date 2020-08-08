@@ -23,7 +23,7 @@ export class ZPackageResolver {
    */
   constructor(readonly setup: ZSetup) {
 
-    const byName = new Map<string, ZPackage$>();
+    const byName = new Map<string, Set<ZPackage$>>();
     let depGraphRev = 0;
 
     this._impl = {
@@ -31,15 +31,25 @@ export class ZPackageResolver {
       rev: 0,
       addPackage(pkg: ZPackage$): void {
         if (!pkg.isAnonymous) {
-          byName.set(pkg.name, pkg);
+
+          const { name } = pkg;
+          let named = byName.get(name);
+
+          if (!named) {
+            byName.set(name, named = new Set<ZPackage$>());
+          }
+
+          named.add(pkg);
         }
       },
-      byName: name => byName.get(name),
+      byName: name => byName.get(name) || [],
       buildDepGraph() {
         if (this.rev !== depGraphRev) {
           depGraphRev = this.rev;
-          for (const pkg of byName.values()) {
-            pkg.depGraph()._init();
+          for (const namedPackages of byName.values()) {
+            for (const namedPackage of namedPackages) {
+              namedPackage.depGraph()._init();
+            }
           }
         }
       },
@@ -112,9 +122,9 @@ export class ZPackageResolver {
    *
    * @param name  Package name.
    *
-   * @returns Either resolved package with the given name, or `undefined` if that package is unknown.
+   * @returns An iterable of packages with requested name.
    */
-  byName(name: string): ZPackage | undefined {
+  byName(name: string): Iterable<ZPackage> {
     return this._impl.byName(name);
   }
 

@@ -16,7 +16,7 @@ export interface ZPackageResolver$ {
   readonly setup: ZSetup;
   rev: number;
   addPackage(pkg: ZPackage$): void;
-  byName(name: string): ZPackage$ | undefined;
+  byName(name: string): Iterable<ZPackage$>;
   buildDepGraph(): void;
 }
 

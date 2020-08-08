@@ -154,6 +154,7 @@ describe('ZPackageDirectory', () => {
         new URL('nested', rootURL).pathname,
         new URL('nested/deeply-nested', rootURL).pathname,
         new URL('nested/nested2/nested3', rootURL).pathname,
+        new URL('nested-v1', rootURL).pathname,
       ]);
     });
   });

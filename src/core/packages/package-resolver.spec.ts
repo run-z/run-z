@@ -1,3 +1,4 @@
+import { itsEmpty } from '@proc7ts/a-iterable';
 import { asis } from '@proc7ts/primitives';
 import * as path from 'path';
 import { pathToFileURL, URL } from 'url';
@@ -47,7 +48,7 @@ describe('ZPackageResolver', () => {
     it('is resolved', () => {
       expect(pkg.name).toBe('anonymous');
       expect(pkg.isAnonymous).toBe(true);
-      expect(resolver.byName(pkg.name)).toBeUndefined();
+      expect(itsEmpty(resolver.byName(pkg.name))).toBe(true);
     });
 
     describe('parent', () => {
@@ -97,9 +98,23 @@ describe('ZPackageResolver', () => {
 
     it('is resolved', () => {
       expect(nested.name).toBe('named-nested');
-      expect(resolver.byName(nested.name)).toBe(nested);
+      expect([...resolver.byName(nested.name)]).toEqual([nested]);
       expect(deeplyNested.name).toBe('named-nested/deeply-nested');
-      expect(resolver.byName(deeplyNested.name)).toBe(deeplyNested);
+      expect([...resolver.byName(deeplyNested.name)]).toEqual([deeplyNested]);
+    });
+
+    describe('multiple versions', () => {
+      it('available under the same name', async () => {
+
+        const nested$v1 = await resolver.get(packageLocation('nesting/nested-v1'));
+
+        expect(nested$v1.name).toBe('named-nested');
+
+        const found = new Set(resolver.byName(nested.name));
+
+        expect(found).toContain(nested);
+        expect(found).toContain(nested$v1);
+      });
     });
 
     describe('parent', () => {
@@ -159,11 +174,11 @@ describe('ZPackageResolver', () => {
 
     it('is resolved', () => {
       expect(pkg.name).toBe('@scope-name/package-name');
-      expect(resolver.byName(pkg.name)).toBe(pkg);
+      expect([...resolver.byName(pkg.name)]).toEqual([pkg]);
       expect(nested.name).toBe('@scope-name/package-name/nested');
-      expect(resolver.byName(nested.name)).toBe(nested);
+      expect([...resolver.byName(nested.name)]).toEqual([nested]);
       expect(deeplyNested.name).toBe('@scope-name/package-name/nested/deeper');
-      expect(resolver.byName(deeplyNested.name)).toBe(deeplyNested);
+      expect([...resolver.byName(deeplyNested.name)]).toEqual([deeplyNested]);
     });
 
     describe('parent', () => {

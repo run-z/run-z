@@ -138,9 +138,7 @@ function zPackageDepsOfKind(
 
     reported.add(depName);
 
-    const dep = resolver.byName(depName);
-
-    if (dep) {
+    for (const dep of resolver.byName(depName)) {
       if (deep) {
         zPackageDeps(reported, collected, dep);
       }
