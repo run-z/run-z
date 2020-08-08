@@ -67,7 +67,7 @@ class ZDepGraphBatches$ implements ZDepGraphBatches {
       moveTo(context) {
         return ZDepGraphBatches$.newBatchRule(context, control.included, control.isSelfIncluded);
       },
-      async processBatch({ dependent, batched }) {
+      async processBatch({ dependent, taskName, batched }) {
 
         const original = dependent.plannedCall.task.target;
         const included = (): ReadonlySet<ZPackage> => {
@@ -83,7 +83,9 @@ class ZDepGraphBatches$ implements ZDepGraphBatches {
                 task,
                 {
                   params(): ZTaskParams.Partial {
-                    return (includeSelf && task.target === original) || included().has(task.target)
+                    return task.name !== taskName // Apply only to same-named tasks.
+                    || (includeSelf && task.target === original) // Include original task?
+                    || included().has(task.target) // Included in requested part of dep graph?
                         ? {}
                         : { attrs: { skip: [reason] } };
                   },
