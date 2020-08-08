@@ -1,6 +1,6 @@
 /**
  * @packageDocumentation
- * @module run-z
+ * @module run-z/builtins
  */
 import { mapIt } from '@proc7ts/a-iterable';
 import { noop } from '@proc7ts/primitives';

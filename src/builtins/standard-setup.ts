@@ -19,7 +19,7 @@ const builtinZExtensions: readonly ZExtension[] = [
 /**
  * Standard task execution setup.
  *
- * Enables {@link builtinZExtensions built-in extensions}
+ * Enables {@link StandardZSetup.builtins built-in extensions}
  */
 export class StandardZSetup extends ZSetup {
 

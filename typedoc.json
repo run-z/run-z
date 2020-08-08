@@ -9,7 +9,7 @@
     "**/*.spec.ts"
   ],
   "excludeNotExported": true,
-  "mode": "file",
+  "mode": "modules",
   "name": "Run Z",
   "out": "./target/typedoc",
   "tsconfig": "tsconfig.main.json"

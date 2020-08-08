@@ -1,6 +1,6 @@
 /**
  * @packageDocumentation
- * @module run-z
+ * @module run-z/builtins
  */
 import type { ZExtension, ZTaskOption } from '../../core';
 import { ZBatcher } from '../../core';
