@@ -8,19 +8,19 @@ import { AbstractZTask } from './abstract.task';
  */
 export class CommandZTask extends AbstractZTask<ZTaskSpec.Command> {
 
-  exec(execution: ZTaskExecution<ZTaskSpec.Command>): ZExecutedProcess {
-    return this.target.location.shell.execCommand(this.spec.action.command, execution.call.params());
-  }
-
-  protected callParams(): ZTaskParams {
+  protected _callParams(): ZTaskParams {
 
     const { spec: { attrs, args, action: { args: commandArgs } } } = this;
 
     return new ZTaskParams({ attrs, args: [...commandArgs, ...args] });
   }
 
-  protected isParallel(): boolean {
+  protected _isParallel(): boolean {
     return this.spec.action.parallel;
+  }
+
+  protected _execTask(execution: ZTaskExecution<ZTaskSpec.Command>): ZExecutedProcess {
+    return this.target.location.shell.execCommand(this.spec.action.command, execution.call.params());
   }
 
 }

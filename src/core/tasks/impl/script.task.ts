@@ -7,7 +7,7 @@ import { AbstractZTask } from './abstract.task';
  */
 export class ScriptZTask extends AbstractZTask<ZTaskSpec.Script> {
 
-  exec(execution: ZTaskExecution<ZTaskSpec.Script>): ZExecutedProcess {
+  protected _execTask(execution: ZTaskExecution<ZTaskSpec.Script>): ZExecutedProcess {
     return this.target.location.shell.execScript(this.name, execution.call.params());
   }
 

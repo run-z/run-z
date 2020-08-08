@@ -9,9 +9,16 @@ const zExecutedProcessDone = Promise.resolve();
 /**
  * @internal
  */
-export const noopZExecutedProcess: ZExecutedProcess = {
+const noopZExecutedProcess: ZExecutedProcess = {
   abort: noop,
   whenDone(): Promise<void> {
     return zExecutedProcessDone;
   },
 };
+
+/**
+ * @internal
+ */
+export function execNoopZProcess(): ZExecutedProcess {
+  return noopZExecutedProcess;
+}

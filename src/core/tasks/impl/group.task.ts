@@ -1,7 +1,7 @@
 import { ZOptionInput } from '@run-z/optionz';
 import { ZBatchDetails } from '../../batches';
 import type { ZExecutedProcess } from '../../jobs';
-import { noopZExecutedProcess } from '../../jobs/impl';
+import { execNoopZProcess } from '../../jobs/impl';
 import type { ZPackageSet } from '../../packages';
 import type { ZCall, ZCallDetails, ZPrePlanner } from '../../plan';
 import type { ZTask } from '../task';
@@ -79,15 +79,15 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
     return groupCall;
   }
 
-  exec(): ZExecutedProcess {
-    return noopZExecutedProcess;
-  }
-
   private _subTaskTargets(): ZPackageSet {
 
     const { target, spec: { action: { targets } } } = this;
 
     return target.selectTargets(targets);
+  }
+
+  protected _execTask(): ZExecutedProcess {
+    return execNoopZProcess();
   }
 
 }
