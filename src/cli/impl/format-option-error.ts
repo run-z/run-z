@@ -16,14 +16,11 @@ export function formatZOptionError(
     }: ZOptionError,
     fromIndex = 2,
 ): readonly string[] {
-  args = args.slice(fromIndex);
-  index -= 2;
-  endIndex -= 2;
 
   let commandLine = '';
   let underline = '';
 
-  for (let i = 0; i < args.length; ++i) {
+  for (let i = fromIndex; i < args.length; ++i) {
 
     const arg = args[i];
 
