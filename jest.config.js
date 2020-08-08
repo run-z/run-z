@@ -7,6 +7,7 @@ module.exports = {
     '!src/**/*.spec.ts',
     '!src/**/index.ts',
     '!src/**/main.ts',
+    '!src/cli/run-z.ts',
     '!**/node_modules/**',
   ],
   coverageDirectory: 'target/coverage',

@@ -10,8 +10,9 @@ export default {
   input: {
     'run-z': './src/index.ts',
     'run-z.builtins': './src/builtins/index.ts',
-    'run-z.cli': './src/cli/main.ts',
+    'run-z.cli': './src/cli/index.ts',
     'run-z.core': './src/core/index.ts',
+    'run-z.main': './src/main.ts',
     'run-z.os': './src/os/index.ts',
   },
   plugins: [
@@ -38,6 +39,9 @@ export default {
     }
     if (id.startsWith(path.join(__dirname, 'src', 'os') + path.sep)) {
       return 'run-z.os';
+    }
+    if (id === path.join(__dirname, 'src', 'main.ts')) {
+      return 'run-z.main';
     }
     return 'run-z';
   },

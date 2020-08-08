@@ -3,7 +3,6 @@
   "exclude": [
     "**/index.ts",
     "**/*.impl.ts",
-    "**/cli/**/*.ts",
     "**/impl/**/*.ts",
     "**/spec/**/*.ts",
     "**/*.spec.ts"
