@@ -10,6 +10,16 @@ import type { DraftZTask } from './draft-task';
 /**
  * @internal
  */
+const zTaskActionsWithArgs: { readonly [action in ZTaskSpec.Action['type']]: 0 | 1 } = {
+  command: 1,
+  group: 0,
+  script: 1,
+  unknown: 1,
+};
+
+/**
+ * @internal
+ */
 export function zTaskSpecOptionClass<TArgs extends any[]>(
     base: ZOption.BaseClass<TArgs>,
 ): ZOption.ImplClass<ZTaskOption, DraftZTask, TArgs> {
@@ -56,11 +66,16 @@ export function zTaskSpecOptionClass<TArgs extends any[]>(
       if (!args.length) {
         return this;
       }
-      if (!this._draft.builder.action) {
+
+      const action = this._draft.builder.action;
+
+      if (!action || !zTaskActionsWithArgs[action.type]) {
         throw new ZOptionError(this.optionLocation(), `Unrecognized option: "${args[0]}"`);
       }
+
       this.pre.conclude();
       this._draft.builder.addArg(...args);
+
       return this;
     }
 
