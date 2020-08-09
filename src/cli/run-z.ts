@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module run-z
+ */
 import { ZOptionError } from '@run-z/optionz';
 import { StandardZSetup } from '../builtins';
 import { UnknownZTaskError } from '../core/tasks';
