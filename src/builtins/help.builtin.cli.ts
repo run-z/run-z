@@ -2,8 +2,10 @@
  * @packageDocumentation
  * @module run-z/builtins
  */
-import * as chalk from 'chalk';
+import { flatMapIt, itsReduction, makeIt } from '@proc7ts/a-iterable';
+import chalk from 'chalk';
 import cliui from 'cliui';
+import stripAnsi from 'strip-ansi';
 import type { ZExtension, ZTaskOption } from '../core';
 import { execNoopZProcess } from '../core/jobs/impl';
 
@@ -51,39 +53,74 @@ function readZHelp(detailed: boolean, option: ZTaskOption): void {
 function printZHelp(detailed: boolean, option: ZTaskOption): void {
 
   const ui = cliui();
-  const options = Array.from(option.supportedOptions()).sort();
+  const options = printZHelpOptions(detailed, option);
+  const usageWidth = printZHelpUsageWidth(options);
 
-  for (const key of options) {
+  for (const [usage, text] of options) {
 
-    const meta = option.optionMeta(key);
-    let text: string | undefined;
-
-    if (detailed) {
-      if (meta.help) {
-        if (meta.description) {
-          text = `${meta.help}\n${meta.description}`;
-        } else {
-          text = meta.help;
-        }
-      } else if (meta.description != null) {
-        text = meta.description;
-      } else if (meta.usage.length === 1 && meta.usage[0] === key) {
-        continue;
-      } else {
-        text = '';
-      }
-    } else {
-      if (!meta.help) {
-        continue;
-      }
-      text = meta.help;
-    }
+    const usageText = usage.map(usage => chalk.greenBright(usage)).join('\n');
 
     ui.div(
-        meta.usage.map(usage => chalk.greenBright(usage)).join('\n'),
-        text,
+        {
+          text: usageText,
+          width: usageWidth,
+          padding: detailed ? [1, 1, 0, 2] : [0, 1, 0, 2],
+        },
+        {
+          text,
+          padding: detailed ? [1, 0, 0, 1] : [0, 0, 0, 1],
+        },
     );
   }
 
   console.log(ui.toString());
+}
+
+/**
+ * @internal
+ */
+function printZHelpOptions(detailed: boolean, option: ZTaskOption): Iterable<[readonly string[], string]> {
+
+  const options = Array.from(option.supportedOptions()).sort();
+
+  return makeIt(function *() {
+    for (const key of options) {
+
+      const meta = option.optionMeta(key);
+      let text: string | undefined;
+
+      if (detailed) {
+        if (meta.help) {
+          if (meta.description) {
+            text = `${meta.help.trim()}\n\n${meta.description.trim()}`;
+          } else {
+            text = meta.help.trim();
+          }
+        } else {
+          text = meta.description?.trim() || '';
+        }
+      } else {
+        if (!meta.help) {
+          continue;
+        }
+        text = meta.help.trim();
+      }
+
+      yield [meta.usage, text];
+    }
+  });
+}
+
+/**
+ * @internal
+ */
+function printZHelpUsageWidth(options: Iterable<[readonly string[], string]>): number {
+  return itsReduction(
+      flatMapIt(
+          options,
+          ([usage]) => usage,
+      ),
+      (prev, usage) => Math.max(prev, stripAnsi(usage).length),
+      12,
+  ) + 3;
 }
