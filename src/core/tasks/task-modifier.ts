@@ -3,6 +3,7 @@
  * @module run-z
  */
 import type { ZBatching } from '../batches';
+import type { ZExecutedProcess, ZTaskExecution } from '../jobs';
 import type { ZPackage } from '../packages';
 import type { ZTaskSpec } from './task-spec';
 
@@ -95,5 +96,14 @@ export interface ZTaskModifier {
    * @returns `this` instance.
    */
   setAction(action: ZTaskSpec.Action): ZTaskModifier;
+
+  /**
+   * Overrides task executor.
+   *
+   * This method call overrides normal task execution. E.g. to display help info.
+   *
+   * @param executor  New executor for task execution.
+   */
+  executeBy(executor: (this: void, execution: ZTaskExecution<any>) => ZExecutedProcess): this;
 
 }

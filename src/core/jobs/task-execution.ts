@@ -12,7 +12,7 @@ import type { ZTaskSpec } from '../tasks';
  *
  * @typeparam TAction  Task action type.
  */
-export interface ZTaskExecution<TAction extends ZTaskSpec.Action> {
+export interface ZTaskExecution<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
 
   /**
    * Executed task call.

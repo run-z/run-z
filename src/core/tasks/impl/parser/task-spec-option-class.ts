@@ -1,6 +1,7 @@
 import type { ZOption } from '@run-z/optionz';
 import { ZOptionError } from '@run-z/optionz';
 import type { ZBatching } from '../../../batches';
+import type { ZExecutedProcess, ZTaskExecution } from '../../../jobs';
 import type { ZPackage } from '../../../packages';
 import type { ZTaskOption } from '../../task-option';
 import type { ZTaskSpec } from '../../task-spec';
@@ -71,6 +72,11 @@ export function zTaskSpecOptionClass<TArgs extends any[]>(
     setAction(action: ZTaskSpec.Action): this {
       this.pre.conclude();
       this._draft.builder.setAction(action);
+      return this;
+    }
+
+    executeBy(executor: (this: void, execution: ZTaskExecution) => ZExecutedProcess): this {
+      this._draft.builder.executeBy(executor);
       return this;
     }
 

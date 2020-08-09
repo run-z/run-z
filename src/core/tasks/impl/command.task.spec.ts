@@ -1,4 +1,5 @@
 import { valueProvider } from '@proc7ts/primitives';
+import { StandardZSetup } from '../../../builtins';
 import { prerequisitesOf, taskIds, TestPlan } from '../../../spec';
 import type { ZShell } from '../../jobs';
 import { execNoopZProcess } from '../../jobs/impl';
@@ -174,6 +175,49 @@ describe('CommandZTask', () => {
 
     await call.exec().whenDone();
 
+    expect(shell.execCommand).not.toHaveBeenCalled();
+  });
+  it('executes by overridden executor', async () => {
+
+    const executor = jest.fn(execNoopZProcess);
+
+    testPlan = new TestPlan(
+        'root',
+        {
+          setup: new StandardZSetup({
+            extensions: {
+              options: {
+                '--test'(option) {
+                  option.executeBy(executor);
+                  option.recognize();
+                },
+              },
+            },
+          }),
+        },
+    );
+
+    const shell = {
+      execCommand: jest.fn(execNoopZProcess),
+    } as jest.Mocked<Partial<ZShell>> as jest.Mocked<ZShell>;
+
+    testPlan.addPackage(
+        'test',
+        {
+          packageJson: {
+            scripts: {
+              exec: 'run-z --test --then start --arg3',
+            },
+          },
+          shell,
+        },
+    );
+
+    const call = await testPlan.call('exec');
+
+    await call.exec().whenDone();
+
+    expect(executor).toHaveBeenCalled();
     expect(shell.execCommand).not.toHaveBeenCalled();
   });
 });

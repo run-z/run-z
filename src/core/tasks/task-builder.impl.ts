@@ -1,4 +1,5 @@
 import { ZBatching } from '../batches';
+import type { ZExecutedProcess, ZTaskExecution } from '../jobs';
 import type { ZPackage } from '../packages';
 import type { AbstractZTask } from './impl';
 import { CommandZTask, GroupZTask, ScriptZTask, UnknownZTask } from './impl';
@@ -12,6 +13,7 @@ import { addZTaskAttr, addZTaskAttrs } from './task-spec.impl';
 export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> implements ZTaskBuilder<TAction> {
 
   batching: ZBatching = ZBatching.newBatching();
+  executor?: (this: void, execution: ZTaskExecution) => ZExecutedProcess;
   private readonly _pre: ZTaskSpec.Pre[] = [];
   private readonly _attrs: Record<string, [string, ...string[]]> = {};
   private readonly _args: string[] = [];
@@ -52,6 +54,11 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
   setAction<TNewAction extends ZTaskSpec.Action>(action: TNewAction): ZTaskBuilder$<TNewAction> {
     this._action = action;
     return this as ZTaskBuilder$<any>;
+  }
+
+  executeBy(executor: (this: void, execution: ZTaskExecution<any>) => ZExecutedProcess): this {
+    this.executor = executor;
+    return this;
   }
 
   async parse(commandLine: string): Promise<this> {
