@@ -4,7 +4,7 @@ import type { ZPackage } from '../packages';
 import type { AbstractZTask } from './impl';
 import { CommandZTask, GroupZTask, ScriptZTask, UnknownZTask } from './impl';
 import type { ZTaskBuilder } from './task-builder';
-import type { ZTaskSpec } from './task-spec';
+import { ZTaskSpec } from './task-spec';
 import { addZTaskAttr, addZTaskAttrs } from './task-spec.impl';
 
 /**
@@ -14,6 +14,7 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
 
   batching: ZBatching = ZBatching.newBatching();
   executor?: (this: void, execution: ZTaskExecution) => ZExecutedProcess;
+  private readonly _commandLine: string[] = [];
   private readonly _pre: ZTaskSpec.Pre[] = [];
   private readonly _attrs: Record<string, [string, ...string[]]> = {};
   private readonly _args: string[] = [];
@@ -62,12 +63,25 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
   }
 
   async parse(commandLine: string): Promise<this> {
-    await this.taskTarget.setup.taskParser.parse(this, commandLine);
-    return this;
+
+    const args = this.taskTarget.setup.taskParser.parseCommandLine(commandLine);
+
+    if (!args) {
+      this.setAction(ZTaskSpec.scriptAction);
+      return this;
+    }
+
+    return this.applyOptions(args, 1);
   }
 
-  async applyOptions(args: readonly string[], fromIndex?: number): Promise<this> {
-    await this.taskTarget.setup.taskParser.applyOptions(this, args, fromIndex);
+  async applyOptions(args: readonly string[], fromIndex = 0): Promise<this> {
+
+    const prevLength = this._commandLine.length;
+
+    this._commandLine.push(...args);
+
+    await this.taskTarget.setup.taskParser.applyOptions(this, this._commandLine, prevLength + fromIndex);
+
     return this;
   }
 

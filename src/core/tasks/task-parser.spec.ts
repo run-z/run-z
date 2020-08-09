@@ -109,9 +109,9 @@ describe('ZTaskParser', () => {
 
     expect(error).toBeInstanceOf(ZOptionError);
     expect(error.optionLocation).toEqual({
-      args: ['--test', 'value', '--other'],
-      index: 0,
-      endIndex: 1,
+      args: ['run-z', '--test', 'value', '--other'],
+      index: 1,
+      endIndex: 2,
       offset: 0,
       endOffset: 6,
     });
@@ -135,7 +135,11 @@ describe('ZTaskParser', () => {
   });
   it('applies command options', async () => {
 
-    const spec = await applyOptions(['dep1', 'dep2', 'dep3', '--some', '--then', 'cmd', '--arg']);
+    const builder = await newTask();
+
+    await setup.taskParser.applyOptions(builder, ['dep1', 'dep2', 'dep3', '--some', '--then', 'cmd', '--arg']);
+
+    const spec = builder.spec();
 
     expect(spec.pre).toEqual([
       { targets: [], task: 'dep1', parallel: false, attrs: {}, args: [] },
@@ -635,14 +639,6 @@ describe('ZTaskParser', () => {
 
     const builder = await newTask();
     await builder.parse(commandLine);
-
-    return builder.spec();
-  }
-
-  async function applyOptions(args: readonly string[]): Promise<ZTaskSpec> {
-
-    const builder = await newTask();
-    await builder.applyOptions(args);
 
     return builder.spec();
   }
