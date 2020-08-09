@@ -4,10 +4,11 @@ module.exports = {
   collectCoverageFrom: [
     'src/**/*.ts',
     '!src/spec/**',
-    '!src/**/*.spec.ts',
+    '!src/**/*.cli.ts',  // Exclude CLI-specific functionality
+    '!src/**/*.d.ts',    // Exclude type definitions
+    '!src/**/*.spec.ts', // Exclude tests
     '!src/**/index.ts',
     '!src/**/main.ts',
-    '!src/cli/run-z.ts',
     '!**/node_modules/**',
   ],
   coverageDirectory: 'target/coverage',
