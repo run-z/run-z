@@ -60,7 +60,7 @@
     "shx": "^0.3.2",
     "ts-jest": "^26.1.4",
     "tslib": "^2.0.1",
-    "typedoc": "^0.17.3",
+    "typedoc": "^0.18.0",
     "typedoc-plugin-external-module-name": "^4.0.3",
     "typescript": "^3.9.7"
   },
