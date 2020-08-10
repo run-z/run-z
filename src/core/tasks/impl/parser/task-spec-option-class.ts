@@ -1,7 +1,7 @@
 import type { ZOption } from '@run-z/optionz';
 import { ZOptionError } from '@run-z/optionz';
 import type { ZBatching } from '../../../batches';
-import type { ZExecutedProcess, ZTaskExecution } from '../../../jobs';
+import type { ZTaskExecutor } from '../../../jobs';
 import type { ZPackage } from '../../../packages';
 import type { ZTaskOption } from '../../task-option';
 import type { ZTaskSpec } from '../../task-spec';
@@ -40,6 +40,10 @@ export function zTaskSpecOptionClass<TArgs extends any[]>(
       return this._draft.builder.action;
     }
 
+    get executor(): ZTaskExecutor | undefined {
+      return this._draft.builder.executor;
+    }
+
     get batching(): ZBatching {
       return this._draft.builder.batching;
     }
@@ -49,7 +53,7 @@ export function zTaskSpecOptionClass<TArgs extends any[]>(
     }
 
     get hasAction(): boolean {
-      return this.action != null || this._draft.builder.executor != null;
+      return this.action != null || this.executor != null;
     }
 
     get acceptsArgs(): boolean {
@@ -106,7 +110,7 @@ export function zTaskSpecOptionClass<TArgs extends any[]>(
       return this;
     }
 
-    executeBy(executor: (this: void, execution: ZTaskExecution) => ZExecutedProcess): this {
+    executeBy(executor: ZTaskExecutor): this {
       this._draft.builder.executeBy(executor);
       return this;
     }
