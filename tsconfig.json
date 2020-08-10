@@ -13,7 +13,6 @@
     "importsNotUsedAsValues": "error",
     "importHelpers": true,
     "noEmitHelpers": true,
-    "allowSyntheticDefaultImports": true,
     "lib": [
       "ES2018"
     ],

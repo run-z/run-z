@@ -39,6 +39,9 @@ module.exports = {
     'ts-jest': {
       packageJson: 'package.json',
       tsConfig: 'tsconfig.spec.json',
+      diagnostics: {
+        ignoreCodes: [151001],
+      },
     },
   },
 };

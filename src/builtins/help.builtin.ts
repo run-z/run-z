@@ -3,8 +3,7 @@
  * @module run-z/builtins
  */
 import { flatMapIt, itsReduction, makeIt } from '@proc7ts/a-iterable';
-import cliui from 'cliui';
-import stripAnsi from 'strip-ansi';
+import stringWidth from 'string-width';
 import type { ZExtension, ZTaskOption } from '../core';
 import { clz, execNoopZProcess } from '../internals';
 
@@ -51,6 +50,8 @@ function readZHelp(detailed: boolean, option: ZTaskOption): void {
  */
 function printZHelp(detailed: boolean, option: ZTaskOption): void {
 
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const cliui = require('cliui');
   const ui = cliui();
   const options = printZHelpOptions(detailed, option);
   const usageWidth = printZHelpUsageWidth(options);
@@ -87,25 +88,29 @@ function printZHelpOptions(detailed: boolean, option: ZTaskOption): Iterable<[re
 
       const meta = option.optionMeta(key);
       let text: string | undefined;
+      const { usage, help } = meta;
 
       if (detailed) {
-        if (meta.help) {
-          if (meta.description) {
-            text = `${meta.help.trim()}\n\n${meta.description.trim()}`;
+
+        const { description = '' } = meta;
+
+        if (help) {
+          if (description) {
+            text = `${help.trim()}\n\n${description.trim()}`;
           } else {
-            text = meta.help.trim();
+            text = help.trim();
           }
         } else {
-          text = meta.description?.trim() || '';
+          text = description.trim();
         }
       } else {
-        if (!meta.help) {
+        if (!help) {
           continue;
         }
-        text = meta.help.trim();
+        text = help.trim();
       }
 
-      yield [meta.usage, text];
+      yield [usage, text];
     }
   });
 }
@@ -119,7 +124,7 @@ function printZHelpUsageWidth(options: Iterable<[readonly string[], string]>): n
           options,
           ([usage]) => usage,
       ),
-      (prev, usage) => Math.max(prev, stripAnsi(usage).length),
+      (prev, usage) => Math.max(prev, stringWidth(usage)),
       12,
   ) + 3;
 }
