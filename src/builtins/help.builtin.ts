@@ -2,10 +2,44 @@
  * @packageDocumentation
  * @module run-z/builtins
  */
-import { flatMapIt, itsReduction, makeIt } from '@proc7ts/a-iterable';
-import stringWidth from 'string-width';
+import type { ZOptionReader } from '@run-z/optionz';
+import { helpZOptionReader, ZHelpFormatter } from '@run-z/optionz/help';
 import type { ZExtension, ZTaskOption } from '../core';
 import { clz, execNoopZProcess } from '../internals';
+
+/**
+ * @internal
+ */
+class ZTaskHelpFormatter extends ZHelpFormatter {
+
+  usage(text: string): string {
+    return clz.option(text);
+  }
+
+}
+
+/**
+ * @internal
+ */
+function readZHelp(mode?: 'brief' | 'detailed'): ZOptionReader.Fn<ZTaskOption> {
+
+  const formatter = new ZTaskHelpFormatter();
+
+  return option => {
+    if (option.pre.isStarted || option.hasAction) {
+      return;
+    }
+    return helpZOptionReader({
+      mode,
+      display(options) {
+        option.executeBy(() => {
+          console.log(formatter.help(options));
+          return execNoopZProcess();
+        });
+      },
+    })(option);
+  };
+}
 
 /**
  * Builtin extension for printing help information instead of executing tasks.
@@ -15,116 +49,16 @@ import { clz, execNoopZProcess } from '../internals';
 export const ZHelpBuiltin: ZExtension = {
   options: {
     '-h': {
-      read: readZHelp.bind(undefined, false),
+      read: readZHelp('brief'),
       meta: {
         help: 'Print brief help information',
       },
     },
     '--help': {
-      read: readZHelp.bind(undefined, true),
+      read: readZHelp(),
       meta: {
         help: 'Print detailed help information',
       },
     },
   },
 };
-
-/**
- * @internal
- */
-function readZHelp(detailed: boolean, option: ZTaskOption): void {
-  if (option.pre.isStarted || option.hasAction) {
-    return;
-  }
-
-  option.recognize();
-  option.executeBy(() => {
-    printZHelp(detailed, option);
-    return execNoopZProcess();
-  });
-
-}
-
-/**
- * @internal
- */
-function printZHelp(detailed: boolean, option: ZTaskOption): void {
-
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const cliui = require('cliui');
-  const ui = cliui();
-  const options = printZHelpOptions(detailed, option);
-  const usageWidth = printZHelpUsageWidth(options);
-
-  for (const [usage, text] of options) {
-
-    const usageText = usage.map(usage => clz.option(usage)).join('\n');
-
-    ui.div(
-        {
-          text: usageText,
-          width: usageWidth,
-          padding: detailed ? [1, 1, 0, 2] : [0, 1, 0, 2],
-        },
-        {
-          text,
-          padding: detailed ? [1, 0, 0, 1] : [0, 0, 0, 1],
-        },
-    );
-  }
-
-  console.log(ui.toString());
-}
-
-/**
- * @internal
- */
-function printZHelpOptions(detailed: boolean, option: ZTaskOption): Iterable<[readonly string[], string]> {
-
-  const options = Array.from(option.supportedOptions()).sort();
-
-  return makeIt(function *() {
-    for (const key of options) {
-
-      const meta = option.optionMeta(key);
-      let text: string | undefined;
-      const { usage, help } = meta;
-
-      if (detailed) {
-
-        const { description = '' } = meta;
-
-        if (help) {
-          if (description) {
-            text = `${help.trim()}\n\n${description.trim()}`;
-          } else {
-            text = help.trim();
-          }
-        } else {
-          text = description.trim();
-        }
-      } else {
-        if (!help) {
-          continue;
-        }
-        text = help.trim();
-      }
-
-      yield [usage, text];
-    }
-  });
-}
-
-/**
- * @internal
- */
-function printZHelpUsageWidth(options: Iterable<[readonly string[], string]>): number {
-  return itsReduction(
-      flatMapIt(
-          options,
-          ([usage]) => usage,
-      ),
-      (prev, usage) => Math.max(prev, stringWidth(usage)),
-      12,
-  ) + 3;
-}
