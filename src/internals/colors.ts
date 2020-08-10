@@ -23,4 +23,8 @@ export const clz = {
     return chalk.hidden('- ') + '*';
   },
 
+  optional(text: string): string {
+    return clz.sign('[') + text + clz.sign(']');
+  },
+
 };

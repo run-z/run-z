@@ -15,10 +15,30 @@ import { ZDepGraphBatches } from './dep-graph-batches.rule';
  */
 export const ZDepGraphBatchesBuiltin: ZExtension = {
   options: {
-    '--with-deps': readZDepGraphBatches.bind(undefined, 'dependencies', true),
-    '--only-deps': readZDepGraphBatches.bind(undefined, 'dependencies', false),
-    '--with-dependants': readZDepGraphBatches.bind(undefined, 'dependants', true),
-    '--only-dependants': readZDepGraphBatches.bind(undefined, 'dependants', false),
+    '--with-deps': {
+      read: readZDepGraphBatches.bind(undefined, 'dependencies', true),
+      meta: {
+        help: 'Execute tasks in each package the current one depends on, then in current package',
+      },
+    },
+    '--only-deps': {
+      read: readZDepGraphBatches.bind(undefined, 'dependencies', false),
+      meta: {
+        help: 'Execute tasks in each package the current one depends on. Skip current package',
+      },
+    },
+    '--with-dependants': {
+      read: readZDepGraphBatches.bind(undefined, 'dependants', true),
+      meta: {
+        help: 'Execute tasks in current package, then in each package depending on it',
+      },
+    },
+    '--only-dependants': {
+      read: readZDepGraphBatches.bind(undefined, 'dependants', false),
+      meta: {
+        help: 'Execute tasks in each package depending on current one. Skip current package',
+      },
+    },
     '--all'(option) {
       option.defer(() => {
         option.setBatching(

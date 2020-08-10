@@ -12,9 +12,14 @@ import { ZBatcher } from '../core';
  */
 export const ZAllBatchBuiltin: ZExtension = {
   options: {
-    '--all'(option) {
-      option.setBatching(option.batching.batchBy(ZBatcher.topmost()));
-      option.values(0);
+    '--all': {
+      read(option) {
+        option.setBatching(option.batching.batchBy(ZBatcher.topmost()));
+        option.values(0);
+      },
+      meta: {
+        help: 'Execute tasks in named batches',
+      },
     },
   },
 };

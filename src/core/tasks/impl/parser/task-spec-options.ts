@@ -85,19 +85,35 @@ The ${clz.option('=' + clz.param('ATTR'))} means the same as ${clz.option(clz.pa
     },
   },
 
-  '/*'(option) {
+  '/*': {
+    read(option) {
 
-    const { name } = option;
-    const preOption = name.substr(1);
+      const { name } = option;
+      const preOption = name.substr(1);
 
-    if (preOption) {
-      option.pre.addOption(preOption);
-    }
-    option.recognize();
+      if (preOption) {
+        option.pre.addOption(preOption);
+      }
+      option.recognize();
+    },
+    meta: {
+      get usage() {
+        return `/${clz.param('ARG')}`;
+      },
+      help: 'Pass attribute or command line argument to preceding task',
+    },
   },
 
-  '//*'(option) {
-    option.values().slice(0, -1).forEach(preOption => option.pre.addOption(preOption));
+  '//*': {
+    read(option) {
+      option.values().slice(0, -1).forEach(preOption => option.pre.addOption(preOption));
+    },
+    meta: {
+      get usage() {
+        return `//${clz.param('ARG')} ${clz.sign('...')}//`;
+      },
+      help: 'Pass multiple attributes or command line arguments to preceding task',
+    },
   },
 
   ',': {
@@ -128,7 +144,7 @@ The ${clz.option('=' + clz.param('ATTR'))} means the same as ${clz.option(clz.pa
         return clz.param('TASK');
       },
       help: 'Add task prerequisite',
-      description: 'Task prerequisites executed in order before the task itself',
+      description: 'Task prerequisites executed in order before the task itself.',
     },
   },
 
