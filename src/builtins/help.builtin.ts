@@ -51,12 +51,14 @@ export const ZHelpBuiltin: ZExtension = {
     '-h': {
       read: readZHelp('brief'),
       meta: {
+        group: '!builtin:help.brief',
         help: 'Print brief help information',
       },
     },
     '--help': {
       read: readZHelp(),
       meta: {
+        group: '!builtin:help.detailed',
         help: 'Print detailed help information',
       },
     },

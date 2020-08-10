@@ -18,6 +18,7 @@ export const ZAllBatchBuiltin: ZExtension = {
         option.values(0);
       },
       meta: {
+        group: '!builtin:batch',
         help: 'Execute tasks in named batches',
       },
     },

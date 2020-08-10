@@ -18,24 +18,28 @@ export const ZDepGraphBatchesBuiltin: ZExtension = {
     '--with-deps': {
       read: readZDepGraphBatches.bind(undefined, 'dependencies', true),
       meta: {
+        group: '!builtin:batch',
         help: 'Execute tasks in each package the current one depends on, then in current package',
       },
     },
     '--only-deps': {
       read: readZDepGraphBatches.bind(undefined, 'dependencies', false),
       meta: {
+        group: '!builtin:batch',
         help: 'Execute tasks in each package the current one depends on. Skip current package',
       },
     },
     '--with-dependants': {
       read: readZDepGraphBatches.bind(undefined, 'dependants', true),
       meta: {
+        group: '!builtin:batch',
         help: 'Execute tasks in current package, then in each package depending on it',
       },
     },
     '--only-dependants': {
       read: readZDepGraphBatches.bind(undefined, 'dependants', false),
       meta: {
+        group: '!builtin:batch',
         help: 'Execute tasks in each package depending on current one. Skip current package',
       },
     },

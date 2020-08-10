@@ -15,6 +15,7 @@ export const ZCommandExecutionBuiltin: ZExtension = {
     '--then': {
       read: readZTaskCommand.bind(undefined, false),
       meta: {
+        group: '!builtin:exec',
         get usage() {
           return `${clz.option('--then')} ${clz.param('COMMAND')} `
               + clz.optional(clz.param('ARG') + clz.sign(' ...'));

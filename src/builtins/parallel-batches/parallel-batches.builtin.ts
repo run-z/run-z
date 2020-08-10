@@ -15,6 +15,7 @@ export const ZParallelBatchesBuiltin: ZExtension = {
     '--batch-parallel': {
       read: readZBatchParallel.bind(undefined, true),
       meta: {
+        group: '!builtin:batch',
         help: 'Execute batched tasks in parallel to each other',
       },
     },
@@ -27,6 +28,7 @@ export const ZParallelBatchesBuiltin: ZExtension = {
     '--batch-sequential': {
       read: readZBatchParallel.bind(undefined, false),
       meta: {
+        group: '!builtin:batch',
         help: 'Execute batched tasks sequentially',
       },
     },

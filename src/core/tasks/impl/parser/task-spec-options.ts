@@ -42,6 +42,7 @@ const fallbackZTaskSpecOptions: SupportedZOptions.Map<ZTaskOption> = {
       option.recognize();
     },
     meta: {
+      group: '!:pre.target',
       get usage() {
         return `./${clz.param('PKG-SELECTOR')} ${clz.sign('...')}`;
       },
@@ -69,6 +70,7 @@ Hidden directories ignored.
       }
     },
     meta: {
+      group: '!:run',
       get usage() {
         return [
           `${clz.param('ATTR')}=${clz.param('VALUE')}`,
@@ -97,6 +99,7 @@ The ${clz.option('=' + clz.param('ATTR'))} means the same as ${clz.option(clz.pa
       option.recognize();
     },
     meta: {
+      group: '!:pre:arg',
       get usage() {
         return `/${clz.param('ARG')}`;
       },
@@ -109,6 +112,7 @@ The ${clz.option('=' + clz.param('ATTR'))} means the same as ${clz.option(clz.pa
       option.values().slice(0, -1).forEach(preOption => option.pre.addOption(preOption));
     },
     meta: {
+      group: '!:pre:args',
       get usage() {
         return `//${clz.param('ARG')} ${clz.sign('...')}//`;
       },
@@ -122,6 +126,7 @@ The ${clz.option('=' + clz.param('ATTR'))} means the same as ${clz.option(clz.pa
       option.recognize();
     },
     meta: {
+      group: '!:pre',
       get usage() {
         return `${clz.param('TASK')}, ${clz.param('TASK')}`;
       },
@@ -140,6 +145,7 @@ The ${clz.option('=' + clz.param('ATTR'))} means the same as ${clz.option(clz.pa
       option.recognize();
     },
     meta: {
+      group: '!:pre',
       get usage() {
         return clz.param('TASK');
       },
