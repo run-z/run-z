@@ -1,6 +1,6 @@
 import { arrayOfElements, valueByRecipe } from '@proc7ts/primitives';
 import type { SupportedZOptions } from '@run-z/optionz';
-import * as chalk from 'chalk';
+import { clz } from '../../../../internals';
 import type { ZTaskOption } from '../../task-option';
 import type { ZTaskParser } from '../../task-parser';
 import type { DraftZTask } from './draft-task';
@@ -39,22 +39,19 @@ const fallbackZTaskSpecOptions: SupportedZOptions.Map<ZTaskOption> = {
   './*': {
     read(option) {
       option.pre.nextTarget({ selector: option.name });
-      option.values(0);
+      option.recognize();
     },
     meta: {
       get usage() {
-        return `./${chalk.green.italic('<PKG-SELECTOR>')} ${chalk.grey('...')}`;
+        return `./${clz.param('PKG-SELECTOR')} ${clz.sign('...')}`;
       },
-      help: 'Target packages for the tasks',
+      help: 'Execute tasks from selected packages in batch',
       get description() {
-
-        const bullet = chalk.hidden('- ') + '-';
-
         return `
-where ${chalk.green.italic('<PKG-SELECTOR>')}:
-${bullet} is an URL path to package directory;
-${bullet} may contain ${chalk.greenBright('//')} separator to include immediately nested package directories;
-${bullet} may contain ${chalk.greenBright('///')} separator to include deeply nested package packages.
+where ${clz.param('PKG-SELECTOR')}:
+${clz.bullet} is an URL path to package directory;
+${clz.bullet} may contain ${clz.option('//')} separator to select immediately nested package directories;
+${clz.bullet} may contain ${clz.option('///')} separator to select deeply nested package directories.
 
 Hidden directories ignored.
       `;
@@ -68,25 +65,21 @@ Hidden directories ignored.
       const { name, taskTarget: { setup: { taskParser } } } = option;
 
       if (taskParser.parseAttr(name, (n, v) => !n.includes('/') && !!option.addAttr(n, v))) {
-        option.values(0);
+        option.recognize();
       }
     },
     meta: {
       get usage() {
         return [
-          `${chalk.green.italic('<ATTR>')}=${chalk.green.italic('<VALUE>')}`,
-          `=${chalk.green.italic('<ATTR>')}`,
+          `${clz.param('ATTR')}=${clz.param('VALUE')}`,
+          `=${clz.param('ATTR')}`,
         ];
       },
       help: 'Set global attribute',
       get description() {
         return `
 The attribute will be set on the task, as well as on its prerequisites.
-The ${chalk.green('=' + chalk.italic('<ATTR>'))} means the same as ${
-            chalk.green(
-                chalk.italic('<ATTR>') + '=' + chalk.italic('<VALUE>'),
-            )
-        }
+The ${clz.option('=' + clz.param('ATTR'))} means the same as ${clz.option(clz.param('ATTR') + '=on')}
         `;
       },
     },
@@ -100,7 +93,7 @@ The ${chalk.green('=' + chalk.italic('<ATTR>'))} means the same as ${
     if (preOption) {
       option.pre.addOption(preOption);
     }
-    option.values(0);
+    option.recognize();
   },
 
   '//*'(option) {
@@ -110,10 +103,12 @@ The ${chalk.green('=' + chalk.italic('<ATTR>'))} means the same as ${
   ',': {
     read(option) {
       option.pre.parallelToNext();
-      option.values(0);
+      option.recognize();
     },
     meta: {
-      usage: `${chalk.green.italic('<TASK>')}, ${chalk.green.italic('<TASK>')}`,
+      get usage() {
+        return `${clz.param('TASK')}, ${clz.param('TASK')}`;
+      },
       help: 'Execute tasks in parallel to each other',
     },
   },
@@ -126,12 +121,14 @@ The ${chalk.green('=' + chalk.italic('<ATTR>'))} means the same as ${
       if (name) {
         option.pre.start(name);
       }
-      option.values(0);
+      option.recognize();
     },
     meta: {
-      usage: chalk.green.italic('<TASK>'),
-      help: 'Task prerequisite',
-      description: 'Task prerequisites are executed in order, before the task itself',
+      get usage() {
+        return clz.param('TASK');
+      },
+      help: 'Add task prerequisite',
+      description: 'Task prerequisites executed in order before the task itself',
     },
   },
 
@@ -159,7 +156,7 @@ function readNamedZTaskOption(option: ZTaskOption): void {
   } else {
     option.addArg(option.name);
   }
-  option.values(0);
+  option.recognize();
 }
 
 /**

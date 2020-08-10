@@ -1,6 +1,10 @@
+/**
+ * @packageDocumentation
+ * @module run-z/internals
+ */
 import { mapIt } from '@proc7ts/a-iterable';
 import { noop } from '@proc7ts/primitives';
-import type { ZExecutedProcess } from '../executed-process';
+import type { ZExecutedProcess } from '../../core';
 import { execZProcess } from './exec-process';
 
 /**

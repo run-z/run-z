@@ -1,5 +1,5 @@
 import { asis } from '@proc7ts/primitives';
-import type { ZExecutedProcess } from '../executed-process';
+import type { ZExecutedProcess } from '../../core/jobs/executed-process';
 import { execNextZProcess } from './exec-next-process';
 import { execZProcess } from './exec-process';
 

@@ -1,7 +1,7 @@
 import { ZOptionInput } from '@run-z/optionz';
+import { execNoopZProcess } from '../../../internals';
 import { ZBatchDetails } from '../../batches';
 import type { ZExecutedProcess } from '../../jobs';
-import { execNoopZProcess } from '../../jobs/impl';
 import type { ZPackageSet } from '../../packages';
 import type { ZCall, ZCallDetails, ZPrePlanner } from '../../plan';
 import type { ZTask } from '../task';

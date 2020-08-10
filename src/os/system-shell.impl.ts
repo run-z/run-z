@@ -4,7 +4,7 @@ import * as path from 'path';
 import { fileURLToPath } from 'url';
 import type { ZExecutedProcess, ZShell, ZTaskParams } from '../core';
 import { ZAbortedExecutionError } from '../core';
-import { execZProcess } from '../core/jobs/impl';
+import { execZProcess } from '../internals';
 import type { ZPackageDirectory } from './package-directory';
 
 /**

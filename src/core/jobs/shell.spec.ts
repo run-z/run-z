@@ -1,4 +1,4 @@
-import { execNoopZProcess } from './impl';
+import { execNoopZProcess } from '../../internals';
 import { ZShell } from './shell';
 
 describe('ZShell', () => {

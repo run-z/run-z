@@ -1,5 +1,5 @@
+import { execNoopZProcess, failZProcess } from '../../../internals';
 import type { ZExecutedProcess, ZTaskExecution } from '../../jobs';
-import { execNoopZProcess, failZProcess } from '../../jobs/impl';
 import type { ZTaskBuilder$ } from '../task-builder.impl';
 import { ZTaskSpec } from '../task-spec';
 import { UnknownZTaskError } from '../unknown-task-error';

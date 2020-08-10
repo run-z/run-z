@@ -1,8 +1,8 @@
 import { valueProvider } from '@proc7ts/primitives';
 import { StandardZSetup } from '../../../builtins';
+import { execNoopZProcess } from '../../../internals';
 import { prerequisitesOf, taskIds, TestPlan } from '../../../spec';
 import type { ZShell } from '../../jobs';
-import { execNoopZProcess } from '../../jobs/impl';
 import { ZTaskParams } from '../../plan';
 import { CommandZTask } from './command.task';
 

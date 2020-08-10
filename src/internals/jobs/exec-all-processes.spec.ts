@@ -1,5 +1,5 @@
 import { asis, noop } from '@proc7ts/primitives';
-import type { ZExecutedProcess } from '../executed-process';
+import type { ZExecutedProcess } from '../../core';
 import { execAllZProcesses } from './exec-all-processes';
 import { execZProcess } from './exec-process';
 

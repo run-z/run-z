@@ -1,6 +1,6 @@
+import { execNoopZProcess } from '../../../internals';
 import { ZBatchDetails } from '../../batches';
 import type { ZExecutedProcess, ZTaskExecution } from '../../jobs';
-import { execNoopZProcess } from '../../jobs/impl';
 import type { ZPackage } from '../../packages';
 import type { ZCall, ZCallPlanner, ZPrePlanner } from '../../plan';
 import { ZCallDetails, ZTaskParams } from '../../plan';

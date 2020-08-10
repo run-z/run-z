@@ -1,12 +1,14 @@
+/**
+ * @packageDocumentation
+ * @module run-z/internals
+ */
 import { asyncByRecipe, noop } from '@proc7ts/primitives';
-import type { ZExecutedProcess } from '../executed-process';
+import type { ZExecutedProcess } from '../../core';
 
 /**
  * Executed process starter signature.
  *
  * Constructs new process initializers.
- *
- * @internal
  */
 export type ZExecutedProcessStarter =
 /**
@@ -15,7 +17,11 @@ export type ZExecutedProcessStarter =
     (this: void) => ZExecutedProcess | PromiseLike<ZExecutedProcess>;
 
 /**
- * @internal
+ * Builds execution process by its starter.
+ *
+ * @param starter  Execution process starter function.
+ *
+ * @returns Executed process.
  */
 export function execZProcess(starter: ZExecutedProcessStarter): ZExecutedProcess {
 

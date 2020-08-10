@@ -3,11 +3,10 @@
  * @module run-z/builtins
  */
 import { flatMapIt, itsReduction, makeIt } from '@proc7ts/a-iterable';
-import chalk from 'chalk';
 import cliui from 'cliui';
 import stripAnsi from 'strip-ansi';
 import type { ZExtension, ZTaskOption } from '../core';
-import { execNoopZProcess } from '../core/jobs/impl';
+import { clz, execNoopZProcess } from '../internals';
 
 /**
  * Builtin extension for printing help information instead of executing tasks.
@@ -19,13 +18,13 @@ export const ZHelpBuiltin: ZExtension = {
     '-h': {
       read: readZHelp.bind(undefined, false),
       meta: {
-        help: 'Prints brief help information',
+        help: 'Print brief help information',
       },
     },
     '--help': {
       read: readZHelp.bind(undefined, true),
       meta: {
-        help: 'Prints detailed help information',
+        help: 'Print detailed help information',
       },
     },
   },
@@ -58,7 +57,7 @@ function printZHelp(detailed: boolean, option: ZTaskOption): void {
 
   for (const [usage, text] of options) {
 
-    const usageText = usage.map(usage => chalk.greenBright(usage)).join('\n');
+    const usageText = usage.map(usage => clz.option(usage)).join('\n');
 
     ui.div(
         {
