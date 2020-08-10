@@ -36,12 +36,31 @@ export function zTaskSpecOptionClass<TArgs extends any[]>(
       _draft.moveTo(this);
     }
 
+    get action(): ZTaskSpec.Action | undefined {
+      return this._draft.builder.action;
+    }
+
     get batching(): ZBatching {
       return this._draft.builder.batching;
     }
 
     get pre(): ZTaskOption.Pre {
       return this._draft.pre;
+    }
+
+    get hasAction(): boolean {
+      return this.action != null || this._draft.builder.executor != null;
+    }
+
+    get acceptsArgs(): boolean {
+
+      const action = this.action;
+
+      if (action) {
+        return !!zTaskActionsWithArgs[action.type];
+      }
+
+      return false;
     }
 
     addPre(pre: ZTaskSpec.Pre): this {
@@ -66,10 +85,7 @@ export function zTaskSpecOptionClass<TArgs extends any[]>(
       if (!args.length) {
         return this;
       }
-
-      const action = this._draft.builder.action;
-
-      if (!action || !zTaskActionsWithArgs[action.type]) {
+      if (!this.acceptsArgs) {
         throw new ZOptionError(this.optionLocation(), `Unrecognized option: "${args[0]}"`);
       }
 

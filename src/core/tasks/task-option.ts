@@ -22,6 +22,18 @@ export interface ZTaskOption extends ZOption, ZTaskModifier {
   readonly pre: ZTaskOption.Pre;
 
   /**
+   * Whether task action or executor set.
+   *
+   * It is illegal to update action or executor when it is already set.
+   */
+  readonly hasAction: boolean;
+
+  /**
+   * Whether the task action or executor accepts command line arguments.
+   */
+  readonly acceptsArgs: boolean;
+
+  /**
    * Assigns a task action.
    *
    * The task action defaults to {@link Group grouping task} unless reassigned by this call.

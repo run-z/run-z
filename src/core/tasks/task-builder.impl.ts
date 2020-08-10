@@ -13,7 +13,7 @@ import { addZTaskAttr, addZTaskAttrs } from './task-spec.impl';
 export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> implements ZTaskBuilder<TAction> {
 
   batching: ZBatching = ZBatching.newBatching();
-  executor?: (this: void, execution: ZTaskExecution) => ZExecutedProcess;
+  private _executor?: (this: void, execution: ZTaskExecution) => ZExecutedProcess;
   private readonly _commandLine: string[] = [];
   private readonly _pre: ZTaskSpec.Pre[] = [];
   private readonly _attrs: Record<string, [string, ...string[]]> = {};
@@ -25,6 +25,10 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
 
   get action(): TAction | undefined {
     return this._action as TAction;
+  }
+
+  get executor(): ((this: void, execution: ZTaskExecution) => ZExecutedProcess) | undefined {
+    return this._executor;
   }
 
   addPre(pre: ZTaskSpec.Pre): this {
@@ -58,7 +62,7 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
   }
 
   executeBy(executor: (this: void, execution: ZTaskExecution<any>) => ZExecutedProcess): this {
-    this.executor = executor;
+    this._executor = executor;
     return this;
   }
 

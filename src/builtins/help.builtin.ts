@@ -33,7 +33,7 @@ export const ZHelpBuiltin: ZExtension = {
  * @internal
  */
 function readZHelp(detailed: boolean, option: ZTaskOption): void {
-  if (option.pre.isStarted || option.action) {
+  if (option.pre.isStarted || option.hasAction) {
     return;
   }
 
