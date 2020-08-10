@@ -1,0 +1,442 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>run-z/internals | Run Z</title>
+	<meta name="description" content="Documentation for Run Z">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">Run Z</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="run-z_internals.html">run-z/internals</a>
+				</li>
+			</ul>
+			<h1>Module run-z/internals</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Type aliases</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="run-z_internals.html#ZExecutedProcessStarter" class="tsd-kind-icon">ZExecuted<wbr>Process<wbr>Starter</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Functions</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="run-z_internals.html#execAllZProcesses" class="tsd-kind-icon">exec<wbr>AllZProcesses</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="run-z_internals.html#execNoopZProcess" class="tsd-kind-icon">exec<wbr>NoopZProcess</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="run-z_internals.html#execZProcess" class="tsd-kind-icon">execZProcess</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="run-z_internals.html#failZProcess" class="tsd-kind-icon">failZProcess</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Object literals</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-object-literal tsd-parent-kind-module"><a href="run-z_internals.html#clz" class="tsd-kind-icon">clz</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Type aliases</h2>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
+					<a name="ZExecutedProcessStarter" class="tsd-anchor"></a>
+					<h3>ZExecuted<wbr>Process<wbr>Starter</h3>
+					<div class="tsd-signature tsd-kind-icon">ZExecuted<wbr>Process<wbr>Starter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><a href="../interfaces/run-z.ZExecutedProcess.html" class="tsd-signature-type">ZExecutedProcess</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">PromiseLike</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/run-z.ZExecutedProcess.html" class="tsd-signature-type">ZExecutedProcess</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/internals/jobs/exec-process.ts#L13">run-z/run-z/src/internals/jobs/exec-process.ts:13</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Executed process starter signature.</p>
+						</div>
+						<p>Constructs new process initializers.</p>
+					</div>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-signature">
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias">
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/run-z.ZExecutedProcess.html" class="tsd-signature-type">ZExecutedProcess</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">PromiseLike</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/run-z.ZExecutedProcess.html" class="tsd-signature-type">ZExecutedProcess</a><span class="tsd-signature-symbol">&gt;</span></li>
+								</ul>
+								<ul class="tsd-descriptions">
+									<li class="tsd-description">
+										<div class="tsd-comment tsd-typography">
+										</div>
+										<h4 class="tsd-parameters-title">Parameters</h4>
+										<ul class="tsd-parameters">
+											<li>
+												<h5>this: <span class="tsd-signature-type">void</span></h5>
+											</li>
+										</ul>
+										<h4 class="tsd-returns-title">Returns <a href="../interfaces/run-z.ZExecutedProcess.html" class="tsd-signature-type">ZExecutedProcess</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">PromiseLike</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/run-z.ZExecutedProcess.html" class="tsd-signature-type">ZExecutedProcess</a><span class="tsd-signature-symbol">&gt;</span></h4>
+										<p>Either executed process initializer, or a promise-like instance resolving to one.</p>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="execAllZProcesses" class="tsd-anchor"></a>
+					<h3>exec<wbr>AllZProcesses</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">exec<wbr>AllZProcesses<span class="tsd-signature-symbol">(</span>executed<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterable</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/run-z.ZExecutedProcess.html" class="tsd-signature-type">ZExecutedProcess</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/run-z.ZExecutedProcess.html" class="tsd-signature-type">ZExecutedProcess</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/internals/jobs/exec-all-processes.ts#L19">run-z/run-z/src/internals/jobs/exec-all-processes.ts:19</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Builds execution process that succeeds when all of the given processes do, or fails when either of them fail.</p>
+								</div>
+								<p>Aborts other executed processes once one of them fail.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>executed: <span class="tsd-signature-type">Iterable</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/run-z.ZExecutedProcess.html" class="tsd-signature-type">ZExecutedProcess</a><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>An iterable of executed processes.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/run-z.ZExecutedProcess.html" class="tsd-signature-type">ZExecutedProcess</a></h4>
+							<p>New executed process.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="execNoopZProcess" class="tsd-anchor"></a>
+					<h3>exec<wbr>NoopZProcess</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">exec<wbr>NoopZProcess<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/run-z.ZExecutedProcess.html" class="tsd-signature-type">ZExecutedProcess</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/internals/jobs/exec-noop-process.ts#L28">run-z/run-z/src/internals/jobs/exec-noop-process.ts:28</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Builds no-op execution process.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/run-z.ZExecutedProcess.html" class="tsd-signature-type">ZExecutedProcess</a></h4>
+							<p>Already completed process.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="execZProcess" class="tsd-anchor"></a>
+					<h3>execZProcess</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">execZProcess<span class="tsd-signature-symbol">(</span>starter<span class="tsd-signature-symbol">: </span><a href="run-z_internals.html#ZExecutedProcessStarter" class="tsd-signature-type">ZExecutedProcessStarter</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/run-z.ZExecutedProcess.html" class="tsd-signature-type">ZExecutedProcess</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/internals/jobs/exec-process.ts#L26">run-z/run-z/src/internals/jobs/exec-process.ts:26</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Builds execution process by its starter.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>starter: <a href="run-z_internals.html#ZExecutedProcessStarter" class="tsd-signature-type">ZExecutedProcessStarter</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Execution process starter function.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/run-z.ZExecutedProcess.html" class="tsd-signature-type">ZExecutedProcess</a></h4>
+							<p>Executed process.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="failZProcess" class="tsd-anchor"></a>
+					<h3>failZProcess</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">failZProcess<span class="tsd-signature-symbol">(</span>reason<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/run-z.ZExecutedProcess.html" class="tsd-signature-type">ZExecutedProcess</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/internals/jobs/fail-process.ts#L15">run-z/run-z/src/internals/jobs/fail-process.ts:15</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Builds failed executed process.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>reason: <span class="tsd-signature-type">any</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>A reason of execution failure.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/run-z.ZExecutedProcess.html" class="tsd-signature-type">ZExecutedProcess</a></h4>
+							<p>Failed process.</p>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Object literals</h2>
+				<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-module">
+					<a name="clz" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> clz</h3>
+					<div class="tsd-signature tsd-kind-icon">clz<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/internals/colors.ts#L8">run-z/run-z/src/internals/colors.ts:8</a></li>
+						</ul>
+					</aside>
+					<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-object-literal">
+						<a name="clz.optional" class="tsd-anchor"></a>
+						<h3>optional</h3>
+						<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-object-literal">
+							<li class="tsd-signature tsd-kind-icon">optional<span class="tsd-signature-symbol">(</span>text<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+						</ul>
+						<ul class="tsd-descriptions">
+							<li class="tsd-description">
+								<aside class="tsd-sources">
+									<ul>
+										<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/internals/colors.ts#L26">run-z/run-z/src/internals/colors.ts:26</a></li>
+									</ul>
+								</aside>
+								<h4 class="tsd-parameters-title">Parameters</h4>
+								<ul class="tsd-parameters">
+									<li>
+										<h5>text: <span class="tsd-signature-type">string</span></h5>
+									</li>
+								</ul>
+								<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+							</li>
+						</ul>
+					</section>
+					<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-object-literal">
+						<a name="clz.param" class="tsd-anchor"></a>
+						<h3>param</h3>
+						<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-object-literal">
+							<li class="tsd-signature tsd-kind-icon">param<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+						</ul>
+						<ul class="tsd-descriptions">
+							<li class="tsd-description">
+								<aside class="tsd-sources">
+									<ul>
+										<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/internals/colors.ts#L14">run-z/run-z/src/internals/colors.ts:14</a></li>
+									</ul>
+								</aside>
+								<h4 class="tsd-parameters-title">Parameters</h4>
+								<ul class="tsd-parameters">
+									<li>
+										<h5>name: <span class="tsd-signature-type">string</span></h5>
+									</li>
+								</ul>
+								<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+							</li>
+						</ul>
+					</section>
+					<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-object-literal">
+						<a name="clz.bullet" class="tsd-anchor"></a>
+						<h3>bullet</h3>
+						<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-object-literal">
+							<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> bullet<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+						</ul>
+						<ul class="tsd-descriptions">
+							<li class="tsd-description">
+								<aside class="tsd-sources">
+									<ul>
+										<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/internals/colors.ts#L22">run-z/run-z/src/internals/colors.ts:22</a></li>
+									</ul>
+								</aside>
+								<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+							</li>
+						</ul>
+					</section>
+					<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-object-literal">
+						<a name="clz.option" class="tsd-anchor"></a>
+						<h3>option</h3>
+						<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-object-literal">
+							<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> option<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Chalk</span></li>
+						</ul>
+						<ul class="tsd-descriptions">
+							<li class="tsd-description">
+								<aside class="tsd-sources">
+									<ul>
+										<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/internals/colors.ts#L10">run-z/run-z/src/internals/colors.ts:10</a></li>
+									</ul>
+								</aside>
+								<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Chalk</span></h4>
+							</li>
+						</ul>
+					</section>
+					<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-object-literal">
+						<a name="clz.sign" class="tsd-anchor"></a>
+						<h3>sign</h3>
+						<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-object-literal">
+							<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> sign<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Chalk</span></li>
+						</ul>
+						<ul class="tsd-descriptions">
+							<li class="tsd-description">
+								<aside class="tsd-sources">
+									<ul>
+										<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/internals/colors.ts#L18">run-z/run-z/src/internals/colors.ts:18</a></li>
+									</ul>
+								</aside>
+								<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Chalk</span></h4>
+							</li>
+						</ul>
+					</section>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="run-z.html">run-<wbr>z</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="run-z_builtins.html">run-<wbr>z/builtins</a>
+					</li>
+					<li class="current tsd-kind-module">
+						<a href="run-z_internals.html">run-<wbr>z/internals</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="run-z_internals.html#ZExecutedProcessStarter" class="tsd-kind-icon">ZExecuted<wbr>Process<wbr>Starter</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="run-z_internals.html#execAllZProcesses" class="tsd-kind-icon">exec<wbr>AllZProcesses</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="run-z_internals.html#execNoopZProcess" class="tsd-kind-icon">exec<wbr>NoopZProcess</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="run-z_internals.html#execZProcess" class="tsd-kind-icon">execZProcess</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="run-z_internals.html#failZProcess" class="tsd-kind-icon">failZProcess</a>
+					</li>
+					<li class=" tsd-kind-object-literal tsd-parent-kind-module">
+						<a href="run-z_internals.html#clz" class="tsd-kind-icon">clz</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-namespace"><span class="tsd-kind-icon">Namespace</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>
