@@ -3,3 +3,4 @@ export * from './executed-process';
 export * from './job';
 export * from './shell';
 export * from './task-execution';
+export * from './task-executor';

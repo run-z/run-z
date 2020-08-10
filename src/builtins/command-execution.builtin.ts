@@ -3,6 +3,7 @@
  * @module run-z/builtins
  */
 import type { ZExtension, ZTaskOption } from '../core';
+import { clz } from '../internals';
 
 /**
  * Command execution built-in extension.
@@ -11,8 +12,34 @@ import type { ZExtension, ZTaskOption } from '../core';
  */
 export const ZCommandExecutionBuiltin: ZExtension = {
   options: {
-    '--and': readZTaskCommand.bind(undefined, true),
-    '--then': readZTaskCommand.bind(undefined, false),
+    '--then': {
+      read: readZTaskCommand.bind(undefined, false),
+      meta: {
+        group: '!builtin:exec',
+        get usage() {
+          return `${clz.option('--then')} ${clz.param('COMMAND')} `
+              + clz.optional(clz.param('ARG') + clz.sign(' ...'));
+        },
+        get help() {
+          return `Execute ${clz.param('COMMAND')} after prerequisites`;
+        },
+        get description() {
+          return `
+${clz.option('--and')} executes the ${clz.param('COMMAND')} in parallel to the last prerequisite.
+        `;
+        },
+      },
+    },
+    '--and': {
+      read: readZTaskCommand.bind(undefined, true),
+      meta: {
+        aliasOf: '--then',
+        get usage() {
+          return `${clz.option('--and')} ${clz.param('COMMAND')} `
+              + clz.optional(clz.param('ARG') + clz.sign(' ...'));
+        },
+      },
+    },
   },
 };
 

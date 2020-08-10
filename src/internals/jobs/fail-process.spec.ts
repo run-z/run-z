@@ -1,5 +1,5 @@
 import { noop } from '@proc7ts/primitives';
-import { immediateResolution } from '../../../spec';
+import { immediateResolution } from '../../spec';
 import { failZProcess } from './fail-process';
 
 describe('failZProcess', () => {

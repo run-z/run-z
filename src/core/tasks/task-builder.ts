@@ -16,7 +16,7 @@ import type { ZTaskSpec } from './task-spec';
  */
 export interface ZTaskBuilder<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> extends ZTaskModifier {
 
-  readonly action?: TAction;
+  readonly action: TAction | undefined;
 
   /**
    * Assigns a task action.

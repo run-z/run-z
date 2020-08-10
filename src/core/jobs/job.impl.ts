@@ -1,8 +1,8 @@
 import { mapIt } from '@proc7ts/a-iterable';
+import { execAllZProcesses, execNextZProcess } from '../../internals';
 import type { ZCallRecord } from '../plan/call.impl';
 import type { ZTask, ZTaskSpec } from '../tasks';
 import type { ZExecutedProcess } from './executed-process';
-import { execAllZProcesses, execNextZProcess } from './impl';
 import type { ZJob } from './job';
 
 /**

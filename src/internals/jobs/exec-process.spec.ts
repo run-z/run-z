@@ -1,5 +1,5 @@
 import { noop } from '@proc7ts/primitives';
-import type { ZExecutedProcess } from '../executed-process';
+import type { ZExecutedProcess } from '../../core/jobs/executed-process';
 import { execZProcess } from './exec-process';
 
 describe('execZProcess', () => {

@@ -34,8 +34,8 @@ export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> exte
    */
   readonly callDetails: ZCallDetails.Full<TAction>;
 
-  /**
-   * Plans a call to this task as a prerequisite of another one.
+    /**
+     * Plans a call to this task as a prerequisite of another one.
    *
    * By default a {@link ZTaskSpec.Group grouping task} treats the first argument as a sub-task name and the rest of
    * arguments as arguments to this sub-task. A task of any other type calls to itself.

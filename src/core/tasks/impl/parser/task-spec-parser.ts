@@ -18,7 +18,7 @@ export function zTaskSpecParser(
     this: void,
     builder: ZTaskBuilder,
     entries: readonly string[],
-    fromIndex?: number,
+    fromIndex: number,
 ) => Promise<ZTaskBuilder> {
 
   const parser: ZOptionsParser<DraftZTask> = customZOptionsParser({
@@ -27,7 +27,7 @@ export function zTaskSpecParser(
     optionClass: zTaskSpecOptionClass,
   });
 
-  return (builder, entries, fromIndex = 0) => parser(
+  return (builder, entries, fromIndex) => parser(
       new DraftZTask(builder),
       entries,
       fromIndex,

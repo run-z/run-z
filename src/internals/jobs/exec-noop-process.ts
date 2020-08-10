@@ -1,5 +1,9 @@
+/**
+ * @packageDocumentation
+ * @module run-z/internals
+ */
 import { noop } from '@proc7ts/primitives';
-import type { ZExecutedProcess } from '../executed-process';
+import type { ZExecutedProcess } from '../../core';
 
 /**
  * @internal
@@ -17,7 +21,9 @@ const noopZExecutedProcess: ZExecutedProcess = {
 };
 
 /**
- * @internal
+ * Builds no-op execution process.
+ *
+ * @returns Already completed process.
  */
 export function execNoopZProcess(): ZExecutedProcess {
   return noopZExecutedProcess;

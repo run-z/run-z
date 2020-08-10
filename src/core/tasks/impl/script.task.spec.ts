@@ -1,6 +1,6 @@
+import { execNoopZProcess } from '../../../internals';
 import { TestPlan } from '../../../spec';
 import type { ZShell } from '../../jobs';
-import { execNoopZProcess } from '../../jobs/impl';
 import { ZTaskParams } from '../../plan';
 import { ScriptZTask } from './script.task';
 

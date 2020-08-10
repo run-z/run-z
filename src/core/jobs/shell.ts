@@ -2,9 +2,9 @@
  * @packageDocumentation
  * @module run-z
  */
+import { execNoopZProcess } from '../../internals';
 import type { ZTaskParams } from '../plan';
 import type { ZExecutedProcess } from './executed-process';
-import { execNoopZProcess } from './impl';
 
 /**
  * Command execution shell.

@@ -1,6 +1,6 @@
+import { execNoopZProcess } from '../../../internals';
 import { ZBatchDetails } from '../../batches';
 import type { ZExecutedProcess, ZTaskExecution } from '../../jobs';
-import { execNoopZProcess } from '../../jobs/impl';
 import type { ZPackage } from '../../packages';
 import type { ZCall, ZCallPlanner, ZPrePlanner } from '../../plan';
 import { ZCallDetails, ZTaskParams } from '../../plan';
@@ -49,9 +49,20 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   }
 
   exec(execution: ZTaskExecution<TAction>): ZExecutedProcess {
+
+    const executor = this._builder.executor;
+
+    if (executor) {
+      // Overridden executor
+      return executor(execution);
+    }
+
     if (execution.call.params().flag('skip')) {
+      // Skip execution
       return execNoopZProcess();
     }
+
+    // Normal execution
     return this._execTask(execution);
   }
 

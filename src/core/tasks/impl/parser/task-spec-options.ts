@@ -1,5 +1,6 @@
 import { arrayOfElements, valueByRecipe } from '@proc7ts/primitives';
 import type { SupportedZOptions } from '@run-z/optionz';
+import { clz } from '../../../../internals';
 import type { ZTaskOption } from '../../task-option';
 import type { ZTaskParser } from '../../task-parser';
 import type { DraftZTask } from './draft-task';
@@ -9,54 +10,148 @@ import type { DraftZTask } from './draft-task';
  */
 const fallbackZTaskSpecOptions: SupportedZOptions.Map<ZTaskOption> = {
 
-  '--*=*': readNameValueZTaskArg,
-  '-*=*': readNameValueZTaskArg,
-
-  '--*': readNamedZTaskArg,
-  '-*': readNamedZTaskArg,
-
-  './*'(option) {
-    option.pre.nextTarget({ selector: option.name });
-    option.values(0);
+  '--*=*': {
+    read: readNameValueZTaskOption,
+    meta: {
+      hidden: true,
+    },
+  },
+  '-*=*': {
+    read: readNameValueZTaskOption,
+    meta: {
+      hidden: true,
+    },
   },
 
-  '*=*'(option) {
-
-    const { name, taskTarget: { setup: { taskParser } } } = option;
-
-    if (taskParser.parseAttr(name, (n, v) => !n.includes('/') && !!option.addAttr(n, v))) {
-      option.values(0);
-    }
+  '--*': {
+    read: readNamedZTaskOption,
+    meta: {
+      hidden: true,
+    },
+  },
+  '-*': {
+    read: readNamedZTaskOption,
+    meta: {
+      hidden: true,
+    },
   },
 
-  '/*'(option) {
+  './*': {
+    read(option) {
+      option.pre.nextTarget({ selector: option.name });
+      option.recognize();
+    },
+    meta: {
+      group: '!:pre.target',
+      get usage() {
+        return `./${clz.param('PKG-SELECTOR')} ${clz.sign('...')}`;
+      },
+      help: 'Execute tasks from selected packages in batch',
+      get description() {
+        return `
+where ${clz.param('PKG-SELECTOR')}:
+${clz.bullet} is an URL path to package directory;
+${clz.bullet} may contain ${clz.option('//')} separator to select immediately nested package directories;
+${clz.bullet} may contain ${clz.option('///')} separator to select deeply nested package directories.
 
-    const { name } = option;
-    const preOption = name.substr(1);
-
-    if (preOption) {
-      option.pre.addOption(preOption);
-    }
-    option.values(0);
+Hidden directories ignored.
+      `;
+      },
+    },
   },
 
-  '//*'(option) {
-    option.values().slice(0, -1).forEach(preOption => option.pre.addOption(preOption));
+  '*=*': {
+    read(option) {
+
+      const { name, taskTarget: { setup: { taskParser } } } = option;
+
+      if (taskParser.parseAttr(name, (n, v) => !n.includes('/') && !!option.addAttr(n, v))) {
+        option.recognize();
+      }
+    },
+    meta: {
+      group: '!:run',
+      get usage() {
+        return [
+          `${clz.param('ATTR')}=${clz.param('VALUE')}`,
+          `=${clz.param('ATTR')}`,
+        ];
+      },
+      help: 'Set global attribute',
+      get description() {
+        return `
+The attribute will be set on the task, as well as on its prerequisites.
+The ${clz.option('=' + clz.param('ATTR'))} means the same as ${clz.option(clz.param('ATTR') + '=on')}
+        `;
+      },
+    },
   },
 
-  ','(option) {
-    option.pre.parallelToNext();
-    option.values(0);
+  '/*': {
+    read(option) {
+
+      const { name } = option;
+      const preOption = name.substr(1);
+
+      if (preOption) {
+        option.pre.addOption(preOption);
+      }
+      option.recognize();
+    },
+    meta: {
+      group: '!:pre:arg',
+      get usage() {
+        return `/${clz.param('ARG')}`;
+      },
+      help: 'Pass attribute or command line argument to preceding task',
+    },
   },
 
-  '*'(option) {
+  '//*': {
+    read(option) {
+      option.values().slice(0, -1).forEach(preOption => option.pre.addOption(preOption));
+    },
+    meta: {
+      group: '!:pre:args',
+      get usage() {
+        return `//${clz.param('ARG')} ${clz.sign('...')}//`;
+      },
+      help: 'Pass multiple attributes or command line arguments to preceding task',
+    },
+  },
 
-    const { name } = option;
+  ',': {
+    read(option) {
+      option.pre.parallelToNext();
+      option.recognize();
+    },
+    meta: {
+      group: '!:pre',
+      get usage() {
+        return `${clz.param('TASK')}, ${clz.param('TASK')}`;
+      },
+      help: 'Execute tasks in parallel to each other',
+    },
+  },
 
-    if (name) {
-      option.pre.start(name);
-    }
-    option.values(0);
+  '*': {
+    read(option) {
+
+      const { name } = option;
+
+      if (name) {
+        option.pre.start(name);
+      }
+      option.recognize();
+    },
+    meta: {
+      group: '!:pre',
+      get usage() {
+        return clz.param('TASK');
+      },
+      help: 'Add task prerequisite',
+      description: 'Task prerequisites executed in order before the task itself.',
+    },
   },
 
 };
@@ -77,19 +172,19 @@ export function zTaskSpecOptions(
 /**
  * @internal
  */
-function readNamedZTaskArg(option: ZTaskOption): void {
+function readNamedZTaskOption(option: ZTaskOption): void {
   if (option.pre.isStarted) {
     option.pre.addArg(option.name);
   } else {
     option.addArg(option.name);
   }
-  option.values(0);
+  option.recognize();
 }
 
 /**
  * @internal
  */
-function readNameValueZTaskArg(option: ZTaskOption): void {
+function readNameValueZTaskOption(option: ZTaskOption): void {
 
   const [value] = option.values(1);
   const arg = `${option.name}=${value}`;

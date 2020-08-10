@@ -1,9 +1,10 @@
 import { ZBatching } from '../batches';
+import type { ZTaskExecutor } from '../jobs';
 import type { ZPackage } from '../packages';
 import type { AbstractZTask } from './impl';
 import { CommandZTask, GroupZTask, ScriptZTask, UnknownZTask } from './impl';
 import type { ZTaskBuilder } from './task-builder';
-import type { ZTaskSpec } from './task-spec';
+import { ZTaskSpec } from './task-spec';
 import { addZTaskAttr, addZTaskAttrs } from './task-spec.impl';
 
 /**
@@ -12,6 +13,8 @@ import { addZTaskAttr, addZTaskAttrs } from './task-spec.impl';
 export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> implements ZTaskBuilder<TAction> {
 
   batching: ZBatching = ZBatching.newBatching();
+  private _executor?: ZTaskExecutor;
+  private readonly _commandLine: string[] = [];
   private readonly _pre: ZTaskSpec.Pre[] = [];
   private readonly _attrs: Record<string, [string, ...string[]]> = {};
   private readonly _args: string[] = [];
@@ -22,6 +25,10 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
 
   get action(): TAction | undefined {
     return this._action as TAction;
+  }
+
+  get executor(): ZTaskExecutor | undefined {
+    return this._executor;
   }
 
   addPre(pre: ZTaskSpec.Pre): this {
@@ -54,13 +61,31 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
     return this as ZTaskBuilder$<any>;
   }
 
-  async parse(commandLine: string): Promise<this> {
-    await this.taskTarget.setup.taskParser.parse(this, commandLine);
+  executeBy(executor: ZTaskExecutor): this {
+    this._executor = executor;
     return this;
   }
 
-  async applyOptions(args: readonly string[], fromIndex?: number): Promise<this> {
-    await this.taskTarget.setup.taskParser.applyOptions(this, args, fromIndex);
+  async parse(commandLine: string): Promise<this> {
+
+    const args = this.taskTarget.setup.taskParser.parseCommandLine(commandLine);
+
+    if (!args) {
+      this.setAction(ZTaskSpec.scriptAction);
+      return this;
+    }
+
+    return this.applyOptions(args, 1);
+  }
+
+  async applyOptions(args: readonly string[], fromIndex = 0): Promise<this> {
+
+    const prevLength = this._commandLine.length;
+
+    this._commandLine.push(...args);
+
+    await this.taskTarget.setup.taskParser.applyOptions(this, this._commandLine, prevLength + fromIndex);
+
     return this;
   }
 

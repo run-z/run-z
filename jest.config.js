@@ -4,10 +4,11 @@ module.exports = {
   collectCoverageFrom: [
     'src/**/*.ts',
     '!src/spec/**',
-    '!src/**/*.spec.ts',
+    '!src/**/*.cli.ts',  // Exclude CLI-specific functionality
+    '!src/**/*.d.ts',    // Exclude type definitions
+    '!src/**/*.spec.ts', // Exclude tests
     '!src/**/index.ts',
     '!src/**/main.ts',
-    '!src/cli/run-z.ts',
     '!**/node_modules/**',
   ],
   coverageDirectory: 'target/coverage',
@@ -33,10 +34,14 @@ module.exports = {
       },
     ],
   ],
+  testEnvironment: 'node',
   globals: {
     'ts-jest': {
       packageJson: 'package.json',
       tsConfig: 'tsconfig.spec.json',
+      diagnostics: {
+        ignoreCodes: [151001],
+      },
     },
   },
 };

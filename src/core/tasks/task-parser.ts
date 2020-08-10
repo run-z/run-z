@@ -8,7 +8,6 @@ import { parse } from 'shell-quote';
 import { zTaskSpecParser } from './impl/parser';
 import type { ZTaskBuilder } from './task-builder';
 import type { ZTaskOption } from './task-option';
-import { ZTaskSpec } from './task-spec';
 
 /**
  * A parser of command line containing {@link ZTaskSpec task specifier}.
@@ -104,25 +103,6 @@ export class ZTaskParser {
   }
 
   /**
-   * Parses a command line and applies recognized options to the task.
-   *
-   * @param builder  Target task builder to apply recognized task options with.
-   * @param commandLine  Task command line to parse.
-   *
-   * @returns A promise resolved to task builder when command line parsed.
-   */
-  async parse(builder: ZTaskBuilder, commandLine: string): Promise<ZTaskBuilder> {
-
-    const args = this.parseCommandLine(commandLine);
-
-    if (!args) {
-      return builder.setAction(ZTaskSpec.scriptAction);
-    }
-
-    return this.applyOptions(builder, args, 1);
-  }
-
-  /**
    * Recognized options from command line arguments and applies them to the task.
    *
    * @param builder  Target task builder to apply recognized task options with.
@@ -131,7 +111,7 @@ export class ZTaskParser {
    *
    * @returns A promise resolved to task builder when command line options applied.
    */
-  applyOptions(builder: ZTaskBuilder, args: readonly string[], fromIndex?: number): Promise<ZTaskBuilder> {
+  applyOptions(builder: ZTaskBuilder, args: readonly string[], fromIndex = 0): Promise<ZTaskBuilder> {
     if (!this._specParser) {
       this._specParser = zTaskSpecParser(builder.taskTarget.setup, this._config);
     }

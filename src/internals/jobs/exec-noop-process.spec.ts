@@ -1,5 +1,5 @@
 import { noop } from '@proc7ts/primitives';
-import { immediateResolution } from '../../../spec';
+import { immediateResolution } from '../../spec';
 import { execNoopZProcess } from './exec-noop-process';
 
 describe('execNoopZProcess', () => {

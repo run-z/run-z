@@ -1,10 +1,21 @@
 import type { ZOption } from '@run-z/optionz';
 import { ZOptionError } from '@run-z/optionz';
 import type { ZBatching } from '../../../batches';
+import type { ZTaskExecutor } from '../../../jobs';
 import type { ZPackage } from '../../../packages';
 import type { ZTaskOption } from '../../task-option';
 import type { ZTaskSpec } from '../../task-spec';
 import type { DraftZTask } from './draft-task';
+
+/**
+ * @internal
+ */
+const zTaskActionsWithArgs: { readonly [action in ZTaskSpec.Action['type']]: 0 | 1 } = {
+  command: 1,
+  group: 0,
+  script: 1,
+  unknown: 1,
+};
 
 /**
  * @internal
@@ -25,12 +36,35 @@ export function zTaskSpecOptionClass<TArgs extends any[]>(
       _draft.moveTo(this);
     }
 
+    get action(): ZTaskSpec.Action | undefined {
+      return this._draft.builder.action;
+    }
+
+    get executor(): ZTaskExecutor | undefined {
+      return this._draft.builder.executor;
+    }
+
     get batching(): ZBatching {
       return this._draft.builder.batching;
     }
 
     get pre(): ZTaskOption.Pre {
       return this._draft.pre;
+    }
+
+    get hasAction(): boolean {
+      return this.action != null || this.executor != null;
+    }
+
+    get acceptsArgs(): boolean {
+
+      const action = this.action;
+
+      if (action) {
+        return !!zTaskActionsWithArgs[action.type];
+      }
+
+      return false;
     }
 
     addPre(pre: ZTaskSpec.Pre): this {
@@ -55,11 +89,13 @@ export function zTaskSpecOptionClass<TArgs extends any[]>(
       if (!args.length) {
         return this;
       }
-      if (!this._draft.builder.action) {
+      if (!this.acceptsArgs) {
         throw new ZOptionError(this.optionLocation(), `Unrecognized option: "${args[0]}"`);
       }
+
       this.pre.conclude();
       this._draft.builder.addArg(...args);
+
       return this;
     }
 
@@ -71,6 +107,11 @@ export function zTaskSpecOptionClass<TArgs extends any[]>(
     setAction(action: ZTaskSpec.Action): this {
       this.pre.conclude();
       this._draft.builder.setAction(action);
+      return this;
+    }
+
+    executeBy(executor: ZTaskExecutor): this {
+      this._draft.builder.executeBy(executor);
       return this;
     }
 

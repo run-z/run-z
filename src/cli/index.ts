@@ -1,1 +1,1 @@
-export * from './run-z';
+export * from './run-z.cli';

@@ -67,7 +67,7 @@ describe('ZTaskParser', () => {
 
     const builder = await newTask();
 
-    await builder.parse('run-z dep1 dep2 dep3 --dep-arg1=value --dep-arg2 test');
+    await builder.parse('run-z dep1 dep2 dep3 --dep-arg1=value --dep-arg2 test --then exec');
     await builder.applyOptions(['--test=value', '--other']);
 
     const spec = builder.spec();
@@ -79,7 +79,12 @@ describe('ZTaskParser', () => {
       { targets: [], task: 'test', parallel: false, attrs: {}, args: [] },
     ]);
     expect(spec.args).toEqual(['--test=value', '--other']);
-    expect(spec.action).toEqual({ type: 'group', targets: [] });
+    expect(spec.action).toEqual({
+      type: 'command',
+      command: 'exec',
+      parallel: false,
+      args: [],
+    });
   });
   it('throws on unrecognized option', async () => {
 
@@ -92,6 +97,23 @@ describe('ZTaskParser', () => {
       endIndex: 2,
       offset: 0,
       endOffset: 7,
+    });
+  });
+  it('does not recognize group arguments', async () => {
+
+    const builder = await newTask();
+
+    await builder.parse('run-z');
+
+    const error = await builder.applyOptions(['--test=value', '--other']).catch(asis);
+
+    expect(error).toBeInstanceOf(ZOptionError);
+    expect(error.optionLocation).toEqual({
+      args: ['run-z', '--test', 'value', '--other'],
+      index: 1,
+      endIndex: 2,
+      offset: 0,
+      endOffset: 6,
     });
   });
   it('recognizes command', async () => {
@@ -113,7 +135,11 @@ describe('ZTaskParser', () => {
   });
   it('applies command options', async () => {
 
-    const spec = await applyOptions(['dep1', 'dep2', 'dep3', '--some', '--then', 'cmd', '--arg']);
+    const builder = await newTask();
+
+    await setup.taskParser.applyOptions(builder, ['dep1', 'dep2', 'dep3', '--some', '--then', 'cmd', '--arg']);
+
+    const spec = builder.spec();
 
     expect(spec.pre).toEqual([
       { targets: [], task: 'dep1', parallel: false, attrs: {}, args: [] },
@@ -613,14 +639,6 @@ describe('ZTaskParser', () => {
 
     const builder = await newTask();
     await builder.parse(commandLine);
-
-    return builder.spec();
-  }
-
-  async function applyOptions(args: readonly string[]): Promise<ZTaskSpec> {
-
-    const builder = await newTask();
-    await builder.applyOptions(args);
 
     return builder.spec();
   }
