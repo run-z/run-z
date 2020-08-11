@@ -7,25 +7,14 @@ import type { ZOptionReader } from '@run-z/optionz';
 import type { ZOptionMeta } from '@run-z/optionz/d.ts/option-meta';
 import { helpZOptionReader, ZHelpFormatter } from '@run-z/optionz/help';
 import type { ZExtension, ZTaskOption } from '../core';
-import { clz, execZProcess } from '../internals';
-
-/**
- * @internal
- */
-class ZTaskHelpFormatter extends ZHelpFormatter {
-
-  usage(text: string): string {
-    return clz.option(text);
-  }
-
-}
+import { execZProcess } from '../internals';
 
 /**
  * @internal
  */
 function readZHelp(mode?: 'brief' | 'detailed'): ZOptionReader.Fn<ZTaskOption> {
 
-  const formatter = new ZTaskHelpFormatter();
+  const formatter = new ZHelpFormatter();
   const printHelp = async (options: ZOptionMeta.List): Promise<void> => {
     console.log(await formatter.help(options));
   };

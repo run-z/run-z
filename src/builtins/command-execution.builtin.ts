@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module run-z/builtins
  */
+import { clz } from '@run-z/optionz/colors';
 import type { ZExtension, ZTaskOption } from '../core';
-import { clz } from '../internals';
 
 /**
  * Command execution built-in extension.
@@ -17,7 +17,7 @@ export const ZCommandExecutionBuiltin: ZExtension = {
       meta: {
         group: '!builtin:exec',
         get usage() {
-          return `${clz.option('--then')} ${clz.param('COMMAND')} `
+          return `${clz.usage('--then')} ${clz.param('COMMAND')} `
               + clz.optional(clz.param('ARG') + clz.sign(' ...'));
         },
         get help() {
@@ -25,7 +25,7 @@ export const ZCommandExecutionBuiltin: ZExtension = {
         },
         get description() {
           return `
-${clz.option('--and')} executes the ${clz.param('COMMAND')} in parallel to the last prerequisite.
+${clz.usage('--and')} executes the ${clz.param('COMMAND')} in parallel to the last prerequisite.
         `;
         },
       },
@@ -35,7 +35,7 @@ ${clz.option('--and')} executes the ${clz.param('COMMAND')} in parallel to the l
       meta: {
         aliasOf: '--then',
         get usage() {
-          return `${clz.option('--and')} ${clz.param('COMMAND')} `
+          return `${clz.usage('--and')} ${clz.param('COMMAND')} `
               + clz.optional(clz.param('ARG') + clz.sign(' ...'));
         },
       },

@@ -1,6 +1,6 @@
 import { arrayOfElements, valueByRecipe } from '@proc7ts/primitives';
 import type { SupportedZOptions } from '@run-z/optionz';
-import { clz } from '../../../../internals';
+import { clz } from '@run-z/optionz/colors';
 import type { ZTaskOption } from '../../task-option';
 import type { ZTaskParser } from '../../task-parser';
 import type { DraftZTask } from './draft-task';
@@ -51,8 +51,8 @@ const fallbackZTaskSpecOptions: SupportedZOptions.Map<ZTaskOption> = {
         return `
 where ${clz.param('PKG-SELECTOR')}:
 ${clz.bullet} is an URL path to package directory;
-${clz.bullet} may contain ${clz.option('//')} separator to select immediately nested package directories;
-${clz.bullet} may contain ${clz.option('///')} separator to select deeply nested package directories.
+${clz.bullet} may contain ${clz.usage('//')} separator to select immediately nested package directories;
+${clz.bullet} may contain ${clz.usage('///')} separator to select deeply nested package directories.
 
 Hidden directories ignored.
       `;
@@ -81,7 +81,7 @@ Hidden directories ignored.
       get description() {
         return `
 The attribute will be set on the task, as well as on its prerequisites.
-The ${clz.option('=' + clz.param('ATTR'))} means the same as ${clz.option(clz.param('ATTR') + '=on')}
+The ${clz.usage('=' + clz.param('ATTR'))} means the same as ${clz.usage(clz.param('ATTR') + '=on')}
         `;
       },
     },
