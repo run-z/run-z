@@ -137,20 +137,38 @@ The ${clz.usage('=' + clz.param('ATTR'))} means the same as ${clz.usage(clz.para
   '*': {
     read(option) {
 
-      const { name } = option;
+      let { name } = option;
+      let annex = false;
 
+      if (name.startsWith('+')) {
+        name = name.substr(1);
+        annex = true;
+      }
       if (name) {
-        option.pre.start(name);
+        option.pre.start(name, annex);
       }
       option.recognize();
     },
     meta: {
       group: '!:pre',
       get usage() {
-        return clz.param('TASK');
+        return [
+            clz.param('TASK'),
+            `+${clz.param('TASK')}`,
+        ];
       },
       help: 'Add task prerequisite',
-      description: 'Task prerequisites executed in order before the task itself.',
+      get description() {
+        return `
+Prerequisites are tasks executed in order before the task itself.
+
+Each task is executed once even though it can be called multiple times. Call parameters (i.e. command line arguments
+and attributes) from multiple calls are merged.
+
+The ${clz.usage('+' + clz.param('TASK'))} form is a task annex. Such form does not cause the task to be executed,
+but can provide additional parameters for actual task call, or allow parallel execution with another task.
+`;
+      },
     },
   },
 

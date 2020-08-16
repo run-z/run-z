@@ -81,6 +81,11 @@ export namespace ZTaskOption {
     readonly taskName?: string;
 
     /**
+     * Whether the started task is an {@link ZTaskSpec.annex annex}.
+     */
+    readonly isAnnex: boolean;
+
+    /**
      * Starts the next prerequisite specification.
      *
      * {@link conclude Concludes} previously started one.
@@ -88,10 +93,11 @@ export namespace ZTaskOption {
      * The prerequisite will be added as soon as its specification {@link conclude concluded}.
      *
      * @param taskName  The name of prerequisite task.
+     * @param annex  Whether the started prerequisite is a task annex.
      *
      * @returns `this` instance.
      */
-    start(taskName: string): this;
+    start(taskName: string, annex?: boolean): this;
 
     /**
      * Appends prerequisite attribute.
