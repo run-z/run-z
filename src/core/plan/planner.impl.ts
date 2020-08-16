@@ -74,6 +74,7 @@ export class ZInstructionRecords {
   }
 
   order(first: ZTask, second: ZTask): void {
+
     const prerequisites = this._prerequisites.get(second);
 
     if (prerequisites) {

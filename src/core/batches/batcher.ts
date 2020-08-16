@@ -213,6 +213,7 @@ async function batchInZTarget(
     dependent: planner.dependent,
     targets: target,
     taskName: planner.taskName,
+    isAnnex: planner.isAnnex,
     batch(task, details) {
 
       const batchDetails = ZBatchDetails.by(details);

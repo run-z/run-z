@@ -75,7 +75,14 @@ export namespace ZTaskSpec {
     readonly task: string;
 
     /**
-     * Whether the referenced task can be executed in parallel with preceding one.
+     * Whether this is a task annex.
+     *
+     * Task annex is not executed. But can provide additional parameters for actual task call.
+     */
+    readonly annex: boolean;
+
+    /**
+     * Whether this prerequisite can be executed in parallel with preceding one.
      */
     readonly parallel: boolean;
 
@@ -97,7 +104,12 @@ export namespace ZTaskSpec {
   export interface Attrs {
 
     /**
-     * Unknown task throws {@link UnknownZTaskError}, unless this {@link ZTaskParams.flag flag} is set.
+     * The task is not executed when this {@link ZTaskParams.flag flag} is set.
+     */
+    readonly skip?: readonly [string, ...string[]];
+
+    /**
+     * Unknown task execution throws {@link UnknownZTaskError} unless this {@link ZTaskParams.flag flag} is set.
      */
     readonly 'if-present'?: readonly [string, ...string[]];
 

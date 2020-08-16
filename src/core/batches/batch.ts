@@ -20,6 +20,11 @@ export interface ZBatch {
   readonly taskName: string;
 
   /**
+   * Whether task annexes batched.
+   */
+  readonly isAnnex: boolean;
+
+  /**
    * Batched task calls.
    */
   readonly batched: Iterable<ZCall>;

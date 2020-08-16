@@ -77,6 +77,41 @@ describe('GroupZTask', () => {
     expect(dep3.params().attrs).toEqual({ attr1: ['on'], attr2: ['on', 'off', 'on'] });
   });
 
+  it('does not order sub-task annexes', async () => {
+    testPlan.addPackage(
+        'test',
+        {
+          packageJson: {
+            scripts: {
+              test: 'run-z +dep1/dep3/=attr1 =attr2',
+              dep1: 'run-z dep2 attr2=off',
+              dep2: 'run-z --then exec2',
+              dep3: 'run-z --then exec3',
+            },
+          },
+        },
+    );
+
+    const call = await testPlan.call('test');
+    const plan = call.plan;
+    const target = call.task.target;
+    const dep1 = plan.callOf(await target.task('dep1'));
+    const dep2 = plan.callOf(await target.task('dep2'));
+    const dep3 = plan.callOf(await target.task('dep3'));
+
+    expect(prerequisitesOf(call)).toHaveLength(0);
+    expect(call.params().attrs).toEqual({ attr2: ['on'] });
+
+    expect(prerequisitesOf(dep1)).toEqual(taskIds(dep2));
+    expect(dep1.params().attrs).toEqual({ attr2: ['off', 'on'] });
+
+    expect(prerequisitesOf(dep2)).toHaveLength(0);
+    expect(dep2.params().attrs).toEqual({ attr2: ['off', 'on'] });
+
+    expect(prerequisitesOf(dep3)).toHaveLength(0);
+    expect(dep3.params().attrs).toEqual({ attr1: ['on'], attr2: ['on', 'off', 'on'] });
+  });
+
   it('calls external prerequisites', async () => {
 
     const target = testPlan.addPackage(

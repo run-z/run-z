@@ -25,6 +25,7 @@ export class DraftZTask {
     let preTargets: readonly ZTaskSpec.Target[] = [];
     let parallelPre = false;
     let preTaskName: string | undefined;
+    let preAnnex = false;
     let preOptionAt = -1;
     let preAttrs: Record<string, [string, ...string[]]> = {};
     let preArgs: string[] = [];
@@ -42,13 +43,17 @@ export class DraftZTask {
       get taskName() {
         return preTaskName;
       },
-      start(taskName: string) {
+      get isAnnex() {
+        return preAnnex;
+      },
+      start(taskName: string, annex = false) {
         this.conclude();
         if (draft._nextTargets.length) {
           preTargets = draft._nextTargets;
           draft._nextTargets = [];
         }
         preTaskName = taskName;
+        preAnnex = annex;
         return this;
       },
       addAttr(name: string, value: string) {
@@ -91,12 +96,14 @@ export class DraftZTask {
           const pre: ZTaskSpec.Pre = {
             targets: preTargets,
             task: this.taskName,
+            annex: this.isAnnex,
             parallel: parallelPre,
             attrs: preAttrs,
             args: preArgs,
           };
 
           preTaskName = undefined;
+          preAnnex = false;
           parallelPre = false;
           preOptionAt = -1;
           preAttrs = {};

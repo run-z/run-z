@@ -118,8 +118,10 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
           const preTask = preCall.task;
 
           calledTasks.push(preTask);
-          for (const prevTask of prevTasks) {
-            planner.order(prevTask, preTask);
+          if (!pre.annex) {
+            for (const prevTask of prevTasks) {
+              planner.order(prevTask, preTask);
+            }
           }
 
           return preCall;
@@ -135,6 +137,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
         dependent: planner,
         targets: preTargets,
         taskName: pre.task,
+        isAnnex: pre.annex,
         batch(preTask, preDetails) {
 
           const batchDetails = ZBatchDetails.by(preDetails);
@@ -155,13 +158,16 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
           taskQN: `${String(preTargets)} */${pre.task}`,
         };
 
-        parallel.push(qualifier);
         for (const calledTask of calledTasks) {
           planner.qualify(calledTask, qualifier);
         }
+
+        parallel.push(qualifier);
       }
 
-      prevTasks = calledTasks;
+      if (!pre.annex) {
+        prevTasks = calledTasks;
+      }
     }
 
     for (const prevTask of prevTasks) {
