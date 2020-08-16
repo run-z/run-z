@@ -51,6 +51,7 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
       dependent: planner.dependent,
       targets: this._subTaskTargets(),
       taskName: subTaskName,
+      isAnnex: pre.annex,
       batch: <TAction extends ZTaskSpec.Action>(
           subTask: ZTask<TAction>,
           subDetails: ZBatchDetails<TAction> = {},
@@ -64,8 +65,10 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
             {
               params: () => groupCall.params().extend(params()),
               plan: async subPlanner => {
-                // Execute sub-tasks after the grouping one
-                subPlanner.order(this, subPlanner.plannedCall.task);
+                if (!pre.annex) {
+                  // Execute sub-tasks after the grouping one
+                  subPlanner.order(this, subPlanner.plannedCall.task);
+                }
                 // Apply task plan
                 await details.plan(subPlanner);
                 // Apply sub-tasks plan

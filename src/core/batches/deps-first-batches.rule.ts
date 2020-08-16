@@ -47,7 +47,10 @@ class ZDepsFirstBatches$ implements ZDepsFirstBatches {
       moveTo(context) {
         return ZDepsFirstBatches$.newBatchRule(context, control.isDepsFirst);
       },
-      processBatch({ dependent, batched }) {
+      processBatch({ dependent, isAnnex, batched }) {
+        if (isAnnex) {
+          return; // Do not order task annexes
+        }
 
         const tasksByTarget = zTasksByTarget(batched);
         const orderedTasks = new Set<ZTask>();

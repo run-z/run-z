@@ -183,6 +183,7 @@ export class ZBatching {
     const batch: ZBatch = {
       dependent: planner.dependent,
       taskName: planner.taskName,
+      isAnnex: planner.isAnnex,
       batched,
     };
 

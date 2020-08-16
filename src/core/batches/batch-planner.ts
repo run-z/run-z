@@ -30,6 +30,11 @@ export interface ZBatchPlanner {
   readonly taskName: string;
 
   /**
+   * Whether task annexes are batched.
+   */
+  readonly isAnnex: boolean;
+
+  /**
    * Records task to call in batch.
    *
    * @typeparam TAction  Batched task action type.

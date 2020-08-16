@@ -40,6 +40,31 @@ describe('ZDepsFirstBatches', () => {
     expect(other2.hasPrerequisite(test2.task)).toBe(true);
     expect(other2.hasPrerequisite(other1.task)).toBe(true);
   });
+  it('does not orders task annexes', async () => {
+    await init();
+    await testPlan.parse('run-z ./nested// +test other');
+
+    const test1 = await testPlan.callOf(nested1, 'test');
+    const other1 = await testPlan.callOf(nested1, 'other');
+    const test2 = await testPlan.callOf(nested2, 'test');
+    const other2 = await testPlan.callOf(nested2, 'other');
+
+    expect(test1.hasPrerequisite(test2.task)).toBe(false);
+    expect(test1.hasPrerequisite(other1.task)).toBe(false);
+    expect(test1.hasPrerequisite(other2.task)).toBe(false);
+
+    expect(other1.hasPrerequisite(test1.task)).toBe(false);
+    expect(other1.hasPrerequisite(test2.task)).toBe(false);
+    expect(other1.hasPrerequisite(other2.task)).toBe(false);
+
+    expect(test2.hasPrerequisite(test1.task)).toBe(false);
+    expect(test2.hasPrerequisite(other1.task)).toBe(false);
+    expect(test2.hasPrerequisite(other2.task)).toBe(false);
+
+    expect(other2.hasPrerequisite(test1.task)).toBe(false);
+    expect(other2.hasPrerequisite(test2.task)).toBe(false);
+    expect(other2.hasPrerequisite(other1.task)).toBe(true);
+  });
   it('establishes dependencies-first order between multi-batched tasks', async () => {
     testPlan = new TestPlan(
         'root',
