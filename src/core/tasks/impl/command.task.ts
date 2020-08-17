@@ -19,8 +19,8 @@ export class CommandZTask extends AbstractZTask<ZTaskSpec.Command> {
     return this.spec.action.parallel;
   }
 
-  protected _execTask(execution: ZTaskExecution<ZTaskSpec.Command>): ZExecutedProcess {
-    return this.target.location.shell.execCommand(this.spec.action.command, execution.call.params());
+  protected _execTask({ shell, job }: ZTaskExecution<ZTaskSpec.Command>): ZExecutedProcess {
+    return shell.execCommand(job, this.spec.action.command, job.call.params());
   }
 
 }

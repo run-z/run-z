@@ -1,4 +1,3 @@
-import { ZShell } from '../jobs';
 import { ZPackageTree } from './package-tree';
 
 describe('ZPackageTree', () => {
@@ -139,12 +138,6 @@ describe('ZPackageTree', () => {
       return Array.from(await root.select(pattern), ({ path }) => path);
     }
 
-  });
-
-  describe('shell', () => {
-    it('is no-op by default', () => {
-      expect(root.shell).toBe(ZShell.noop);
-    });
   });
 
 });

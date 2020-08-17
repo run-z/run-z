@@ -50,17 +50,20 @@ describe('ScriptZTask', () => {
                 exec: 'start --arg3',
               },
             },
-            shell,
           },
       );
 
       const call = await testPlan.call('test');
 
-      await call.exec().whenDone();
+      await call.exec(shell).whenDone();
 
-      expect(shell.execScript).toHaveBeenCalledWith('exec', expect.any(ZTaskParams));
+      expect(shell.execScript).toHaveBeenCalledWith(
+          expect.objectContaining({ call: await testPlan.callOf(call.task.target, 'exec') }),
+          'exec',
+          expect.any(ZTaskParams),
+      );
 
-      const params = shell.execScript.mock.calls[0][1];
+      const params = shell.execScript.mock.calls[0][2];
 
       expect(params.args).toEqual(['--arg1', '--arg2']);
     });

@@ -1,6 +1,6 @@
 import { asis, noop } from '@proc7ts/primitives';
 import { ZOptionError } from '@run-z/optionz';
-import { ZSetup } from '../core';
+import { ZSetup, ZShell } from '../core';
 import { execNoopZProcess } from '../internals/jobs';
 import { TestPlan } from '../spec';
 import { ZHelpBuiltin } from './help.builtin';
@@ -28,7 +28,7 @@ describe('ZHelpBuiltin', () => {
 
       const call = await testPlan.parse('run-z -h');
 
-      await call.exec().whenDone();
+      await call.exec(ZShell.noop).whenDone();
 
       expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('-h'));
     });
@@ -51,7 +51,7 @@ describe('ZHelpBuiltin', () => {
 
       const call = await testPlan.parse('run-z -h');
 
-      await call.exec().whenDone();
+      await call.exec(ZShell.noop).whenDone();
 
       expect(logSpy).toHaveBeenCalledWith(expect.not.stringContaining('--test-option'));
     });
@@ -62,7 +62,7 @@ describe('ZHelpBuiltin', () => {
 
       const call = await testPlan.parse('run-z --help');
 
-      await call.exec().whenDone();
+      await call.exec(ZShell.noop).whenDone();
 
       expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('--help'));
     });
@@ -85,7 +85,7 @@ describe('ZHelpBuiltin', () => {
 
       const call = await testPlan.parse('run-z --help');
 
-      await call.exec().whenDone();
+      await call.exec(ZShell.noop).whenDone();
 
       expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('--test-option'));
     });
@@ -93,7 +93,7 @@ describe('ZHelpBuiltin', () => {
 
       const call = await testPlan.parse('run-z test/=skip --help');
 
-      await call.exec().whenDone();
+      await call.exec(ZShell.noop).whenDone();
 
       expect(logSpy).not.toHaveBeenCalled();
     });

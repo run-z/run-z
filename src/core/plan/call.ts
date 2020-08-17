@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module run-z
  */
-import type { ZJob } from '../jobs';
+import type { ZJob, ZShell } from '../jobs';
 import type { ZTask, ZTaskSpec } from '../tasks';
 import type { ZPlan } from './plan';
 import type { ZTaskParams } from './task-params';
@@ -77,8 +77,10 @@ export interface ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
   /**
    * Executes this call.
    *
+   * @param shell  Task execution shell.
+   *
    * @returns Either new task execution job, or the one already started.
    */
-  exec(): ZJob<TAction>;
+  exec(shell: ZShell): ZJob<TAction>;
 
 }

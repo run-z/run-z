@@ -57,7 +57,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
       return executor(execution);
     }
 
-    if (execution.call.params().flag('skip')) {
+    if (execution.job.call.params().flag('skip')) {
       // Skip execution
       return execNoopZProcess();
     }

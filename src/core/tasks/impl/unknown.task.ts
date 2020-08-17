@@ -14,8 +14,8 @@ export class UnknownZTask extends AbstractZTask<ZTaskSpec.Unknown> {
     super(builder, { ...spec, action: ZTaskSpec.unknownAction });
   }
 
-  protected _execTask(execution: ZTaskExecution<ZTaskSpec.Unknown>): ZExecutedProcess {
-    if (execution.call.params().flag('if-present')) {
+  protected _execTask({ job }: ZTaskExecution<ZTaskSpec.Unknown>): ZExecutedProcess {
+    if (job.call.params().flag('if-present')) {
       return execNoopZProcess();
     }
     return failZProcess(new UnknownZTaskError(this.target.name, this.name));
