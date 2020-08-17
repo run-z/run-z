@@ -2,8 +2,10 @@
  * @packageDocumentation
  * @module run-z
  */
+import type { ZOptionsParser } from '@run-z/optionz';
 import type { ZTask } from './task';
 import type { ZTaskModifier } from './task-modifier';
+import type { ZTaskOption } from './task-option';
 import type { ZTaskSpec } from './task-spec';
 
 /**
@@ -34,24 +36,25 @@ export interface ZTaskBuilder<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
    * Parses a command line and {@link applyOptions applies} recognized options to the task.
    *
    * @param commandLine  Task command line to parse.
+   * @param opts  Parser options. By default, starts command line options processing from the second argument.
    *
    * @returns A promise resolved to `this` instance when the command line parsed.
    *
    * @see TaskFactory.parse
    */
-  parse(commandLine: string): Promise<this>;
+  parse(commandLine: string, opts?: ZOptionsParser.Opts<ZTaskOption>): Promise<this>;
 
   /**
    * Recognized options from command line arguments and applies them to the task.
    *
    * @param args  Arguments to apply.
-   * @param fromIndex  An index of command line argument to start processing from. `0` by default.
+   * @param opts  Parser options.
    *
    * @returns A promise resolved to `this` instance when command line options applied.
    *
    * @see TaskFactory.applyOptions
    */
-  applyOptions(args: readonly string[], fromIndex?: number): Promise<this>;
+  applyOptions(args: readonly string[], opts?: ZOptionsParser.Opts<ZTaskOption>): Promise<this>;
 
   /**
    * Recognizes options from process command line argument and {@link applyOptions applies} them to the task.
@@ -67,14 +70,14 @@ export interface ZTaskBuilder<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
    *
    * @param taskName  Known task name.
    * @param argv  Command line arguments of the process.
-   * @param fromIndex  An index of command line argument to start processing from. `2` by default.
+   * @param opts  Parser options. By default, starts command line options processing from the third argument.
    *
    * @returns A promise resolved to `this` instance when command line options applied.
    */
   applyArgv(
       taskName: string | undefined,
       argv: readonly string[],
-      fromIndex?: number,
+      opts?: ZOptionsParser.Opts<ZTaskOption>,
   ): Promise<this>;
 
   /**

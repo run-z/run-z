@@ -34,7 +34,7 @@
     "@proc7ts/a-iterable": "^2.7.0",
     "@proc7ts/call-thru": "^4.0.0",
     "@proc7ts/primitives": "^1.1.0",
-    "@run-z/optionz": "^1.0.0-dev.9",
+    "@run-z/optionz": "^1.0.0-dev.10",
     "chalk": "^4.1.0",
     "shell-quote": "^1.7.2"
   },

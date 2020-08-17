@@ -2,6 +2,7 @@ import type { ZOptionsParser } from '@run-z/optionz';
 import { customZOptionsParser } from '@run-z/optionz';
 import type { ZSetup } from '../../../setup';
 import type { ZTaskBuilder } from '../../task-builder';
+import type { ZTaskOption } from '../../task-option';
 import type { ZTaskParser } from '../../task-parser';
 import { DraftZTask } from './draft-task';
 import { zTaskSpecOptionClass } from './task-spec-option-class';
@@ -18,19 +19,19 @@ export function zTaskSpecParser(
     this: void,
     builder: ZTaskBuilder,
     entries: readonly string[],
-    fromIndex: number,
+    opts?: ZOptionsParser.Opts<ZTaskOption, DraftZTask>,
 ) => Promise<ZTaskBuilder> {
 
-  const parser: ZOptionsParser<DraftZTask> = customZOptionsParser({
+  const parser: ZOptionsParser<ZTaskOption, DraftZTask> = customZOptionsParser({
     options: zTaskSpecOptions(options),
     syntax: zTaskSpecSyntax(setup),
     optionClass: zTaskSpecOptionClass,
   });
 
-  return (builder, entries, fromIndex) => parser(
+  return (builder, entries, opts) => parser(
       new DraftZTask(builder),
       entries,
-      fromIndex,
+      opts,
   ).then(builder => builder.done());
 }
 

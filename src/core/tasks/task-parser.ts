@@ -4,6 +4,7 @@
  */
 import { noop } from '@proc7ts/primitives';
 import { SupportedZOptions, ZOptionInput } from '@run-z/optionz';
+import type { ZOptionsParser } from '@run-z/optionz/d.ts/options-parser';
 import { parse } from 'shell-quote';
 import { zTaskSpecParser } from './impl/parser';
 import type { ZTaskBuilder } from './task-builder';
@@ -107,15 +108,19 @@ export class ZTaskParser {
    *
    * @param builder  Target task builder to apply recognized task options with.
    * @param args  Arguments to apply.
-   * @param fromIndex  An index of command line argument to start processing from. `0` by default.
+   * @param opts  Parser options.
    *
    * @returns A promise resolved to task builder when command line options applied.
    */
-  applyOptions(builder: ZTaskBuilder, args: readonly string[], fromIndex = 0): Promise<ZTaskBuilder> {
+  applyOptions(
+      builder: ZTaskBuilder,
+      args: readonly string[],
+      opts?: ZOptionsParser.Opts<ZTaskOption>,
+  ): Promise<ZTaskBuilder> {
     if (!this._specParser) {
       this._specParser = zTaskSpecParser(builder.taskTarget.setup, this._config);
     }
-    return this._specParser(builder, args, fromIndex);
+    return this._specParser(builder, args, opts);
   }
 
 }
