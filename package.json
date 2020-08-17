@@ -36,9 +36,7 @@
     "@proc7ts/primitives": "^1.1.0",
     "@run-z/optionz": "^1.0.0-dev.9",
     "chalk": "^4.1.0",
-    "cliui": "^6.0.0",
-    "shell-quote": "^1.7.2",
-    "string-width": "^4.2.0"
+    "shell-quote": "^1.7.2"
   },
   "devDependencies": {
     "@proc7ts/eslint-config": "^2.0.3",
@@ -57,7 +55,7 @@
     "jest": "^26.4.0",
     "jest-junit": "^11.1.0",
     "npm-run-all": "^4.1.5",
-    "rollup": "^2.26.0",
+    "rollup": "^2.26.3",
     "rollup-plugin-sourcemaps": "^0.6.2",
     "rollup-plugin-typescript2": "^0.27.2",
     "shx": "^0.3.2",
