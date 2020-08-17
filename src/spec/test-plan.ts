@@ -1,6 +1,6 @@
 import { asis } from '@proc7ts/primitives';
 import { StandardZSetup } from '../builtins';
-import type { ZCall, ZCallDetails, ZPackageLocation, ZPlan, ZSetup, ZShell } from '../core';
+import type { ZCall, ZCallDetails, ZPackageLocation, ZPlan, ZSetup } from '../core';
 import { ZPackage, ZPackageJson, ZPackageTree } from '../core';
 
 export class TestPlan {
@@ -15,15 +15,13 @@ export class TestPlan {
       {
         setup = new StandardZSetup(),
         packageJson = {},
-        shell,
       }: {
         setup?: ZSetup;
         packageJson?: ZPackageJson;
-        shell?: ZShell;
       } = {},
   ) {
     this.setup = setup;
-    this._target = this.root = new ZPackageTree(name, { packageJson, shell });
+    this._target = this.root = new ZPackageTree(name, { packageJson });
   }
 
   get lastPlan(): ZPlan {
@@ -43,13 +41,11 @@ export class TestPlan {
       name: string,
       {
         packageJson,
-        shell,
       }: {
         packageJson?: ZPackageJson;
-        shell?: ZShell;
       } = {},
   ): ZPackageTree {
-    return this._target = this.root.put(name, { packageJson, shell });
+    return this._target = this.root.put(name, { packageJson });
   }
 
   async parse(commandLine: string): Promise<ZCall> {

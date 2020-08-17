@@ -138,17 +138,20 @@ describe('CommandZTask', () => {
                 exec: 'run-z --then start --arg3',
               },
             },
-            shell,
           },
       );
 
       const call = await testPlan.call('test');
 
-      await call.exec().whenDone();
+      await call.exec(shell).whenDone();
 
-      expect(shell.execCommand).toHaveBeenCalledWith('start', expect.any(ZTaskParams));
+      expect(shell.execCommand).toHaveBeenCalledWith(
+          expect.objectContaining({ call: await testPlan.callOf(call.task.target, 'exec') }),
+          'start',
+          expect.any(ZTaskParams),
+      );
 
-      const params = shell.execCommand.mock.calls[0][1];
+      const params = shell.execCommand.mock.calls[0][2];
 
       expect(params.args).toEqual(['--arg3', '--arg1', '--arg2']);
     });
@@ -167,13 +170,12 @@ describe('CommandZTask', () => {
               exec: 'run-z --then start --arg3',
             },
           },
-          shell,
         },
     );
 
     const call = await testPlan.call('exec', { params: valueProvider({ attrs: { skip: ['on'] } }) });
 
-    await call.exec().whenDone();
+    await call.exec(shell).whenDone();
 
     expect(shell.execCommand).not.toHaveBeenCalled();
   });
@@ -209,13 +211,12 @@ describe('CommandZTask', () => {
               exec: 'run-z --test --then start --arg3',
             },
           },
-          shell,
         },
     );
 
     const call = await testPlan.call('exec');
 
-    await call.exec().whenDone();
+    await call.exec(shell).whenDone();
 
     expect(executor).toHaveBeenCalled();
     expect(shell.execCommand).not.toHaveBeenCalled();

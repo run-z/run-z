@@ -1,5 +1,6 @@
 import { asis } from '@proc7ts/primitives';
 import { TestPlan } from '../../../spec';
+import { ZShell } from '../../jobs';
 import { UnknownZTaskError } from '../unknown-task-error';
 import { UnknownZTask } from './unknown.task';
 
@@ -22,7 +23,7 @@ describe('UnknownZTask', () => {
     it('throws when absent', async () => {
 
       const call = await testPlan.call('absent');
-      const error = await call.exec().whenDone().catch(asis);
+      const error = await call.exec(ZShell.noop).whenDone().catch(asis);
 
       expect(error).toBeInstanceOf(UnknownZTaskError);
       expect(error.taskName).toBe('absent');
@@ -41,7 +42,7 @@ describe('UnknownZTask', () => {
 
       const call = await testPlan.call('test');
 
-      expect(await call.exec().whenDone()).toBeUndefined();
+      expect(await call.exec(ZShell.noop).whenDone()).toBeUndefined();
     });
     it('throws when `if-present` flag unset', async () => {
       testPlan.addPackage(
@@ -57,7 +58,7 @@ describe('UnknownZTask', () => {
       );
 
       const call = await testPlan.call('test');
-      const error = await call.exec().whenDone().catch(asis);
+      const error = await call.exec(ZShell.noop).whenDone().catch(asis);
 
       expect(error).toBeInstanceOf(UnknownZTaskError);
       expect(error.taskName).toBe('absent');

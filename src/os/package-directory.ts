@@ -7,8 +7,7 @@ import { isPresent, valueProvider } from '@proc7ts/primitives';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath, pathToFileURL, URL } from 'url';
-import { ZPackageJson, ZPackageLocation, ZShell } from '../core';
-import { SystemZShell } from './system-shell.impl';
+import { ZPackageJson, ZPackageLocation } from '../core';
 import { isRootURL, urlBaseName, urlOfFile } from './url.impl';
 
 /**
@@ -56,8 +55,6 @@ export class ZPackageDirectory extends ZPackageLocation {
    */
   readonly rootURL: URL;
 
-  readonly shell: ZShell;
-
   private _parent?: ZPackageDirectory | null | undefined = null;
 
   private constructor(url: URL, rootURL: URL) {
@@ -65,11 +62,10 @@ export class ZPackageDirectory extends ZPackageLocation {
     this.url = urlOfFile(url);
     this.dirURL = new URL(this.url.pathname + '/', url);
     this.rootURL = rootURL;
-    this.shell = new SystemZShell(this);
   }
 
   get path(): string {
-    return this.url.pathname;
+    return fileURLToPath(this.url);
   }
 
   get parent(): ZPackageDirectory | undefined {

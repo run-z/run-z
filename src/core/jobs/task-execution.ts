@@ -2,8 +2,9 @@
  * @packageDocumentation
  * @module run-z
  */
-import type { ZCall } from '../plan';
 import type { ZTaskSpec } from '../tasks';
+import type { ZJob } from './job';
+import type { ZShell } from './shell';
 
 /**
  * Task execution context.
@@ -15,8 +16,13 @@ import type { ZTaskSpec } from '../tasks';
 export interface ZTaskExecution<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
 
   /**
-   * Executed task call.
+   * Task execution shell to use.
    */
-  readonly call: ZCall<TAction>;
+  readonly shell: ZShell;
+
+  /**
+   * Task execution jobs.
+   */
+  readonly job: ZJob<TAction>;
 
 }

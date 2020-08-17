@@ -3,7 +3,6 @@
  * @module run-z
  */
 import { valueProvider } from '@proc7ts/primitives';
-import { ZShell } from '../jobs';
 import { ZPackageLocation } from './package-location';
 import type { ZPackageJson } from './package.json';
 
@@ -17,7 +16,6 @@ export class ZPackageTree extends ZPackageLocation {
   readonly parent: ZPackageTree | undefined;
   readonly path: string;
   readonly load: () => Promise<ZPackageJson | undefined>;
-  readonly shell: ZShell;
   private readonly _nested = new Map<string, ZPackageTree>();
 
   /**
@@ -34,18 +32,15 @@ export class ZPackageTree extends ZPackageLocation {
       {
         packageJson,
         parent,
-        shell = parent ? parent.shell : ZShell.noop,
       }: {
         packageJson?: PromiseLike<ZPackageJson | undefined> | ZPackageJson;
         parent?: ZPackageTree;
-        shell?: ZShell;
       } = {},
   ) {
     super();
     this.parent = parent;
     this.path = parent ? `${parent.path}/${baseName}` : baseName;
     this.load = valueProvider(Promise.resolve(packageJson));
-    this.shell = shell;
   }
 
   relative(path: string): ZPackageTree | undefined {
@@ -95,10 +90,8 @@ export class ZPackageTree extends ZPackageLocation {
       path: string,
       {
         packageJson,
-        shell,
       }: {
         packageJson?: PromiseLike<ZPackageJson | undefined> | ZPackageJson;
-        shell?: ZShell;
       } = {},
   ): ZPackageTree {
 
@@ -106,7 +99,7 @@ export class ZPackageTree extends ZPackageLocation {
 
     if (!restPath) {
 
-      const nested = new ZPackageTree(name, { packageJson, parent: this, shell });
+      const nested = new ZPackageTree(name, { packageJson, parent: this });
 
       this._nested.set(name, nested);
 
@@ -115,7 +108,7 @@ export class ZPackageTree extends ZPackageLocation {
 
     const nested = this._nested.get(name) || this.put(name);
 
-    return nested.put(restPath, { packageJson, shell });
+    return nested.put(restPath, { packageJson });
   }
 
   toString(): string {

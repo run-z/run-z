@@ -1,4 +1,5 @@
 import { valueProvider } from '@proc7ts/primitives';
+import type { ZShell } from '../jobs';
 import type { ZExecutionJob } from '../jobs/job.impl';
 import type { ZTask, ZTaskSpec } from '../tasks';
 import type { ZCall } from './call';
@@ -147,8 +148,8 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
     return this._records.areParallel(this.task, other);
   }
 
-  exec(): ZExecutionJob<TAction> {
-    return this._records.executor.exec(this);
+  exec(shell: ZShell): ZExecutionJob<TAction> {
+    return this._records.executor.exec(this, shell);
   }
 
 }

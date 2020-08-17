@@ -1,4 +1,5 @@
 import { prerequisitesOf, taskId, taskIds, TestPlan } from '../../../spec';
+import { ZShell } from '../../jobs';
 import { GroupZTask } from './group.task';
 
 describe('GroupZTask', () => {
@@ -438,7 +439,7 @@ describe('GroupZTask', () => {
 
       const call = await testPlan.call('test');
 
-      expect(await call.exec().whenDone()).toBeUndefined();
+      expect(await call.exec(ZShell.noop).whenDone()).toBeUndefined();
     });
     it('executes prerequisites', async () => {
       testPlan.addPackage(
@@ -456,7 +457,7 @@ describe('GroupZTask', () => {
 
       const call = await testPlan.call('test');
 
-      expect(await call.exec().whenDone()).toBeUndefined();
+      expect(await call.exec(ZShell.noop).whenDone()).toBeUndefined();
     });
   });
 });

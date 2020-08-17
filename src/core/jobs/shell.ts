@@ -5,34 +5,36 @@
 import { execNoopZProcess } from '../../internals';
 import type { ZTaskParams } from '../plan';
 import type { ZExecutedProcess } from './executed-process';
+import type { ZJob } from './job';
 
 /**
- * Command execution shell.
+ * Task execution shell.
  *
- * Each {@link ZPackageLocation package location} provides its own shell instance. The tasks of that package uses it
- * to perform their job.
+ * It is provided is used by {@link ZCall.exec task execution jobs} to execute commands.
  */
 export interface ZShell {
 
   /**
    * Executes a {@link ZTaskSpec.Command command}.
    *
+   * @param job  The job executing command.
    * @param command  Command to execute.
    * @param params  Execution parameters.
    *
    * @returns Executed command instance.
    */
-  execCommand(command: string, params: ZTaskParams): ZExecutedProcess;
+  execCommand(job: ZJob, command: string, params: ZTaskParams): ZExecutedProcess;
 
   /**
    * Executes an {@link ZTaskSpec.Script NPM script}.
    *
+   * @param job  The job executing NPM script.
    * @param name  The name of NPM script to execute.
    * @param params  Execution parameters.
    *
    * @returns Executed script instance.
    */
-  execScript(name: string, params: ZTaskParams): ZExecutedProcess;
+  execScript(job: ZJob, name: string, params: ZTaskParams): ZExecutedProcess;
 
 }
 
@@ -54,7 +56,7 @@ const noopZShell: ZShell = {
 export const ZShell = {
 
   /**
-   * Command execution shell that does nothing.
+   * Task execution shell that does nothing.
    */
   get noop(): ZShell {
     return noopZShell;

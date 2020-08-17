@@ -1,25 +1,20 @@
 import { noop } from '@proc7ts/primitives';
 import { spawn } from 'child_process';
 import * as path from 'path';
-import { fileURLToPath } from 'url';
-import type { ZExecutedProcess, ZShell, ZTaskParams } from '../core';
+import type { ZExecutedProcess, ZJob, ZShell, ZTaskParams } from '../core';
 import { ZAbortedExecutionError } from '../core';
 import { execZProcess } from '../internals';
-import type { ZPackageDirectory } from './package-directory';
 
 /**
- * @internal
+ * Operating system-specific task execution shell.
  */
 export class SystemZShell implements ZShell {
 
-  constructor(private readonly _dir: ZPackageDirectory) {
+  execCommand(job: ZJob, command: string, params: ZTaskParams): ZExecutedProcess {
+    return this._run(job, command, params.args);
   }
 
-  execCommand(command: string, params: ZTaskParams): ZExecutedProcess {
-    return this._run(command, params.args);
-  }
-
-  execScript(name: string, params: ZTaskParams): ZExecutedProcess {
+  execScript(job: ZJob, name: string, params: ZTaskParams): ZExecutedProcess {
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const { npm_execpath: npmPath = 'npm' } = process.env;
@@ -34,10 +29,10 @@ export class SystemZShell implements ZShell {
     }
     args.push(name, ...params.args);
 
-    return this._run(command, args);
+    return this._run(job, command, args);
   }
 
-  _run(command: string, args: readonly string[]): ZExecutedProcess {
+  _run(job: ZJob, command: string, args: readonly string[]): ZExecutedProcess {
     return execZProcess(() => {
 
       const childProcess = spawn(
@@ -46,7 +41,7 @@ export class SystemZShell implements ZShell {
           {
             shell: true,
             stdio: 'inherit',
-            cwd: fileURLToPath(this._dir.url),
+            cwd: job.call.task.target.location.path,
           },
       );
 

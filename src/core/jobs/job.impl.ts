@@ -4,6 +4,7 @@ import type { ZCallRecord } from '../plan/call.impl';
 import type { ZTask, ZTaskSpec } from '../tasks';
 import type { ZExecutedProcess } from './executed-process';
 import type { ZJob } from './job';
+import type { ZShell } from './shell';
 
 /**
  * @internal
@@ -12,7 +13,7 @@ export class ZExecutor {
 
   readonly jobs = new Map<ZTask, ZExecutionJob>();
 
-  exec<TAction extends ZTaskSpec.Action>(call: ZCallRecord<TAction>): ZExecutionJob<TAction> {
+  exec<TAction extends ZTaskSpec.Action>(call: ZCallRecord<TAction>, shell: ZShell): ZExecutionJob<TAction> {
 
     const { task } = call;
     const running = this.jobs.get(task);
@@ -21,7 +22,7 @@ export class ZExecutor {
       return running as ZExecutionJob<TAction>;
     }
 
-    const starting = new ZExecutionJob(this, call);
+    const starting = new ZExecutionJob(this, shell, call);
 
     this.jobs.set(task, starting);
 
@@ -41,6 +42,7 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
 
   constructor(
       private readonly _executor: ZExecutor,
+      private readonly _shell: ZShell,
       readonly call: ZCallRecord<TAction>,
   ) {
   }
@@ -64,7 +66,8 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
           () => {
             resolve();
             return this.call.task.exec({
-              call: this.call,
+              shell: this._shell,
+              job: this,
             });
           },
       );
@@ -82,7 +85,7 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
   private _execPrerequisites(): ZExecutedProcess {
     return execAllZProcesses(mapIt(
         this.call.prerequisites(),
-        pre => pre.exec(),
+        pre => pre.exec(this._shell),
     ));
   }
 

@@ -5,7 +5,7 @@
 import { ZOptionError } from '@run-z/optionz';
 import { StandardZSetup } from '../builtins';
 import { UnknownZTaskError } from '../core/tasks';
-import { ZPackageDirectory } from '../os';
+import { SystemZShell, ZPackageDirectory } from '../os';
 import { formatZOptionError } from './impl';
 
 export function runZ(): Promise<void> {
@@ -18,6 +18,7 @@ export function runZ(): Promise<void> {
 async function doRunZ(): Promise<void> {
 
   const setup = new StandardZSetup();
+  const shell = new SystemZShell();
   const currentDir = ZPackageDirectory.open();
   const target = await setup.packageResolver.get(currentDir);
   const builder = await setup.taskFactory.newTask(target, 'run-z')
@@ -25,7 +26,7 @@ async function doRunZ(): Promise<void> {
   const task = builder.task();
   const call = await task.call();
 
-  return call.exec().whenDone();
+  return call.exec(shell).whenDone();
 }
 
 /**
