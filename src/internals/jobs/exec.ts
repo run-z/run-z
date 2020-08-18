@@ -3,29 +3,29 @@
  * @module run-z/internals
  */
 import { asyncByRecipe, noop } from '@proc7ts/primitives';
-import type { ZExecutedProcess } from '../../core';
+import type { ZExecution } from '../../core';
 
 /**
- * Executed process starter signature.
+ * Execution starter signature.
  *
- * Constructs new process initializers.
+ * Constructs new execution initializer.
  */
-export type ZExecutedProcessStarter =
+export type ZExecutionStarter =
 /**
- * @returns  Either executed process initializer, or a promise-like instance resolving to one.
+ * @returns  Either execution initializer, or a promise-like instance resolving to one.
  */
-    (this: void) => ZExecutedProcess | PromiseLike<ZExecutedProcess>;
+    (this: void) => ZExecution | PromiseLike<ZExecution>;
 
 /**
- * Builds execution process by its starter.
+ * Starts execution by starter.
  *
  * @param starter  Execution process starter function.
  *
- * @returns Executed process.
+ * @returns Started execution instance.
  */
-export function execZProcess(starter: ZExecutedProcessStarter): ZExecutedProcess {
+export function execZ(starter: ZExecutionStarter): ZExecution {
 
-  let initialize: (init: ZExecutedProcess) => void;
+  let initialize: (init: ZExecution) => void;
   let abort = (): void => {
     abort = noop;
     initialize = init => {

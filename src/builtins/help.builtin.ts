@@ -7,7 +7,7 @@ import type { ZOptionReader } from '@run-z/optionz';
 import type { ZOptionMeta } from '@run-z/optionz/d.ts/option-meta';
 import { helpZOptionReader, ZHelpFormatter } from '@run-z/optionz/help';
 import type { ZExtension, ZTaskOption } from '../core';
-import { execZProcess } from '../internals';
+import { execZ } from '../internals';
 
 /**
  * @internal
@@ -21,7 +21,7 @@ function readZHelp(mode?: 'brief' | 'detailed'): ZOptionReader.Fn<ZTaskOption> {
   const printer = helpZOptionReader<ZTaskOption>({
     mode,
     display(options, option) {
-      option.executeBy(() => execZProcess(() => {
+      option.executeBy(() => execZ(() => {
 
         const whenDone = printHelp(options);
 

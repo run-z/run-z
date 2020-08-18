@@ -77,7 +77,7 @@ export namespace ZTaskSpec {
     /**
      * Whether this is a task annex.
      *
-     * Task annex is not executed. But can provide additional parameters for actual task call.
+     * Task annex is not executed, but can provide additional parameters for actual task call.
      */
     readonly annex: boolean;
 

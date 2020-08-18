@@ -1,12 +1,12 @@
 import { noop } from '@proc7ts/primitives';
-import type { ZExecutedProcess } from '../../core/jobs/executed-process';
-import { execZProcess } from './exec-process';
+import type { ZExecution } from '../../core';
+import { execZ } from './exec';
 
-describe('execZProcess', () => {
+describe('execZ', () => {
   describe('abort', () => {
 
     let abort: jest.Mock<any, any>;
-    let proc: ZExecutedProcess;
+    let proc: ZExecution;
 
     beforeEach(() => {
       abort = jest.fn();
@@ -17,7 +17,7 @@ describe('execZProcess', () => {
     });
 
     it('is called immediately at most once', async () => {
-      proc = execZProcess(() => ({
+      proc = execZ(() => ({
         whenDone() {
           return Promise.resolve();
         },
@@ -35,7 +35,7 @@ describe('execZProcess', () => {
     it('is called at most once after initialization', async () => {
 
       let done!: () => void;
-      proc = execZProcess(() => ({
+      proc = execZ(() => ({
         whenDone() {
           return new Promise(resolve => done = resolve);
         },

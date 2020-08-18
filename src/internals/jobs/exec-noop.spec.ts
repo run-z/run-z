@@ -1,16 +1,16 @@
 import { noop } from '@proc7ts/primitives';
 import { immediateResolution } from '../../spec';
-import { execNoopZProcess } from './exec-noop-process';
+import { execZNoop } from './exec-noop';
 
-describe('execNoopZProcess', () => {
+describe('execZNoop', () => {
   describe('whenDone', () => {
     it('resolves immediately', async () => {
-      expect(await immediateResolution(execNoopZProcess().whenDone())).toEqual([undefined]);
+      expect(await immediateResolution(execZNoop().whenDone())).toEqual([undefined]);
     });
   });
   describe('abort', () => {
     it('is noop', () => {
-      expect(execNoopZProcess().abort).toBe(noop);
+      expect(execZNoop().abort).toBe(noop);
     });
   });
 });

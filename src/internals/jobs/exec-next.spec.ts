@@ -1,18 +1,18 @@
 import { asis } from '@proc7ts/primitives';
-import type { ZExecutedProcess } from '../../core/jobs/executed-process';
-import { execNextZProcess } from './exec-next-process';
-import { execZProcess } from './exec-process';
+import type { ZExecution } from '../../core';
+import { execZ } from './exec';
+import { execZNext } from './exec-next';
 
-describe('execNextZProcess', () => {
+describe('execZNext', () => {
 
-  let first: ZExecutedProcess;
+  let first: ZExecution;
   let done1: () => void;
   let reject1: (error: any) => void;
   let abort1: jest.Mock;
 
   beforeEach(() => {
     abort1 = jest.fn();
-    first = execZProcess(() => ({
+    first = execZ(() => ({
       whenDone: () => new Promise((resolve, reject) => {
         done1 = resolve;
         reject1 = reject;
@@ -26,7 +26,7 @@ describe('execNextZProcess', () => {
   let reject2: (error: any) => void;
   let abort2: jest.Mock;
 
-  let proc: ZExecutedProcess;
+  let proc: ZExecution;
   let success: boolean;
   let error: any;
 
@@ -38,7 +38,7 @@ describe('execNextZProcess', () => {
     reject2 = undefined!;
     abort2 = jest.fn();
     second = new Promise<void>(resolveSecond => {
-      proc = execNextZProcess(
+      proc = execZNext(
           first,
           () => ({
             whenDone() {
@@ -61,7 +61,7 @@ describe('execNextZProcess', () => {
   });
 
   describe('whenDone', () => {
-    it('succeeds when both processes succeed', async () => {
+    it('succeeds when both executions succeed', async () => {
       done1();
       await second;
       expect(success).toBe(false);
@@ -70,7 +70,7 @@ describe('execNextZProcess', () => {
       await proc.whenDone();
       expect(success).toBe(true);
     });
-    it('fails when first process failed', async () => {
+    it('fails when first execution failed', async () => {
 
       const reason = new Error('test');
 
@@ -79,7 +79,7 @@ describe('execNextZProcess', () => {
       expect(await proc.whenDone().catch(asis)).toBe(reason);
       expect(error).toBe(reason);
     });
-    it('fails when second process failed', async () => {
+    it('fails when second execution failed', async () => {
 
       const reason = new Error('test');
 
@@ -93,7 +93,7 @@ describe('execNextZProcess', () => {
   });
 
   describe('abort', () => {
-    it('aborts only first processes before the second constructed', async () => {
+    it('aborts only first execution before the second constructed', async () => {
       proc.abort();
       done1();
       await proc.whenDone();
@@ -102,7 +102,7 @@ describe('execNextZProcess', () => {
       expect(abort2).not.toHaveBeenCalled();
       expect(success).toBe(true);
     });
-    it('aborts only second process when it is constructed', async () => {
+    it('aborts only second execution when it is constructed', async () => {
       done1();
       await second;
       proc.abort();

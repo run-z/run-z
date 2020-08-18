@@ -1,20 +1,20 @@
 import { asis, noop } from '@proc7ts/primitives';
-import type { ZExecutedProcess } from '../../core';
-import { execAllZProcesses } from './exec-all-processes';
-import { execZProcess } from './exec-process';
+import type { ZExecution } from '../../core';
+import { execZ } from './exec';
+import { execZAll } from './exec-all';
 
-describe('execAllZProcesses', () => {
+describe('execZAll', () => {
 
   let done1: () => void;
   let reject1: (error: any) => void;
   let whenDone1: Promise<void>;
-  let proc1: ZExecutedProcess;
+  let proc1: ZExecution;
   let isDone1: boolean;
   let abort1: jest.Mock;
 
   let done2: () => void;
   let whenDone2: Promise<void>;
-  let proc2: ZExecutedProcess;
+  let proc2: ZExecution;
   let isDone2: boolean;
   let abort2: jest.Mock;
 
@@ -24,7 +24,7 @@ describe('execAllZProcesses', () => {
       reject1 = reject;
     });
     abort1 = jest.fn();
-    proc1 = execZProcess(() => ({
+    proc1 = execZ(() => ({
       whenDone() {
         return whenDone1;
       },
@@ -35,7 +35,7 @@ describe('execAllZProcesses', () => {
       done2 = resolve;
     });
     abort2 = jest.fn();
-    proc2 = execZProcess(() => ({
+    proc2 = execZ(() => ({
       whenDone() {
         return whenDone2;
       },
@@ -49,10 +49,10 @@ describe('execAllZProcesses', () => {
     proc2.whenDone().then(() => isDone2 = true, noop);
   });
 
-  let all: ZExecutedProcess;
+  let all: ZExecution;
 
   beforeEach(() => {
-    all = execAllZProcesses([proc1, proc2]);
+    all = execZAll([proc1, proc2]);
   });
 
   it('succeeds when all processes do', async () => {

@@ -6,11 +6,11 @@
 /**
  * Error raised when execution aborted for some predictable reason.
  *
- * E.g. when {@link ZExecutedProcess.abort} method is called.
+ * E.g. when {@link ZExecution.abort} method is called.
  *
- * Rejecting with this error as reason is not considered a process failure.
+ * Rejecting with this error as reason is not considered an execution failure.
  */
-export class ZAbortedExecutionError extends Error {
+export class AbortedZExecutionError extends Error {
 
   /**
    * Constructs aborted execution error.

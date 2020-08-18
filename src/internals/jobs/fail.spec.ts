@@ -1,20 +1,20 @@
 import { noop } from '@proc7ts/primitives';
 import { immediateResolution } from '../../spec';
-import { failZProcess } from './fail-process';
+import { failZ } from './fail';
 
-describe('failZProcess', () => {
+describe('failZ', () => {
   describe('whenDone', () => {
     it('rejects immediately', async () => {
 
       const reason = new Error('test');
 
-      expect(await immediateResolution(failZProcess(reason).whenDone())).toEqual([undefined, reason]);
+      expect(await immediateResolution(failZ(reason).whenDone())).toEqual([undefined, reason]);
     });
   });
   describe('abort', () => {
     it('is noop', async () => {
 
-      const process = failZProcess('test');
+      const process = failZ('test');
 
       expect(process.abort).toBe(noop);
 

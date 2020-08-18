@@ -2,9 +2,9 @@
  * @packageDocumentation
  * @module run-z
  */
-import { execNoopZProcess } from '../../internals';
+import { execZNoop } from '../../internals';
 import type { ZTaskParams } from '../plan';
-import type { ZExecutedProcess } from './executed-process';
+import type { ZExecution } from './execution';
 import type { ZJob } from './job';
 
 /**
@@ -21,9 +21,9 @@ export interface ZShell {
    * @param command  Command to execute.
    * @param params  Execution parameters.
    *
-   * @returns Executed command instance.
+   * @returns Command execution instance.
    */
-  execCommand(job: ZJob, command: string, params: ZTaskParams): ZExecutedProcess;
+  execCommand(job: ZJob, command: string, params: ZTaskParams): ZExecution;
 
   /**
    * Executes an {@link ZTaskSpec.Script NPM script}.
@@ -32,9 +32,9 @@ export interface ZShell {
    * @param name  The name of NPM script to execute.
    * @param params  Execution parameters.
    *
-   * @returns Executed script instance.
+   * @returns NPM script execution instance.
    */
-  execScript(job: ZJob, name: string, params: ZTaskParams): ZExecutedProcess;
+  execScript(job: ZJob, name: string, params: ZTaskParams): ZExecution;
 
 }
 
@@ -44,11 +44,11 @@ export interface ZShell {
 const noopZShell: ZShell = {
 
   execCommand() {
-    return execNoopZProcess();
+    return execZNoop();
   },
 
   execScript() {
-    return execNoopZProcess();
+    return execZNoop();
   },
 
 };

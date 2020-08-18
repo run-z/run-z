@@ -1,8 +1,8 @@
 import { mapIt } from '@proc7ts/a-iterable';
-import { execAllZProcesses, execNextZProcess } from '../../internals';
+import { execZAll, execZNext } from '../../internals';
 import type { ZCallRecord } from '../plan/call.impl';
 import type { ZTask, ZTaskSpec } from '../tasks';
-import type { ZExecutedProcess } from './executed-process';
+import type { ZExecution } from './execution';
 import type { ZJob } from './job';
 import type { ZShell } from './shell';
 
@@ -37,8 +37,8 @@ export class ZExecutor {
 export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> implements ZJob<TAction> {
 
   private _whenStarted!: Promise<void>;
-  private _whenFinished!: ZExecutedProcess;
-  private _whenDone!: ZExecutedProcess;
+  private _whenFinished!: ZExecution;
+  private _whenDone!: ZExecution;
 
   constructor(
       private readonly _executor: ZExecutor,
@@ -61,7 +61,7 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
     const whenReady = this._whenReady();
 
     this._whenStarted = new Promise<void>(resolve => {
-      this._whenFinished = execNextZProcess(
+      this._whenFinished = execZNext(
           whenReady,
           () => {
             resolve();
@@ -70,7 +70,7 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
       );
     });
 
-    this._whenDone = execAllZProcesses([whenPrerequisites, this._whenFinished]);
+    this._whenDone = execZAll([whenPrerequisites, this._whenFinished]);
 
     return this;
   }
@@ -79,16 +79,16 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
     this._whenDone.abort();
   }
 
-  private _execPrerequisites(): ZExecutedProcess {
-    return execAllZProcesses(mapIt(
+  private _execPrerequisites(): ZExecution {
+    return execZAll(mapIt(
         this.call.prerequisites(),
         pre => pre.exec(this.shell),
     ));
   }
 
-  private _whenReady(): ZExecutedProcess {
+  private _whenReady(): ZExecution {
 
-    const whenReady: ZExecutedProcess[] = [];
+    const whenReady: ZExecution[] = [];
 
     for (const job of this._executor.jobs.values()) {
       if (!job.started) {
@@ -113,7 +113,7 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
       });
     }
 
-    return execAllZProcesses(whenReady);
+    return execZAll(whenReady);
   }
 
   whenFinished(): Promise<void> {

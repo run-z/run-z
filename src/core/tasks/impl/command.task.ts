@@ -1,4 +1,4 @@
-import type { ZExecutedProcess, ZJob } from '../../jobs';
+import type { ZExecution, ZJob } from '../../jobs';
 import { ZTaskParams } from '../../plan';
 import type { ZTaskSpec } from '../task-spec';
 import { AbstractZTask } from './abstract.task';
@@ -19,7 +19,7 @@ export class CommandZTask extends AbstractZTask<ZTaskSpec.Command> {
     return this.spec.action.parallel;
   }
 
-  protected _execTask(job: ZJob<ZTaskSpec.Command>): ZExecutedProcess {
+  protected _execTask(job: ZJob<ZTaskSpec.Command>): ZExecution {
     return job.shell.execCommand(job, this.spec.action.command, job.call.params());
   }
 

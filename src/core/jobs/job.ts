@@ -9,8 +9,6 @@ import type { ZShell } from './shell';
 /**
  * Task execution job.
  *
- * Represents executed task.
- *
  * @typeparam TAction  Task action type.
  */
 export interface ZJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {

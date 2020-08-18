@@ -1,5 +1,5 @@
-import { execNoopZProcess, failZProcess } from '../../../internals';
-import type { ZExecutedProcess, ZJob } from '../../jobs';
+import { execZNoop, failZ } from '../../../internals';
+import type { ZExecution, ZJob } from '../../jobs';
 import type { ZTaskBuilder$ } from '../task-builder.impl';
 import { ZTaskSpec } from '../task-spec';
 import { UnknownZTaskError } from '../unknown-task-error';
@@ -14,11 +14,11 @@ export class UnknownZTask extends AbstractZTask<ZTaskSpec.Unknown> {
     super(builder, { ...spec, action: ZTaskSpec.unknownAction });
   }
 
-  protected _execTask(job: ZJob<ZTaskSpec.Unknown>): ZExecutedProcess {
+  protected _execTask(job: ZJob<ZTaskSpec.Unknown>): ZExecution {
     if (job.call.params().flag('if-present')) {
-      return execNoopZProcess();
+      return execZNoop();
     }
-    return failZProcess(new UnknownZTaskError(this.target.name, this.name));
+    return failZ(new UnknownZTaskError(this.target.name, this.name));
   }
 
 }

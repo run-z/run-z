@@ -1,20 +1,20 @@
 import { noop } from '@proc7ts/primitives';
 import { spawn } from 'child_process';
 import * as path from 'path';
-import type { ZExecutedProcess, ZJob, ZShell, ZTaskParams } from '../core';
-import { ZAbortedExecutionError } from '../core';
-import { execZProcess } from '../internals';
+import type { ZExecution, ZJob, ZShell, ZTaskParams } from '../core';
+import { AbortedZExecutionError } from '../core';
+import { execZ } from '../internals';
 
 /**
  * Operating system-specific task execution shell.
  */
 export class SystemZShell implements ZShell {
 
-  execCommand(job: ZJob, command: string, params: ZTaskParams): ZExecutedProcess {
+  execCommand(job: ZJob, command: string, params: ZTaskParams): ZExecution {
     return this._run(job, command, params.args);
   }
 
-  execScript(job: ZJob, name: string, params: ZTaskParams): ZExecutedProcess {
+  execScript(job: ZJob, name: string, params: ZTaskParams): ZExecution {
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
     const { npm_execpath: npmPath = 'npm' } = process.env;
@@ -32,8 +32,8 @@ export class SystemZShell implements ZShell {
     return this._run(job, command, args);
   }
 
-  _run(job: ZJob, command: string, args: readonly string[]): ZExecutedProcess {
-    return execZProcess(() => {
+  _run(job: ZJob, command: string, args: readonly string[]): ZExecution {
+    return execZ(() => {
 
       const childProcess = spawn(
           command,
@@ -58,9 +58,9 @@ export class SystemZShell implements ZShell {
         childProcess.on('error', reportError);
         childProcess.on('exit', (code, signal) => {
           if (signal) {
-            reportError(new ZAbortedExecutionError(signal));
+            reportError(new AbortedZExecutionError(signal));
           } else if (code) {
-            reportError(code > 127 ? new ZAbortedExecutionError(code) : code);
+            reportError(code > 127 ? new AbortedZExecutionError(code) : code);
           } else {
             abort = noop;
             resolve();

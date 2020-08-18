@@ -3,7 +3,7 @@
  * @module run-z
  */
 import type { ZTaskSpec } from '../tasks';
-import type { ZExecutedProcess } from './executed-process';
+import type { ZExecution } from './execution';
 import type { ZJob } from './job';
 
 /**
@@ -17,4 +17,4 @@ export type ZTaskExecutor<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> =
  *
  * @returns Task execution instance.
  */
-    (this: void, job: ZJob<TAction>) => ZExecutedProcess;
+    (this: void, job: ZJob<TAction>) => ZExecution;

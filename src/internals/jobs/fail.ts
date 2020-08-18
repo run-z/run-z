@@ -3,16 +3,16 @@
  * @module run-z/internals
  */
 import { noop } from '@proc7ts/primitives';
-import type { ZExecutedProcess } from '../../core';
+import type { ZExecution } from '../../core';
 
 /**
- * Builds failed executed process.
+ * Performs failed execution.
  *
  * @param reason  A reason of execution failure.
  *
- * @returns Failed process.
+ * @returns Failed execution instance.
  */
-export function failZProcess(reason: any): ZExecutedProcess {
+export function failZ(reason: any): ZExecution {
 
   const rejection = Promise.reject(reason);
 

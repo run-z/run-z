@@ -1,6 +1,6 @@
-import { execNoopZProcess } from '../../../internals';
+import { execZNoop } from '../../../internals';
 import { ZBatchDetails } from '../../batches';
-import type { ZExecutedProcess, ZJob } from '../../jobs';
+import type { ZExecution, ZJob } from '../../jobs';
 import type { ZPackage } from '../../packages';
 import type { ZCall, ZCallPlanner, ZPrePlanner } from '../../plan';
 import { ZCallDetails, ZTaskParams } from '../../plan';
@@ -48,7 +48,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
     return this.target.setup.planner.call(this, details);
   }
 
-  exec(job: ZJob<TAction>): ZExecutedProcess {
+  exec(job: ZJob<TAction>): ZExecution {
 
     const executor = this._builder.executor;
 
@@ -59,7 +59,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
 
     if (job.call.params().flag('skip')) {
       // Skip execution
-      return execNoopZProcess();
+      return execZNoop();
     }
 
     // Normal execution
@@ -187,6 +187,6 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
     return false;
   }
 
-  protected abstract _execTask(job: ZJob<TAction>): ZExecutedProcess;
+  protected abstract _execTask(job: ZJob<TAction>): ZExecution;
 
 }
