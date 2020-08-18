@@ -4,7 +4,7 @@
  */
 import type { ZTaskSpec } from '../tasks';
 import type { ZExecutedProcess } from './executed-process';
-import type { ZTaskExecution } from './task-execution';
+import type { ZJob } from './job';
 
 /**
  * Custom task executor signature.
@@ -13,8 +13,8 @@ import type { ZTaskExecution } from './task-execution';
  */
 export type ZTaskExecutor<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> =
 /**
- * @param execution  Task execution context.
+ * @param job  Task execution job.
  *
- * @returns Executed task instance.
+ * @returns Task execution instance.
  */
-    (this: void, execution: ZTaskExecution<TAction>) => ZExecutedProcess;
+    (this: void, job: ZJob<TAction>) => ZExecutedProcess;

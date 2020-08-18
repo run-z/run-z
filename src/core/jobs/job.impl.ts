@@ -42,7 +42,7 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
 
   constructor(
       private readonly _executor: ZExecutor,
-      private readonly _shell: ZShell,
+      readonly shell: ZShell,
       readonly call: ZCallRecord<TAction>,
   ) {
   }
@@ -65,10 +65,7 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
           whenReady,
           () => {
             resolve();
-            return this.call.task.exec({
-              shell: this._shell,
-              job: this,
-            });
+            return this.call.task.exec(this);
           },
       );
     });
@@ -85,7 +82,7 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
   private _execPrerequisites(): ZExecutedProcess {
     return execAllZProcesses(mapIt(
         this.call.prerequisites(),
-        pre => pre.exec(this._shell),
+        pre => pre.exec(this.shell),
     ));
   }
 

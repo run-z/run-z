@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module run-z
  */
-import type { ZExecutedProcess, ZTaskExecution } from '../jobs';
+import type { ZExecutedProcess, ZJob } from '../jobs';
 import type { ZPackage } from '../packages';
 import type { ZCall, ZCallDetails, ZPrePlanner } from '../plan';
 import type { ZTaskSpec } from './task-spec';
@@ -70,11 +70,11 @@ export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> exte
   /**
    * Performs task execution.
    *
-   * @param execution  Task execution context.
+   * @param job  This task execution job.
    *
-   * @returns Executed task instance.
+   * @returns Task execution instance.
    */
-  exec(execution: ZTaskExecution<TAction>): ZExecutedProcess;
+  exec(job: ZJob<TAction>): ZExecutedProcess;
 
 }
 

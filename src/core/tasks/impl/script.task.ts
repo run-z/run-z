@@ -1,4 +1,4 @@
-import type { ZExecutedProcess, ZTaskExecution } from '../../jobs';
+import type { ZExecutedProcess, ZJob } from '../../jobs';
 import type { ZTaskSpec } from '../task-spec';
 import { AbstractZTask } from './abstract.task';
 
@@ -7,8 +7,8 @@ import { AbstractZTask } from './abstract.task';
  */
 export class ScriptZTask extends AbstractZTask<ZTaskSpec.Script> {
 
-  protected _execTask({ shell, job }: ZTaskExecution<ZTaskSpec.Script>): ZExecutedProcess {
-    return shell.execScript(job, this.name, job.call.params());
+  protected _execTask(job: ZJob<ZTaskSpec.Script>): ZExecutedProcess {
+    return job.shell.execScript(job, this.name, job.call.params());
   }
 
 }

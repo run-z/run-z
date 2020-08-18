@@ -4,6 +4,7 @@
  */
 import type { ZCall } from '../plan';
 import type { ZTaskSpec } from '../tasks';
+import type { ZShell } from './shell';
 
 /**
  * Task execution job.
@@ -13,6 +14,11 @@ import type { ZTaskSpec } from '../tasks';
  * @typeparam TAction  Task action type.
  */
 export interface ZJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
+
+  /**
+   * Task execution shell this job is executed by.
+   */
+  readonly shell: ZShell;
 
   /**
    * A task call executed by this job.
