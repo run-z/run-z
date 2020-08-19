@@ -154,11 +154,14 @@ export class ZJobRun {
     await Promise.all(this._output.map(
         ([line, fd]) => this._runner.println(`${this._prefix()}${line}`, fd),
     ));
+    if (this._row == null) {
+      this._row = this._runner.register(this);
+    }
   }
 
   private async _render(): Promise<void> {
 
-    const firstReport = this._row == null || !this.reportsProgress;
+    const firstReport = this._row == null;
 
     if (!firstReport) {
       // Position at proper row and clean it
@@ -176,7 +179,7 @@ export class ZJobRun {
 
     if (firstReport) {
       await this._runner.println(`${prefix}${status}`);
-      this._row = this._runner.report(this) - 1;
+      this._row = this._runner.register(this) - 1;
     } else {
       // Move back to original position
       await this._write(`${prefix}${status}` + os.EOL + ansiEscapes.cursorRestorePosition);

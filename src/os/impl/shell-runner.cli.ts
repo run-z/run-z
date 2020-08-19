@@ -22,7 +22,7 @@ export class ZShellRunner {
     return new ZJobRun(this, job).run(command, args);
   }
 
-  report(run: ZJobRun): number {
+  register(run: ZJobRun): number {
 
     const task = run.job.call.task;
     const targetCols = stringWidth(task.target.name);
