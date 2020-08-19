@@ -16,7 +16,6 @@ export class SystemZShell implements ZShell {
 
   execScript(job: ZJob, name: string, params: ZTaskParams): ZExecution {
 
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     const { npm_execpath: npmPath = 'npm' } = process.env;
     const npmExt = path.extname(npmPath);
     const npmPathIsJs = /\.m?js/.test(npmExt);

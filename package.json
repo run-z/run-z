@@ -39,7 +39,7 @@
     "shell-quote": "^1.7.2"
   },
   "devDependencies": {
-    "@proc7ts/eslint-config": "^2.0.3",
+    "@proc7ts/eslint-config": "^2.0.4",
     "@proc7ts/rollup-helpers": "^1.0.0",
     "@rollup/plugin-commonjs": "^15.0.0",
     "@rollup/plugin-node-resolve": "^9.0.0",
