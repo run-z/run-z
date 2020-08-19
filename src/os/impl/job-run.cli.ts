@@ -190,9 +190,9 @@ export class ZJobRun {
       this._pending = this._runner.schedule(async () => {
         await this._printAll();
         this._output.length = 0;
+        this._outputNL = true;
       });
-    }
-    if (!this._pendingRender) {
+    } else if (!this._pendingRender) {
       this._pendingRender = true;
       this._pending = this._runner.schedule(() => {
         this._pendingRender = false;
