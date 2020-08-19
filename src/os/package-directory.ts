@@ -8,7 +8,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath, pathToFileURL, URL } from 'url';
 import { ZPackageJson, ZPackageLocation } from '../core';
-import { isRootURL, urlBaseName, urlOfFile } from './url.impl';
+import { isRootURL, urlBaseName, urlOfFile } from './impl';
 
 /**
  * A file system directory potentially containing NPM package.

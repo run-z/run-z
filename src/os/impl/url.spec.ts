@@ -1,5 +1,5 @@
 import { URL } from 'url';
-import { isRootURL, urlBaseName, urlOfFile } from './url.impl';
+import { isRootURL, urlBaseName, urlOfFile } from './url';
 
 describe('urlOfFile', () => {
   it('removes trailing slash', () => {

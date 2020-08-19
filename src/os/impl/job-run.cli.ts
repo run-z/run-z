@@ -1,0 +1,212 @@
+import { noop } from '@proc7ts/primitives';
+import * as ansiEscapes from 'ansi-escapes';
+import { ChildProcessByStdio, spawn } from 'child_process';
+import * as os from 'os';
+import type { Readable } from 'stream';
+import { promisify } from 'util';
+import { AbortedZExecutionError, ZExecution, ZJob } from '../../core';
+import { execZ } from '../../internals';
+import type { ZShellRunner } from './shell-runner.cli';
+import { stripControlChars } from './strip-control-chars';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const chalk = require('chalk');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const stringWidth = require('string-width');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const wrapAnsi = require('wrap-ansi');
+
+/**
+ * @internal
+ */
+export class ZJobRun {
+
+  private _process!: ChildProcessByStdio<null, Readable, Readable>;
+  private _pendingRender = false;
+  private _row?: number;
+  private readonly _output: [string, 0 | 1][] = [];
+  private _outputNL = true;
+
+  constructor(private readonly _runner: ZShellRunner, readonly job: ZJob) {
+  }
+
+  get reportsProgress(): boolean {
+    return chalk.supportsColor && chalk.supportsColor.level;
+  }
+
+  get prefix(): string {
+
+    const task = this.job.call.task;
+
+    return `${chalk.green(task.target.name)} ${chalk.greenBright(task.name)}`;
+  }
+
+  get status(): string {
+    for (let i = this._output.length - 1; i >= 0; --i) {
+
+      const line = stripControlChars(this._output[i][0]);
+
+      if (line.trim()) {
+        return line;
+      }
+    }
+
+    return 'Running...';
+  }
+
+  run(command: string, args: readonly string[]): ZExecution {
+    return execZ(() => {
+      this._process = spawn(
+          command,
+          args,
+          {
+            cwd: this.job.call.task.target.location.path,
+            env: {
+              ...process.env,
+              FORCE_COLOR: chalk.supportsColor ? String(chalk.supportsColor.level) : '0',
+            },
+            shell: true,
+            stdio: ['ignore', 'pipe', 'pipe'],
+            windowsHide: true,
+          },
+      );
+
+      let abort = (): void => {
+        this._process.kill();
+      };
+      const whenDone = new Promise<void>((resolve, reject) => {
+
+        const reportError = (error: any): void => {
+          abort = noop;
+          this._reportError(error).catch(noop);
+          reject(error);
+        };
+
+        this._process.on('error', reportError);
+        this._process.on('exit', (code, signal) => {
+          if (signal) {
+            reportError(new AbortedZExecutionError(signal));
+          } else if (code) {
+            reportError(code > 127 ? new AbortedZExecutionError(code) : code);
+          } else {
+            abort = noop;
+            resolve();
+          }
+        });
+        this._process.stdout.on('data', chunk => this._report(chunk));
+        this._process.stderr.on('data', chunk => this._report(chunk, 1));
+      });
+
+      return {
+        whenDone() {
+          return whenDone;
+        },
+        abort() {
+          abort();
+        },
+      };
+    });
+  }
+
+  async render(): Promise<void> {
+    if (this.reportsProgress) {
+      await this._render();
+    }
+  }
+
+  private async _render(): Promise<void> {
+
+    const firstReport = this._row == null || !this.reportsProgress;
+
+    if (firstReport) {
+      this._row = this._runner.numRows;
+      await this._runner.report(this);
+    } else {
+      // Position at proper row and clean it
+      await this._write(
+          ansiEscapes.cursorSavePosition
+          + ansiEscapes.cursorUp(this._runner.numRows - this._row!)
+          + ansiEscapes.cursorLeft
+          + ansiEscapes.eraseEndLine,
+      );
+    }
+
+    const prefix = this._renderedPrefix();
+    const prefixCols = stringWidth(prefix);
+    const status = wrapAnsi(this.status, process.stdout.columns - prefixCols, { hard: true, trim: false });
+
+    if (firstReport) {
+      await this._runner.println(`${prefix}${status}`);
+    } else {
+      // Move back to original position
+      await this._write(`${prefix}${status}` + os.EOL + ansiEscapes.cursorRestorePosition);
+    }
+  }
+
+  private async _reportError(error: any): Promise<void> {
+    this._report(error.message || String(error), 1);
+
+    if (this.reportsProgress) {
+      await Promise.all(this._output.map(
+          ([line, fd]) => this._runner.println(
+              `${this._renderedPrefix()}${line}`,
+              fd ? process.stderr : process.stdout,
+          ),
+      ));
+    }
+  }
+
+  private _report(chunk: string | Buffer, fd: 0 | 1 = 0): void {
+
+    const lines = String(chunk).split('\n');
+
+    for (let i = 0; i < lines.length; ++i) {
+
+      const line = lines[i];
+      const append = !i && !this._outputNL;
+
+      if (i === lines.length - 1) {
+        // Last line
+        if (!line) {
+          this._outputNL = true;
+          break;
+        } else {
+          this._outputNL = false;
+        }
+      }
+      if (append) {
+        this._output[this._output.length - 1][0] += line;
+      } else {
+        this._output.push([line, fd]);
+      }
+    }
+
+    this._scheduleRender();
+  }
+
+  private _scheduleRender(): void {
+    if (!this._pendingRender) {
+      this._pendingRender = true;
+      this._runner.schedule(() => {
+        this._pendingRender = false;
+        return this._render();
+      });
+    }
+  }
+
+  private _renderedPrefix(): string {
+
+    let prefix = this.prefix;
+    const prefixCols: number = stringWidth(prefix);
+    const gapCols = Math.max(this._runner.prefixCols - prefixCols, 0);
+
+    prefix += ' '.repeat(gapCols);
+
+    return `${chalk.gray('[')}${prefix}${chalk.gray(']')} `;
+  }
+
+  private _write(text: string): Promise<void> {
+    return promisify(process.stdout.write.bind(process.stdout))(text);
+  }
+
+}

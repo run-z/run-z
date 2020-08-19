@@ -4,6 +4,7 @@
  */
 import { ZOptionError } from '@run-z/optionz';
 import { StandardZSetup } from '../builtins';
+import { AbortedZExecutionError } from '../core/jobs';
 import { UnknownZTaskError } from '../core/tasks';
 import { SystemZShell, ZPackageDirectory } from '../os';
 import { formatZOptionError } from './impl';
@@ -39,6 +40,8 @@ function logZError(error: any): Promise<void> {
     }
   } else if (error instanceof UnknownZTaskError) {
     console.error(error.message);
+  } else if (error instanceof AbortedZExecutionError) {
+    console.error('Aborted with', error.abortReason);
   } else {
     console.error('Unexpected error', error);
   }

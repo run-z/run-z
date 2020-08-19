@@ -18,7 +18,8 @@
     ],
     "types": [
       "jest",
-      "node"
+      "node",
+      "wrap-ansi"
     ],
     "outDir": "target/js",
     "sourceMap": true,
