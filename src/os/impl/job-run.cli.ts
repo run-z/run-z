@@ -12,9 +12,44 @@ import { stripControlChars } from './strip-control-chars';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const chalk = require('chalk');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
+const cliSpinners = require('cli-spinners');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const logSymbols = require('log-symbols');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const stringWidth = require('string-width');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const wrapAnsi = require('wrap-ansi');
+
+/**
+ * @internal
+ */
+const zJobSpinner = cliSpinners.dots;
+
+/**
+ * @internal
+ */
+const zJobRunStatus = {
+
+  progress(): string {
+
+    const { interval, frames } = zJobSpinner;
+    const now = Date.now();
+    const period = interval * frames.length;
+    const sinceStart = now % period;
+    const stage = Math.floor(sinceStart / interval);
+
+    return frames[stage];
+  },
+
+  ok(): string {
+    return logSymbols.success;
+  },
+
+  error(): string {
+    return logSymbols.error;
+  },
+
+};
 
 /**
  * @internal
@@ -26,6 +61,7 @@ export class ZJobRun {
   private _row?: number;
   private readonly _output: [string, 0 | 1][] = [];
   private _outputNL = true;
+  private _status: keyof typeof zJobRunStatus = 'progress';
 
   constructor(private readonly _runner: ZShellRunner, readonly job: ZJob) {
   }
@@ -71,7 +107,6 @@ export class ZJobRun {
 
         const reportError = (error: any): void => {
           abort = noop;
-          this._reportError(error).catch(noop);
           reject(error);
         };
 
@@ -88,7 +123,21 @@ export class ZJobRun {
         });
         this._process.stdout.on('data', chunk => this._report(chunk));
         this._process.stderr.on('data', chunk => this._report(chunk, 1));
-      });
+      }).then(
+          () => this._reportSuccess(),
+      ).catch(
+          error => {
+            this._reportError(error);
+            return Promise.reject(error);
+          },
+      );
+
+      if (this.reportsProgress) {
+
+        const interval = setInterval(() => this._scheduleRender(), zJobSpinner.interval);
+
+        whenDone.finally(() => clearInterval(interval));
+      }
 
       return {
         whenDone() {
@@ -173,7 +222,7 @@ export class ZJobRun {
       );
     }
 
-    const prefix = this._prefix();
+    const prefix = zJobRunStatus[this._status]() + ' ' + this._prefix();
     const prefixCols = stringWidth(prefix);
     const status = wrapAnsi(this.status, process.stdout.columns - prefixCols, { hard: true, trim: false });
 
@@ -186,10 +235,16 @@ export class ZJobRun {
     }
   }
 
-  private async _reportError(error: any): Promise<void> {
+  private _reportSuccess(): void {
+    this._status = 'ok';
+    this._scheduleRender();
+  }
+
+  private _reportError(error: any): void {
+    this._status = 'error';
     this._report(error.message || String(error), 1);
     if (this.reportsProgress) {
-      await this._printAll();
+      this._runner.schedule(() => this._printAll());
     }
   }
 
