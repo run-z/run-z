@@ -12,32 +12,53 @@ const stringWidth = require('string-width');
  */
 export class ZShellRunner {
 
-  prefixCols = 0;
+  targetCols = 0;
+  taskCols = 0;
   numRows = 0;
   private readonly _runs: ZJobRun[] = [];
-  private readonly _schedule: (() => Promise<void>)[] = [];
+  private readonly _schedule: (() => Promise<unknown>)[] = [];
 
   run(job: ZJob, command: string, args: readonly string[]): ZExecution {
     return new ZJobRun(this, job).run(command, args);
   }
 
-  async report(run: ZJobRun): Promise<void> {
+  report(run: ZJobRun): number {
 
-    const prefixCols = stringWidth(run.prefix);
+    const task = run.job.call.task;
+    const targetCols = stringWidth(task.target.name);
+    const taskCols = stringWidth(task.name);
+    let renderAll = false;
 
-    if (this.prefixCols < prefixCols) {
-      this.prefixCols = prefixCols;
-      await this._renderAll();
-      this._runs.push(run);
+    if (this.targetCols < targetCols) {
+      this.targetCols = targetCols;
+      renderAll = true;
     }
+    if (this.taskCols < taskCols) {
+      this.taskCols = taskCols;
+      renderAll = true;
+    }
+
+    if (renderAll) {
+      this._renderAll();
+    }
+
+    const result = this.numRows;
+
+    this._runs.push(run);
+
+    return result;
   }
 
-  async println(chunk = '', out = process.stdout): Promise<void> {
+  async println(chunk = '', fd: 0 | 1 = 0): Promise<void> {
+
+    const out = fd ? process.stderr : process.stdout;
+
     await promisify(out.write.bind(out))(chunk + os.EOL);
+
     ++this.numRows;
   }
 
-  schedule(action: () => Promise<void>): void {
+  schedule(action: () => Promise<unknown>): void {
 
     const doSchedule = !this._schedule.length;
 
@@ -62,10 +83,12 @@ export class ZShellRunner {
     }
   }
 
-  private async _renderAll(): Promise<void> {
-    for (const run of this._runs) {
-      await run.render();
-    }
+  private _renderAll(): void {
+    this.schedule(async () => {
+      for (const run of this._runs) {
+        await run.render();
+      }
+    });
   }
 
 }

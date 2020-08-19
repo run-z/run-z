@@ -34,13 +34,6 @@ export class ZJobRun {
     return chalk.supportsColor && chalk.supportsColor.level;
   }
 
-  get prefix(): string {
-
-    const task = this.job.call.task;
-
-    return `${chalk.green(task.target.name)} ${chalk.greenBright(task.name)}`;
-  }
-
   get status(): string {
     for (let i = this._output.length - 1; i >= 0; --i) {
 
@@ -114,48 +107,6 @@ export class ZJobRun {
     }
   }
 
-  private async _render(): Promise<void> {
-
-    const firstReport = this._row == null || !this.reportsProgress;
-
-    if (firstReport) {
-      this._row = this._runner.numRows;
-      await this._runner.report(this);
-    } else {
-      // Position at proper row and clean it
-      await this._write(
-          ansiEscapes.cursorSavePosition
-          + ansiEscapes.cursorUp(this._runner.numRows - this._row!)
-          + ansiEscapes.cursorLeft
-          + ansiEscapes.eraseEndLine,
-      );
-    }
-
-    const prefix = this._renderedPrefix();
-    const prefixCols = stringWidth(prefix);
-    const status = wrapAnsi(this.status, process.stdout.columns - prefixCols, { hard: true, trim: false });
-
-    if (firstReport) {
-      await this._runner.println(`${prefix}${status}`);
-    } else {
-      // Move back to original position
-      await this._write(`${prefix}${status}` + os.EOL + ansiEscapes.cursorRestorePosition);
-    }
-  }
-
-  private async _reportError(error: any): Promise<void> {
-    this._report(error.message || String(error), 1);
-
-    if (this.reportsProgress) {
-      await Promise.all(this._output.map(
-          ([line, fd]) => this._runner.println(
-              `${this._renderedPrefix()}${line}`,
-              fd ? process.stderr : process.stdout,
-          ),
-      ));
-    }
-  }
-
   private _report(chunk: string | Buffer, fd: 0 | 1 = 0): void {
 
     const lines = String(chunk).split('\n');
@@ -185,7 +136,12 @@ export class ZJobRun {
   }
 
   private _scheduleRender(): void {
-    if (!this._pendingRender) {
+    if (!this.reportsProgress) {
+      this._runner.schedule(async () => {
+        await this._printAll();
+        this._output.length = 0;
+      });
+    } else if (!this._pendingRender) {
       this._pendingRender = true;
       this._runner.schedule(() => {
         this._pendingRender = false;
@@ -194,15 +150,55 @@ export class ZJobRun {
     }
   }
 
-  private _renderedPrefix(): string {
+  private async _printAll(): Promise<void> {
+    await Promise.all(this._output.map(
+        ([line, fd]) => this._runner.println(`${this._prefix()}${line}`, fd),
+    ));
+  }
 
-    let prefix = this.prefix;
-    const prefixCols: number = stringWidth(prefix);
-    const gapCols = Math.max(this._runner.prefixCols - prefixCols, 0);
+  private async _render(): Promise<void> {
 
-    prefix += ' '.repeat(gapCols);
+    const firstReport = this._row == null || !this.reportsProgress;
 
-    return `${chalk.gray('[')}${prefix}${chalk.gray(']')} `;
+    if (!firstReport) {
+      // Position at proper row and clean it
+      await this._write(
+          ansiEscapes.cursorSavePosition
+          + ansiEscapes.cursorUp(this._runner.numRows - this._row!)
+          + ansiEscapes.cursorLeft
+          + ansiEscapes.eraseEndLine,
+      );
+    }
+
+    const prefix = this._prefix();
+    const prefixCols = stringWidth(prefix);
+    const status = wrapAnsi(this.status, process.stdout.columns - prefixCols, { hard: true, trim: false });
+
+    if (firstReport) {
+      await this._runner.println(`${prefix}${status}`);
+      this._row = this._runner.report(this) - 1;
+    } else {
+      // Move back to original position
+      await this._write(`${prefix}${status}` + os.EOL + ansiEscapes.cursorRestorePosition);
+    }
+  }
+
+  private async _reportError(error: any): Promise<void> {
+    this._report(error.message || String(error), 1);
+    if (this.reportsProgress) {
+      await this._printAll();
+    }
+  }
+
+  private _prefix(): string {
+
+    const task = this.job.call.task;
+    const targetName = chalk.green(task.target.name);
+    const gaps1 = ' '.repeat(Math.max(this._runner.targetCols - stringWidth(targetName), 0));
+    const taskName = chalk.greenBright(task.name);
+    const gaps2 = ' '.repeat(Math.max(this._runner.taskCols - stringWidth(taskName), 0));
+
+    return `${chalk.gray('[')}${targetName}${gaps1} ${taskName}${gaps2}${chalk.gray(']')} `;
   }
 
   private _write(text: string): Promise<void> {
