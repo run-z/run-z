@@ -211,27 +211,28 @@ export class ZJobRun {
   private async _render(): Promise<void> {
 
     const firstReport = this._row == null;
+    let out = '';
 
     if (!firstReport) {
       // Position at proper row and clean it
-      await this._write(
-          ansiEscapes.cursorSavePosition
+      out += ansiEscapes.cursorSavePosition
           + ansiEscapes.cursorUp(this._runner.numRows - this._row!)
           + ansiEscapes.cursorLeft
-          + ansiEscapes.eraseEndLine,
-      );
+          + ansiEscapes.eraseEndLine;
     }
 
     const prefix = zJobRunStatus[this._status]() + ' ' + this._prefix();
     const prefixCols = stringWidth(prefix);
     const status = wrapAnsi(this.status, process.stdout.columns - prefixCols, { hard: true, trim: false });
 
+    out += `${prefix}${status}`;
+
     if (firstReport) {
-      await this._runner.println(`${prefix}${status}`);
+      await this._runner.println(out);
       this._row = this._runner.register(this) - 1;
     } else {
       // Move back to original position
-      await this._write(`${prefix}${status}` + os.EOL + ansiEscapes.cursorRestorePosition);
+      await this._write(out + os.EOL + ansiEscapes.cursorRestorePosition);
     }
   }
 
