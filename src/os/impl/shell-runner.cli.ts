@@ -17,6 +17,7 @@ export class ZShellRunner {
   numRows = 0;
   private readonly _runs: ZJobRun[] = [];
   private readonly _schedule: (() => Promise<unknown>)[] = [];
+  private _running?: Promise<void>;
 
   run(job: ZJob, command: string, args: readonly string[]): ZExecution {
     return new ZJobRun(this, job).run(command, args);
@@ -39,7 +40,7 @@ export class ZShellRunner {
     }
 
     if (renderAll) {
-      this._renderAll();
+      this._renderAll().catch(noop);
     }
 
     const result = this.numRows;
@@ -58,13 +59,11 @@ export class ZShellRunner {
     ++this.numRows;
   }
 
-  schedule(action: () => Promise<unknown>): void {
-
-    const doSchedule = !this._schedule.length;
+  schedule(action: () => Promise<unknown>): Promise<void> {
 
     this._schedule.push(action);
 
-    if (doSchedule) {
+    if (!this._running) {
 
       const execScheduled = async (): Promise<void> => {
         for (;;) {
@@ -77,14 +76,18 @@ export class ZShellRunner {
 
           await scheduled().catch(noop);
         }
+
+        this._running = undefined;
       };
 
-      execScheduled().catch(noop);
+      this._running = execScheduled();
     }
+
+    return this._running;
   }
 
-  private _renderAll(): void {
-    this.schedule(async () => {
+  private _renderAll(): Promise<void> {
+    return this.schedule(async () => {
       for (const run of this._runs) {
         await run.render();
       }

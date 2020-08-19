@@ -62,6 +62,7 @@ export class ZJobRun {
   private readonly _output: [string, 0 | 1][] = [];
   private _outputNL = true;
   private _status: keyof typeof zJobRunStatus = 'progress';
+  private _pending: Promise<void> = Promise.resolve();
 
   constructor(private readonly _runner: ZShellRunner, readonly job: ZJob) {
   }
@@ -103,7 +104,7 @@ export class ZJobRun {
       let abort = (): void => {
         this._process.kill();
       };
-      const whenDone = new Promise<void>((resolve, reject) => {
+      let whenDone = new Promise<void>((resolve, reject) => {
 
         const reportError = (error: any): void => {
           abort = noop;
@@ -126,8 +127,8 @@ export class ZJobRun {
       }).then(
           () => this._reportSuccess(),
       ).catch(
-          error => {
-            this._reportError(error);
+          async error => {
+            await this._reportError(error);
             return Promise.reject(error);
           },
       );
@@ -136,7 +137,7 @@ export class ZJobRun {
 
         const interval = setInterval(() => this._scheduleRender(), zJobSpinner.interval);
 
-        whenDone.finally(() => clearInterval(interval));
+        whenDone = whenDone.finally(() => clearInterval(interval));
       }
 
       return {
@@ -186,26 +187,28 @@ export class ZJobRun {
 
   private _scheduleRender(): void {
     if (!this.reportsProgress) {
-      this._runner.schedule(async () => {
+      this._pending = this._runner.schedule(async () => {
         await this._printAll();
         this._output.length = 0;
       });
-    } else if (!this._pendingRender) {
+    }
+    if (!this._pendingRender) {
       this._pendingRender = true;
-      this._runner.schedule(() => {
+      this._pending = this._runner.schedule(() => {
         this._pendingRender = false;
         return this._render();
       });
     }
   }
 
-  private async _printAll(): Promise<void> {
-    await Promise.all(this._output.map(
+  private _printAll(): Promise<void> {
+    this._pending = Promise.all(this._output.map(
         ([line, fd]) => this._runner.println(`${this._prefix()}${line}`, fd),
-    ));
+    )).then(noop);
     if (this._row == null) {
       this._row = this._runner.register(this);
     }
+    return this._pending;
   }
 
   private async _render(): Promise<void> {
@@ -236,17 +239,19 @@ export class ZJobRun {
     }
   }
 
-  private _reportSuccess(): void {
+  private _reportSuccess(): Promise<void> {
     this._status = 'ok';
     this._scheduleRender();
+    return this._pending;
   }
 
-  private _reportError(error: any): void {
+  private _reportError(error: any): Promise<void> {
     this._status = 'error';
     this._report(error.message || String(error), 1);
     if (this.reportsProgress) {
-      this._runner.schedule(() => this._printAll());
+      this._pending = this._runner.schedule(() => this._printAll());
     }
+    return this._pending;
   }
 
   private _prefix(): string {
