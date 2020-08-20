@@ -26,7 +26,7 @@ describe('writerFor', () => {
   it('writes to output', async () => {
     write.mockImplementation((_chunk, cb: (err?: any) => void) => {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-     cb();
+      cb();
       return true;
     });
 
@@ -39,25 +39,34 @@ describe('writerFor', () => {
     const error = new Error('test');
 
     write.mockImplementation((_chunk, cb: (err?: any) => void) => {
-      cb(error);
+      Promise.reject(error).catch(cb);
       return true;
     });
 
     expect(await writer('test').catch(asis)).toBe(error);
   });
   it('awaits for drain', async () => {
+
+    let toDrain = true;
+
     write.mockImplementation((_chunk, cb: (err?: any) => void) => {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       cb();
-      return false;
+      if (toDrain) {
+        toDrain = false;
+        return false;
+      }
+      return true;
     });
 
-    const promise = writer('test');
+    await writer('test');
 
-    await Promise.resolve(); // Await for
+    const promise = writer('after drain');
+    await Promise.resolve(); // Await for write
+
     emitter.emit('drain');
     await promise;
 
-    expect(write).toHaveBeenCalledWith('test', expect.any(Function));
+    expect(write).toHaveBeenCalledWith('after drain', expect.any(Function));
   });
 });

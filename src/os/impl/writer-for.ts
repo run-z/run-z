@@ -10,22 +10,18 @@ export function writerFor(out: Writable): (data: string | Buffer) => Promise<voi
   return data => ready.then(
       () => new Promise<void>((resolve, reject) => {
 
-        let ok = false;
-
-        ok = out.write(
+        const ok = out.write(
             data,
             err => {
               if (err != null) {
                 reject(err);
-              } else if (ok) {
+              } else {
                 resolve();
               }
             },
         );
 
-        if (ok) {
-          resolve();
-        } else {
+        if (!ok) {
           ready = new Promise<void>(makeReady => {
             out.once(
                 'drain',
@@ -34,7 +30,7 @@ export function writerFor(out: Writable): (data: string | Buffer) => Promise<voi
                   makeReady();
                 },
             );
-          }).then(resolve);
+          });
         }
       }),
   );
