@@ -1,13 +1,13 @@
+import { mapIt } from '@proc7ts/a-iterable';
 import { noop } from '@proc7ts/primitives';
 import * as ansiEscapes from 'ansi-escapes';
-import { ChildProcessByStdio, spawn } from 'child_process';
+import { spawn } from 'child_process';
 import * as os from 'os';
-import type { Readable } from 'stream';
 import { promisify } from 'util';
 import { AbortedZExecutionError, ZExecution, ZJob } from '../../core';
 import { execZ } from '../../internals';
+import { ZJobOutput } from './job-output';
 import type { ZShellRunner } from './shell-runner.cli';
-import { stripControlChars } from './strip-control-chars';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const chalk = require('chalk');
@@ -56,11 +56,9 @@ const zJobRunStatus = {
  */
 export class ZJobRun {
 
-  private _process!: ChildProcessByStdio<null, Readable, Readable>;
   private _pendingRender = false;
   private _row?: number;
-  private readonly _output: [string, 0 | 1][] = [];
-  private _outputNL = true;
+  private readonly _output = new ZJobOutput();
   private _status: keyof typeof zJobRunStatus = 'progress';
   private _pending: Promise<void> = Promise.resolve();
 
@@ -71,22 +69,10 @@ export class ZJobRun {
     return chalk.supportsColor && chalk.supportsColor.level;
   }
 
-  get status(): string {
-    for (let i = this._output.length - 1; i >= 0; --i) {
-
-      const line = stripControlChars(this._output[i][0]);
-
-      if (line.trim()) {
-        return line;
-      }
-    }
-
-    return 'Running...';
-  }
-
   run(command: string, args: readonly string[]): ZExecution {
     return execZ(() => {
-      this._process = spawn(
+
+      const childProcess = spawn(
           command,
           args,
           {
@@ -102,7 +88,7 @@ export class ZJobRun {
       );
 
       let abort = (): void => {
-        this._process.kill();
+        childProcess.kill();
       };
       let whenDone = new Promise<void>((resolve, reject) => {
 
@@ -111,8 +97,8 @@ export class ZJobRun {
           reject(error);
         };
 
-        this._process.on('error', reportError);
-        this._process.on('exit', (code, signal) => {
+        childProcess.on('error', reportError);
+        childProcess.on('exit', (code, signal) => {
           if (signal) {
             reportError(new AbortedZExecutionError(signal));
           } else if (code) {
@@ -122,8 +108,8 @@ export class ZJobRun {
             resolve();
           }
         });
-        this._process.stdout.on('data', chunk => this._report(chunk));
-        this._process.stderr.on('data', chunk => this._report(chunk, 1));
+        childProcess.stdout.on('data', chunk => this._report(chunk));
+        childProcess.stderr.on('data', chunk => this._report(chunk, 1));
       }).then(
           () => this._reportSuccess(),
       ).catch(
@@ -158,30 +144,7 @@ export class ZJobRun {
   }
 
   private _report(chunk: string | Buffer, fd: 0 | 1 = 0): void {
-
-    const lines = String(chunk).split('\n');
-
-    for (let i = 0; i < lines.length; ++i) {
-
-      const line = lines[i];
-      const append = !i && !this._outputNL;
-
-      if (i === lines.length - 1) {
-        // Last line
-        if (!line) {
-          this._outputNL = true;
-          break;
-        } else {
-          this._outputNL = false;
-        }
-      }
-      if (append) {
-        this._output[this._output.length - 1][0] += line;
-      } else {
-        this._output.push([line, fd]);
-      }
-    }
-
+    this._output.add(chunk, fd);
     this._scheduleRender();
   }
 
@@ -189,8 +152,7 @@ export class ZJobRun {
     if (!this.reportsProgress) {
       this._pending = this._runner.schedule.schedule(async () => {
         await this._printAll();
-        this._output.length = 0;
-        this._outputNL = true;
+        this._output.clear();
       });
     } else if (!this._pendingRender) {
       this._pendingRender = true;
@@ -202,9 +164,10 @@ export class ZJobRun {
   }
 
   private _printAll(): Promise<void> {
-    this._pending = Promise.all(this._output.map(
+    this._pending = Promise.all(mapIt(
+        this._output.lines(),
         ([line, fd]) => this._runner.println(`${this._prefix()}${line}`, fd),
-    )).then(noop);
+    )).then();
     if (this._row == null) {
       this._row = this._runner.register(this);
     }
@@ -226,7 +189,7 @@ export class ZJobRun {
 
     const prefix = zJobRunStatus[this._status]() + ' ' + this._prefix();
     const prefixCols = stringWidth(prefix);
-    const status = wrapAnsi(this.status, process.stdout.columns - prefixCols, { hard: true, trim: false });
+    const status = wrapAnsi(this._output.status, process.stdout.columns - prefixCols, { hard: true, trim: false });
 
     out += `${prefix}${status}`;
 
