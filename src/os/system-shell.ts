@@ -110,7 +110,7 @@ export class SystemZShell implements ZShell {
         };
 
         childProcess.on('error', reportError);
-        childProcess.on('close', (code, signal) => {
+        childProcess.on('exit', (code, signal) => {
           if (signal) {
             reportError(new AbortedZExecutionError(signal));
           } else if (code) {
