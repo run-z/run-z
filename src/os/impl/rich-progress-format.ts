@@ -105,9 +105,8 @@ class RichZJobProgress extends ZJobProgress {
     this._interval = setInterval(() => this._scheduleRender(), zJobSpinner.interval);
   }
 
-  stop(): Promise<void> {
+  stop(): void {
     clearInterval(this._interval);
-    return super.stop();
   }
 
   async render(): Promise<void> {

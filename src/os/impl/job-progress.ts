@@ -30,8 +30,8 @@ export abstract class ZJobProgress {
     /* no-op */
   }
 
-  stop(): Promise<void> {
-    return this._pending;
+  stop(): void {
+    /* no-op */
   }
 
   report(chunk: string | Buffer, fd: 0 | 1 = 0): void {
