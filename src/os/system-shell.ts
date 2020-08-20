@@ -4,10 +4,7 @@ import * as path from 'path';
 import type { ZExecution, ZJob, ZShell, ZTaskParams } from '../core';
 import { AbortedZExecutionError } from '../core';
 import { execZ } from '../internals';
-import { ZProgressFormat } from './impl';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const chalk = require('chalk');
+import { colorSupportLevel, ZProgressFormat } from './impl';
 
 /**
  * Operating system-specific task execution shell.
@@ -50,7 +47,7 @@ export class SystemZShell implements ZShell {
             cwd: job.call.task.target.location.path,
             env: {
               ...process.env,
-              FORCE_COLOR: chalk.supportsColor ? String(chalk.supportsColor.level) : '0',
+              FORCE_COLOR: String(colorSupportLevel()),
             },
             shell: true,
             stdio: ['ignore', 'pipe', 'pipe'],

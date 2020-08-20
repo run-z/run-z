@@ -1,6 +1,13 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+/* eslint-disable @typescript-eslint/no-var-requires */
+
+/**
+ * @internal
+ */
 const stripAnsi = require('strip-ansi');
 
+/**
+ * @internal
+ */
 // eslint-disable-next-line no-control-regex
 const controlChars = /[\u0000-\u001f]+/g;
 

@@ -1,11 +1,17 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { noop } from '@proc7ts/primitives';
 import * as os from 'os';
 import { promisify } from 'util';
 import type { ZJob } from '../../core';
-import { ZJobProgress } from './job-progress.cli';
+import { colorSupportLevel } from './color-support-level';
+import type { ZJobProgress } from './job-progress.cli';
+import { ColorZJobProgress } from './job-progress.color';
+import { SimpleZJobProgress } from './job-progress.simple';
 import { ZRenderSchedule } from './render-schedule';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+/**
+ * @internal
+ */
 const stringWidth = require('string-width');
 
 /**
@@ -20,7 +26,7 @@ export class ZProgressFormat {
   private readonly _runs: ZJobProgress[] = [];
 
   jobProgress(job: ZJob): ZJobProgress {
-    return new ZJobProgress(this, job);
+    return colorSupportLevel() ? new ColorZJobProgress(this, job) : new SimpleZJobProgress(this, job);
   }
 
   register(run: ZJobProgress): number {

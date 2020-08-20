@@ -86,9 +86,9 @@
     "rebuild": "run-s clean build",
     "test": "jest",
     "test:all": "run-z test:command/--command2 test:script/--script2 --all3",
-    "test:command": "run-z --then node ./src/spec/bin/ok.js --command1",
-    "test:fail": "run-z --then node ./src/spec/bin/fail.js",
-    "test:kill": "run-z --then node ./src/spec/bin/kill.js",
+    "test:command": "run-z --color --then node ./src/spec/bin/ok.js --command1",
+    "test:fail": "run-z --color --then node ./src/spec/bin/fail.js",
+    "test:kill": "run-z --no-colors --then node ./src/spec/bin/kill.js",
     "test:kill-with-code": "run-z --then node ./src/spec/bin/kill-with-code.js",
     "test:script": "node ./src/spec/bin/ok.js --script1",
     "test:stale": "node ./src/spec/bin/stale.js"
