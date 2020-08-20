@@ -32,6 +32,8 @@ export function writerFor(out: Writable): (data: string | Buffer) => Promise<voi
             );
           });
         }
+
+        resolve();
       }),
   );
 }

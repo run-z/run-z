@@ -39,7 +39,7 @@ describe('writerFor', () => {
     const error = new Error('test');
 
     write.mockImplementation((_chunk, cb: (err?: any) => void) => {
-      Promise.reject(error).catch(cb);
+      cb(error);
       return true;
     });
 
