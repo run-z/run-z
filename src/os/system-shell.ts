@@ -32,7 +32,8 @@ export class SystemZShell implements ZShell {
           option.recognize();
         },
         meta: {
-          help: 'Reports execution progress',
+          group: '!builtin:progress',
+          help: 'Report execution progress',
         },
       },
       '--progress=*': {
