@@ -1,8 +1,8 @@
 import { noop } from '@proc7ts/primitives';
 import * as os from 'os';
 import { promisify } from 'util';
-import type { ZExecution, ZJob } from '../../core';
-import { ZJobRun } from './job-run.cli';
+import type { ZJob } from '../../core';
+import { ZJobProgress } from './job-progress.cli';
 import { ZRenderSchedule } from './render-schedule';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -11,19 +11,19 @@ const stringWidth = require('string-width');
 /**
  * @internal
  */
-export class ZShellRunner {
+export class ZProgressFormat {
 
   targetCols = 0;
   taskCols = 0;
   numRows = 0;
   readonly schedule = new ZRenderSchedule();
-  private readonly _runs: ZJobRun[] = [];
+  private readonly _runs: ZJobProgress[] = [];
 
-  run(job: ZJob, command: string, args: readonly string[]): ZExecution {
-    return new ZJobRun(this, job).run(command, args);
+  jobProgress(job: ZJob): ZJobProgress {
+    return new ZJobProgress(this, job);
   }
 
-  register(run: ZJobRun): number {
+  register(run: ZJobProgress): number {
 
     const task = run.job.call.task;
     const targetCols = stringWidth(task.target.name);

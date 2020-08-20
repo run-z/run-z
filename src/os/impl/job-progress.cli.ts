@@ -1,13 +1,10 @@
 import { mapIt } from '@proc7ts/a-iterable';
-import { noop } from '@proc7ts/primitives';
 import * as ansiEscapes from 'ansi-escapes';
-import { spawn } from 'child_process';
 import * as os from 'os';
 import { promisify } from 'util';
-import { AbortedZExecutionError, ZExecution, ZJob } from '../../core';
-import { execZ } from '../../internals';
+import type { ZJob } from '../../core';
 import { ZJobOutput } from './job-output';
-import type { ZShellRunner } from './shell-runner.cli';
+import type { ZProgressFormat } from './progress-format.cli';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const chalk = require('chalk');
@@ -54,87 +51,32 @@ const zJobRunStatus = {
 /**
  * @internal
  */
-export class ZJobRun {
+export class ZJobProgress {
 
   private _pendingRender = false;
   private _row?: number;
   private readonly _output = new ZJobOutput();
   private _status: keyof typeof zJobRunStatus = 'progress';
   private _pending: Promise<void> = Promise.resolve();
+  private _interval?: NodeJS.Timeout;
 
-  constructor(private readonly _runner: ZShellRunner, readonly job: ZJob) {
+  constructor(private readonly _format: ZProgressFormat, readonly job: ZJob) {
   }
 
   get reportsProgress(): boolean {
     return chalk.supportsColor && chalk.supportsColor.level;
   }
 
-  run(command: string, args: readonly string[]): ZExecution {
-    return execZ(() => {
+  start(): void {
+    if (this.reportsProgress) {
+      this._interval = setInterval(() => this._scheduleRender(), zJobSpinner.interval);
+    }
+  }
 
-      const childProcess = spawn(
-          command,
-          args,
-          {
-            cwd: this.job.call.task.target.location.path,
-            env: {
-              ...process.env,
-              FORCE_COLOR: chalk.supportsColor ? String(chalk.supportsColor.level) : '0',
-            },
-            shell: true,
-            stdio: ['ignore', 'pipe', 'pipe'],
-            windowsHide: true,
-          },
-      );
-
-      let abort = (): void => {
-        childProcess.kill();
-      };
-      let whenDone = new Promise<void>((resolve, reject) => {
-
-        const reportError = (error: any): void => {
-          abort = noop;
-          reject(error);
-        };
-
-        childProcess.on('error', reportError);
-        childProcess.on('exit', (code, signal) => {
-          if (signal) {
-            reportError(new AbortedZExecutionError(signal));
-          } else if (code) {
-            reportError(code > 127 ? new AbortedZExecutionError(code) : code);
-          } else {
-            abort = noop;
-            resolve();
-          }
-        });
-        childProcess.stdout.on('data', chunk => this._report(chunk));
-        childProcess.stderr.on('data', chunk => this._report(chunk, 1));
-      }).then(
-          () => this._reportSuccess(),
-      ).catch(
-          async error => {
-            await this._reportError(error);
-            return Promise.reject(error);
-          },
-      );
-
-      if (this.reportsProgress) {
-
-        const interval = setInterval(() => this._scheduleRender(), zJobSpinner.interval);
-
-        whenDone = whenDone.finally(() => clearInterval(interval));
-      }
-
-      return {
-        whenDone() {
-          return whenDone;
-        },
-        abort() {
-          abort();
-        },
-      };
-    });
+  stop(): void {
+    if (this._interval) {
+      clearInterval(this._interval);
+    }
   }
 
   async render(): Promise<void> {
@@ -143,20 +85,20 @@ export class ZJobRun {
     }
   }
 
-  private _report(chunk: string | Buffer, fd: 0 | 1 = 0): void {
+  report(chunk: string | Buffer, fd: 0 | 1 = 0): void {
     this._output.add(chunk, fd);
     this._scheduleRender();
   }
 
   private _scheduleRender(): void {
     if (!this.reportsProgress) {
-      this._pending = this._runner.schedule.schedule(async () => {
+      this._pending = this._format.schedule.schedule(async () => {
         await this._printAll();
         this._output.clear();
       });
     } else if (!this._pendingRender) {
       this._pendingRender = true;
-      this._pending = this._runner.schedule.schedule(() => {
+      this._pending = this._format.schedule.schedule(() => {
         this._pendingRender = false;
         return this._render();
       });
@@ -166,10 +108,10 @@ export class ZJobRun {
   private _printAll(): Promise<void> {
     this._pending = Promise.all(mapIt(
         this._output.lines(),
-        ([line, fd]) => this._runner.println(`${this._prefix()}${line}`, fd),
+        ([line, fd]) => this._format.println(`${this._prefix()}${line}`, fd),
     )).then();
     if (this._row == null) {
-      this._row = this._runner.register(this);
+      this._row = this._format.register(this);
     }
     return this._pending;
   }
@@ -182,7 +124,7 @@ export class ZJobRun {
     if (!firstReport) {
       // Position at proper row and clean it
       out += ansiEscapes.cursorSavePosition
-          + ansiEscapes.cursorUp(this._runner.numRows - this._row!)
+          + ansiEscapes.cursorUp(this._format.numRows - this._row!)
           + ansiEscapes.cursorLeft
           + ansiEscapes.eraseEndLine;
     }
@@ -194,25 +136,25 @@ export class ZJobRun {
     out += `${prefix}${status}`;
 
     if (firstReport) {
-      await this._runner.println(out);
-      this._row = this._runner.register(this) - 1;
+      await this._format.println(out);
+      this._row = this._format.register(this) - 1;
     } else {
       // Move back to original position
       await this._write(out + os.EOL + ansiEscapes.cursorRestorePosition);
     }
   }
 
-  private _reportSuccess(): Promise<void> {
+  reportSuccess(): Promise<void> {
     this._status = 'ok';
     this._scheduleRender();
     return this._pending;
   }
 
-  private _reportError(error: any): Promise<void> {
+  reportError(error: any): Promise<void> {
     this._status = 'error';
-    this._report(error.message || String(error), 1);
+    this.report(error.message || String(error), 1);
     if (this.reportsProgress) {
-      this._pending = this._runner.schedule.schedule(() => this._printAll());
+      this._pending = this._format.schedule.schedule(() => this._printAll());
     }
     return this._pending;
   }
@@ -221,9 +163,9 @@ export class ZJobRun {
 
     const task = this.job.call.task;
     const targetName = chalk.green(task.target.name);
-    const gaps1 = ' '.repeat(Math.max(this._runner.targetCols - stringWidth(targetName), 0));
+    const gaps1 = ' '.repeat(Math.max(this._format.targetCols - stringWidth(targetName), 0));
     const taskName = chalk.greenBright(task.name);
-    const gaps2 = ' '.repeat(Math.max(this._runner.taskCols - stringWidth(taskName), 0));
+    const gaps2 = ' '.repeat(Math.max(this._format.taskCols - stringWidth(taskName), 0));
 
     return `${chalk.gray('[')}${targetName}${gaps1} ${taskName}${gaps2}${chalk.gray(']')} `;
   }
