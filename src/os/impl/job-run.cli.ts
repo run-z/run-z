@@ -187,14 +187,14 @@ export class ZJobRun {
 
   private _scheduleRender(): void {
     if (!this.reportsProgress) {
-      this._pending = this._runner.schedule(async () => {
+      this._pending = this._runner.schedule.schedule(async () => {
         await this._printAll();
         this._output.length = 0;
         this._outputNL = true;
       });
     } else if (!this._pendingRender) {
       this._pendingRender = true;
-      this._pending = this._runner.schedule(() => {
+      this._pending = this._runner.schedule.schedule(() => {
         this._pendingRender = false;
         return this._render();
       });
@@ -249,7 +249,7 @@ export class ZJobRun {
     this._status = 'error';
     this._report(error.message || String(error), 1);
     if (this.reportsProgress) {
-      this._pending = this._runner.schedule(() => this._printAll());
+      this._pending = this._runner.schedule.schedule(() => this._printAll());
     }
     return this._pending;
   }

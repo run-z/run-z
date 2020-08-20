@@ -3,6 +3,7 @@ import * as os from 'os';
 import { promisify } from 'util';
 import type { ZExecution, ZJob } from '../../core';
 import { ZJobRun } from './job-run.cli';
+import { ZRenderSchedule } from './render-schedule';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const stringWidth = require('string-width');
@@ -15,9 +16,8 @@ export class ZShellRunner {
   targetCols = 0;
   taskCols = 0;
   numRows = 0;
+  readonly schedule = new ZRenderSchedule();
   private readonly _runs: ZJobRun[] = [];
-  private readonly _schedule: (() => Promise<unknown>)[] = [];
-  private _running?: Promise<void>;
 
   run(job: ZJob, command: string, args: readonly string[]): ZExecution {
     return new ZJobRun(this, job).run(command, args);
@@ -59,35 +59,8 @@ export class ZShellRunner {
     ++this.numRows;
   }
 
-  schedule(action: () => Promise<unknown>): Promise<void> {
-
-    this._schedule.push(action);
-
-    if (!this._running) {
-
-      const execScheduled = async (): Promise<void> => {
-        for (;;) {
-
-          const scheduled = this._schedule.pop();
-
-          if (!scheduled) {
-            break;
-          }
-
-          await scheduled().catch(noop);
-        }
-
-        this._running = undefined;
-      };
-
-      this._running = execScheduled();
-    }
-
-    return this._running;
-  }
-
   private _renderAll(): Promise<void> {
-    return this.schedule(async () => {
+    return this.schedule.schedule(async () => {
       for (const run of this._runs) {
         await run.render();
       }
