@@ -1,21 +1,25 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { asis } from '@proc7ts/primitives';
 import { pathToFileURL } from 'url';
 import { StandardZSetup } from '../builtins';
-import { AbortedZExecutionError, ZPackage } from '../core';
+import { AbortedZExecutionError, ZPackage, ZSetup } from '../core';
 import { ZPackageDirectory } from './package-directory';
 import { SystemZShell } from './system-shell';
+
+const logSymbols = require('log-symbols');
 
 describe('SystemZShell', () => {
 
   let shell: SystemZShell;
+  let setup: ZSetup;
   let pkg: ZPackage;
 
   beforeEach(async () => {
     shell = new SystemZShell();
 
     const dir = ZPackageDirectory.open({ rootURL: pathToFileURL(process.cwd()) });
-    const setup = new StandardZSetup();
 
+    setup = new StandardZSetup();
     pkg = await setup.packageResolver.get(dir);
   });
 
@@ -110,5 +114,85 @@ describe('SystemZShell', () => {
     const error = await job.whenDone().catch(asis);
 
     expect(error).toBeInstanceOf(AbortedZExecutionError);
+  });
+
+  describe('options', () => {
+
+    let writeSpy: jest.SpyInstance;
+
+    beforeEach(() => {
+      writeSpy = jest.spyOn(process.stdout, 'write');
+      writeSpy.mockImplementation((_chunk: any, cb: () => void) => {
+        cb();
+        return true;
+      });
+    });
+    afterEach(() => {
+      writeSpy.mockRestore();
+    });
+
+    describe('--progress=text', () => {
+      it('enables text progress format', async () => {
+
+        const builder = setup.taskFactory.newTask(pkg, 'no-progress-reporting-task');
+
+        await builder.parse('run-z --color --progress=text test:script', { options: shell.options() });
+
+        const task = builder.task();
+        const call = await task.call();
+
+        await call.exec(shell).whenDone();
+
+        expect(writeSpy).not.toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.anything());
+      });
+    });
+
+    describe('--progress', () => {
+      it('enables rich progress format', async () => {
+
+        const builder = setup.taskFactory.newTask(pkg, 'progress-reporting-task');
+
+        await builder.parse('run-z --no-colors --progress test:script', { options: shell.options() });
+
+        const task = builder.task();
+        const call = await task.call();
+        const actionZJob = call.exec(shell);
+
+        await actionZJob.whenDone();
+
+        expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.anything());
+      });
+      it('enables rich progress format without value', async () => {
+
+        const builder = setup.taskFactory.newTask(pkg, 'progress-reporting-task');
+
+        await builder.parse('run-z --progress --no-colors test:script', { options: shell.options() });
+
+        const task = builder.task();
+        const call = await task.call();
+        const actionZJob = call.exec(shell);
+
+        await actionZJob.whenDone();
+
+        expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.anything());
+      });
+    });
+
+    describe('--progress=rich', () => {
+      it('enables rich progress format', async () => {
+
+        const builder = setup.taskFactory.newTask(pkg, 'progress-reporting-task');
+
+        await builder.parse('run-z --no-colors --progress=rich test:script', { options: shell.options() });
+
+        const task = builder.task();
+        const call = await task.call();
+        const actionZJob = call.exec(shell);
+
+        await actionZJob.whenDone();
+
+        expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.anything());
+      });
+    });
   });
 });

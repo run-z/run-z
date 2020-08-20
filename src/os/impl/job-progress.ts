@@ -2,7 +2,7 @@
 import { mapIt } from '@proc7ts/a-iterable';
 import type { ZJob } from '../../core';
 import { ZJobOutput } from './job-output';
-import type { ZProgressFormat } from './progress-format.cli';
+import type { ZProgressFormat } from './progress-format';
 
 /**
  * @internal
@@ -30,12 +30,8 @@ export abstract class ZJobProgress {
     /* no-op */
   }
 
-  stop(): void {
-    /* no-op */
-  }
-
-  async render(): Promise<void> {
-    /* no-op */
+  stop(): Promise<void> {
+    return this._pending;
   }
 
   report(chunk: string | Buffer, fd: 0 | 1 = 0): void {
@@ -49,7 +45,7 @@ export abstract class ZJobProgress {
   }
 
   reportError(error: any): Promise<void> {
-    this.report(error.message || String(error), 1);
+    this.report(String(error), 1);
     return this._pending;
   }
 

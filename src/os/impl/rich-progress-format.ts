@@ -1,8 +1,46 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
+import { noop } from '@proc7ts/primitives';
 import * as ansiEscapes from 'ansi-escapes';
 import * as os from 'os';
-import { promisify } from 'util';
-import { ZJobProgress } from './job-progress.cli';
+import type { ZJob } from '../../core';
+import { ZJobProgress } from './job-progress';
+import { ZProgressFormat } from './progress-format';
+import { write2stdout } from './writer-for';
+
+/**
+ * @internal
+ */
+export class RichZProgressFormat extends ZProgressFormat<RichZJobProgress> {
+
+  private readonly _jobs: RichZJobProgress[] = [];
+
+  jobProgress(job: ZJob): RichZJobProgress {
+    return new RichZJobProgress(this, job);
+  }
+
+  register(jobProgress: RichZJobProgress): number {
+
+    const { targetCols, taskCols } = this;
+    const result = super.register(jobProgress);
+
+    this._jobs.push(jobProgress);
+
+    if (this.targetCols !== targetCols || this.taskCols !== taskCols) {
+      this._renderAll().catch(noop);
+    }
+
+    return result;
+  }
+
+  private _renderAll(): Promise<void> {
+    return this.schedule.schedule(async () => {
+      for (const run of this._jobs) {
+        await run.render();
+      }
+    });
+  }
+
+}
 
 /**
  * @internal
@@ -58,25 +96,23 @@ const zJobRunStatus = {
 /**
  * @internal
  */
-const writeToStdout = promisify(process.stdout.write.bind(process.stdout));
-
-/**
- * @internal
- */
-export class ColorZJobProgress extends ZJobProgress {
+class RichZJobProgress extends ZJobProgress {
 
   private _status: keyof typeof zJobRunStatus = 'progress';
+  private _interval!: NodeJS.Timeout;
 
   start(): void {
+    this._interval = setInterval(() => this._scheduleRender(), zJobSpinner.interval);
+  }
 
-    const interval = setInterval(() => this._scheduleRender(), zJobSpinner.interval);
-
-    this.stop = () => clearInterval(interval);
+  stop(): Promise<void> {
+    clearInterval(this._interval);
+    return super.stop();
   }
 
   async render(): Promise<void> {
 
-    const firstReport = this._row == null;
+    const firstReport = this._row == null || 0;
     let out = '';
 
     if (!firstReport) {
@@ -98,7 +134,7 @@ export class ColorZJobProgress extends ZJobProgress {
       this._row = this._format.register(this) - 1;
     } else {
       // Move back to original position
-      await writeToStdout(out + os.EOL + ansiEscapes.cursorRestorePosition);
+      await write2stdout(out + os.EOL + ansiEscapes.cursorRestorePosition);
     }
   }
 
