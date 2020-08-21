@@ -26,6 +26,9 @@ node_modules
 /ts*.json
 /typedoc.json
 
+# Include main executable
+!/run-z.js
+
 # Package lock
 /yarn.lock
 

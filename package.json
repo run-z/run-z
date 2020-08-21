@@ -25,7 +25,7 @@
   "module": "dist/run-z.mjs",
   "types": "index.d.ts",
   "bin": {
-    "run-z": "./dist/run-z.main.js"
+    "run-z": "./run-z.js"
   },
   "engines": {
     "node": ">=12"
