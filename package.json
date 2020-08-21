@@ -28,7 +28,7 @@
     "run-z": "./dist/run-z.main.js"
   },
   "engines": {
-    "node": ">=12.17"
+    "node": ">=12"
   },
   "dependencies": {
     "@proc7ts/a-iterable": "^2.7.0",
@@ -50,7 +50,7 @@
     "@rollup/plugin-commonjs": "^15.0.0",
     "@rollup/plugin-node-resolve": "^9.0.0",
     "@types/jest": "^26.0.10",
-    "@types/node": "^12.12.53",
+    "@types/node": "^12.12.54",
     "@types/shell-quote": "^1.7.0",
     "@types/wrap-ansi": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "^3.9.1",
