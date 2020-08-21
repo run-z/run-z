@@ -134,9 +134,10 @@ describe('ZPlan', () => {
         {
           packageJson: {
             scripts: {
-              test: 'run-z dep2 dep1',
+              test: 'run-z dep3 dep1',
               dep1: 'run-z dep2',
-              dep2: 'exec',
+              dep2: 'exec2',
+              dep3: 'exec3',
             },
           },
         },
@@ -149,18 +150,24 @@ describe('ZPlan', () => {
 
     const dep1 = plan.callOf(await target.task('dep1'));
     const dep2 = plan.callOf(await target.task('dep2'));
+    const dep3 = plan.callOf(await target.task('dep3'));
 
     expect(prerequisitesOf(call)).toEqual(taskIds(dep1));
     expect(call.hasPrerequisite(dep1.task)).toBe(true);
     expect(call.hasPrerequisite(dep2.task)).toBe(true);
+    expect(call.hasPrerequisite(dep3.task)).toBe(true);
 
     expect(prerequisitesOf(dep1)).toEqual(taskIds(dep2));
-    expect(dep1.hasPrerequisite(dep2.task)).toBe(true);
     expect(dep1.hasPrerequisite(call.task)).toBe(false);
+    expect(dep1.hasPrerequisite(dep2.task)).toBe(true);
+    expect(dep1.hasPrerequisite(dep3.task)).toBe(true);
 
-    expect(prerequisitesOf(dep2)).toHaveLength(0);
-    expect(dep2.hasPrerequisite(dep1.task)).toBe(false);
+    expect(prerequisitesOf(dep2)).toEqual(taskIds(dep3));
     expect(dep2.hasPrerequisite(call.task)).toBe(false);
+    expect(dep2.hasPrerequisite(dep1.task)).toBe(false);
+    expect(dep2.hasPrerequisite(dep3.task)).toBe(true);
+
+    expect(prerequisitesOf(dep3)).toHaveLength(0);
   });
   it('orders recurrent task execution', async () => {
     testPlan.addPackage(

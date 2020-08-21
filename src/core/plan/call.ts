@@ -35,6 +35,18 @@ export interface ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
   params(): ZTaskParams;
 
   /**
+   * Returns the entry tasks of the called task execution.
+   *
+   * The entry tasks is executed first before the called task execution. This is either the task itself, or its first
+   * prerequisite.
+   *
+   * @returns An iterable of tasks to be executed.
+   *
+   * @see ZCallPlanner.addEntry
+   */
+  entries(): Iterable<ZTask>;
+
+  /**
    * Returns immediate prerequisites of this task.
    *
    * @returns An iterable of task execution calls to make before this one.

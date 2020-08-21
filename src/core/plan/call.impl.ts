@@ -41,6 +41,7 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
   private _currDepth: ZCallDepth;
   private readonly _params: (readonly [ZCallParams, ZCallDepth])[] = [];
   private _builtParams: readonly [number, ZTaskParams] | [] = [];
+  private readonly _entries = new Set<ZTask>();
 
   constructor(
       private readonly _records: ZInstructionRecords,
@@ -54,6 +55,13 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
 
   get plan(): ZPlan {
     return this._records.plan;
+  }
+
+  entries(): Iterable<ZTask> {
+    if (!this._entries.size) {
+      return [this.task];
+    }
+    return this._entries;
   }
 
   private _ofTask(task: ZTask): true | undefined {
@@ -98,6 +106,7 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
       qualify: this._records.qualify.bind(this._records),
       call: (task, details) => this._records.call(task, details, this),
       order: this._records.order.bind(this._records),
+      addEntry: (entry: ZTask) => this._entries.add(entry),
       makeParallel: this._records.makeParallel.bind(this._records),
     });
   }

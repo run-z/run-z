@@ -71,6 +71,15 @@ export interface ZCallPlanner<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
   order(this: void, first: ZTask, second: ZTask): void;
 
   /**
+   * Registers the task execution entry. I.e. the task to be executed first before the task execution.
+   *
+   * This is necessary e.g. when the task is called as a prerequisite and another prerequisite precedes it.
+   *
+   * @param entry  The entry task.
+   */
+  addEntry(this: void, entry: ZTask): void;
+
+  /**
    * Allow parallel tasks execution.
    *
    * The call to this method does not cause any of the tasks to be executed.

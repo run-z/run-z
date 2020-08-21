@@ -89,10 +89,6 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
    * instructions recorded asynchronously.
    */
   protected async _planCall(planner: ZCallPlanner<TAction>): Promise<void> {
-    await this._planPre(planner);
-  }
-
-  private async _planPre(planner: ZCallPlanner<TAction>): Promise<void> {
 
     const batching = this._builder.batching;
     const { target, spec } = this;
@@ -105,7 +101,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
         parallel = [];
       }
 
-      const calledTasks: ZTask[] = [];
+      const preTasks: ZTask[] = [];
       const prePlanner: ZPrePlanner = {
         dependent: planner,
         batching,
@@ -117,10 +113,16 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
           const preCall = await planner.call(task, details);
           const preTask = preCall.task;
 
-          calledTasks.push(preTask);
+          preTasks.push(preTask);
           if (!pre.annex) {
-            for (const prevTask of prevTasks) {
-              planner.order(prevTask, preTask);
+            if (prevTasks.length) {
+              for (const prevTask of prevTasks) {
+                for (const preCallEntry of preCall.entries()) {
+                  planner.order(prevTask, preCallEntry);
+                }
+              }
+            } else {
+              planner.addEntry(preTask);
             }
           }
 
@@ -150,23 +152,23 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
         },
       });
 
-      if (calledTasks.length === 1) {
-        parallel.push(calledTasks[0]);
+      if (preTasks.length === 1) {
+        parallel.push(preTasks[0]);
       } else {
 
         const qualifier: ZTaskQualifier = {
           taskQN: `${String(preTargets)} */${pre.task}`,
         };
 
-        for (const calledTask of calledTasks) {
-          planner.qualify(calledTask, qualifier);
+        for (const preTask of preTasks) {
+          planner.qualify(preTask, qualifier);
         }
 
         parallel.push(qualifier);
       }
 
       if (!pre.annex) {
-        prevTasks = calledTasks;
+        prevTasks = preTasks;
       }
     }
 
