@@ -5,6 +5,7 @@ import * as os from 'os';
 import type { ZJob } from '../../core';
 import { ZJobProgress } from './job-progress';
 import { ZProgressFormat } from './progress-format';
+import { ttyColumns } from './tty-columns';
 import { write2stdout } from './writer-for';
 
 /**
@@ -50,17 +51,17 @@ const cliSpinners = require('cli-spinners');
 /**
  * @internal
  */
+const cliTruncate = require('cli-truncate');
+
+/**
+ * @internal
+ */
 const logSymbols = require('log-symbols');
 
 /**
  * @internal
  */
 const stringWidth = require('string-width');
-
-/**
- * @internal
- */
-const wrapAnsi = require('wrap-ansi');
 
 /**
  * @internal
@@ -124,7 +125,13 @@ class RichZJobProgress extends ZJobProgress {
 
     const prefix = zJobRunStatus[this._status]() + ' ' + this._prefix();
     const prefixCols = stringWidth(prefix);
-    const status = wrapAnsi(this._output.status, process.stdout.columns - prefixCols, { hard: true, trim: false });
+    const status = cliTruncate(
+        this._output.status,
+        ttyColumns() - prefixCols,
+        {
+          preferTruncationOnSpace: true,
+        },
+    );
 
     out += `${prefix}${status}`;
 
