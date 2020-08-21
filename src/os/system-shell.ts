@@ -5,7 +5,7 @@ import * as path from 'path';
 import type { ZExecution, ZJob, ZShell, ZTaskParams } from '../core';
 import { AbortedZExecutionError } from '../core';
 import { execZ } from '../internals';
-import { colorSupportLevel, RichZProgressFormat, TextZProgressFormat, ZProgressFormat } from './impl';
+import { RichZProgressFormat, TextZProgressFormat, ttyColorLevel, ttyColumns, ZProgressFormat } from './impl';
 
 /**
  * Operating system-specific task execution shell.
@@ -77,7 +77,7 @@ export class SystemZShell implements ZShell {
 
   private _run(job: ZJob, command: string, args: readonly string[]): ZExecution {
     if (!this._format) {
-      this._format = colorSupportLevel() ? new RichZProgressFormat() : new TextZProgressFormat();
+      this._format = ttyColorLevel() ? new RichZProgressFormat() : new TextZProgressFormat();
     }
 
     const progress = this._format.jobProgress(job);
@@ -91,7 +91,8 @@ export class SystemZShell implements ZShell {
             cwd: job.call.task.target.location.path,
             env: {
               ...process.env,
-              FORCE_COLOR: String(colorSupportLevel()),
+              COLUMNS: String(ttyColumns()),
+              FORCE_COLOR: String(ttyColorLevel()),
             },
             shell: true,
             stdio: ['ignore', 'pipe', 'pipe'],
