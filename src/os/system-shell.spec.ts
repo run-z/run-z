@@ -114,6 +114,7 @@ describe('SystemZShell', () => {
     expect(await call.exec(shell).whenDone().catch(asis)).toBeInstanceOf(AbortedZExecutionError);
   });
   it('allows to abort the job', async () => {
+    shell.setProgressFormat('rich');
 
     const task = await pkg.task('test:stale');
     const call = await task.call();
