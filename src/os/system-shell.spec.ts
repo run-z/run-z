@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { asis } from '@proc7ts/primitives';
+import { asis, noop } from '@proc7ts/primitives';
 import { pathToFileURL } from 'url';
 import { StandardZSetup } from '../builtins';
 import { AbortedZExecutionError, ZPackage, ZSetup } from '../core';
@@ -142,19 +142,32 @@ describe('SystemZShell', () => {
       writeSpy.mockRestore();
     });
 
-    it('has help', async () => {
+    describe('--help', () => {
 
-      const builder = setup.taskFactory.newTask(pkg, '');
+      let logSpy: jest.SpyInstance;
 
-      await builder.parse('run-z --help', { options: shell.options() });
+      beforeEach(() => {
+        logSpy = jest.spyOn(console, 'log');
+        logSpy.mockImplementation(noop);
+      });
+      afterEach(() => {
+        logSpy.mockRestore();
+      });
 
-      const task = builder.task();
-      const call = await task.call();
+      it('prints shell options help', async () => {
 
-      await call.exec(shell).whenDone();
+        const builder = setup.taskFactory.newTask(pkg, '');
 
-      expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining('--progress'), expect.any(Function));
-      expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining('--max-jobs'), expect.any(Function));
+        await builder.parse('run-z --help', { options: shell.options() });
+
+        const task = builder.task();
+        const call = await task.call();
+
+        await call.exec(shell).whenDone();
+
+        expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('--progress'));
+        expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('--max-jobs'));
+      });
     });
 
     describe('--progress=text', () => {
