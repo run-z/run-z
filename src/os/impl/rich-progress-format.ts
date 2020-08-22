@@ -3,6 +3,7 @@ import { noop } from '@proc7ts/primitives';
 import * as ansiEscapes from 'ansi-escapes';
 import * as os from 'os';
 import type { ZJob } from '../../core';
+import { AbortedZExecutionError } from '../../core';
 import { ZJobProgress } from './job-progress';
 import { ZProgressFormat } from './progress-format';
 import { ttyColumns } from './tty-columns';
@@ -152,6 +153,13 @@ class RichZJobProgress extends ZJobProgress {
   reportError(error: any): Promise<void> {
     this._status = 'error';
     this.report(error.message || String(error), 1);
+
+    if (error instanceof AbortedZExecutionError) {
+      // No need to print abort message
+      return this._pending;
+    }
+
+    // Print collected output
     return this._pending = this._format.schedule.schedule(() => this._printAll());
   }
 

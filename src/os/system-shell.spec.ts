@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { asis } from '@proc7ts/primitives';
+import { asis, noop } from '@proc7ts/primitives';
 import { pathToFileURL } from 'url';
 import { StandardZSetup } from '../builtins';
 import { AbortedZExecutionError, ZPackage, ZSetup } from '../core';
@@ -7,6 +7,8 @@ import { ZPackageDirectory } from './package-directory';
 import { SystemZShell } from './system-shell';
 
 const logSymbols = require('log-symbols');
+
+const chalk = require('chalk');
 
 describe('SystemZShell', () => {
 
@@ -34,6 +36,15 @@ describe('SystemZShell', () => {
     } else {
       process.env.npm_execpath = prevNpmPath;
     }
+  });
+
+  let prevColors: any;
+
+  beforeEach(() => {
+    prevColors = chalk.supportsColor;
+  });
+  afterEach(() => {
+    chalk.supportsColor = prevColors;
   });
 
   it('executes NPM script', async () => {
@@ -103,6 +114,7 @@ describe('SystemZShell', () => {
     expect(await call.exec(shell).whenDone().catch(asis)).toBeInstanceOf(AbortedZExecutionError);
   });
   it('allows to abort the job', async () => {
+    shell.setProgressFormat('rich');
 
     const task = await pkg.task('test:stale');
     const call = await task.call();
@@ -131,6 +143,34 @@ describe('SystemZShell', () => {
       writeSpy.mockRestore();
     });
 
+    describe('--help', () => {
+
+      let logSpy: jest.SpyInstance;
+
+      beforeEach(() => {
+        logSpy = jest.spyOn(console, 'log');
+        logSpy.mockImplementation(noop);
+      });
+      afterEach(() => {
+        logSpy.mockRestore();
+      });
+
+      it('prints shell options help', async () => {
+
+        const builder = setup.taskFactory.newTask(pkg, '');
+
+        await builder.parse('run-z --help', { options: shell.options() });
+
+        const task = builder.task();
+        const call = await task.call();
+
+        await call.exec(shell).whenDone();
+
+        expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('--progress'));
+        expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('--max-jobs'));
+      });
+    });
+
     describe('--progress=text', () => {
       it('enables text progress format', async () => {
 
@@ -143,7 +183,7 @@ describe('SystemZShell', () => {
 
         await call.exec(shell).whenDone();
 
-        expect(writeSpy).not.toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.anything());
+        expect(writeSpy).not.toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
       });
     });
 
@@ -160,7 +200,7 @@ describe('SystemZShell', () => {
 
         await actionZJob.whenDone();
 
-        expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.anything());
+        expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
       });
       it('enables rich progress format without value', async () => {
 
@@ -174,7 +214,7 @@ describe('SystemZShell', () => {
 
         await actionZJob.whenDone();
 
-        expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.anything());
+        expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
       });
     });
 
@@ -191,7 +231,62 @@ describe('SystemZShell', () => {
 
         await actionZJob.whenDone();
 
-        expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.anything());
+        expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
+      });
+    });
+
+    describe('--max-jobs', () => {
+
+      let setMaxJobs: jest.SpyInstance;
+
+      beforeEach(() => {
+        setMaxJobs = jest.spyOn(shell, 'setMaxJobs');
+      });
+      afterEach(() => {
+        setMaxJobs.mockRestore();
+      });
+
+      it('sets automatic maximum of simultaneously running jobs', async () => {
+
+        const builder = setup.taskFactory.newTask(pkg, '');
+
+        await builder.parse('run-z --max-jobs test:script', { options: shell.options() });
+
+        const task = builder.task();
+        const call = await task.call();
+        const actionZJob = call.exec(shell);
+
+        await actionZJob.whenDone();
+
+        expect(setMaxJobs).toHaveBeenCalledWith(undefined);
+      });
+      it('sets specified maximum of simultaneously running jobs', async () => {
+
+        const builder = setup.taskFactory.newTask(pkg, '');
+
+        await builder.parse('run-z -j1 test:script', { options: shell.options() });
+
+        const task = builder.task();
+        const call = await task.call();
+        const actionZJob = call.exec(shell);
+
+        await actionZJob.whenDone();
+
+        expect(setMaxJobs).toHaveBeenCalledWith(1);
+      });
+      it('sets specified maximum of simultaneously running jobs with `-j LIMIT`', async () => {
+
+        const builder = setup.taskFactory.newTask(pkg, '');
+
+        await builder.parse('run-z -j 2 test:script', { options: shell.options() });
+
+        const task = builder.task();
+        const call = await task.call();
+        const actionZJob = call.exec(shell);
+
+        await actionZJob.whenDone();
+
+        expect(setMaxJobs).toHaveBeenCalledWith(2);
       });
     });
   });
