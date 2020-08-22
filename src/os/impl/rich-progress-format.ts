@@ -152,7 +152,7 @@ class RichZJobProgress extends ZJobProgress {
 
   reportError(error: any): Promise<void> {
     this._status = 'error';
-    this.report((error.message || String(error)) + String(error instanceof AbortedZExecutionError), 1);
+    this.report(error.message || String(error), 1);
 
     if (error instanceof AbortedZExecutionError) {
       // No need to print abort message
