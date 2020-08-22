@@ -8,6 +8,8 @@ import { SystemZShell } from './system-shell';
 
 const logSymbols = require('log-symbols');
 
+const chalk = require('chalk');
+
 describe('SystemZShell', () => {
 
   let shell: SystemZShell;
@@ -34,6 +36,15 @@ describe('SystemZShell', () => {
     } else {
       process.env.npm_execpath = prevNpmPath;
     }
+  });
+
+  let prevColors: any;
+
+  beforeEach(() => {
+    prevColors = chalk.supportsColor;
+  });
+  afterEach(() => {
+    chalk.supportsColor = prevColors;
   });
 
   it('executes NPM script', async () => {

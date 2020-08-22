@@ -122,7 +122,7 @@ describe('poolZExecutions', () => {
 
     const pool = poolZExecutions();
 
-    const [start1, end1] = testJob(1);
+    const [start1] = testJob(1);
     const exec1 = pool(start1);
 
     const [start2, end2] = testJob(2);
@@ -146,7 +146,7 @@ describe('poolZExecutions', () => {
 
     const pool = poolZExecutions();
 
-    const [start1, end1] = testJob(1);
+    const [start1] = testJob(1);
     const exec1 = pool(start1);
 
     const [start2, end2] = testJob(2);
