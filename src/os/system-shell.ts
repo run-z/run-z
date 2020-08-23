@@ -1,5 +1,5 @@
 import type { ZExecution, ZExecutionStarter } from '@run-z/exec-z';
-import { execZ, poolZExecutions, spawnZ } from '@run-z/exec-z';
+import { poolZExecutions, spawnZ } from '@run-z/exec-z';
 import type { SupportedZOptions, ZOption } from '@run-z/optionz';
 import { clz } from '@run-z/optionz/colors';
 import { spawn } from 'child_process';
@@ -12,7 +12,7 @@ import { RichZProgressFormat, TextZProgressFormat, ttyColorLevel, ttyColumns, ZP
  */
 export class SystemZShell implements ZShell {
 
-  private _exec: (this: void, starter: ZExecutionStarter) => ZExecution = execZ;
+  private _exec: (this: void, starter: ZExecutionStarter) => ZExecution = poolZExecutions();
   private _format?: ZProgressFormat;
 
   /**
