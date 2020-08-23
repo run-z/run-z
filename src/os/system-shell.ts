@@ -183,9 +183,7 @@ By default ${clz.usage('rich')} format is used for color terminals, and ${clz.us
       });
 
       return {
-        whenStarted() {
-          return spawned.whenStarted();
-        },
+        whenStarted: spawned.whenStarted.bind(spawned),
         whenDone() {
           return spawned.whenDone()
               .then(
@@ -199,9 +197,7 @@ By default ${clz.usage('rich')} format is used for color terminals, and ${clz.us
                   () => progress.stop(),
               );
         },
-        abort() {
-          spawned.abort();
-        },
+        abort: spawned.abort.bind(spawned),
       };
     });
   }

@@ -70,18 +70,7 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
       );
     });
 
-    this._whenDone = execZ(() => {
-
-      const all = execZAll([whenPrerequisites, this._whenFinished]);
-
-      return {
-        whenStarted: all.whenStarted.bind(all),
-        whenDone() {
-          return all.whenDone().then(noop);
-        },
-        abort: all.abort.bind(all),
-      };
-    });
+    this._whenDone = execZAll([whenPrerequisites, this._whenFinished], noop);
 
     return this;
   }
@@ -90,14 +79,17 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
     this._whenDone.abort();
   }
 
-  private _execPrerequisites(): ZExecution<unknown> {
-    return execZAll(mapIt(
-        this.call.prerequisites(),
-        pre => pre.exec(this.shell),
-    ));
+  private _execPrerequisites(): ZExecution {
+    return execZAll(
+        mapIt(
+            this.call.prerequisites(),
+            pre => pre.exec(this.shell),
+        ),
+        noop,
+    );
   }
 
-  private _whenReady(): ZExecution<unknown> {
+  private _whenReady(): ZExecution {
 
     const whenReady: ZExecution[] = [];
 
@@ -123,7 +115,7 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
       );
     }
 
-    return execZAll(whenReady);
+    return execZAll(whenReady, noop);
   }
 
   whenFinished(): Promise<void> {
