@@ -1,6 +1,7 @@
-import { execZNoop } from '../../../internals';
+import type { ZExecution } from '@run-z/exec-z';
+import { execZNoOp } from '@run-z/exec-z';
 import { ZBatchDetails } from '../../batches';
-import type { ZExecution, ZJob } from '../../jobs';
+import type { ZJob } from '../../jobs';
 import type { ZPackage } from '../../packages';
 import type { ZCall, ZCallPlanner, ZPrePlanner } from '../../plan';
 import { ZCallDetails, ZTaskParams } from '../../plan';
@@ -59,7 +60,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
 
     if (job.call.params().flag('skip')) {
       // Skip execution
-      return execZNoop();
+      return execZNoOp();
     }
 
     // Normal execution

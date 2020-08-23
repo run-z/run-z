@@ -1,8 +1,8 @@
 import { mapIt } from '@proc7ts/a-iterable';
-import { execZAll, execZNext } from '../../internals';
+import { noop } from '@proc7ts/primitives';
+import { execZ, execZAfter, execZAll, ZExecution } from '@run-z/exec-z';
 import type { ZCallRecord } from '../plan/call.impl';
 import type { ZTask, ZTaskSpec } from '../tasks';
-import type { ZExecution } from './execution';
 import type { ZJob } from './job';
 import type { ZShell } from './shell';
 
@@ -61,7 +61,7 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
     const whenReady = this._whenReady();
 
     this._whenStarted = new Promise<void>(resolve => {
-      this._whenFinished = execZNext(
+      this._whenFinished = execZAfter(
           whenReady,
           () => {
             resolve();
@@ -70,7 +70,18 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
       );
     });
 
-    this._whenDone = execZAll([whenPrerequisites, this._whenFinished]);
+    this._whenDone = execZ(() => {
+
+      const all = execZAll([whenPrerequisites, this._whenFinished]);
+
+      return {
+        whenStarted: all.whenStarted.bind(all),
+        whenDone() {
+          return all.whenDone().then(noop);
+        },
+        abort: all.abort.bind(all),
+      };
+    });
 
     return this;
   }
@@ -79,14 +90,14 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
     this._whenDone.abort();
   }
 
-  private _execPrerequisites(): ZExecution {
+  private _execPrerequisites(): ZExecution<unknown> {
     return execZAll(mapIt(
         this.call.prerequisites(),
         pre => pre.exec(this.shell),
     ));
   }
 
-  private _whenReady(): ZExecution {
+  private _whenReady(): ZExecution<unknown> {
 
     const whenReady: ZExecution[] = [];
 
@@ -103,14 +114,13 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
       // Can not run in parallel.
       // Await for job to finish.
       // Transitive prerequisites are handled individually.
-      whenReady.push({
-        whenDone() {
-          return job.whenFinished();
-        },
-        abort() {
-          return job.abort();
-        },
-      });
+      whenReady.push(
+          execZ(() => ({
+            whenStarted: job.whenStarted.bind(job),
+            whenDone: job.whenFinished.bind(job),
+            abort: job.abort.bind(job),
+          })),
+      );
     }
 
     return execZAll(whenReady);

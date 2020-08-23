@@ -2,7 +2,8 @@
  * @packageDocumentation
  * @module run-z
  */
-import type { ZExecution, ZJob } from '../jobs';
+import type { ZExecution } from '@run-z/exec-z';
+import type { ZJob } from '../jobs';
 import type { ZPackage } from '../packages';
 import type { ZCall, ZCallDetails, ZPrePlanner } from '../plan';
 import type { ZTaskSpec } from './task-spec';

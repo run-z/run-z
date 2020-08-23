@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module run-z
  */
+import type { ZExecution } from '@run-z/exec-z';
 import type { ZTaskSpec } from '../tasks';
-import type { ZExecution } from './execution';
 import type { ZJob } from './job';
 
 /**

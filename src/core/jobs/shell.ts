@@ -2,9 +2,9 @@
  * @packageDocumentation
  * @module run-z
  */
-import { execZNoop } from '../../internals';
+import type { ZExecution } from '@run-z/exec-z';
+import { execZNoOp } from '@run-z/exec-z';
 import type { ZTaskParams } from '../plan';
-import type { ZExecution } from './execution';
 import type { ZJob } from './job';
 
 /**
@@ -44,11 +44,11 @@ export interface ZShell {
 const noopZShell: ZShell = {
 
   execCommand() {
-    return execZNoop();
+    return execZNoOp();
   },
 
   execScript() {
-    return execZNoop();
+    return execZNoOp();
   },
 
 };

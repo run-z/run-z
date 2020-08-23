@@ -2,9 +2,10 @@
  * @packageDocumentation
  * @module run-z
  */
+import { AbortedZExecutionError } from '@run-z/exec-z';
 import { ZOptionError } from '@run-z/optionz';
 import { StandardZSetup } from '../builtins';
-import { AbortedZExecutionError, UnknownZTaskError } from '../core';
+import { UnknownZTaskError } from '../core';
 import { SystemZShell, ZPackageDirectory } from '../os';
 import { formatZOptionError } from './impl';
 

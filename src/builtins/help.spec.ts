@@ -1,7 +1,7 @@
 import { asis, noop } from '@proc7ts/primitives';
+import { execZNoOp } from '@run-z/exec-z';
 import { ZOptionError } from '@run-z/optionz';
 import { ZSetup, ZShell } from '../core';
-import { execZNoop } from '../internals/jobs';
 import { TestPlan } from '../spec';
 import { ZHelpBuiltin } from './help.builtin';
 
@@ -108,7 +108,7 @@ describe('ZHelpBuiltin', () => {
                   options: {
                     '--test-exec'(option) {
                       option.recognize();
-                      option.executeBy(execZNoop);
+                      option.executeBy(execZNoOp);
                     },
                   },
                 },

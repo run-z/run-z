@@ -1,11 +1,10 @@
-import { noop } from '@proc7ts/primitives';
+import type { ZExecution, ZExecutionStarter } from '@run-z/exec-z';
+import { execZ, poolZExecutions, spawnZ } from '@run-z/exec-z';
 import type { SupportedZOptions, ZOption } from '@run-z/optionz';
 import { clz } from '@run-z/optionz/colors';
 import { spawn } from 'child_process';
 import * as path from 'path';
-import type { ZExecution, ZJob, ZShell, ZTaskParams } from '../core';
-import { AbortedZExecutionError } from '../core';
-import { execZ, poolZExecutions, ZExecutionStarter } from '../internals';
+import type { ZJob, ZShell, ZTaskParams } from '../core';
 import { RichZProgressFormat, TextZProgressFormat, ttyColorLevel, ttyColumns, ZProgressFormat } from './impl';
 
 /**
@@ -157,65 +156,51 @@ By default ${clz.usage('rich')} format is used for color terminals, and ${clz.us
 
     return this._exec(() => {
 
-      const childProcess = spawn(
-          command,
-          args,
-          {
-            cwd: job.call.task.target.location.path,
-            env: {
-              ...process.env,
-              COLUMNS: String(ttyColumns()),
-              FORCE_COLOR: String(ttyColorLevel()),
+      const spawned = spawnZ(() => {
+
+        const childProcess = spawn(
+            command,
+            args,
+            {
+              cwd: job.call.task.target.location.path,
+              env: {
+                ...process.env,
+                COLUMNS: String(ttyColumns()),
+                FORCE_COLOR: String(ttyColorLevel()),
+              },
+              shell: true,
+              stdio: ['ignore', 'pipe', 'pipe'],
+              windowsHide: true,
             },
-            shell: true,
-            stdio: ['ignore', 'pipe', 'pipe'],
-            windowsHide: true,
-          },
-      );
-
-      let abort = (): void => {
-        childProcess.kill();
-      };
-      let whenDone = new Promise<void>((resolve, reject) => {
-
-        const reportError = (error: any): void => {
-          abort = noop;
-          reject(error);
-        };
-
-        childProcess.on('error', reportError);
-        childProcess.on('exit', (code, signal) => {
-          if (signal) {
-            reportError(new AbortedZExecutionError(signal));
-          } else if (code) {
-            reportError(code > 127 ? new AbortedZExecutionError(code) : code);
-          } else {
-            abort = noop;
-            resolve();
-          }
-        });
-
-        progress.start();
+        );
 
         childProcess.stdout.on('data', chunk => progress.report(chunk));
         childProcess.stderr.on('data', chunk => progress.report(chunk, 1));
-      }).then(
-          () => progress.reportSuccess(),
-      ).catch(
-          async error => {
-            await progress.reportError(error);
-            return Promise.reject(error);
-          },
-      );
 
-      whenDone = whenDone.finally(() => progress.stop());
+        progress.start();
+
+        return childProcess;
+      });
 
       return {
+        whenStarted() {
+          return spawned.whenStarted();
+        },
         whenDone() {
-          return whenDone;
+          return spawned.whenDone()
+              .then(
+                  () => progress.reportSuccess(),
+              ).catch(
+                  async error => {
+                    await progress.reportError(error);
+                    return Promise.reject(error);
+                  },
+              ).finally(
+                  () => progress.stop(),
+              );
         },
         abort() {
-          abort();
+          spawned.abort();
         },
       };
     });

@@ -1,4 +1,5 @@
-import type { ZExecution, ZJob } from '../../jobs';
+import type { ZExecution } from '@run-z/exec-z';
+import type { ZJob } from '../../jobs';
 import { ZTaskParams } from '../../plan';
 import type { ZTaskSpec } from '../task-spec';
 import { AbstractZTask } from './abstract.task';

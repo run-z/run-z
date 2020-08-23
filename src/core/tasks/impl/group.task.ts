@@ -1,7 +1,7 @@
+import type { ZExecution } from '@run-z/exec-z';
+import { execZNoOp } from '@run-z/exec-z';
 import { ZOptionInput } from '@run-z/optionz';
-import { execZNoop } from '../../../internals';
 import { ZBatchDetails } from '../../batches';
-import type { ZExecution } from '../../jobs';
 import type { ZPackageSet } from '../../packages';
 import type { ZCall, ZCallDetails, ZPrePlanner } from '../../plan';
 import type { ZTask } from '../task';
@@ -90,7 +90,7 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
   }
 
   protected _execTask(): ZExecution {
-    return execZNoop();
+    return execZNoOp();
   }
 
 }

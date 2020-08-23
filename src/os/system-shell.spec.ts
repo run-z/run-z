@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { asis, noop } from '@proc7ts/primitives';
+import { AbortedZExecutionError } from '@run-z/exec-z';
 import { pathToFileURL } from 'url';
 import { StandardZSetup } from '../builtins';
-import { AbortedZExecutionError, ZPackage, ZSetup } from '../core';
+import type { ZPackage, ZSetup } from '../core';
 import { ZPackageDirectory } from './package-directory';
 import { SystemZShell } from './system-shell';
 

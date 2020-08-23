@@ -12,7 +12,6 @@ export default {
     'run-z.builtins': './src/builtins/index.ts',
     'run-z.cli': './src/cli/index.ts',
     'run-z.core': './src/core/index.ts',
-    'run-z.internals': './src/internals/index.ts',
     'run-z.os': './src/os/index.ts',
   },
   plugins: [
@@ -36,9 +35,6 @@ export default {
     }
     if (id.startsWith(path.join(__dirname, 'src', 'core') + path.sep)) {
       return 'run-z.core';
-    }
-    if (id.startsWith(path.join(__dirname, 'src', 'internals') + path.sep)) {
-      return 'run-z.internals';
     }
     if (id.startsWith(path.join(__dirname, 'src', 'os') + path.sep)) {
       return 'run-z.os';

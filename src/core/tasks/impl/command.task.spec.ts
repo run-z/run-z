@@ -1,6 +1,6 @@
 import { valueProvider } from '@proc7ts/primitives';
+import { execZNoOp } from '@run-z/exec-z';
 import { StandardZSetup } from '../../../builtins';
-import { execZNoop } from '../../../internals';
 import { prerequisitesOf, taskIds, TestPlan } from '../../../spec';
 import type { ZShell } from '../../jobs';
 import { ZTaskParams } from '../../plan';
@@ -126,7 +126,7 @@ describe('CommandZTask', () => {
     it('executes command', async () => {
 
       const shell = {
-        execCommand: jest.fn(execZNoop),
+        execCommand: jest.fn(execZNoOp),
       } as jest.Mocked<Partial<ZShell>> as jest.Mocked<ZShell>;
 
       testPlan.addPackage(
@@ -159,7 +159,7 @@ describe('CommandZTask', () => {
   it('does not execute command when `skip` flag is set', async () => {
 
     const shell = {
-      execCommand: jest.fn(execZNoop),
+      execCommand: jest.fn(execZNoOp),
     } as jest.Mocked<Partial<ZShell>> as jest.Mocked<ZShell>;
 
     testPlan.addPackage(
@@ -181,7 +181,7 @@ describe('CommandZTask', () => {
   });
   it('executes by overridden executor', async () => {
 
-    const executor = jest.fn(execZNoop);
+    const executor = jest.fn(execZNoOp);
 
     testPlan = new TestPlan(
         'root',
@@ -200,7 +200,7 @@ describe('CommandZTask', () => {
     );
 
     const shell = {
-      execCommand: jest.fn(execZNoop),
+      execCommand: jest.fn(execZNoOp),
     } as jest.Mocked<Partial<ZShell>> as jest.Mocked<ZShell>;
 
     testPlan.addPackage(

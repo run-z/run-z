@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { noop } from '@proc7ts/primitives';
+import { AbortedZExecutionError } from '@run-z/exec-z';
 import * as ansiEscapes from 'ansi-escapes';
 import * as os from 'os';
 import type { ZJob } from '../../core';
-import { AbortedZExecutionError } from '../../core';
 import { ZJobProgress } from './job-progress';
 import { ZProgressFormat } from './progress-format';
 import { ttyColumns } from './tty-columns';

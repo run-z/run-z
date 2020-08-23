@@ -2,6 +2,7 @@
  * @packageDocumentation
  * @module run-z
  */
+import type { ZExecution } from '@run-z/exec-z';
 import type { ZCall } from '../plan';
 import type { ZTaskSpec } from '../tasks';
 import type { ZShell } from './shell';
@@ -11,7 +12,7 @@ import type { ZShell } from './shell';
  *
  * @typeparam TAction  Task action type.
  */
-export interface ZJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
+export interface ZJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> extends ZExecution {
 
   /**
    * Task execution shell this job is executed by.

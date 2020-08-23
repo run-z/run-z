@@ -3,11 +3,11 @@
  * @module run-z/builtins
  */
 import { noop } from '@proc7ts/primitives';
+import { execZ } from '@run-z/exec-z';
 import type { ZOptionReader } from '@run-z/optionz';
 import type { ZOptionMeta } from '@run-z/optionz/d.ts/option-meta';
 import { helpZOptionReader, ZHelpFormatter } from '@run-z/optionz/help';
 import type { ZExtension, ZTaskOption } from '../core';
-import { execZ } from '../internals';
 
 /**
  * @internal
