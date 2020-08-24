@@ -5,5 +5,5 @@ const chalk = require('chalk');
  * @internal
  */
 export function ttyColorLevel(): 0 | 1 | 2 | 3 {
-  return chalk.supportsColor ? chalk.supportsColor.level : 0;
+  return chalk.level;
 }

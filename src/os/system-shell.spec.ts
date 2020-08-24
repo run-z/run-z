@@ -39,13 +39,13 @@ describe('SystemZShell', () => {
     }
   });
 
-  let prevColors: any;
+  let prevColorLevel: any;
 
   beforeEach(() => {
-    prevColors = chalk.supportsColor;
+    prevColorLevel = chalk.level;
   });
   afterEach(() => {
-    chalk.supportsColor = prevColors;
+    chalk.level = prevColorLevel;
   });
 
   it('executes NPM script', async () => {
