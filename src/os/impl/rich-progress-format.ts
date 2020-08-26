@@ -1,6 +1,6 @@
 import { noop } from '@proc7ts/primitives';
 import { AbortedZExecutionError } from '@run-z/exec-z';
-import * as ansiEscapes from 'ansi-escapes';
+import ansiEscapes from 'ansi-escapes';
 import cliSpinners from 'cli-spinners';
 import cliTruncate from 'cli-truncate';
 import logSymbols from 'log-symbols';
