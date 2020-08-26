@@ -2,9 +2,13 @@
  * @packageDocumentation
  * @module run-z
  */
+import { flatMapIt } from '@proc7ts/a-iterable';
+import { arrayOfElements } from '@proc7ts/primitives';
 import type { ZExecution } from '@run-z/exec-z';
 import { execZNoOp } from '@run-z/exec-z';
 import type { ZTaskParams } from '../plan';
+import type { ZSetup } from '../setup';
+import type { ZTaskParser } from '../tasks';
 import type { ZJob } from './job';
 
 /**
@@ -12,7 +16,26 @@ import type { ZJob } from './job';
  *
  * It is provided is used by {@link ZCall.exec task execution jobs} to execute commands.
  */
-export interface ZShell {
+export abstract class ZShell {
+
+  /**
+   * Creates task execution shell that does nothing.
+   *
+   * @param setup  Task execution setup.
+   *
+   * @returns New task execution shell.
+   */
+  static noop(setup: ZSetup): ZShell {
+    return new NoOpZShell(setup);
+  }
+
+  /**
+   * Constructs task execution shell.
+   *
+   * @param setup  Task execution setup.
+   */
+  constructor(readonly setup: ZSetup) {
+  }
 
   /**
    * Executes a {@link ZTaskSpec.Command command}.
@@ -23,7 +46,7 @@ export interface ZShell {
    *
    * @returns Command execution instance.
    */
-  execCommand(job: ZJob, command: string, params: ZTaskParams): ZExecution;
+  abstract execCommand(job: ZJob, command: string, params: ZTaskParams): ZExecution;
 
   /**
    * Executes an {@link ZTaskSpec.Script NPM script}.
@@ -34,32 +57,35 @@ export interface ZShell {
    *
    * @returns NPM script execution instance.
    */
-  execScript(job: ZJob, name: string, params: ZTaskParams): ZExecution;
+  abstract execScript(job: ZJob, name: string, params: ZTaskParams): ZExecution;
+
+  /**
+   * Constructs command line options supported by system shell.
+   *
+   * Includes options supported by {@link ZExtension.shellOptions extensions}.
+   */
+  options(): ZTaskParser.SupportedOptions {
+    return Array.from(
+        flatMapIt(
+            this.setup.extensions,
+            ({ shellOptions }) => arrayOfElements(shellOptions),
+        ),
+    );
+  }
 
 }
 
 /**
  * @internal
  */
-const noopZShell: ZShell = {
+class NoOpZShell extends ZShell {
 
-  execCommand() {
+  execCommand(): ZExecution {
     return execZNoOp();
-  },
+  }
 
-  execScript() {
+  execScript(): ZExecution {
     return execZNoOp();
-  },
+  }
 
-};
-
-export const ZShell = {
-
-  /**
-   * Task execution shell that does nothing.
-   */
-  get noop(): ZShell {
-    return noopZShell;
-  },
-
-};
+}

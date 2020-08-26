@@ -6,10 +6,11 @@
 import { arrayOfElements } from '@proc7ts/primitives';
 import type { ZExecution, ZExecutionStarter } from '@run-z/exec-z';
 import { poolZExecutions, spawnZ } from '@run-z/exec-z';
-import type { SupportedZOptions, ZOption } from '@run-z/optionz';
-import { chalkZColorOptions, clz } from '@run-z/optionz/colors';
+import type { ZOption } from '@run-z/optionz';
+import { clz } from '@run-z/optionz/colors';
 import * as path from 'path';
-import type { ZJob, ZShell, ZTaskParams } from '../core';
+import type { ZJob, ZTaskParams } from '../core';
+import { ZShell, ZTaskParser } from '../core';
 import { RichZProgressFormat, TextZProgressFormat, ttyColorLevel, ttyColumns, ZProgressFormat } from './impl';
 
 /**
@@ -25,7 +26,7 @@ const kill = require('tree-kill');
 /**
  * Operating system-specific task execution shell.
  */
-export class SystemZShell implements ZShell {
+export class SystemZShell extends ZShell {
 
   private _exec: (this: void, starter: ZExecutionStarter) => ZExecution = poolZExecutions();
   private _format?: ZProgressFormat;
@@ -38,51 +39,52 @@ export class SystemZShell implements ZShell {
    * `--progress` - configures the {@link setProgressFormat progress reporting format},
    * `--max-jobs` (`-j`) - configures the {@link setMaxJobs maximum number of simultaneously running jobs}.
    */
-  options<TOption extends ZOption>(): SupportedZOptions<TOption> {
-
-    const options: SupportedZOptions.Map<TOption> = {
-      '--max-jobs': {
-        read: readMaxZJobs.bind(this),
-        meta: {
-          group: '!builtin:shell:max-jobs',
-          get usage() {
-            return `--max-jobs ${clz.optional(clz.param('LIMIT'))}`;
-          },
-          help: 'Set the maximum of simultaneously running jobs',
-          get description() {
-            return `
+  options(): ZTaskParser.SupportedOptions {
+    return [
+      ...arrayOfElements(super.options()),
+      {
+        '--max-jobs': {
+          read: readMaxZJobs.bind(this),
+          meta: {
+            group: '!builtin:shell:max-jobs',
+            get usage() {
+              return `--max-jobs ${clz.optional(clz.param('LIMIT'))}`;
+            },
+            help: 'Set the maximum of simultaneously running jobs',
+            get description() {
+              return `
 Zero or negative ${clz.param('LIMIT')} means no limit.
 
 Defaults to the number of CPUs when no ${clz.param('LIMIT')} set.
             `;
+            },
           },
         },
-      },
-      '-j*': {
-        read: readMaxZJobs.bind(this),
-        meta: {
-          aliasOf: '--max-jobs',
-          get usage() {
-            return `-j${clz.param('LIMIT')}`;
+        '-j*': {
+          read: readMaxZJobs.bind(this),
+          meta: {
+            aliasOf: '--max-jobs',
+            get usage() {
+              return `-j${clz.param('LIMIT')}`;
+            },
           },
         },
-      },
-      '-j': {
-        read: readMaxZJobs.bind(this),
-        meta: {
-          hidden: true,
+        '-j': {
+          read: readMaxZJobs.bind(this),
+          meta: {
+            hidden: true,
+          },
         },
-      },
-      '--progress': {
-        read: (option: ZOption) => {
-          this.setProgressFormat('rich');
-          option.recognize();
-        },
-        meta: {
-          group: '!builtin:shell:progress',
-          help: 'Report execution progress',
-          get description() {
-            return `
+        '--progress': {
+          read: (option: ZOption) => {
+            this.setProgressFormat('rich');
+            option.recognize();
+          },
+          meta: {
+            group: '!builtin:shell:progress',
+            help: 'Report execution progress',
+            get description() {
+              return `
 ${clz.param('FORMAT')} can be one of:
 
 ${clz.bullet()} ${clz.usage('rich')} or none - rich progress format,
@@ -90,28 +92,24 @@ ${clz.bullet()} ${clz.usage('text')} - report progress by logging task output.
 
 By default ${clz.usage('rich')} format is used for color terminals, and ${clz.usage('text')} otherwise.
             `;
+            },
+          },
+        },
+        '--progress=*': {
+          read: (option: ZOption) => {
+
+            const [name] = option.values();
+
+            this.setProgressFormat(name as 'rich' | 'text');
+          },
+          meta: {
+            aliasOf: '--progress',
+            get usage() {
+              return `--progress=${clz.param('FORMAT')}`;
+            },
           },
         },
       },
-      '--progress=*': {
-        read: (option: ZOption) => {
-
-          const [name] = option.values();
-
-          this.setProgressFormat(name as 'rich' | 'text');
-        },
-        meta: {
-          aliasOf: '--progress',
-          get usage() {
-            return `--progress=${clz.param('FORMAT')}`;
-          },
-        },
-      },
-    };
-
-    return [
-      options,
-      ...arrayOfElements(chalkZColorOptions<TOption>()),
     ];
   }
 

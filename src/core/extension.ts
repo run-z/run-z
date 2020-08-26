@@ -14,4 +14,11 @@ export interface ZExtension {
    */
   readonly options?: ZTaskParser.SupportedOptions;
 
+  /**
+   * Additional shell options supported by this extension.
+   *
+   * In contrast to [options], the shell ones can only be specified for `run-z` command, but not for arbitrary task.
+   */
+  readonly shellOptions?: ZTaskParser.SupportedOptions;
+
 }

@@ -49,7 +49,7 @@ function readZHelp(mode?: 'brief' | 'detailed'): ZOptionReader.Fn<ZTaskOption> {
  * Supports `-h` and `--help` options.
  */
 export const ZHelpBuiltin: ZExtension = {
-  options: {
+  shellOptions: {
     '-h': {
       read: readZHelp('brief'),
       meta: {
