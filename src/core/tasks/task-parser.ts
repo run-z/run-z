@@ -5,7 +5,7 @@
 import { noop } from '@proc7ts/primitives';
 import { SupportedZOptions, ZOptionInput } from '@run-z/optionz';
 import type { ZOptionsParser } from '@run-z/optionz/d.ts/options-parser';
-import { parse } from 'shell-quote';
+import shellQuote from 'shell-quote';
 import { zTaskSpecParser } from './impl/parser';
 import type { ZTaskBuilder } from './task-builder';
 import type { ZTaskOption } from './task-option';
@@ -88,7 +88,7 @@ export class ZTaskParser {
       withEnv = true;
       return;
     };
-    const entries = parse(commandLine, detectEnv);
+    const entries = shellQuote.parse(commandLine, detectEnv);
 
     if (entries[0] !== 'run-z') {
       return; // Not a run-z script.

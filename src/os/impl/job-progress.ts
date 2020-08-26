@@ -1,18 +1,9 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 import { mapIt } from '@proc7ts/a-iterable';
+import chalk from 'chalk';
+import stringWidth from 'string-width';
 import type { ZJob } from '../../core';
 import { ZJobOutput } from './job-output';
 import type { ZProgressFormat } from './progress-format';
-
-/**
- * @internal
- */
-const chalk = require('chalk');
-
-/**
- * @internal
- */
-const stringWidth = require('string-width');
 
 /**
  * @internal

@@ -24,8 +24,18 @@
   "main": "dist/run-z.js",
   "module": "dist/run-z.mjs",
   "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/run-z.mjs",
+      "require": "./dist/run-z.js"
+    },
+    "./builtins": {
+      "import": "./dist/run-z.builtins.mjs",
+      "require": "./dist/run-z.builtins.js"
+    }
+  },
   "bin": {
-    "run-z": "./run-z.js"
+    "run-z": "./bin/run-z.mjs"
   },
   "engines": {
     "node": ">=12"
@@ -34,8 +44,8 @@
     "@proc7ts/a-iterable": "^2.7.0",
     "@proc7ts/call-thru": "^4.0.0",
     "@proc7ts/primitives": "^1.1.0",
-    "@run-z/exec-z": "^1.0.0-dev.3",
-    "@run-z/optionz": "^1.0.0-dev.11",
+    "@run-z/exec-z": "^1.0.0-dev.4",
+    "@run-z/optionz": "^1.0.0-dev.12",
     "ansi-escapes": "^4.3.1",
     "chalk": "^4.1.0",
     "cli-spinners": "^2.4.0",
@@ -44,6 +54,7 @@
     "log-symbols": "^4.0.0",
     "shell-quote": "^1.7.2",
     "string-width": "^4.2.0",
+    "strip-ansi": "^6.0.0",
     "tree-kill": "^1.2.2"
   },
   "devDependencies": {

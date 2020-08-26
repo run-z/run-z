@@ -1,15 +1,12 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 import { asis, noop } from '@proc7ts/primitives';
 import { AbortedZExecutionError } from '@run-z/exec-z';
+import chalk from 'chalk';
+import logSymbols from 'log-symbols';
 import { pathToFileURL } from 'url';
 import { StandardZSetup } from '../builtins';
 import type { ZPackage, ZSetup } from '../core';
 import { ZPackageDirectory } from './package-directory';
 import { SystemZShell } from './system-shell';
-
-const logSymbols = require('log-symbols');
-
-const chalk = require('chalk');
 
 describe('SystemZShell', () => {
 

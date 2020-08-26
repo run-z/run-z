@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-const chalk = require('chalk');
+import chalk from 'chalk';
 
 /**
  * @internal
