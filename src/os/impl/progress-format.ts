@@ -1,14 +1,9 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 import * as os from 'os';
+import stringWidth from 'string-width';
 import type { ZJob } from '../../core';
 import type { ZJobProgress } from './job-progress';
 import { ZRenderSchedule } from './render-schedule';
 import { write2stderr, write2stdout } from './writer-for';
-
-/**
- * @internal
- */
-const stringWidth = require('string-width');
 
 /**
  * @internal

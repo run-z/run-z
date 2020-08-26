@@ -1,7 +1,5 @@
+import chalk from 'chalk';
 import { stripControlChars } from './strip-control-chars';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const chalk = require('chalk');
 
 describe('stripControlChars', () => {
   it('strips control chars and terminal escape sequences', () => {

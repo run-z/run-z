@@ -1,8 +1,11 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 import { noop } from '@proc7ts/primitives';
 import { AbortedZExecutionError } from '@run-z/exec-z';
 import * as ansiEscapes from 'ansi-escapes';
+import cliSpinners from 'cli-spinners';
+import cliTruncate from 'cli-truncate';
+import logSymbols from 'log-symbols';
 import * as os from 'os';
+import stringWidth from 'string-width';
 import type { ZJob } from '../../core';
 import { ZJobProgress } from './job-progress';
 import { ZProgressFormat } from './progress-format';
@@ -43,26 +46,6 @@ export class RichZProgressFormat extends ZProgressFormat<RichZJobProgress> {
   }
 
 }
-
-/**
- * @internal
- */
-const cliSpinners = require('cli-spinners');
-
-/**
- * @internal
- */
-const cliTruncate = require('cli-truncate');
-
-/**
- * @internal
- */
-const logSymbols = require('log-symbols');
-
-/**
- * @internal
- */
-const stringWidth = require('string-width');
 
 /**
  * @internal

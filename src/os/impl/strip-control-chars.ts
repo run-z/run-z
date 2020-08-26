@@ -1,9 +1,4 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-
-/**
- * @internal
- */
-const stripAnsi = require('strip-ansi');
+import stripAnsi from 'strip-ansi';
 
 /**
  * @internal

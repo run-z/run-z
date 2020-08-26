@@ -2,26 +2,19 @@
  * @packageDocumentation
  * @module run-z
  */
-/* eslint-disable @typescript-eslint/no-var-requires */
 import { arrayOfElements } from '@proc7ts/primitives';
 import type { ZExecution, ZExecutionStarter } from '@run-z/exec-z';
 import { poolZExecutions, spawnZ } from '@run-z/exec-z';
 import type { ZOption } from '@run-z/optionz';
 import { clz } from '@run-z/optionz/colors';
+import type { ChildProcessByStdio } from 'child_process';
+import spawn from 'cross-spawn';
 import * as path from 'path';
+import type { Readable } from 'stream';
+import kill from 'tree-kill';
 import type { ZJob, ZTaskParams } from '../core';
 import { ZShell, ZTaskParser } from '../core';
 import { RichZProgressFormat, TextZProgressFormat, ttyColorLevel, ttyColumns, ZProgressFormat } from './impl';
-
-/**
- * @internal
- */
-const spawn = require('cross-spawn');
-
-/**
- * @internal
- */
-const kill = require('tree-kill');
 
 /**
  * Operating system-specific task execution shell.
@@ -192,10 +185,10 @@ By default ${clz.usage('rich')} format is used for color terminals, and ${clz.us
                   stdio: ['ignore', 'pipe', 'pipe'],
                   windowsHide: true,
                 },
-            );
+            ) as ChildProcessByStdio<null, Readable, Readable>;
 
-            childProcess.stdout.on('data', (chunk: any) => progress.report(chunk));
-            childProcess.stderr.on('data', (chunk: any) => progress.report(chunk, 1));
+            childProcess.stdout.on('data', chunk => progress.report(chunk));
+            childProcess.stderr.on('data', chunk => progress.report(chunk, 1));
 
             progress.start();
 
