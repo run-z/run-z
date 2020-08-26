@@ -23,7 +23,6 @@ describe('SystemZShell', () => {
 
     const dir = ZPackageDirectory.open({ rootURL: pathToFileURL(process.cwd()) });
 
-
     pkg = await setup.packageResolver.get(dir);
   });
 

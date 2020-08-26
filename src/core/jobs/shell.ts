@@ -2,10 +2,13 @@
  * @packageDocumentation
  * @module run-z
  */
+import { flatMapIt } from '@proc7ts/a-iterable';
+import { arrayOfElements } from '@proc7ts/primitives';
 import type { ZExecution } from '@run-z/exec-z';
 import { execZNoOp } from '@run-z/exec-z';
 import type { ZTaskParams } from '../plan';
 import type { ZSetup } from '../setup';
+import type { ZTaskParser } from '../tasks';
 import type { ZJob } from './job';
 
 /**
@@ -55,6 +58,20 @@ export abstract class ZShell {
    * @returns NPM script execution instance.
    */
   abstract execScript(job: ZJob, name: string, params: ZTaskParams): ZExecution;
+
+  /**
+   * Constructs command line options supported by system shell.
+   *
+   * Includes options supported by {@link ZExtension.shellOptions extensions}.
+   */
+  options(): ZTaskParser.SupportedOptions {
+    return Array.from(
+        flatMapIt(
+            this.setup.extensions,
+            ({ shellOptions }) => arrayOfElements(shellOptions),
+        ),
+    );
+  }
 
 }
 
