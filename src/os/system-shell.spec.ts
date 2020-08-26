@@ -80,6 +80,7 @@ describe('SystemZShell', () => {
     expect(await call.exec(shell).whenDone()).toBeUndefined();
   });
   it('executes command', async () => {
+    shell.setProgressFormat('rich');
 
     const task = await pkg.task('test:command');
     const call = await task.call();
@@ -94,6 +95,7 @@ describe('SystemZShell', () => {
     expect(await call.exec(shell).whenDone()).toBeUndefined();
   });
   it('fails on command failure', async () => {
+    shell.setProgressFormat('rich');
 
     const task = await pkg.task('test:fail');
     const call = await task.call();
@@ -101,13 +103,14 @@ describe('SystemZShell', () => {
     expect(await call.exec(shell).whenDone().catch(asis)).toBe(13);
   });
   it('fails on command kill', async () => {
+    shell.setProgressFormat('text');
 
     const task = await pkg.task('test:kill');
     const call = await task.call();
 
     expect(await call.exec(shell).whenDone().catch(asis)).toBeInstanceOf(AbortedZExecutionError);
   });
-  it('fails on command kill with exist code', async () => {
+  it('fails on command kill with exit code', async () => {
 
     const task = await pkg.task('test:kill-with-code');
     const call = await task.call();
@@ -122,6 +125,7 @@ describe('SystemZShell', () => {
     const job = call.exec(shell);
 
     await job.whenStarted();
+    await new Promise(resolve => setTimeout(resolve, 250)); // Await for script to start
     job.abort();
 
     const error = await job.whenDone().catch(asis);
@@ -188,6 +192,40 @@ describe('SystemZShell', () => {
       });
     });
 
+    describe('--color', () => {
+      it('enables rich progress format', async () => {
+
+        const builder = setup.taskFactory.newTask(pkg, 'progress-reporting-task');
+
+        await builder.parse('run-z --color test:script', { options: shell.options() });
+
+        const task = builder.task();
+        const call = await task.call();
+        const job = call.exec(shell);
+
+        await job.whenDone();
+
+        expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
+      });
+    });
+
+    describe('--no-colors', () => {
+      it('enables text progress format', async () => {
+
+        const builder = setup.taskFactory.newTask(pkg, 'no-progress-reporting-task');
+
+        await builder.parse('run-z --no-colors test:script', { options: shell.options() });
+
+        const task = builder.task();
+        const call = await task.call();
+        const job = call.exec(shell);
+
+        await job.whenDone();
+
+        expect(writeSpy).toHaveBeenCalledWith(expect.not.stringContaining(logSymbols.success), expect.any(Function));
+      });
+    });
+
     describe('--progress', () => {
       it('enables rich progress format', async () => {
 
@@ -197,9 +235,9 @@ describe('SystemZShell', () => {
 
         const task = builder.task();
         const call = await task.call();
-        const actionZJob = call.exec(shell);
+        const job = call.exec(shell);
 
-        await actionZJob.whenDone();
+        await job.whenDone();
 
         expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
       });
@@ -211,11 +249,25 @@ describe('SystemZShell', () => {
 
         const task = builder.task();
         const call = await task.call();
-        const actionZJob = call.exec(shell);
+        const job = call.exec(shell);
 
-        await actionZJob.whenDone();
+        await job.whenDone();
 
         expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
+      });
+      it('reports failure', async () => {
+
+        const builder = setup.taskFactory.newTask(pkg, 'error-reporting-task');
+
+        await builder.parse('run-z --progress test:fail', { options: shell.options() });
+
+        const task = builder.task();
+        const call = await task.call();
+        const job = call.exec(shell);
+
+        expect(await job.whenDone().catch(asis)).toBeDefined();
+
+        expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.error), expect.any(Function));
       });
     });
 
@@ -228,9 +280,9 @@ describe('SystemZShell', () => {
 
         const task = builder.task();
         const call = await task.call();
-        const actionZJob = call.exec(shell);
+        const job = call.exec(shell);
 
-        await actionZJob.whenDone();
+        await job.whenDone();
 
         expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
       });
@@ -255,9 +307,9 @@ describe('SystemZShell', () => {
 
         const task = builder.task();
         const call = await task.call();
-        const actionZJob = call.exec(shell);
+        const job = call.exec(shell);
 
-        await actionZJob.whenDone();
+        await job.whenDone();
 
         expect(setMaxJobs).toHaveBeenCalledWith(undefined);
       });
@@ -269,9 +321,9 @@ describe('SystemZShell', () => {
 
         const task = builder.task();
         const call = await task.call();
-        const actionZJob = call.exec(shell);
+        const job = call.exec(shell);
 
-        await actionZJob.whenDone();
+        await job.whenDone();
 
         expect(setMaxJobs).toHaveBeenCalledWith(1);
       });
@@ -283,9 +335,9 @@ describe('SystemZShell', () => {
 
         const task = builder.task();
         const call = await task.call();
-        const actionZJob = call.exec(shell);
+        const job = call.exec(shell);
 
-        await actionZJob.whenDone();
+        await job.whenDone();
 
         expect(setMaxJobs).toHaveBeenCalledWith(2);
       });

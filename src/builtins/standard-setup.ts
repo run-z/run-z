@@ -5,7 +5,6 @@
 import { arrayOfElements } from '@proc7ts/primitives';
 import { ZConfig, ZExtension, ZSetup } from '../core';
 import { ZAllBatchBuiltin } from './all-batch.builtin';
-import { ZColorsBuiltin } from './colors.builtin';
 import { ZCommandExecutionBuiltin } from './command-execution.builtin';
 import { ZDepGraphBatchesBuiltin } from './dep-graph';
 import { ZHelpBuiltin } from './help.builtin';
@@ -13,7 +12,6 @@ import { ZParallelBatchesBuiltin } from './parallel-batches';
 
 const builtinZExtensions: readonly ZExtension[] = [
   ZAllBatchBuiltin,
-  ZColorsBuiltin,
   ZCommandExecutionBuiltin,
   ZHelpBuiltin,
   ZDepGraphBatchesBuiltin,

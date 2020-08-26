@@ -1,3 +1,4 @@
+console.log('STALE');
 // Prevent process from stopping
 const id = setInterval(
     () => {

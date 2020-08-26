@@ -17,6 +17,7 @@
       "ES2018"
     ],
     "types": [
+      "cross-spawn",
       "jest",
       "node",
       "wrap-ansi"

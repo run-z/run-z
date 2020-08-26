@@ -1,11 +1,26 @@
+/**
+ * @packageDocumentation
+ * @module run-z
+ */
+/* eslint-disable @typescript-eslint/no-var-requires */
+import { arrayOfElements } from '@proc7ts/primitives';
 import type { ZExecution, ZExecutionStarter } from '@run-z/exec-z';
 import { poolZExecutions, spawnZ } from '@run-z/exec-z';
 import type { SupportedZOptions, ZOption } from '@run-z/optionz';
-import { clz } from '@run-z/optionz/colors';
-import { spawn } from 'child_process';
+import { chalkZColorOptions, clz } from '@run-z/optionz/colors';
 import * as path from 'path';
 import type { ZJob, ZShell, ZTaskParams } from '../core';
 import { RichZProgressFormat, TextZProgressFormat, ttyColorLevel, ttyColumns, ZProgressFormat } from './impl';
+
+/**
+ * @internal
+ */
+const spawn = require('cross-spawn');
+
+/**
+ * @internal
+ */
+const kill = require('tree-kill');
 
 /**
  * Operating system-specific task execution shell.
@@ -24,7 +39,8 @@ export class SystemZShell implements ZShell {
    * `--max-jobs` (`-j`) - configures the {@link setMaxJobs maximum number of simultaneously running jobs}.
    */
   options<TOption extends ZOption>(): SupportedZOptions<TOption> {
-    return {
+
+    const options: SupportedZOptions.Map<TOption> = {
       '--max-jobs': {
         read: readMaxZJobs.bind(this),
         meta: {
@@ -92,6 +108,11 @@ By default ${clz.usage('rich')} format is used for color terminals, and ${clz.us
         },
       },
     };
+
+    return [
+      options,
+      ...arrayOfElements(chalkZColorOptions<TOption>()),
+    ];
   }
 
   /**
@@ -156,31 +177,38 @@ By default ${clz.usage('rich')} format is used for color terminals, and ${clz.us
 
     return this._exec(() => {
 
-      const spawned = spawnZ(() => {
+      const spawned = spawnZ(
+          () => {
 
-        const childProcess = spawn(
-            command,
-            args,
-            {
-              cwd: job.call.task.target.location.path,
-              env: {
-                ...process.env,
-                COLUMNS: String(ttyColumns()),
-                FORCE_COLOR: String(ttyColorLevel()),
-              },
-              shell: true,
-              stdio: ['ignore', 'pipe', 'pipe'],
-              windowsHide: true,
+            const childProcess = spawn(
+                command,
+                args,
+                {
+                  cwd: job.call.task.target.location.path,
+                  env: {
+                    ...process.env,
+                    COLUMNS: String(ttyColumns()),
+                    FORCE_COLOR: String(ttyColorLevel()),
+                  },
+                  shell: true,
+                  stdio: ['ignore', 'pipe', 'pipe'],
+                  windowsHide: true,
+                },
+            );
+
+            childProcess.stdout.on('data', (chunk: any) => progress.report(chunk));
+            childProcess.stderr.on('data', (chunk: any) => progress.report(chunk, 1));
+
+            progress.start();
+
+            return childProcess;
+          },
+          {
+            kill(proc) {
+              kill(proc.pid, 'SIGKILL');
             },
-        );
-
-        childProcess.stdout.on('data', chunk => progress.report(chunk));
-        childProcess.stderr.on('data', chunk => progress.report(chunk, 1));
-
-        progress.start();
-
-        return childProcess;
-      });
+          },
+      );
 
       return {
         whenStarted: spawned.whenStarted.bind(spawned),
