@@ -2,15 +2,18 @@ import { asis, noop } from '@proc7ts/primitives';
 import { execZNoOp } from '@run-z/exec-z';
 import { ZOptionError } from '@run-z/optionz';
 import { ZSetup, ZShell } from '../core';
+import { SystemZShell } from '../os';
 import { TestPlan } from '../spec';
 import { ZHelpBuiltin } from './help.builtin';
 
 describe('ZHelpBuiltin', () => {
 
   let testPlan: TestPlan;
+  let shell: ZShell;
 
   beforeEach(() => {
     testPlan = new TestPlan();
+    shell = new SystemZShell(testPlan.setup);
   });
 
   let logSpy: jest.SpyInstance;
@@ -26,7 +29,7 @@ describe('ZHelpBuiltin', () => {
   describe('-h', () => {
     it('displays brief help', async () => {
 
-      const call = await testPlan.parse('run-z -h');
+      const call = await testPlan.parse('run-z -h', { options: shell.options() });
 
       await call.exec(ZShell.noop(testPlan.setup)).whenDone();
 
@@ -49,7 +52,7 @@ describe('ZHelpBuiltin', () => {
           },
       );
 
-      const call = await testPlan.parse('run-z -h');
+      const call = await testPlan.parse('run-z -h', { options: shell.options() });
 
       await call.exec(ZShell.noop(testPlan.setup)).whenDone();
 
@@ -60,7 +63,7 @@ describe('ZHelpBuiltin', () => {
   describe('--help', () => {
     it('displays full help', async () => {
 
-      const call = await testPlan.parse('run-z --help');
+      const call = await testPlan.parse('run-z --help', { options: shell.options() });
 
       await call.exec(ZShell.noop(testPlan.setup)).whenDone();
 
@@ -83,7 +86,7 @@ describe('ZHelpBuiltin', () => {
           },
       );
 
-      const call = await testPlan.parse('run-z --help');
+      const call = await testPlan.parse('run-z --help', { options: shell.options() });
 
       await call.exec(ZShell.noop(testPlan.setup)).whenDone();
 
@@ -91,7 +94,7 @@ describe('ZHelpBuiltin', () => {
     });
     it('does not display help when specified after prerequisite', async () => {
 
-      const call = await testPlan.parse('run-z test/=skip --help');
+      const call = await testPlan.parse('run-z test/=skip --help', { options: shell.options() });
 
       await call.exec(ZShell.noop(testPlan.setup)).whenDone();
 

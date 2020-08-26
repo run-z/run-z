@@ -1,7 +1,8 @@
 import { asis } from '@proc7ts/primitives';
+import type { ZOptionsParser } from '@run-z/optionz';
 import { StandardZSetup } from '../builtins';
 import type { ZCall, ZCallDetails, ZPackageLocation, ZPlan, ZSetup } from '../core';
-import { ZPackage, ZPackageJson, ZPackageTree } from '../core';
+import { ZPackage, ZPackageJson, ZPackageTree, ZTaskOption } from '../core';
 
 export class TestPlan {
 
@@ -48,12 +49,12 @@ export class TestPlan {
     return this._target = this.root.put(name, { packageJson });
   }
 
-  async parse(commandLine: string): Promise<ZCall> {
+  async parse(commandLine: string, opts?: ZOptionsParser.Opts<ZTaskOption>): Promise<ZCall> {
 
     const target = await this.target();
     const builder = this.setup.taskFactory.newTask(target, '');
 
-    await builder.parse(commandLine);
+    await builder.parse(commandLine, opts);
 
     return this.lastCall = await builder.task().call();
   }
