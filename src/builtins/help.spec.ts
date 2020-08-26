@@ -28,7 +28,7 @@ describe('ZHelpBuiltin', () => {
 
       const call = await testPlan.parse('run-z -h');
 
-      await call.exec(ZShell.noop).whenDone();
+      await call.exec(ZShell.noop(testPlan.setup)).whenDone();
 
       expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('-h'));
     });
@@ -51,7 +51,7 @@ describe('ZHelpBuiltin', () => {
 
       const call = await testPlan.parse('run-z -h');
 
-      await call.exec(ZShell.noop).whenDone();
+      await call.exec(ZShell.noop(testPlan.setup)).whenDone();
 
       expect(logSpy).toHaveBeenCalledWith(expect.not.stringContaining('--test-option'));
     });
@@ -62,7 +62,7 @@ describe('ZHelpBuiltin', () => {
 
       const call = await testPlan.parse('run-z --help');
 
-      await call.exec(ZShell.noop).whenDone();
+      await call.exec(ZShell.noop(testPlan.setup)).whenDone();
 
       expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('--help'));
     });
@@ -85,7 +85,7 @@ describe('ZHelpBuiltin', () => {
 
       const call = await testPlan.parse('run-z --help');
 
-      await call.exec(ZShell.noop).whenDone();
+      await call.exec(ZShell.noop(testPlan.setup)).whenDone();
 
       expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('--test-option'));
     });
@@ -93,7 +93,7 @@ describe('ZHelpBuiltin', () => {
 
       const call = await testPlan.parse('run-z test/=skip --help');
 
-      await call.exec(ZShell.noop).whenDone();
+      await call.exec(ZShell.noop(testPlan.setup)).whenDone();
 
       expect(logSpy).not.toHaveBeenCalled();
     });

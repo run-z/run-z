@@ -19,7 +19,7 @@ export function runZ(): Promise<void> {
 async function doRunZ(): Promise<void> {
 
   const setup = new StandardZSetup();
-  const shell = new SystemZShell();
+  const shell = new SystemZShell(setup);
   const currentDir = ZPackageDirectory.open();
   const target = await setup.packageResolver.get(currentDir);
   const builder = await setup.taskFactory

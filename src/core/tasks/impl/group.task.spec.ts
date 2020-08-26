@@ -439,7 +439,7 @@ describe('GroupZTask', () => {
 
       const call = await testPlan.call('test');
 
-      expect(await call.exec(ZShell.noop).whenDone()).toBeUndefined();
+      expect(await call.exec(ZShell.noop(testPlan.setup)).whenDone()).toBeUndefined();
     });
     it('executes prerequisites', async () => {
       testPlan.addPackage(
@@ -457,7 +457,7 @@ describe('GroupZTask', () => {
 
       const call = await testPlan.call('test');
 
-      expect(await call.exec(ZShell.noop).whenDone()).toBeUndefined();
+      expect(await call.exec(ZShell.noop(testPlan.setup)).whenDone()).toBeUndefined();
     });
   });
 });

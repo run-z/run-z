@@ -13,16 +13,17 @@ const chalk = require('chalk');
 
 describe('SystemZShell', () => {
 
-  let shell: SystemZShell;
   let setup: ZSetup;
+  let shell: SystemZShell;
   let pkg: ZPackage;
 
   beforeEach(async () => {
-    shell = new SystemZShell();
+    setup = new StandardZSetup();
+    shell = new SystemZShell(setup);
 
     const dir = ZPackageDirectory.open({ rootURL: pathToFileURL(process.cwd()) });
 
-    setup = new StandardZSetup();
+
     pkg = await setup.packageResolver.get(dir);
   });
 

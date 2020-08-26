@@ -23,7 +23,7 @@ describe('UnknownZTask', () => {
     it('throws when absent', async () => {
 
       const call = await testPlan.call('absent');
-      const error = await call.exec(ZShell.noop).whenDone().catch(asis);
+      const error = await call.exec(ZShell.noop(testPlan.setup)).whenDone().catch(asis);
 
       expect(error).toBeInstanceOf(UnknownZTaskError);
       expect(error.taskName).toBe('absent');
@@ -42,7 +42,7 @@ describe('UnknownZTask', () => {
 
       const call = await testPlan.call('test');
 
-      expect(await call.exec(ZShell.noop).whenDone()).toBeUndefined();
+      expect(await call.exec(ZShell.noop(testPlan.setup)).whenDone()).toBeUndefined();
     });
     it('throws when `if-present` flag unset', async () => {
       testPlan.addPackage(
@@ -58,7 +58,7 @@ describe('UnknownZTask', () => {
       );
 
       const call = await testPlan.call('test');
-      const error = await call.exec(ZShell.noop).whenDone().catch(asis);
+      const error = await call.exec(ZShell.noop(testPlan.setup)).whenDone().catch(asis);
 
       expect(error).toBeInstanceOf(UnknownZTaskError);
       expect(error.taskName).toBe('absent');

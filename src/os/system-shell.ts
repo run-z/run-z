@@ -9,7 +9,8 @@ import { poolZExecutions, spawnZ } from '@run-z/exec-z';
 import type { SupportedZOptions, ZOption } from '@run-z/optionz';
 import { chalkZColorOptions, clz } from '@run-z/optionz/colors';
 import * as path from 'path';
-import type { ZJob, ZShell, ZTaskParams } from '../core';
+import type { ZJob, ZTaskParams } from '../core';
+import { ZShell } from '../core';
 import { RichZProgressFormat, TextZProgressFormat, ttyColorLevel, ttyColumns, ZProgressFormat } from './impl';
 
 /**
@@ -25,7 +26,7 @@ const kill = require('tree-kill');
 /**
  * Operating system-specific task execution shell.
  */
-export class SystemZShell implements ZShell {
+export class SystemZShell extends ZShell {
 
   private _exec: (this: void, starter: ZExecutionStarter) => ZExecution = poolZExecutions();
   private _format?: ZProgressFormat;
