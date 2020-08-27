@@ -1,5 +1,5 @@
 import { asis, noop } from '@proc7ts/primitives';
-import { AbortedZExecutionError } from '@run-z/exec-z';
+import { AbortedZExecutionError, FailedZExecutionError } from '@run-z/exec-z';
 import chalk from 'chalk';
 import logSymbols from 'log-symbols';
 import { pathToFileURL } from 'url';
@@ -96,8 +96,10 @@ describe('SystemZShell', () => {
 
     const task = await pkg.task('test:fail');
     const call = await task.call();
+    const error = await call.exec(shell).whenDone().catch(asis);
 
-    expect(await call.exec(shell).whenDone().catch(asis)).toBe(13);
+    expect(error).toBeInstanceOf(FailedZExecutionError);
+    expect(error.failure).toBe(13);
   });
   it('fails on command kill', async () => {
     shell.setProgressFormat('text');

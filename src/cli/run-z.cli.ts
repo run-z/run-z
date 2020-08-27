@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module run-z
  */
-import { AbortedZExecutionError } from '@run-z/exec-z';
+import { AbortedZExecutionError, FailedZExecutionError } from '@run-z/exec-z';
 import { ZOptionError } from '@run-z/optionz';
 import { StandardZSetup } from '../builtins';
 import { UnknownZTaskError } from '../core';
@@ -49,6 +49,8 @@ function logZError(error: any): Promise<void> {
     console.error(error.message);
   } else if (error instanceof AbortedZExecutionError) {
     console.error('Aborted with', error.abortReason);
+  } else if (error instanceof FailedZExecutionError) {
+    console.error('Failed with', error.failure);
   } else {
     console.error('Unexpected error', error);
   }
