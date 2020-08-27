@@ -44,7 +44,7 @@
     "@proc7ts/call-thru": "^4.0.0",
     "@proc7ts/primitives": "^1.1.0",
     "@run-z/exec-z": "^1.0.0-dev.5",
-    "@run-z/optionz": "^1.0.0-dev.12",
+    "@run-z/optionz": "^1.0.0-dev.13",
     "ansi-escapes": "^4.3.1",
     "chalk": "^4.1.0",
     "cli-spinners": "^2.4.0",
