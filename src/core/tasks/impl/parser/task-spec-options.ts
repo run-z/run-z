@@ -50,9 +50,9 @@ const fallbackZTaskSpecOptions: SupportedZOptions.Map<ZTaskOption> = {
       get description() {
         return `
 where ${clz.param('PKG-SELECTOR')}:
-${clz.bullet} is an URL path to package directory;
-${clz.bullet} may contain ${clz.usage('//')} separator to select immediately nested package directories;
-${clz.bullet} may contain ${clz.usage('///')} separator to select deeply nested package directories.
+${clz.bullet()} is an URL path to package directory;
+${clz.bullet()} may contain ${clz.usage('//')} separator to select immediately nested package directories;
+${clz.bullet()} may contain ${clz.usage('///')} separator to select deeply nested package directories.
 
 Hidden directories ignored.
       `;
