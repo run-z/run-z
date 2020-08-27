@@ -1,7 +1,5 @@
 #!/usr/bin/env -Snode --no-warnings
 
-import { runZ } from '../dist/run-z.cli.mjs';
+import { runZ } from '../dist/run-z.cli.js';
 
-runZ()
-    .then(() => process.exit(0))
-    .catch(() => process.exit(1));
+runZ().catch(() => process.exit(1));
