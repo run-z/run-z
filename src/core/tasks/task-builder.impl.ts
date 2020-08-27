@@ -145,11 +145,11 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
       }
     }
 
-    // Apply script options first
-    await this.applyOptions(args, { ...opts, fromIndex: 1 });
-
-    // Then apply explicit options
-    return this.applyOptions(argv, { ...opts, fromIndex: args.length - 1 + fromIndex });
+    // Replace matching args prefix with corresponding task
+    return this.applyOptions(
+        [taskName, ...argv.slice(args.length - 1 + fromIndex)],
+        { ...opts, fromIndex: 0 },
+    );
   }
 
   spec(): ZTaskSpec<TAction> {

@@ -20,19 +20,26 @@ describe('ZTaskBuilder', () => {
         },
       });
 
-      await builder.applyArgv('test', ['/usr/bin/node', 'run-z.cli.js', 'attr=val1', '--then', 'exec', 'attr=val2']);
+      await builder.applyArgv('test', ['/usr/bin/node', 'run-z.js', 'attr=val1', '--then', 'exec', 'attr=val2']);
 
       expect(builder.spec()).toEqual({
-        pre: [],
+        pre: [
+          {
+            targets: [],
+            task: 'test',
+            annex: false,
+            parallel: false,
+            attrs: {},
+            args: [],
+          },
+        ],
         attrs: {
-          attr: ['val1', 'val2'],
+          attr: ['val2'],
         },
         args: [],
         action: {
-          type: 'command',
-          command: 'exec',
-          parallel: false,
-          args: [],
+          type: 'group',
+          targets: [],
         },
       });
     });
@@ -45,7 +52,7 @@ describe('ZTaskBuilder', () => {
         },
       });
 
-      await builder.applyArgv(undefined, ['/usr/bin/node', 'run-z.cli.js', 'attr=val1', '--then', 'exec', 'attr=val2']);
+      await builder.applyArgv(undefined, ['/usr/bin/node', 'run-z.js', 'attr=val1', '--then', 'exec', 'attr=val2']);
 
       expect(builder.spec()).toEqual({
         pre: [],
