@@ -50,7 +50,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
       );
     }
 
-    const taskParams = plannedCall.extendParams({ attrs, args });
+    const taskParams = plannedCall.extendAttrs({ attrs, args });
 
     return planner.callPre(
         this,

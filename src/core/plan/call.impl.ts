@@ -141,8 +141,8 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
     return params;
   }
 
-  extendParams(extension: ZTaskParams.Partial): (this: void) => ZTaskParams {
-    return () => this.params().extend(extension);
+  extendAttrs(extension: ZTaskParams.Partial): (this: void) => ZTaskParams {
+    return () => this.params().extendAttrs(extension);
   }
 
   prerequisites(): Iterable<ZCall> {

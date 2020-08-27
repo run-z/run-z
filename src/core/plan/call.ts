@@ -89,13 +89,13 @@ export interface ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
   isParallelTo(task: ZTask): boolean;
 
   /**
-   * Extends this call parameters with the given extension.
+   * Extends attributes of this call with the given extension.
    *
    * @param extension  Task parameters extension.
    *
    * @returns Extended task parameters evaluator.
    */
-  extendParams(extension: ZTaskParams.Partial): (this: void) => ZTaskParams;
+  extendAttrs(extension: ZTaskParams.Partial): (this: void) => ZTaskParams;
 
   /**
    * Executes this call.

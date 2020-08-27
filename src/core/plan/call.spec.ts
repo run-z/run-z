@@ -94,18 +94,18 @@ describe('ZCall', () => {
     });
   });
 
-  describe('extendParams', () => {
+  describe('extendAttrs', () => {
     it('extends params', async () => {
 
       const call = await plan();
 
-      expect(call.extendParams({
+      expect(call.extendAttrs({
         attrs: { attr1: ['attr1-val2'] },
         args: ['arg2'],
       })()).toEqual({
         ...initParams,
         attrs: { ...initParams.attrs, attr1: ['attr1-val', 'attr1-val2'] },
-        args: ['cmd-arg1', 'arg1', 'arg2'],
+        args: ['arg2'],
       });
     });
   });
