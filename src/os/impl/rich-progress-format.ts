@@ -129,6 +129,9 @@ class RichZJobProgress extends ZJobProgress {
   }
 
   reportSuccess(): Promise<void> {
+    if (!this._output.lastLine) {
+      this.report('Ok');
+    }
     this._status = 'ok';
     return super.reportSuccess();
   }

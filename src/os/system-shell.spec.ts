@@ -262,10 +262,26 @@ describe('SystemZShell', () => {
         const task = builder.task();
         const call = await task.call();
         const job = call.exec(shell);
+        const error = await job.whenDone().catch(asis);
 
-        expect(await job.whenDone().catch(asis)).toBeDefined();
+        expect(error).toBeInstanceOf(FailedZExecutionError);
+        expect(error.failure).toBe(13);
 
         expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.error), expect.any(Function));
+      });
+      it('displays status when silent task succeeds', async () => {
+
+        const builder = setup.taskFactory.newTask(pkg, 'silently-reporting-task');
+
+        await builder.parse('run-z --progress test:silent', { options: shell.options() });
+
+        const task = builder.task();
+        const call = await task.call();
+        const job = call.exec(shell);
+
+        await job.whenDone();
+
+        expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(' Ok'), expect.any(Function));
       });
     });
 

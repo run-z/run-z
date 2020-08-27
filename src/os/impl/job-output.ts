@@ -9,6 +9,10 @@ export class ZJobOutput {
   private _lastNL = true;
 
   get status(): string {
+    return this.lastLine || 'Running...';
+  }
+
+  get lastLine(): string | undefined {
     for (let i = this._lines.length - 1; i >= 0; --i) {
 
       const line = stripControlChars(this._lines[i][0]);
@@ -18,7 +22,7 @@ export class ZJobOutput {
       }
     }
 
-    return 'Running...';
+    return;
   }
 
   add(chunk: string | Buffer, fd: 0 | 1 = 0): void {
