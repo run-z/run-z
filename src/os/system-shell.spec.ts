@@ -122,7 +122,6 @@ describe('SystemZShell', () => {
     const job = call.exec(shell);
 
     await job.whenStarted();
-    await new Promise(resolve => setTimeout(resolve, 250)); // Await for script to start
     job.abort();
 
     const error = await job.whenDone().catch(asis);

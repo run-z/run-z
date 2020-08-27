@@ -25,7 +25,7 @@ export interface ZJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> exten
   readonly call: ZCall<TAction>;
 
   /**
-   * Awaits for job to start.
+   * Awaits for the job to start.
    *
    * @returns A promise resolved when the job prerequisites satisfied and the work started.
    */

@@ -36,9 +36,8 @@ export class ZExecutor {
  */
 export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> implements ZJob<TAction> {
 
-  private _whenStarted!: Promise<void>;
-  private _whenFinished!: ZExecution;
-  private _whenDone!: ZExecution;
+  private _exec!: ZExecution;
+  private _execAndPre!: ZExecution;
 
   constructor(
       private readonly _executor: ZExecutor,
@@ -48,38 +47,29 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
   }
 
   get started(): boolean {
-    return this._whenFinished != null;
+    return this._exec != null;
   }
 
   whenStarted(): Promise<void> {
-    return Promise.race([this._whenStarted, this.whenFinished()]);
+    return this._exec.whenStarted();
   }
 
   start(): this {
 
-    const whenPrerequisites = this._execPrerequisites();
+    const whenPre = this._execPre();
     const whenReady = this._whenReady();
 
-    this._whenStarted = new Promise<void>(resolve => {
-      this._whenFinished = execZAfter(
-          whenReady,
-          () => {
-            resolve();
-            return this.call.task.exec(this);
-          },
-      );
-    });
-
-    this._whenDone = execZAll([whenPrerequisites, this._whenFinished], noop);
+    this._exec = execZAfter(whenReady, () => this.call.task.exec(this));
+    this._execAndPre = execZAll([whenPre, this._exec], noop);
 
     return this;
   }
 
   abort(): void {
-    this._whenDone.abort();
+    this._execAndPre.abort();
   }
 
-  private _execPrerequisites(): ZExecution {
+  private _execPre(): ZExecution {
     return execZAll(
         mapIt(
             this.call.prerequisites(),
@@ -119,11 +109,11 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
   }
 
   whenFinished(): Promise<void> {
-    return this._whenFinished.whenDone();
+    return this._exec.whenDone();
   }
 
   whenDone(): Promise<void> {
-    return this._whenDone.whenDone();
+    return this._execAndPre.whenDone();
   }
 
 }
