@@ -42,22 +42,12 @@ export default {
 
     return 'run-z';
   },
-  output: [
-    {
-      format: 'cjs',
-      sourcemap: true,
-      dir: './dist',
-      entryFileNames: '[name].js',
-      chunkFileNames: `_[name].js`,
-      hoistTransitiveImports: false,
-    },
-    {
-      format: 'esm',
-      sourcemap: true,
-      dir: './dist',
-      entryFileNames: '[name].mjs',
-      chunkFileNames: `_[name].mjs`,
-      hoistTransitiveImports: false,
-    },
-  ],
+  output: {
+    format: 'esm',
+    sourcemap: true,
+    dir: './dist',
+    entryFileNames: '[name].js',
+    chunkFileNames: `_[name].js`,
+    hoistTransitiveImports: false,
+  },
 };

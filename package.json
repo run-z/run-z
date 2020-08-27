@@ -21,21 +21,20 @@
   "bugs": {
     "url": "https://github.com/run-z/run-z/issues"
   },
+  "type": "module",
   "main": "dist/run-z.js",
-  "module": "dist/run-z.mjs",
+  "module": "dist/run-z.js",
   "types": "index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/run-z.mjs",
-      "require": "./dist/run-z.js"
+      "import": "./dist/run-z.js"
     },
     "./builtins": {
-      "import": "./dist/run-z.builtins.mjs",
-      "require": "./dist/run-z.builtins.js"
+      "import": "./dist/run-z.builtins.js"
     }
   },
   "bin": {
-    "run-z": "./bin/run-z.mjs"
+    "run-z": "bin/run-z.js"
   },
   "engines": {
     "node": ">=12"
@@ -96,7 +95,7 @@
     "doc": "typedoc",
     "doc:gh-pages": "gh-pages --dist target/typedoc --dotfiles",
     "doc:publish": "run-s doc \"doc:gh-pages {@}\" --",
-    "lint": "eslint . --ext .js,.ts",
+    "lint": "eslint . --ext .cjs,.js,.ts",
     "rebuild": "run-s clean build",
     "test": "jest",
     "test:all": "run-z test:command/--command2 test:script/--script2 --all3",
