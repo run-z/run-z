@@ -92,14 +92,6 @@ describe('ZHelpBuiltin', () => {
 
       expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('--test-option'));
     });
-    it('does not display help when specified after prerequisite', async () => {
-
-      const call = await testPlan.parse('run-z test/=skip --help', { options: shell.options() });
-
-      await call.exec(ZShell.noop(testPlan.setup)).whenDone();
-
-      expect(logSpy).not.toHaveBeenCalled();
-    });
     it('is prohibited after executor', async () => {
       testPlan = new TestPlan(
           'root',

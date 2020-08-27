@@ -35,11 +35,6 @@ export interface ZTaskModifier {
   readonly action: ZTaskSpec.Action | undefined;
 
   /**
-   * Task executor set by {@link executeBy}.
-   */
-  readonly executor: ZTaskExecutor | undefined;
-
-  /**
    * Appends a task prerequisite.
    *
    * @param pre  Prerequisite specifier to append.

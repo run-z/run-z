@@ -40,20 +40,12 @@ export function zTaskSpecOptionClass<TArgs extends any[]>(
       return this._draft.builder.action;
     }
 
-    get executor(): ZTaskExecutor | undefined {
-      return this._draft.builder.executor;
-    }
-
     get batching(): ZBatching {
       return this._draft.builder.batching;
     }
 
     get pre(): ZTaskOption.Pre {
       return this._draft.pre;
-    }
-
-    get hasAction(): boolean {
-      return this.action != null || this.executor != null;
     }
 
     get acceptsArgs(): boolean {

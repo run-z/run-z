@@ -18,7 +18,8 @@ function readZHelp(mode?: 'brief' | 'detailed'): ZOptionReader.Fn<ZTaskOption> {
   const printHelp = async (options: ZOptionMeta.List): Promise<void> => {
     console.log(await formatter.help(options));
   };
-  const printer = helpZOptionReader<ZTaskOption>({
+
+  return helpZOptionReader<ZTaskOption>({
     mode,
     display(options, option) {
       option.executeBy(() => execZ(() => {
@@ -34,13 +35,6 @@ function readZHelp(mode?: 'brief' | 'detailed'): ZOptionReader.Fn<ZTaskOption> {
       }));
     },
   });
-
-  return option => {
-    if (option.pre.isStarted || option.hasAction) {
-      return;
-    }
-    return printer(option);
-  };
 }
 
 /**
