@@ -1,4 +1,4 @@
-#!/usr/bin/env -Snode --no-warnings
+#!/usr/bin/env -Snode --no-warnings --enable-source-maps
 
 import { runZ } from '../dist/run-z.cli.js';
 
