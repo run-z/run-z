@@ -28,6 +28,17 @@ export interface ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
   readonly task: ZTask<TAction>;
 
   /**
+   * Whether this call has been made by the given task.
+   *
+   * This is to handle recurrent calls.
+   *
+   * @param task  Target task.
+   *
+   * @returns `true` if this call has been directly or indirectly made by the given task, of `false` otherwise.
+   */
+  by(task: ZTask): boolean;
+
+  /**
    * Evaluates task execution parameters.
    *
    * @returns Task execution parameters instance.

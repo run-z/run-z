@@ -423,6 +423,47 @@ describe('GroupZTask', () => {
     expect(prerequisitesOf(sub2)).toEqual(taskIds(dep));
     expect(sub2.params().attrs).toEqual({ attr1: ['on', 'on'], attr2: ['on'] });
   });
+  it('handles recurrent calls', async () => {
+    testPlan.addPackage(
+        'test',
+        {
+          packageJson: {
+            scripts: {
+              test: 'run-z +dep/attr1=top attr2=top',
+              dep: 'run-z test/attr1=dep attr2=dep',
+            },
+          },
+        },
+    );
+
+    const call = await testPlan.call('test');
+    const dep = await testPlan.callOf(call.task.target, 'dep');
+
+    expect(call.params().attrs).toEqual({ attr1: ['dep'], attr2: ['top'] });
+    expect(dep.params().attrs).toEqual({ attr1: ['dep', 'top'], attr2: ['dep', 'top'] });
+  });
+  it('handles deep recurrent calls', async () => {
+    testPlan.addPackage(
+        'test',
+        {
+          packageJson: {
+            scripts: {
+              test: 'run-z +dep1/attr1=top attr2=top',
+              dep1: 'run-z dep2/attr1=dep1 attr2=dep1',
+              dep2: 'run-z test/attr1=dep2 attr2=dep2',
+            },
+          },
+        },
+    );
+
+    const call = await testPlan.call('test');
+    const dep1 = await testPlan.callOf(call.task.target, 'dep1');
+    const dep2 = await testPlan.callOf(call.task.target, 'dep2');
+
+    expect(call.params().attrs).toEqual({ attr1: ['dep2'], attr2: ['top'] });
+    expect(dep1.params().attrs).toEqual({ attr1: ['dep2', 'top'], attr2: ['dep1', 'top'] });
+    expect(dep2.params().attrs).toEqual({ attr1: ['dep2', 'top', 'dep1'], attr2: ['dep2', 'dep1', 'top'] });
+  });
 
   describe('exec', () => {
     it('does nothing', async () => {

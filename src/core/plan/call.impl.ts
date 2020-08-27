@@ -39,8 +39,8 @@ export type ZCallDepth =
 export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> implements ZCall<TAction> {
 
   private _currDepth: ZCallDepth;
-  private readonly _params: (readonly [ZCallParams, ZCallDepth])[] = [];
-  private _builtParams: readonly [number, ZTaskParams] | [] = [];
+  private readonly _params: (readonly [params: ZCallParams, depth: ZCallDepth])[] = [];
+  private _builtParams: readonly [rev: number, params: ZTaskParams] | [] = [];
   private readonly _entries = new Set<ZTask>();
 
   constructor(
@@ -64,8 +64,8 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
     return this._entries;
   }
 
-  private _ofTask(task: ZTask): true | undefined {
-    return this.task === task || this._parent?._ofTask(task);
+  by(task: ZTask): boolean {
+    return this.task === task || (!!this._parent && this._parent.by(task));
   }
 
   private _depth(): number {
@@ -76,7 +76,7 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
 
     const paramDepth: ZCallDepth = () => by._depth() + 1;
 
-    if (!by._ofTask(this.task)) {
+    if (!by.by(this.task)) {
 
       const prevDepth = this._currDepth;
 
