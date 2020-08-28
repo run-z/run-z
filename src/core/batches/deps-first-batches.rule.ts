@@ -4,7 +4,6 @@
  */
 import type { ZPackage } from '../packages';
 import type { ZCall } from '../plan';
-import type { ZTask } from '../tasks';
 import type { ZBatchRule } from './batch-rule';
 import type { ZBatching } from './batching';
 
@@ -52,27 +51,34 @@ class ZDepsFirstBatches$ implements ZDepsFirstBatches {
           return; // Do not order task annexes
         }
 
-        const tasksByTarget = zTasksByTarget(batched);
-        const orderedTasks = new Set<ZTask>();
-        const orderTaskAndDeps = (task: ZTask): void => {
-          if (!orderedTasks.has(task)) {
-            orderedTasks.add(task);
+        const callsByTarget = zCallsByTarget(batched);
+        const orderedCalls = new Set<ZCall>();
+        const orderTaskAndDeps = (call: ZCall): void => {
+          if (!orderedCalls.has(call)) {
+            orderedCalls.add(call);
+
+            const { task } = call;
+
             for (const dep of task.target.depGraph().dependencies()) {
 
-              const depTasks = tasksByTarget.get(dep);
+              const depCalls = callsByTarget.get(dep);
 
-              if (depTasks) {
-                for (const depTask of depTasks) {
-                  dependent.order(depTask, task);
-                  orderTaskAndDeps(depTask);
+              if (depCalls) {
+                for (const depCall of depCalls) {
+                  for (const entry of call.entries()) {
+                    for (const depEntry of depCall.entries()) {
+                      dependent.order(depEntry, entry);
+                    }
+                  }
+                  orderTaskAndDeps(depCall);
                 }
               }
             }
           }
         };
 
-        for (const { task } of batched) {
-          orderTaskAndDeps(task);
+        for (const call of batched) {
+          orderTaskAndDeps(call);
         }
       },
     };
@@ -109,20 +115,19 @@ export const ZDepsFirstBatches: ZBatchRule<ZDepsFirstBatches> = ZDepsFirstBatche
 /**
  * @internal
  */
-function zTasksByTarget(batched: Iterable<ZCall>): Map<ZPackage, readonly ZTask[]> {
+function zCallsByTarget(batched: Iterable<ZCall>): Map<ZPackage, readonly ZCall[]> {
 
-  const result = new Map<ZPackage, ZTask[]>();
+  const result = new Map<ZPackage, ZCall[]>();
 
   for (const call of batched) {
 
-    const { task } = call;
-    const { target } = task;
-    const tasks = result.get(target);
+    const { target } = call.task;
+    const calls = result.get(target);
 
-    if (tasks) {
-      tasks.push(task);
+    if (calls) {
+      calls.push(call);
     } else {
-      result.set(target, [task]);
+      result.set(target, [call]);
     }
   }
 
