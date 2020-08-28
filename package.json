@@ -74,10 +74,10 @@
     "gh-pages": "^3.1.0",
     "jest": "^26.4.2",
     "jest-junit": "^11.1.0",
+    "npm-run-all": "^4.1.5",
     "rollup": "^2.26.6",
     "rollup-plugin-sourcemaps": "^0.6.2",
     "rollup-plugin-typescript2": "^0.27.2",
-    "run-z": "^1.0.0-dev.9",
     "shx": "^0.3.2",
     "ts-jest": "^26.3.0",
     "tslib": "^2.0.1",
@@ -86,15 +86,18 @@
     "typescript": "^4.0.2"
   },
   "scripts": {
-    "all": "run-z build,lint,test",
-    "bootstrap": "rollup --config ./rollup.config.js",
-    "build": "run-z +z bootstrap",
-    "ci:all": "run-z all +test/--ci/--runInBand",
-    "clean": "run-z +z --then shx rm -rf d.ts dist target",
-    "doc": "run-z +z --then typedoc",
-    "doc:publish": "run-z doc --then gh-pages --dist target/typedoc --dotfiles",
-    "lint": "run-z +z --then eslint .",
-    "test": "run-z +z --then jest",
+    "all": "run-p --aggregate-output build:all \"test {@}\" --",
+    "build": "rollup --config ./rollup.config.js",
+    "build:all": "run-p --aggregate-output rebuild lint",
+    "ci:all": "run-p --aggregate-output build:all ci:test",
+    "ci:test": "jest --ci --runInBand",
+    "clean": "shx rm -rf d.ts dist target",
+    "doc": "typedoc",
+    "doc:gh-pages": "gh-pages --dist target/typedoc --dotfiles",
+    "doc:publish": "run-s doc \"doc:gh-pages {@}\" --",
+    "lint": "eslint . --ext .cjs,.js,.ts",
+    "rebuild": "run-s clean build",
+    "test": "jest",
     "test:all": "run-z test:command/--command2 test:script/--script2 --all3",
     "test:command": "run-z --then node --no-warnings ./src/spec/bin/ok.js --command1",
     "test:fail": "run-z --then node --no-warnings ./src/spec/bin/fail.js",
@@ -102,7 +105,6 @@
     "test:kill-with-code": "run-z --then node --no-warnings ./src/spec/bin/kill-with-code.js",
     "test:script": "node --no-warnings ./src/spec/bin/ok.js --script1",
     "test:silent": "run-z --then node --no-warnings ./src/spec/bin/silent.js --silent",
-    "test:stale": "node --no-warnings ./src/spec/bin/stale.js",
-    "z": "run-z +build,+doc,+lint,+test"
+    "test:stale": "node --no-warnings ./src/spec/bin/stale.js"
   }
 }
