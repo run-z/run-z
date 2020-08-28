@@ -35,21 +35,6 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   ): Promise<ZCall> {
 
     const { plannedCall } = planner.dependent;
-
-    if (plannedCall.by(this)) {
-      // Prevent infinite recursion while evaluating call parameters
-      return planner.callPre(
-          this,
-          {
-            ...details,
-            params: () => ZTaskParams.update(
-                ZTaskParams.update(ZTaskParams.newMutable(), { attrs, args }),
-                details.params(),
-            ),
-          },
-      );
-    }
-
     const taskParams = plannedCall.extendAttrs({ attrs, args });
 
     return planner.callPre(

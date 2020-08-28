@@ -439,8 +439,8 @@ describe('GroupZTask', () => {
     const call = await testPlan.call('test');
     const dep = await testPlan.callOf(call.task.target, 'dep');
 
-    expect(call.params().attrs).toEqual({ attr1: ['dep'], attr2: ['top'] });
-    expect(dep.params().attrs).toEqual({ attr1: ['dep', 'top'], attr2: ['dep', 'top'] });
+    expect(call.params().attrs).toEqual({ attr1: ['top', 'dep'], attr2: ['top', 'dep'] });
+    expect(dep.params().attrs).toEqual({ attr1: ['top'], attr2: ['dep'] });
   });
   it('handles deep recurrent calls', async () => {
     testPlan.addPackage(
@@ -460,9 +460,9 @@ describe('GroupZTask', () => {
     const dep1 = await testPlan.callOf(call.task.target, 'dep1');
     const dep2 = await testPlan.callOf(call.task.target, 'dep2');
 
-    expect(call.params().attrs).toEqual({ attr1: ['dep2'], attr2: ['top'] });
-    expect(dep1.params().attrs).toEqual({ attr1: ['dep2', 'top'], attr2: ['dep1', 'top'] });
-    expect(dep2.params().attrs).toEqual({ attr1: ['dep2', 'top', 'dep1'], attr2: ['dep2', 'dep1', 'top'] });
+    expect(call.params().attrs).toEqual({ attr1: ['top', 'dep1', 'dep2'], attr2: ['top', 'dep2', 'dep1'] });
+    expect(dep1.params().attrs).toEqual({ attr1: ['top'], attr2: ['dep1'] });
+    expect(dep2.params().attrs).toEqual({ attr1: ['top', 'dep1'], attr2: ['dep2', 'dep1'] });
   });
 
   describe('exec', () => {
