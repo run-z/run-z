@@ -1,6 +1,6 @@
 module.exports = {
   root: true,
-  ignorePatterns: ['node_modules/', 'dist/', 'target/', 'd.ts/', '*.d.ts'],
+  ignorePatterns: ['bin/', 'node_modules/', 'dist/', 'target/', 'd.ts/', '*.d.ts'],
   extends: [
     '@proc7ts',
   ],

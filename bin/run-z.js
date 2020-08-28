@@ -1,4 +1,5 @@
-#!/usr/bin/env -Snode --no-warnings --enable-source-maps
+#!/bin/sh
+':' //; exec "$(command -v node)" --no-warnings --enable-source-maps "$0" "$@"
 
 import { runZ } from '../dist/run-z.cli.js';
 
