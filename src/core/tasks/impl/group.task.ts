@@ -63,7 +63,7 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
             planner.transient(batching),
             { ...pre, args: subArgs, task: subTask.name },
             {
-              params: () => groupCall.params().extend(params()),
+              params: () => groupCall.params().extendAttrs(params()),
               plan: async subPlanner => {
                 if (!pre.annex) {
                   // Execute sub-tasks after the grouping one

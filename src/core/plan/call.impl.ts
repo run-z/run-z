@@ -42,6 +42,7 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
   private readonly _params: (readonly [params: ZCallParams, depth: ZCallDepth])[] = [];
   private _builtParams: readonly [rev: number, params: ZTaskParams] | [] = [];
   private readonly _entries = new Set<ZTask>();
+  private _evalParams?: boolean;
 
   constructor(
       private readonly _records: ZInstructionRecords,
@@ -112,33 +113,42 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
   }
 
   params(): ZTaskParams {
-
-    const [rev, cached] = this._builtParams;
-
-    if (rev === this._records.rev) {
-      return cached as ZTaskParams;
+    if (this._evalParams) {
+      // Prevent infinite recursion
+      return ZTaskParams.empty;
     }
+    try {
+      this._evalParams = true;
 
-    // Sort the calls from deepest to closest.
-    const allParams = this._params.map(
-        ([params, depth]) => [depth(), params] as const,
-    ).sort(
-        ([firstDepth], [secondDepth]) => secondDepth - firstDepth,
-    );
+      const [rev, cached] = this._builtParams;
 
-    // Evaluate parameters.
-    const result = ZTaskParams.newMutable();
+      if (rev === this._records.rev) {
+        return cached as ZTaskParams;
+      }
 
-    ZTaskParams.update(result, this.task.callDetails.params());
-    for (const [, params] of allParams) {
-      ZTaskParams.update(result, params());
+      // Sort the calls from deepest to closest.
+      const allParams = this._params.map(
+          ([params, depth]) => [depth(), params] as const,
+      ).sort(
+          ([firstDepth], [secondDepth]) => secondDepth - firstDepth,
+      );
+
+      // Evaluate parameters.
+      const result = ZTaskParams.newMutable();
+
+      ZTaskParams.update(result, this.task.callDetails.params());
+      for (const [, params] of allParams) {
+        ZTaskParams.update(result, params());
+      }
+
+      const params = new ZTaskParams(result);
+
+      this._builtParams = [this._records.rev, params];
+
+      return params;
+    } finally {
+      this._evalParams = false;
     }
-
-    const params = new ZTaskParams(result);
-
-    this._builtParams = [this._records.rev, params];
-
-    return params;
   }
 
   extendAttrs(extension: ZTaskParams.Partial): (this: void) => ZTaskParams {

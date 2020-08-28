@@ -14,9 +14,18 @@ const falseZTaskFlagValues: { [key: string]: 1 } = {
 };
 
 /**
+ * @internal
+ */
+let emptyZTaskParams: ZTaskParams | undefined;
+
+/**
  * Task execution parameters.
  */
 export class ZTaskParams {
+
+  static get empty(): ZTaskParams {
+    return emptyZTaskParams || (emptyZTaskParams = new ZTaskParams(ZTaskParams.newMutable()));
+  }
 
   /**
    * Creates new mutable task execution parameters.

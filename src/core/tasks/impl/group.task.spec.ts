@@ -52,7 +52,7 @@ describe('GroupZTask', () => {
               test: 'run-z dep1/dep3/=attr1 =attr2',
               dep1: 'run-z dep2 attr2=off',
               dep2: 'run-z --then exec2',
-              dep3: 'run-z --then exec3',
+              dep3: 'run-z dep1 --then exec3',
             },
           },
         },
@@ -69,13 +69,13 @@ describe('GroupZTask', () => {
     expect(call.params().attrs).toEqual({ attr2: ['on'] });
 
     expect(prerequisitesOf(dep1)).toEqual(taskIds(dep2));
-    expect(dep1.params().attrs).toEqual({ attr2: ['off', 'on'] });
+    expect(dep1.params().attrs).toEqual({ attr1: ['on'], attr2: ['off', 'on', 'on'] });
 
     expect(prerequisitesOf(dep2)).toHaveLength(0);
-    expect(dep2.params().attrs).toEqual({ attr2: ['off', 'on'] });
+    expect(dep2.params().attrs).toEqual({ attr1: ['on'], attr2: ['off', 'on', 'on'] });
 
     expect(prerequisitesOf(dep3)).toEqual(taskIds(dep1));
-    expect(dep3.params().attrs).toEqual({ attr1: ['on'], attr2: ['on', 'off', 'on'] });
+    expect(dep3.params().attrs).toEqual({ attr1: ['on'], attr2: ['on'] });
   });
 
   it('does not order sub-task annexes', async () => {
