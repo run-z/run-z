@@ -1,4 +1,5 @@
-import type { ZPackage } from '../../core/packages';
+import type { ZPackage } from '../../core';
+import { ZTaskParams } from '../../core';
 import { TestPlan } from '../../spec';
 
 describe('ZDepGraphBatches', () => {
@@ -34,12 +35,12 @@ describe('ZDepGraphBatches', () => {
       expect(test2.hasPrerequisite(test1.task)).toBe(true);
       expect(test3.hasPrerequisite(test2.task)).toBe(true);
 
-      expect(call.params().flag('skip')).toBe(false);
-      expect(all.params().flag('skip')).toBe(false);
-      expect(test1.params().flag('skip')).toBe(false);
-      expect(test2.params().flag('skip')).toBe(false);
-      expect(test3.params().flag('skip')).toBe(true);
-      expect(test3.params().attr('skip')).toBe('with-dependencies');
+      expect(call.params(ZTaskParams.newEvaluator()).flag('skip')).toBe(false);
+      expect(all.params(ZTaskParams.newEvaluator()).flag('skip')).toBe(false);
+      expect(test1.params(ZTaskParams.newEvaluator()).flag('skip')).toBe(false);
+      expect(test2.params(ZTaskParams.newEvaluator()).flag('skip')).toBe(false);
+      expect(test3.params(ZTaskParams.newEvaluator()).flag('skip')).toBe(true);
+      expect(test3.params(ZTaskParams.newEvaluator()).attr('skip')).toBe('with-dependencies');
     });
   });
   describe('--only-deps', () => {
@@ -51,11 +52,11 @@ describe('ZDepGraphBatches', () => {
       const test2 = await testPlan.callOf(nested2, 'test');
       const test3 = await testPlan.callOf(nested3, 'test');
 
-      expect(test1.params().flag('skip')).toBe(false);
-      expect(test2.params().flag('skip')).toBe(true);
-      expect(test2.params().attr('skip')).toBe('only-dependencies');
-      expect(test3.params().flag('skip')).toBe(true);
-      expect(test3.params().attr('skip')).toBe('only-dependencies');
+      expect(test1.params(ZTaskParams.newEvaluator()).flag('skip')).toBe(false);
+      expect(test2.params(ZTaskParams.newEvaluator()).flag('skip')).toBe(true);
+      expect(test2.params(ZTaskParams.newEvaluator()).attr('skip')).toBe('only-dependencies');
+      expect(test3.params(ZTaskParams.newEvaluator()).flag('skip')).toBe(true);
+      expect(test3.params(ZTaskParams.newEvaluator()).attr('skip')).toBe('only-dependencies');
     });
   });
   describe('--with-dependants', () => {
@@ -67,10 +68,10 @@ describe('ZDepGraphBatches', () => {
       const test2 = await testPlan.callOf(nested2, 'test');
       const test3 = await testPlan.callOf(nested3, 'test');
 
-      expect(test1.params().flag('skip')).toBe(true);
-      expect(test1.params().attr('skip')).toBe('with-dependants');
-      expect(test2.params().flag('skip')).toBe(false);
-      expect(test3.params().flag('skip')).toBe(false);
+      expect(test1.params(ZTaskParams.newEvaluator()).flag('skip')).toBe(true);
+      expect(test1.params(ZTaskParams.newEvaluator()).attr('skip')).toBe('with-dependants');
+      expect(test2.params(ZTaskParams.newEvaluator()).flag('skip')).toBe(false);
+      expect(test3.params(ZTaskParams.newEvaluator()).flag('skip')).toBe(false);
     });
   });
   describe('--only-dependants', () => {
@@ -82,11 +83,11 @@ describe('ZDepGraphBatches', () => {
       const test2 = await testPlan.callOf(nested2, 'test');
       const test3 = await testPlan.callOf(nested3, 'test');
 
-      expect(test1.params().flag('skip')).toBe(true);
-      expect(test1.params().attr('skip')).toBe('only-dependants');
-      expect(test2.params().flag('skip')).toBe(true);
-      expect(test2.params().attr('skip')).toBe('only-dependants');
-      expect(test3.params().flag('skip')).toBe(false);
+      expect(test1.params(ZTaskParams.newEvaluator()).flag('skip')).toBe(true);
+      expect(test1.params(ZTaskParams.newEvaluator()).attr('skip')).toBe('only-dependants');
+      expect(test2.params(ZTaskParams.newEvaluator()).flag('skip')).toBe(true);
+      expect(test2.params(ZTaskParams.newEvaluator()).attr('skip')).toBe('only-dependants');
+      expect(test3.params(ZTaskParams.newEvaluator()).flag('skip')).toBe(false);
     });
   });
   describe('--all', () => {
@@ -98,9 +99,9 @@ describe('ZDepGraphBatches', () => {
       const test2 = await testPlan.callOf(nested2, 'test');
       const test3 = await testPlan.callOf(nested3, 'test');
 
-      expect(test1.params().flag('skip')).toBe(false);
-      expect(test2.params().flag('skip')).toBe(false);
-      expect(test3.params().flag('skip')).toBe(false);
+      expect(test1.params(ZTaskParams.newEvaluator()).flag('skip')).toBe(false);
+      expect(test2.params(ZTaskParams.newEvaluator()).flag('skip')).toBe(false);
+      expect(test3.params(ZTaskParams.newEvaluator()).flag('skip')).toBe(false);
     });
   });
 

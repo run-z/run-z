@@ -35,28 +35,13 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   ): Promise<ZCall> {
 
     const { plannedCall } = planner.dependent;
-
-    if (plannedCall.by(this)) {
-      // Prevent infinite recursion while evaluating call parameters
-      return planner.callPre(
-          this,
-          {
-            ...details,
-            params: () => ZTaskParams.update(
-                ZTaskParams.update(ZTaskParams.newMutable(), { attrs, args }),
-                details.params(),
-            ),
-          },
-      );
-    }
-
     const taskParams = plannedCall.extendAttrs({ attrs, args });
 
     return planner.callPre(
         this,
         {
           ...details,
-          params: () => taskParams().extend(details.params()),
+          params: evaluator => taskParams(evaluator).extend(details.params(evaluator)),
         },
     );
   }
@@ -74,13 +59,15 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
       return executor(job);
     }
 
-    if (job.call.params().flag('skip')) {
+    const params = job.call.params(ZTaskParams.newEvaluator());
+
+    if (params.flag('skip')) {
       // Skip execution
       return execZNoOp();
     }
 
     // Normal execution
-    return this._execTask(job);
+    return this._execTask(job, params);
   }
 
   /**
@@ -206,6 +193,6 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
     return false;
   }
 
-  protected abstract _execTask(job: ZJob<TAction>): ZExecution;
+  protected abstract _execTask(job: ZJob<TAction>, params: ZTaskParams): ZExecution;
 
 }

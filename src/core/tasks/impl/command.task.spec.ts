@@ -27,7 +27,7 @@ describe('CommandZTask', () => {
     );
 
     const call = await testPlan.call('test');
-    const params = call.params();
+    const params = call.params(ZTaskParams.newEvaluator());
 
     expect(call.task).toBeInstanceOf(CommandZTask);
     expect(params.args).toEqual(['--cmd']);
@@ -51,7 +51,7 @@ describe('CommandZTask', () => {
     const dep = call.plan.callOf(await call.task.target.task('dep'));
 
     expect(prerequisitesOf(call)).toEqual(taskIds([dep]));
-    expect(dep.params().attrs).toEqual({ attr: ['on'] });
+    expect(dep.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr: ['on'] });
   });
   it('calls parallel prerequisites', async () => {
     testPlan.addPackage(

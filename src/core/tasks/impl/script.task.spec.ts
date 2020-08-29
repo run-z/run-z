@@ -28,7 +28,7 @@ describe('ScriptZTask', () => {
 
     expect(call.task).toBeInstanceOf(ScriptZTask);
 
-    const params = call.params();
+    const params = call.params(ZTaskParams.newEvaluator());
 
     expect(params.attrs).toEqual({});
     expect(params.args).toHaveLength(0);

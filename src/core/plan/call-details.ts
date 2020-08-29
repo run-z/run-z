@@ -15,8 +15,12 @@ export interface ZCallDetails<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
 
   /**
    * Evaluates parameters of the call.
+   *
+   * @param evaluator  Task parameters evaluation context.
+   *
+   * @returns Partial task parameters.
    */
-  params?(): ZTaskParams.Partial;
+  params?(evaluator: ZTaskParams.Evaluator): ZTaskParams.Partial;
 
   /**
    * Plans the call execution.
@@ -43,8 +47,12 @@ export namespace ZCallDetails {
 
     /**
      * Evaluates parameters of the call.
+     *
+     * @param evaluator  Task parameters evaluation context.
+     *
+     * @returns Evaluated task parameters.
      */
-    params(this: void): ZTaskParams;
+    params(this: void, evaluator: ZTaskParams.Evaluator): ZTaskParams;
 
     /**
      * Plans the call execution.
@@ -75,10 +83,10 @@ export const ZCallDetails = {
       details: ZCallDetails<TAction> = {},
   ): ZCallDetails.Full<TAction> {
     return {
-      params: () => new ZTaskParams(
+      params: evaluator => new ZTaskParams(
           ZTaskParams.update(
               ZTaskParams.newMutable(),
-              details.params?.(),
+              details.params?.(evaluator),
           ),
       ),
       plan: async planner => {

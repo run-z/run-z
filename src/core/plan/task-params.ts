@@ -3,6 +3,7 @@
  * @module run-z
  */
 import type { ZTaskSpec } from '../tasks';
+import type { ZCall } from './call';
 
 /**
  * @internal
@@ -14,9 +15,45 @@ const falseZTaskFlagValues: { [key: string]: 1 } = {
 };
 
 /**
+ * @internal
+ */
+let emptyZTaskParams: ZTaskParams | undefined;
+
+/**
  * Task execution parameters.
  */
 export class ZTaskParams {
+
+  /**
+   * Empty task parameters.
+   */
+  static get empty(): ZTaskParams {
+    return emptyZTaskParams || (emptyZTaskParams = new ZTaskParams(ZTaskParams.newMutable()));
+  }
+
+  /**
+   * Creates task parameters evaluation context.
+   *
+   * @returns New task parameters evaluation context instance.
+   */
+  static newEvaluator(): ZTaskParams.Evaluator {
+
+    const evaluated = new Set<ZCall>();
+
+    return {
+
+      paramsOf(source: ZCall, params: (this: void) => ZTaskParams): ZTaskParams {
+        if (evaluated.has(source)) {
+          return ZTaskParams.empty;
+        }
+
+        evaluated.add(source);
+
+        return params();
+      },
+
+    };
+  }
 
   /**
    * Creates new mutable task execution parameters.
@@ -183,6 +220,36 @@ export namespace ZTaskParams {
      * Command line arguments to pass to the task.
      */
     args: string[];
+
+  }
+
+  /**
+   * Task parameters builder signature.
+   */
+  export type Fn =
+  /**
+   * @param evaluator  Task parameters evaluation context.
+   *
+   * @returns Evaluated task parameters.
+   */
+      (this: void, evaluator: Evaluator) => ZTaskParams;
+
+  /**
+   * Task parameters evaluation context.
+   *
+   * It is passed to task parameter evaluators to prevent infinite recursion.
+   */
+  export interface Evaluator {
+
+    /**
+     * Evaluates parameters of the given task call.
+     *
+     * @param source  The task call the parameters evaluated from.
+     * @param params  The task parameters builder function. It is called unless a recursion detected.
+     *
+     * @returns  Evaluated task parameters, or empty ones if recursion detected.
+     */
+    paramsOf(source: ZCall, params: (this: void) => ZTaskParams): ZTaskParams;
 
   }
 
