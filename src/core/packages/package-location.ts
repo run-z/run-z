@@ -25,6 +25,11 @@ export abstract class ZPackageLocation {
   readonly abstract path: string;
 
   /**
+   * A path specific to this location in URL format.
+   */
+  readonly abstract urlPath: string;
+
+  /**
    * Base name of the package path.
    *
    * I.e. the last segment of the [[path]].

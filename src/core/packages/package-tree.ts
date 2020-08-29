@@ -43,6 +43,10 @@ export class ZPackageTree extends ZPackageLocation {
     this.load = valueProvider(Promise.resolve(packageJson));
   }
 
+  get urlPath(): string {
+    return this.path;
+  }
+
   relative(path: string): ZPackageTree | undefined {
 
     const [name, restPath] = pathNameAndRest(path);

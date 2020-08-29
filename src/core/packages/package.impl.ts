@@ -52,7 +52,7 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
       this.isAnonymous = false;
     } else if (parent) {
 
-      const dirName = location.path.substr(parent.location.path.length);
+      const dirName = location.urlPath.substr(parent.location.urlPath.length);
 
       this.name = `${parent.name}${dirName}`;
       this.isAnonymous = parent.isAnonymous;
