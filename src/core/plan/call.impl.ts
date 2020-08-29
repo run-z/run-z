@@ -40,6 +40,11 @@ export type ZCallDepth =
  */
 export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> implements ZCall<TAction> {
 
+  // Duplicated here to avoid circular dependency
+  static newEvaluator(): ZTaskParams.Evaluator {
+    return ZTaskParams.newEvaluator();
+  }
+
   private _currDepth: ZCallDepth;
   private readonly _params: (readonly [params: ZCallParams, depth: ZCallDepth])[] = [];
   private _builtParams: readonly [rev: number, params: ZTaskParams] | [] = [];
@@ -115,15 +120,16 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
   }
 
   params(evaluator: ZTaskParams.Evaluator): ZTaskParams {
+
+    const [rev, cached] = this._builtParams;
+
+    if (rev === this._records.rev) {
+      return cached as ZTaskParams;
+    }
+
     return evaluator.paramsOf(
         this,
         () => {
-
-          const [rev, cached] = this._builtParams;
-
-          if (rev === this._records.rev) {
-            return cached as ZTaskParams;
-          }
 
           // Sort the calls from deepest to closest.
           const allParams = this._params.map(

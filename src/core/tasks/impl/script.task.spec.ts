@@ -60,10 +60,9 @@ describe('ScriptZTask', () => {
       expect(shell.execScript).toHaveBeenCalledWith(
           expect.objectContaining({ call: await testPlan.callOf(call.task.target, 'exec') }),
           'exec',
-          expect.any(ZTaskParams),
       );
 
-      const params = shell.execScript.mock.calls[0][2];
+      const { params } = shell.execScript.mock.calls[0][0];
 
       expect(params.args).toEqual(['--arg1', '--arg2']);
     });

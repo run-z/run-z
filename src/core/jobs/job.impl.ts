@@ -1,7 +1,8 @@
 import { mapIt } from '@proc7ts/a-iterable';
 import { noop } from '@proc7ts/primitives';
 import { execZ, execZAfter, execZAll, ZExecution } from '@run-z/exec-z';
-import type { ZCallRecord } from '../plan/call.impl';
+import type { ZTaskParams } from '../plan';
+import { ZCallRecord } from '../plan/call.impl';
 import type { ZTask, ZTaskSpec } from '../tasks';
 import type { ZJob } from './job';
 import type { ZShell } from './shell';
@@ -12,6 +13,7 @@ import type { ZShell } from './shell';
 export class ZExecutor {
 
   readonly jobs = new Map<ZTask, ZExecutionJob>();
+  readonly evaluator = ZCallRecord.newEvaluator();
 
   exec<TAction extends ZTaskSpec.Action>(call: ZCallRecord<TAction>, shell: ZShell): ZExecutionJob<TAction> {
 
@@ -36,6 +38,7 @@ export class ZExecutor {
  */
 export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> implements ZJob<TAction> {
 
+  private _params?: ZTaskParams;
   private _exec!: ZExecution;
   private _execAndPre!: ZExecution;
 
@@ -44,6 +47,10 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
       readonly shell: ZShell,
       readonly call: ZCallRecord<TAction>,
   ) {
+  }
+
+  get params(): ZTaskParams {
+    return this._params || (this._params = this.call.params(this._executor.evaluator));
   }
 
   get started(): boolean {

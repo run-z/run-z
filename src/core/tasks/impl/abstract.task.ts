@@ -58,16 +58,13 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
       // Overridden executor
       return executor(job);
     }
-
-    const params = job.call.params(ZTaskParams.newEvaluator());
-
-    if (params.flag('skip')) {
+    if (job.params.flag('skip')) {
       // Skip execution
       return execZNoOp();
     }
 
     // Normal execution
-    return this._execTask(job, params);
+    return this._execTask(job);
   }
 
   /**
@@ -193,6 +190,6 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
     return false;
   }
 
-  protected abstract _execTask(job: ZJob<TAction>, params: ZTaskParams): ZExecution;
+  protected abstract _execTask(job: ZJob<TAction>): ZExecution;
 
 }

@@ -3,7 +3,7 @@
  * @module run-z
  */
 import type { ZExecution } from '@run-z/exec-z';
-import type { ZCall } from '../plan';
+import type { ZCall, ZTaskParams } from '../plan';
 import type { ZTaskSpec } from '../tasks';
 import type { ZShell } from './shell';
 
@@ -23,6 +23,11 @@ export interface ZJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> exten
    * A task call executed by this job.
    */
   readonly call: ZCall<TAction>;
+
+  /**
+   * Task execution parameters.
+   */
+  readonly params: ZTaskParams;
 
   /**
    * Awaits for the job to start.

@@ -12,7 +12,7 @@ import spawn from 'cross-spawn';
 import * as path from 'path';
 import type { Readable } from 'stream';
 import kill from 'tree-kill';
-import type { ZJob, ZTaskParams } from '../core';
+import type { ZJob } from '../core';
 import { ZShell, ZTaskParser } from '../core';
 import { RichZProgressFormat, TextZProgressFormat, ttyColorLevel, ttyColumns, ZProgressFormat } from './impl';
 
@@ -138,11 +138,11 @@ By default ${clz.usage('rich')} format is used for color terminals, and ${clz.us
     return this;
   }
 
-  execCommand(job: ZJob, command: string, params: ZTaskParams): ZExecution {
-    return this._run(job, command, params.args);
+  execCommand(job: ZJob, command: string): ZExecution {
+    return this._run(job, command, job.params.args);
   }
 
-  execScript(job: ZJob, name: string, params: ZTaskParams): ZExecution {
+  execScript(job: ZJob, name: string): ZExecution {
 
     const { npm_execpath: npmPath = 'npm' } = process.env;
     const npmExt = path.extname(npmPath);
@@ -154,7 +154,7 @@ By default ${clz.usage('rich')} format is used for color terminals, and ${clz.us
     if (!isYarn) {
       args.push('--');
     }
-    args.push(name, ...params.args);
+    args.push(name, ...job.params.args);
 
     return this._run(job, command, args);
   }

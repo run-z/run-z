@@ -148,10 +148,9 @@ describe('CommandZTask', () => {
       expect(shell.execCommand).toHaveBeenCalledWith(
           expect.objectContaining({ call: await testPlan.callOf(call.task.target, 'exec') }),
           'start',
-          expect.any(ZTaskParams),
       );
 
-      const params = shell.execCommand.mock.calls[0][2];
+      const { params } = shell.execCommand.mock.calls[0][0];
 
       expect(params.args).toEqual(['--arg3', '--arg1', '--arg2']);
     });

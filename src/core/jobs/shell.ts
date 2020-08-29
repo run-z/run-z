@@ -6,7 +6,6 @@ import { flatMapIt } from '@proc7ts/a-iterable';
 import { arrayOfElements } from '@proc7ts/primitives';
 import type { ZExecution } from '@run-z/exec-z';
 import { execZNoOp } from '@run-z/exec-z';
-import type { ZTaskParams } from '../plan';
 import type { ZSetup } from '../setup';
 import type { ZTaskParser } from '../tasks';
 import type { ZJob } from './job';
@@ -42,22 +41,20 @@ export abstract class ZShell {
    *
    * @param job  The job executing command.
    * @param command  Command to execute.
-   * @param params  Execution parameters.
    *
    * @returns Command execution instance.
    */
-  abstract execCommand(job: ZJob, command: string, params: ZTaskParams): ZExecution;
+  abstract execCommand(job: ZJob, command: string): ZExecution;
 
   /**
    * Executes an {@link ZTaskSpec.Script NPM script}.
    *
    * @param job  The job executing NPM script.
    * @param name  The name of NPM script to execute.
-   * @param params  Execution parameters.
    *
    * @returns NPM script execution instance.
    */
-  abstract execScript(job: ZJob, name: string, params: ZTaskParams): ZExecution;
+  abstract execScript(job: ZJob, name: string): ZExecution;
 
   /**
    * Constructs command line options supported by system shell.

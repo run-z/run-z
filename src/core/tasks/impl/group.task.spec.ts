@@ -82,13 +82,13 @@ describe('GroupZTask', () => {
     expect(prerequisitesOf(dep1)).toEqual(taskIds(dep2));
     expect(dep1.params(ZTaskParams.newEvaluator()).attrs).toEqual({
       attr1: ['on'],
-      attr2: ['off', 'on'],
+      attr2: ['off', 'on', 'on'],
     });
 
     expect(prerequisitesOf(dep2)).toHaveLength(0);
     expect(dep2.params(ZTaskParams.newEvaluator()).attrs).toEqual({
       attr1: ['on'],
-      attr2: ['off', 'on'],
+      attr2: ['off', 'on', 'on'],
     });
 
     expect(prerequisitesOf(dep3)).toEqual(taskIds(dep1));
