@@ -181,7 +181,6 @@ By default ${clz.usage('rich')} format is used for color terminals, and ${clz.us
                     COLUMNS: String(ttyColumns()),
                     FORCE_COLOR: String(ttyColorLevel()),
                   },
-                  shell: true,
                   stdio: ['ignore', 'pipe', 'pipe'],
                   windowsHide: true,
                 },
