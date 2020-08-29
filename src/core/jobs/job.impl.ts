@@ -84,6 +84,10 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
     const whenReady: ZExecution[] = [];
 
     for (const job of this._executor.jobs.values()) {
+      if (job.call.task.spec.action.type === 'group') {
+        // No need to wait for group as its prerequisites are handled individually.
+        continue;
+      }
       if (!job.started) {
         // Job is not started yet, so this one is its prerequisite.
         // Do not await for it in order to prevent infinite recursion.

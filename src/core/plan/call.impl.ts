@@ -110,6 +110,7 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
       order: this._records.order.bind(this._records),
       addEntry: (entry: ZTask) => this._entries.add(entry),
       makeParallel: this._records.makeParallel.bind(this._records),
+      makeParallelWhen: this._records.makeParallelWhen.bind(this._records),
     });
   }
 

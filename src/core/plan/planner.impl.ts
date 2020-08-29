@@ -20,6 +20,7 @@ export class ZInstructionRecords {
   private readonly _calls = new Map<ZTask, ZCallRecord>();
   private readonly _prerequisites = new Map<ZTask, Set<ZTask>>();
   private readonly _parallel = new Map<ZTaskQualifier, Set<ZTaskQualifier>>();
+  private readonly _parallelWhen = new Map<ZTaskQualifier, Set<(this: void, other: ZTask, task: ZTask) => boolean>>();
 
   constructor(readonly setup: ZSetup) {
     this.plan = {
@@ -138,12 +139,33 @@ export class ZInstructionRecords {
     }
   }
 
+  makeParallelWhen(task: ZTaskQualifier, condition: (this: void, other: ZTask, task: ZTask) => boolean): void {
+
+    const conditions = this._parallelWhen.get(task);
+
+    if (conditions) {
+      conditions.add(condition);
+    } else {
+      this._parallelWhen.set(task, new Set([condition]));
+    }
+  }
+
   areParallel(first: ZTask, second: ZTask): boolean {
     return this._areParallel(first, second) || this._areParallel(second, first);
   }
 
   private _areParallel(first: ZTask, second: ZTask): boolean {
     for (const firstQ of this._qualifiersOf(first)) {
+
+      const conditions = this._parallelWhen.get(firstQ);
+
+      if (conditions) {
+        for (const condition of conditions) {
+          if (condition(first, second)) {
+            return true;
+          }
+        }
+      }
 
       const parallel = this._parallel.get(firstQ);
 

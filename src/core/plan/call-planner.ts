@@ -80,12 +80,25 @@ export interface ZCallPlanner<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
   addEntry(this: void, entry: ZTask): void;
 
   /**
-   * Allow parallel tasks execution.
+   * Allows parallel tasks execution.
    *
    * The call to this method does not cause any of the tasks to be executed.
    *
    * @param tasks  Array of qualifiers of the tasks that can be executed in parallel to each other.
    */
   makeParallel(this: void, tasks: readonly ZTaskQualifier[]): void;
+
+  /**
+   * Allows parallel execution with the tasks matching the given criteria.
+   *
+   * @param task  The task to check parallelism of.
+   * @param condition  Condition to check. This is a function accepting another task as its first parameter and original
+   * task as the second one, and returning `true` when parallel execution is allowed for them.
+   */
+  makeParallelWhen(
+      this: void,
+      task: ZTaskQualifier,
+      condition: (this: void, other: ZTask, task: ZTask) => boolean,
+  ): void;
 
 }
