@@ -250,11 +250,11 @@ describe('GroupZTask', () => {
 
     expect(prerequisitesOf(dep1)).toEqual(taskIds(dep0));
     expect(dep1.isParallelTo(dep0.task)).toBe(true);
-    expect(dep1.isParallelTo(dep2.task)).toBe(false);
+    expect(dep1.isParallelTo(dep2.task)).toBe(true);
 
     expect(prerequisitesOf(dep2)).toEqual(taskIds(dep0));
     expect(dep2.isParallelTo(dep0.task)).toBe(true);
-    expect(dep2.isParallelTo(dep1.task)).toBe(false);
+    expect(dep2.isParallelTo(dep1.task)).toBe(true);
   });
 
   it('calls external prerequisites parallel to each other', async () => {
@@ -534,8 +534,8 @@ describe('GroupZTask', () => {
             packageJson: {
               scripts: {
                 test: 'run-z dep1,dep2',
-                dep1: 'run-z',
-                dep2: 'run-z',
+                dep1: 'run-z --then exec1',
+                dep2: 'run-z --then exec2',
               },
             },
           },

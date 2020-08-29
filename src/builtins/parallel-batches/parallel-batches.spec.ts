@@ -157,6 +157,9 @@ describe('ZParallelBatches', () => {
         {
           packageJson: {
             name: 'nested2',
+            dependencies: {
+              nested1: '*',
+            },
             scripts: {
               test: 'exec nested1',
             },

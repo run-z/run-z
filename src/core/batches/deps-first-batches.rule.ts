@@ -4,6 +4,7 @@
  */
 import type { ZPackage } from '../packages';
 import type { ZCall } from '../plan';
+import type { ZTask } from '../tasks';
 import type { ZBatchRule } from './batch-rule';
 import type { ZBatching } from './batching';
 
@@ -47,6 +48,9 @@ class ZDepsFirstBatches$ implements ZDepsFirstBatches {
         return ZDepsFirstBatches$.newBatchRule(context, control.isDepsFirst);
       },
       processBatch({ dependent, isAnnex, batched }) {
+        for (const { task } of batched) {
+          dependent.makeParallelWhen(task, zParallelIndependent);
+        }
         if (isAnnex) {
           return; // Do not order task annexes
         }
@@ -106,11 +110,21 @@ class ZDepsFirstBatches$ implements ZDepsFirstBatches {
  * Dependencies-first batched tasks execution rule.
  *
  * When enabled, any task {@link ZTask.target targeted} dependent package is executed before the tasks targeted
- * its {@link ZDepGraph.dependencies dependencies}.
+ * its {@link ZDepGraph.dependencies dependencies}. It also allows to run tasks from independent packages in parallel
+ * to each other.
  *
  * Dependencies-first mode is enabled {@link ZBatching.newBatching by default}.
  */
 export const ZDepsFirstBatches: ZBatchRule<ZDepsFirstBatches> = ZDepsFirstBatches$;
+
+/**
+ * @internal
+ */
+function zParallelIndependent({ target: second }: ZTask, { target: first }: ZTask): boolean {
+  return second !== first
+      && !first.depGraph().dependencies().has(second)
+      && !second.depGraph().dependencies().has(first);
+}
 
 /**
  * @internal
