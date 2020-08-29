@@ -94,7 +94,7 @@ describe('GroupZTask', () => {
     expect(prerequisitesOf(dep3)).toEqual(taskIds(dep1));
     expect(dep3.params(ZTaskParams.newEvaluator()).attrs).toEqual({
       attr1: ['on'],
-      attr2: ['on'],
+      attr2: ['on', 'off', 'on'],
     });
   });
 
@@ -474,8 +474,8 @@ describe('GroupZTask', () => {
       attr2: ['top', 'dep'],
     });
     expect(dep.params(ZTaskParams.newEvaluator()).attrs).toEqual({
-      attr1: ['top'],
-      attr2: ['dep'],
+      attr1: ['dep', 'top'],
+      attr2: ['dep', 'top'],
     });
   });
   it('handles deep recurrent calls', async () => {
@@ -501,12 +501,12 @@ describe('GroupZTask', () => {
       attr2: ['top', 'dep2', 'dep1'],
     });
     expect(dep1.params(ZTaskParams.newEvaluator()).attrs).toEqual({
-      attr1: ['top'],
-      attr2: ['dep1'],
+      attr1: ['dep1', 'dep2', 'top'],
+      attr2: ['dep1', 'top', 'dep2'],
     });
     expect(dep2.params(ZTaskParams.newEvaluator()).attrs).toEqual({
-      attr1: ['top', 'dep1'],
-      attr2: ['dep2', 'dep1'],
+      attr1: ['dep2', 'top', 'dep1'],
+      attr2: ['dep2', 'dep1', 'top'],
     });
   });
 

@@ -38,18 +38,26 @@ export class ZTaskParams {
    */
   static newEvaluator(): ZTaskParams.Evaluator {
 
-    const evaluated = new Set<ZCall>();
+    const evaluated = new Map<ZCall, ZTaskParams>();
 
     return {
 
       paramsOf(source: ZCall, params: (this: void) => ZTaskParams): ZTaskParams {
-        if (evaluated.has(source)) {
-          return ZTaskParams.empty;
+
+        const cached = evaluated.get(source);
+
+        if (cached) {
+          return cached;
         }
 
-        evaluated.add(source);
+        // Prevent infinite recursion.
+        evaluated.set(source, ZTaskParams.empty);
 
-        return params();
+        const newParams = params();
+
+        evaluated.set(source, newParams);
+
+        return newParams;
       },
 
     };
@@ -237,7 +245,7 @@ export namespace ZTaskParams {
   /**
    * Task parameters evaluation context.
    *
-   * It is passed to task parameter evaluators to prevent infinite recursion.
+   * It is passed to task parameter evaluators to prevent infinite recursion and to cache already evaluated results.
    */
   export interface Evaluator {
 

@@ -47,7 +47,6 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
 
   private _currDepth: ZCallDepth;
   private readonly _params: (readonly [params: ZCallParams, depth: ZCallDepth])[] = [];
-  private _builtParams: readonly [rev: number, params: ZTaskParams] | [] = [];
   private readonly _entries = new Set<ZTask>();
 
   constructor(
@@ -120,13 +119,6 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
   }
 
   params(evaluator: ZTaskParams.Evaluator): ZTaskParams {
-
-    const [rev, cached] = this._builtParams;
-
-    if (rev === this._records.rev) {
-      return cached as ZTaskParams;
-    }
-
     return evaluator.paramsOf(
         this,
         () => {
@@ -146,11 +138,7 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
             ZTaskParams.update(result, params(evaluator));
           }
 
-          const params = new ZTaskParams(result);
-
-          this._builtParams = [this._records.rev, params];
-
-          return params;
+          return new ZTaskParams(result);
         },
     );
   }

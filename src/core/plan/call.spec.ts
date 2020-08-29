@@ -68,29 +68,9 @@ describe('ZCall', () => {
     it('cached', async () => {
 
       const call = await plan({ attrs: { attr1: ['attr1-val2'] } });
+      const evaluator = ZTaskParams.newEvaluator();
 
-      expect(call.params(ZTaskParams.newEvaluator())).toBe(call.params(ZTaskParams.newEvaluator()));
-    });
-    it('recalculated after plan modification', async () => {
-
-      let call1!: ZCall;
-      let params1!: ZTaskParams;
-      let call2!: ZCall;
-      let params2!: ZTaskParams;
-      const call = await task.call({
-        params: valueProvider({ attrs: { attr1: ['attr1-val2'] } }),
-        async plan(planner) {
-          call1 = planner.plannedCall;
-          params1 = call1.params(ZTaskParams.newEvaluator());
-          call2 = await planner.call(task, { params: valueProvider({ attrs: { attr2: ['attr2-val2'] } }) });
-          params2 = call1.params(ZTaskParams.newEvaluator());
-        },
-      });
-
-      expect(call1).toBe(call);
-      expect(call2).toBe(call);
-      expect(params1).not.toBe(params2);
-      expect(params2).toBe(call.params(ZTaskParams.newEvaluator()));
+      expect(call.params(evaluator)).toBe(call.params(evaluator));
     });
   });
 
