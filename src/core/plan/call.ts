@@ -30,9 +30,11 @@ export interface ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
   /**
    * Evaluates task execution parameters.
    *
+   * @param evaluator  Task parameters evaluator.
+   *
    * @returns Task execution parameters instance.
    */
-  params(): ZTaskParams;
+  params(evaluator: ZTaskParams.Evaluator): ZTaskParams;
 
   /**
    * Returns the entry tasks of the called task execution.
@@ -84,7 +86,7 @@ export interface ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
    *
    * @returns Extended task parameters evaluator.
    */
-  extendAttrs(extension: ZTaskParams.Partial): (this: void) => ZTaskParams;
+  extendAttrs(extension: ZTaskParams.Partial): ZTaskParams.Fn;
 
   /**
    * Executes this call.

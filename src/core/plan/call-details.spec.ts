@@ -1,10 +1,11 @@
 import { valueProvider } from '@proc7ts/primitives';
 import { ZCallDetails } from './call-details';
+import { ZTaskParams } from './task-params';
 
 describe('ZCallDetails', () => {
   describe('by', () => {
     it('reconstructs parameters', () => {
-      expect(ZCallDetails.by().params().mutate()).toEqual({ attrs: {}, args: [] });
+      expect(ZCallDetails.by().params(ZTaskParams.newEvaluator()).mutate()).toEqual({ attrs: {}, args: [] });
     });
     it('respects parameters', () => {
       expect(ZCallDetails.by({
@@ -12,7 +13,7 @@ describe('ZCallDetails', () => {
           attrs: { attr: ['1'] },
           args: ['arg'],
         }),
-      }).params().mutate()).toEqual({
+      }).params(ZTaskParams.newEvaluator()).mutate()).toEqual({
         attrs: { attr: ['1'] },
         args: ['arg'],
       });

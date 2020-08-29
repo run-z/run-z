@@ -15,9 +15,11 @@ import { ZTaskParams } from './task-params';
  */
 export type ZCallParams =
 /**
+ * @param evaluator  Task parameters evaluation context.
+ *
  * @returns Partial task execution parameters.
  */
-    (this: void) => ZTaskParams.Partial;
+    (this: void, evaluator: ZTaskParams.Evaluator) => ZTaskParams.Partial;
 
 /**
  * Task execution call depth evaluator signature.
@@ -42,7 +44,6 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
   private readonly _params: (readonly [params: ZCallParams, depth: ZCallDepth])[] = [];
   private _builtParams: readonly [rev: number, params: ZTaskParams] | [] = [];
   private readonly _entries = new Set<ZTask>();
-  private _evalParams?: boolean;
 
   constructor(
       private readonly _records: ZInstructionRecords,
@@ -112,47 +113,43 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
     });
   }
 
-  params(): ZTaskParams {
-    if (this._evalParams) {
-      // Prevent infinite recursion
-      return ZTaskParams.empty;
-    }
-    try {
-      this._evalParams = true;
+  params(evaluator: ZTaskParams.Evaluator): ZTaskParams {
+    return evaluator.paramsOf(
+        this,
+        () => {
 
-      const [rev, cached] = this._builtParams;
+          const [rev, cached] = this._builtParams;
 
-      if (rev === this._records.rev) {
-        return cached as ZTaskParams;
-      }
+          if (rev === this._records.rev) {
+            return cached as ZTaskParams;
+          }
 
-      // Sort the calls from deepest to closest.
-      const allParams = this._params.map(
-          ([params, depth]) => [depth(), params] as const,
-      ).sort(
-          ([firstDepth], [secondDepth]) => secondDepth - firstDepth,
-      );
+          // Sort the calls from deepest to closest.
+          const allParams = this._params.map(
+              ([params, depth]) => [depth(), params] as const,
+          ).sort(
+              ([firstDepth], [secondDepth]) => secondDepth - firstDepth,
+          );
 
-      // Evaluate parameters.
-      const result = ZTaskParams.newMutable();
+          // Evaluate parameters.
+          const result = ZTaskParams.newMutable();
 
-      ZTaskParams.update(result, this.task.callDetails.params());
-      for (const [, params] of allParams) {
-        ZTaskParams.update(result, params());
-      }
+          ZTaskParams.update(result, this.task.callDetails.params(evaluator));
+          for (const [, params] of allParams) {
+            ZTaskParams.update(result, params(evaluator));
+          }
 
-      const params = new ZTaskParams(result);
+          const params = new ZTaskParams(result);
 
-      this._builtParams = [this._records.rev, params];
+          this._builtParams = [this._records.rev, params];
 
-      return params;
-    } finally {
-      this._evalParams = false;
-    }
+          return params;
+        },
+    );
   }
 
-  extendAttrs(extension: ZTaskParams.Partial): (this: void) => ZTaskParams {
-    return () => this.params().extendAttrs(extension);
+  extendAttrs(extension: ZTaskParams.Partial): ZTaskParams.Fn {
+    return evaluator => this.params(evaluator).extendAttrs(extension);
   }
 
   prerequisites(): Iterable<ZCall> {

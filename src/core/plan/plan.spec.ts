@@ -1,6 +1,7 @@
 import { prerequisitesOf, taskIds, TestPlan } from '../../spec';
 import type { ZCall } from './call';
 import type { ZPlan } from './plan';
+import { ZTaskParams } from './task-params';
 
 describe('ZPlan', () => {
 
@@ -51,10 +52,10 @@ describe('ZPlan', () => {
     const dep1 = plan.callOf(await target.task('dep1'));
     const dep2 = plan.callOf(await target.task('dep2'));
 
-    expect(dep1.params().args).toHaveLength(0);
-    expect(dep1.params().attrs).toEqual({ attr: ['0'] });
-    expect(dep2.params().args).toEqual(['--arg2', '--arg1']);
-    expect(dep2.params().attr('attr')).toBe('1');
+    expect(dep1.params(ZTaskParams.newEvaluator()).args).toHaveLength(0);
+    expect(dep1.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr: ['0'] });
+    expect(dep2.params(ZTaskParams.newEvaluator()).args).toEqual(['--arg2', '--arg1']);
+    expect(dep2.params(ZTaskParams.newEvaluator()).attr('attr')).toBe('1');
   });
   it('ignores never called prerequisites', async () => {
     testPlan.addPackage(

@@ -3,7 +3,7 @@ import { ZPackageTree } from '../packages';
 import { ZSetup } from '../setup';
 import type { ZTask } from '../tasks';
 import type { ZCall } from './call';
-import type { ZTaskParams } from './task-params';
+import { ZTaskParams } from './task-params';
 
 describe('ZCall', () => {
 
@@ -39,7 +39,7 @@ describe('ZCall', () => {
 
       const call = await plan({ attrs: { attr1: ['attr1-val2'] } });
 
-      expect(call.params()).toEqual({
+      expect(call.params(ZTaskParams.newEvaluator())).toEqual({
         args: ['cmd-arg1', 'arg1'],
         attrs: { ...initParams.attrs, attr1: ['attr1-val', 'attr1-val2'] },
       });
@@ -48,7 +48,7 @@ describe('ZCall', () => {
 
       const call = await plan({ attrs: { attr2: ['attr2-val'] } });
 
-      expect(call.params()).toEqual({
+      expect(call.params(ZTaskParams.newEvaluator())).toEqual({
         args: ['cmd-arg1', 'arg1'],
         attrs: { ...initParams.attrs, attr2: ['attr2-val'] },
       });
@@ -57,7 +57,7 @@ describe('ZCall', () => {
 
       const call = await plan({ args: ['arg2'] });
 
-      expect(call.params()).toEqual({
+      expect(call.params(ZTaskParams.newEvaluator())).toEqual({
         ...initParams,
         args: ['cmd-arg1', 'arg1', 'arg2'],
       });
@@ -69,7 +69,7 @@ describe('ZCall', () => {
 
       const call = await plan({ attrs: { attr1: ['attr1-val2'] } });
 
-      expect(call.params()).toBe(call.params());
+      expect(call.params(ZTaskParams.newEvaluator())).toBe(call.params(ZTaskParams.newEvaluator()));
     });
     it('recalculated after plan modification', async () => {
 
@@ -81,16 +81,16 @@ describe('ZCall', () => {
         params: valueProvider({ attrs: { attr1: ['attr1-val2'] } }),
         async plan(planner) {
           call1 = planner.plannedCall;
-          params1 = call1.params();
+          params1 = call1.params(ZTaskParams.newEvaluator());
           call2 = await planner.call(task, { params: valueProvider({ attrs: { attr2: ['attr2-val2'] } }) });
-          params2 = call1.params();
+          params2 = call1.params(ZTaskParams.newEvaluator());
         },
       });
 
       expect(call1).toBe(call);
       expect(call2).toBe(call);
       expect(params1).not.toBe(params2);
-      expect(params2).toBe(call.params());
+      expect(params2).toBe(call.params(ZTaskParams.newEvaluator()));
     });
   });
 
@@ -102,7 +102,7 @@ describe('ZCall', () => {
       expect(call.extendAttrs({
         attrs: { attr1: ['attr1-val2'] },
         args: ['arg2'],
-      })()).toEqual({
+      })(ZTaskParams.newEvaluator())).toEqual({
         ...initParams,
         attrs: { ...initParams.attrs, attr1: ['attr1-val', 'attr1-val2'] },
         args: ['arg2'],

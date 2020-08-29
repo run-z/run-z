@@ -1,5 +1,6 @@
 import { TestPlan } from '../../spec';
 import type { ZPackage, ZPackageTree } from '../packages';
+import { ZTaskParams } from '../plan';
 
 describe('ZBatcher', () => {
 
@@ -74,7 +75,7 @@ describe('ZBatcher', () => {
     it('prefers matching task group', async () => {
       await testPlan.parse('run-z --all other');
 
-      expect((await testPlan.callOf(nested1, 'other')).params().attr('test')).toBe('other');
+      expect((await testPlan.callOf(nested1, 'other')).params(ZTaskParams.newEvaluator()).attr('test')).toBe('other');
       expect(await testPlan.noCallOf(nested1, 'test')).toBeInstanceOf(TypeError);
       expect(await testPlan.noCallOf(nested2, 'other')).toBeInstanceOf(TypeError);
       expect(await testPlan.noCallOf(nested2, 'test')).toBeInstanceOf(TypeError);
@@ -95,16 +96,16 @@ describe('ZBatcher', () => {
 
       const call = await testPlan.parse('run-z --all test=main test');
 
-      expect(call.plan.callOf(call.task).params().attr('test')).toBe('main');
+      expect(call.plan.callOf(call.task).params(ZTaskParams.newEvaluator()).attr('test')).toBe('main');
     });
   });
 
   async function ensureTasksCalled(): Promise<void> {
     await testPlan.parse('run-z --all test');
 
-    expect((await testPlan.callOf(nested1, 'test')).params().attr('test')).toBe('main');
+    expect((await testPlan.callOf(nested1, 'test')).params(ZTaskParams.newEvaluator()).attr('test')).toBe('main');
     expect(await testPlan.noCallOf(nested1, 'other')).toBeInstanceOf(TypeError);
-    expect((await testPlan.callOf(nested2, 'test')).params().attr('test')).toBe('main');
+    expect((await testPlan.callOf(nested2, 'test')).params(ZTaskParams.newEvaluator()).attr('test')).toBe('main');
     expect(await testPlan.noCallOf(nested2, 'other')).toBeInstanceOf(TypeError);
   }
 });
