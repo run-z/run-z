@@ -49,7 +49,7 @@ class ZDepsFirstBatches$ implements ZDepsFirstBatches {
       },
       processBatch({ dependent, isAnnex, batched }) {
         for (const { task } of batched) {
-          dependent.makeParallelWhen(task, zParallelIndependent);
+          dependent.makeParallelWhen(task, isZTaskInIndependentPackage);
         }
         if (isAnnex) {
           return; // Do not order task annexes
@@ -120,10 +120,8 @@ export const ZDepsFirstBatches: ZBatchRule<ZDepsFirstBatches> = ZDepsFirstBatche
 /**
  * @internal
  */
-function zParallelIndependent({ target: second }: ZTask, { target: first }: ZTask): boolean {
-  return second !== first
-      && !first.depGraph().dependencies().has(second)
-      && !second.depGraph().dependencies().has(first);
+function isZTaskInIndependentPackage({ target: second }: ZTask, { target: first }: ZTask): boolean {
+  return second !== first && !second.depGraph().dependencies().has(first);
 }
 
 /**

@@ -93,7 +93,7 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
         // Do not await for it in order to prevent infinite recursion.
         continue;
       }
-      if (job.call.isParallelTo(this.call.task)) {
+      if (this.call.isParallelTo(job.call.task)) {
         // Do not await for parallel job.
         continue;
       }

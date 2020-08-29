@@ -91,7 +91,9 @@ export interface ZCallPlanner<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
   /**
    * Allows parallel execution with the tasks matching the given criteria.
    *
-   * @param task  The task to check parallelism of.
+   * This is a uni-directional check.
+   *
+   * @param task  The task qualifier to check parallelism of.
    * @param condition  Condition to check. This is a function accepting another task as its first parameter and original
    * task as the second one, and returning `true` when parallel execution is allowed for them.
    */

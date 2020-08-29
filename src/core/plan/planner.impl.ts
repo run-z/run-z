@@ -151,18 +151,20 @@ export class ZInstructionRecords {
   }
 
   areParallel(first: ZTask, second: ZTask): boolean {
-    return this._areParallel(first, second) || this._areParallel(second, first);
+    return this._areParallel(first, second) || this._areParallel(second, first, true);
   }
 
-  private _areParallel(first: ZTask, second: ZTask): boolean {
+  private _areParallel(first: ZTask, second: ZTask, reverse?: boolean): boolean {
     for (const firstQ of this._qualifiersOf(first)) {
+      if (!reverse) {
 
-      const conditions = this._parallelWhen.get(firstQ);
+        const conditions = this._parallelWhen.get(firstQ);
 
-      if (conditions) {
-        for (const condition of conditions) {
-          if (condition(first, second)) {
-            return true;
+        if (conditions) {
+          for (const condition of conditions) {
+            if (condition(first, second)) {
+              return true;
+            }
           }
         }
       }

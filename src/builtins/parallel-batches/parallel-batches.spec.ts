@@ -25,6 +25,7 @@ describe('ZParallelBatches', () => {
       const call2 = await testPlan.callOf(nested2, 'test');
 
       expect(call1.isParallelTo(call2.task)).toBe(true);
+      expect(call2.isParallelTo(call1.task)).toBe(true);
     });
     it('executes tasks in parallel when specified after `--batch-sequential`', async () => {
       await init();
@@ -34,6 +35,7 @@ describe('ZParallelBatches', () => {
       const call2 = await testPlan.callOf(nested2, 'test');
 
       expect(call1.isParallelTo(call2.task)).toBe(true);
+      expect(call2.isParallelTo(call1.task)).toBe(true);
     });
     it('is ignored by transient prerequisites', async () => {
       await init();
@@ -42,7 +44,8 @@ describe('ZParallelBatches', () => {
       const call1 = await testPlan.callOf(nested1, 'test');
       const call2 = await testPlan.callOf(nested2, 'test');
 
-      expect(call1.isParallelTo(call2.task)).toBe(false);
+      expect(call1.isParallelTo(call2.task)).toBe(true);
+      expect(call2.isParallelTo(call1.task)).toBe(false);
     });
   });
 
@@ -55,6 +58,7 @@ describe('ZParallelBatches', () => {
       const call2 = await testPlan.callOf(nested2, 'test');
 
       expect(call1.isParallelTo(call2.task)).toBe(true);
+      expect(call2.isParallelTo(call1.task)).toBe(true);
     });
   });
 
@@ -66,7 +70,8 @@ describe('ZParallelBatches', () => {
       const call1 = await testPlan.callOf(nested1, 'test');
       const call2 = await testPlan.callOf(nested2, 'test');
 
-      expect(call1.isParallelTo(call2.task)).toBe(false);
+      expect(call1.isParallelTo(call2.task)).toBe(true);
+      expect(call2.isParallelTo(call1.task)).toBe(false);
     });
     it('executes tasks sequentially when specified after `--batch-parallel`', async () => {
       await init();
@@ -75,7 +80,8 @@ describe('ZParallelBatches', () => {
       const call1 = await testPlan.callOf(nested1, 'test');
       const call2 = await testPlan.callOf(nested2, 'test');
 
-      expect(call1.isParallelTo(call2.task)).toBe(false);
+      expect(call1.isParallelTo(call2.task)).toBe(true);
+      expect(call2.isParallelTo(call1.task)).toBe(false);
     });
     it('is ignored by transient prerequisites', async () => {
       await init('run-z test=main ./nested// --batch-parallel');
@@ -85,6 +91,7 @@ describe('ZParallelBatches', () => {
       const call2 = await testPlan.callOf(nested2, 'test');
 
       expect(call1.isParallelTo(call2.task)).toBe(true);
+      expect(call2.isParallelTo(call1.task)).toBe(true);
     });
   });
 
@@ -96,7 +103,8 @@ describe('ZParallelBatches', () => {
       const call1 = await testPlan.callOf(nested1, 'test');
       const call2 = await testPlan.callOf(nested2, 'test');
 
-      expect(call1.isParallelTo(call2.task)).toBe(false);
+      expect(call1.isParallelTo(call2.task)).toBe(true);
+      expect(call2.isParallelTo(call1.task)).toBe(false);
     });
   });
 
@@ -125,6 +133,7 @@ describe('ZParallelBatches', () => {
     const call2 = await testPlan.callOf(nested2, 'test');
 
     expect(call1.isParallelTo(call2.task)).toBe(true);
+    expect(call2.isParallelTo(call1.task)).toBe(true);
   });
 
   async function init(script = 'run-z test=main ./nested//'): Promise<void> {
