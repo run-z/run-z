@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { pathToFileURL, URL } from 'url';
+import { fileURLToPath, pathToFileURL, URL } from 'url';
 import { ZPackageDirectory } from './package-directory';
 
 describe('ZPackageDirectory', () => {
@@ -7,13 +7,13 @@ describe('ZPackageDirectory', () => {
   let rootURL: URL;
 
   beforeEach(() => {
-    rootURL = new URL('file:///root/');
+    rootURL = pathToFileURL('/root/');
   });
 
   describe('open', () => {
     it('throws when not inside root URL', () => {
       expect(() => ZPackageDirectory.open({
-        url: new URL('file:///other'),
+        url: pathToFileURL('/other'),
         rootURL,
       })).toThrow(TypeError);
     });
@@ -24,7 +24,7 @@ describe('ZPackageDirectory', () => {
 
       const dir = ZPackageDirectory.open();
 
-      expect(dir.rootURL.href).toBe('file:///');
+      expect(dir.rootURL.href).toBe(pathToFileURL('/').href);
     });
     it('has path without trailing `/`', () => {
 
@@ -33,7 +33,7 @@ describe('ZPackageDirectory', () => {
         rootURL,
       });
 
-      expect(dir.rootURL.pathname).toBe('/root');
+      expect(dir.rootURL.pathname).toBe(pathToFileURL('/root').pathname);
     });
   });
 
@@ -52,8 +52,8 @@ describe('ZPackageDirectory', () => {
         rootURL,
       });
 
-      expect(dir.url.pathname).toBe('/root/other');
-      expect(dir.url.toString()).toBe('file:///root/other');
+      expect(dir.url.pathname).toBe(pathToFileURL('/root/other').pathname);
+      expect(dir.url.toString()).toBe(pathToFileURL('/root/other').toString());
     });
   });
 
@@ -65,7 +65,7 @@ describe('ZPackageDirectory', () => {
         rootURL,
       });
 
-      expect(dir.dirURL.pathname).toBe('/root/other/');
+      expect(dir.dirURL.pathname).toBe(pathToFileURL('/root/other/').pathname);
     });
   });
 
@@ -77,8 +77,7 @@ describe('ZPackageDirectory', () => {
         rootURL,
       });
 
-      expect(dir.parent?.path).toBe('/root/nested');
-      expect(dir.parent?.path).toBe('/root/nested');
+      expect(dir.parent?.path).toBe(fileURLToPath(pathToFileURL('/root/nested')));
     });
     it('does not resolve to parent outside root', () => {
 
@@ -104,13 +103,13 @@ describe('ZPackageDirectory', () => {
     });
 
     it('resolves to nested', () => {
-      expect(dir.relative('./nested')?.toString()).toBe('file:///root/dir/nested');
+      expect(dir.relative('./nested')?.toString()).toBe(pathToFileURL('/root/dir/nested').toString());
     });
     it('resolves to relative', () => {
-      expect(dir.relative('../other')?.toString()).toBe('file:///root/other');
+      expect(dir.relative('../other')?.toString()).toBe(pathToFileURL('/root/other').toString());
     });
     it('resolves to upper-level', () => {
-      expect(dir.relative('../')?.toString()).toBe('file:///root');
+      expect(dir.relative('../')?.toString()).toBe(pathToFileURL('/root').toString());
     });
     it('does not resolve outside root', () => {
       expect(dir.relative('../..')).toBeUndefined();
@@ -133,7 +132,7 @@ describe('ZPackageDirectory', () => {
       });
       const packages: string[] = Array.from(await dir.nested(), ({ path }) => path);
 
-      expect(packages).toEqual([new URL('nested/deeply-nested', rootURL).pathname]);
+      expect(packages).toEqual([fileURLToPath(new URL('nested/deeply-nested', rootURL))]);
     });
   });
 
@@ -151,10 +150,10 @@ describe('ZPackageDirectory', () => {
       const packages: string[] = Array.from(await dir.deeplyNested(), ({ path }) => path);
 
       expect(packages).toEqual([
-        new URL('nested', rootURL).pathname,
-        new URL('nested/deeply-nested', rootURL).pathname,
-        new URL('nested/nested2/nested3', rootURL).pathname,
-        new URL('nested-v1', rootURL).pathname,
+        fileURLToPath(new URL('nested', rootURL)),
+        fileURLToPath(new URL('nested/deeply-nested', rootURL)),
+        fileURLToPath(new URL('nested/nested2/nested3', rootURL)),
+        fileURLToPath(new URL('nested-v1', rootURL)),
       ]);
     });
   });

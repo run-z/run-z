@@ -8,7 +8,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath, pathToFileURL, URL } from 'url';
 import { ZPackageJson, ZPackageLocation } from '../core';
-import { isRootURL, urlBaseName, urlOfFile } from './impl';
+import { fsRoot, isRootURL, urlBaseName, urlOfFile } from './impl';
 
 /**
  * A file system directory potentially containing NPM package.
@@ -26,7 +26,7 @@ export class ZPackageDirectory extends ZPackageLocation {
   static open(
       {
         url = pathToFileURL(process.cwd()),
-        rootURL = new URL('file:///'),
+        rootURL = fsRoot(),
       }: {
         url?: URL;
         rootURL?: URL;
@@ -66,6 +66,10 @@ export class ZPackageDirectory extends ZPackageLocation {
 
   get path(): string {
     return fileURLToPath(this.url);
+  }
+
+  get urlPath(): string {
+    return this.url.pathname;
   }
 
   get parent(): ZPackageDirectory | undefined {

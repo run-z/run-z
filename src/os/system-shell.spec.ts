@@ -7,6 +7,7 @@ import { StandardZSetup } from '../builtins';
 import type { ZPackage, ZSetup } from '../core';
 import { ZPackageDirectory } from './package-directory';
 import { SystemZShell } from './system-shell';
+import * as os from 'os';
 
 describe('SystemZShell', () => {
 
@@ -101,20 +102,27 @@ describe('SystemZShell', () => {
     expect(error).toBeInstanceOf(FailedZExecutionError);
     expect(error.failure).toBe(13);
   });
-  it('fails on command kill', async () => {
+  it('aborts on command kill', async () => {
     shell.setProgressFormat('text');
 
     const task = await pkg.task('test:kill');
     const call = await task.call();
+    const error = await call.exec(shell).whenDone().catch(asis);
 
-    expect(await call.exec(shell).whenDone().catch(asis)).toBeInstanceOf(AbortedZExecutionError);
+    if (os.platform() === 'win32') {
+      // No way to kill with signal under Windows
+      expect(error).toBeInstanceOf(FailedZExecutionError);
+    } else {
+      expect(error).toBeInstanceOf(AbortedZExecutionError);
+    }
   });
   it('fails on command kill with exit code', async () => {
 
     const task = await pkg.task('test:kill-with-code');
     const call = await task.call();
+    const error = await call.exec(shell).whenDone().catch(asis);
 
-    expect(await call.exec(shell).whenDone().catch(asis)).toBeInstanceOf(AbortedZExecutionError);
+    expect(error).toBeInstanceOf(AbortedZExecutionError);
   });
   it('allows to abort the job', async () => {
     shell.setProgressFormat('rich');
@@ -128,7 +136,12 @@ describe('SystemZShell', () => {
 
     const error = await job.whenDone().catch(asis);
 
-    expect(error).toBeInstanceOf(AbortedZExecutionError);
+    if (os.platform() === 'win32') {
+      // No way to kill with signal under Windows
+      expect(error).toBeInstanceOf(FailedZExecutionError);
+    } else {
+      expect(error).toBeInstanceOf(AbortedZExecutionError);
+    }
   });
 
   describe('options', () => {

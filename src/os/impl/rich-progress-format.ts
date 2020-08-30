@@ -4,7 +4,6 @@ import ansiEscapes from 'ansi-escapes';
 import cliSpinners from 'cli-spinners';
 import cliTruncate from 'cli-truncate';
 import logSymbols from 'log-symbols';
-import * as os from 'os';
 import stringWidth from 'string-width';
 import type { ZJob } from '../../core';
 import { ZJobProgress } from './job-progress';
@@ -124,7 +123,7 @@ class RichZJobProgress extends ZJobProgress {
       this._row = this._format.register(this) - 1;
     } else {
       // Move back to original position
-      await write2stdout(out + os.EOL + ansiEscapes.cursorRestorePosition);
+      await write2stdout(out + '\n' + ansiEscapes.cursorRestorePosition);
     }
   }
 

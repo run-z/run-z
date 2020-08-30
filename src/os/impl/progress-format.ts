@@ -1,4 +1,3 @@
-import * as os from 'os';
 import stringWidth from 'string-width';
 import type { ZJob } from '../../core';
 import type { ZJobProgress } from './job-progress';
@@ -34,7 +33,7 @@ export abstract class ZProgressFormat<TProgress extends ZJobProgress = ZJobProgr
   }
 
   async println(chunk: string, fd: 0 | 1 = 0): Promise<void> {
-    await (fd ? write2stderr : write2stdout)(chunk + os.EOL);
+    await (fd ? write2stderr : write2stdout)(chunk + '\n');
     ++this.numRows;
   }
 

@@ -1,4 +1,16 @@
-import { URL } from 'url';
+import { pathToFileURL, URL } from 'url';
+
+/**
+ * @internal
+ */
+let fsRootURL: URL | undefined;
+
+/**
+ * @internal
+ */
+export function fsRoot(): URL {
+  return fsRootURL || (fsRootURL = pathToFileURL('/'));
+}
 
 /**
  * @internal
@@ -7,8 +19,8 @@ export function urlOfFile(url: URL): URL {
 
   const { pathname } = url;
 
-  if (pathname.endsWith('/') && pathname.length > 1) {
-    return new URL(pathname.substr(0, pathname.length - 1), url);
+  if (pathname.endsWith('/') && pathname.length > fsRoot().pathname.length) {
+    return new URL(pathname.substr(0, pathname.length - 1), url); // Remove the trailing slash
   }
 
   return url;
