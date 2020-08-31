@@ -23,9 +23,9 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Cache
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       env:
-        cache-name: cache-node-modules-v1
+        cache-name: cache-node-modules-v2
       with:
         # A directory to store and save the cache
         path: ~/.cache/yarn
