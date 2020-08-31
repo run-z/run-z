@@ -10,9 +10,9 @@ Run That
 `run-z` is a command line utility able to run multiple [npm-scripts] at once.
 
 - Each NPM script considered a [task] to execute.
-- Each task may have _prerequisites_. I.e. other tasks to execute before this one.
+- Each task may have _prerequisites_. I.e. other tasks to execute before it.
 - Each task executes at most once, even though it is a prerequisite of many tasks.
-- Additional [parameters] can be passed to each task. 
+- Additional [parameters] can be passed to any task. 
 - Tasks can be executed [in parallel or sequentially].
 - Tasks may belong to [different packages]. This is especially helpful with [Yarn Workspaces] or [Lerna].
 - Tasks can be [batched] - the same-named tasks can executed in each of the selected packages. 
@@ -43,7 +43,7 @@ Setup And Usage
     npm install run-z --save-dev # Using NPM
     yarn add run-z --dev         # Using Yarn
     ```
-2. Add script(s) to `package.json` running `run-z`:
+2. Add script(s) to `package.json` executing `run-z`:
     ```json
     {
       "scripts": {
@@ -64,7 +64,7 @@ Setup And Usage
     yarn clean build          # Run multiple tasks with Yarn
     npm run clean -- build    # Run multiple tasks with NPM
    
-    npm run z -- clean build  # Use no-op `z` task for convenience.     
+    npm run z -- clean build  # Use a no-op `z` task for convenience.     
     ```
 
 
@@ -73,8 +73,8 @@ Tasks
 [task]: #tasks
 
 Each record in [scripts] section of [package.json] is a script executable by a package manager (NPM or Yarn).
-If executed script is a `run-z` command, the latter treats every script as task. This task can be used as prerequisite
-of another one. `run-z` executes prerequisites prior to the task itself. 
+If executed script is a `run-z` command, the latter treats every script as task. Such a task can be used as a
+prerequisite of another one. `run-z` executes prerequisites prior to the task itself. 
 
 To specify a task prerequisite just add its name to `run-z` command line:
 ```shell script
@@ -84,13 +84,13 @@ This task would execute `prerequsite1`, then `prerequisite2`, and finally the `n
 
 The following types of tasks supported:
 
-- Command.
-  `--then` option treats the rest of command line as command to execute after prerequisites.
-- NPM script.
+- **Command**.
+  `--then` option treats the rest of the command line as command to execute after prerequisites.
+- **NPM script**.
   A `package.json` script not containing a `run-z` command. It still can be used as prerequisite of another task.
-- Group.
+- **Group**.
   A `run-z` command containing zero or more prerequisites and not containing a command to execute.
-- Unknown.
+- **Unknown**.
   A task prerequisite not matching any of the `package.json` scripts.
   Attempting to execute such a task would cause an error. However, it is possible to skip such task execution without
   causing an error.
@@ -119,8 +119,8 @@ should be the same. Any number of spaces may precede or follow opening and closi
 
 ### Task Attributes
 
-Task attributes are name/value pairs accepted by tasks. They can be passed to the tasks the same way as command line
-arguments like this:
+Task attributes are name/value pairs accepted by tasks. They can be passed to the tasks similarly to command line
+arguments:
 
 ```shell script
 run-z test/attribute=value       # Pass `attribute` with `value` to `test` prerequisite.
@@ -129,20 +129,45 @@ run-z test/=if-present           # The shorthand for `if-present=on`.
 ```
 
 Some attributes are flags. I.e. their values treated as booleans with `0`, `false`, and `off` (case-insensitive) meaning
-`false`, and everything else as `true`. A shorthand syntax (`=flag`) can be used to set it to `on` (i.e. `true`).
+`false`, and everything else meaning `true`. A shorthand syntax (`=flag`) can be used to set it to `on` meaning `true`.
 
-If attribute value set multiple times, the most recent one takes precedence.
+If attribute value set multiple times, the last value takes precedence.
 
-Attributes passed to the task prerequisites transitively. The deepest attribute values have lower precedence than the
-ones passed from their dependants. The attributes passed from command line always have the highest precedence.
+Attributes passed to the task prerequisites transitively. The deepest attribute value has lower precedence than the
+one passed from the dependent task. The attribute passed from command line always has the highest precedence.
 
 The following attributes supported:
 
-- `if-present` - a flag indicating that task should be executed only if corresponding script is present in
-  `package.json`. This can be useful for batched tasks.
+- `if-present` - a flag indicating that the task should be executed only if corresponding script defined.
+  This can be useful for batched tasks.
 - `skip` - when this flag set the task won't be executed.
 
 Other attributes aren't used currently, but still can be set.
+
+
+### Task Annexes
+
+Task annex is a task name prefixed with `+` sign. It does the same as the task, except the task execution.
+
+This can be used e.g. to pass additional parameters to the task _IF_ the task executed.
+
+Note that each task executed once. Still, it can be specified multiple times. Each time with its own set of parameters
+and attributes.
+
+So, for example, with the following `package.json` file:
+```json
+{
+  "scripts": {
+    "test": "run-z +z jest",
+    "z": "run-z +test/--runInBand"
+  }
+}
+```
+executing the
+```
+yarn test
+```
+would always apply a `--runInBand` option to `jest`.
 
 
 Parallel And Sequential Execution
@@ -156,6 +181,13 @@ run-z clean build lint,test  # Arbitrary number of spaces allowed around comma.
 ```
 This would execute `lint` and `test` tasks in parallel to each other, but only when `build` one completed.
 While the `build` task would be executed only when `clean` one completed.
+
+It is also possible to execute a command in parallel to its prerequisite. For that an `--and` option could be used
+instead of `--then`:
+```shell script
+run-z copy-assets --and tsc -p .  # Copies assets and compiles TypeScript simultaneously.
+```
+
 
 By default, the maximum number of tasks that can be executed simultaneously is limited to the number of CPUs.
 The `--max-jobs` (`-j`) option can be used to change the limit:
@@ -178,7 +210,7 @@ run-z ../package1 build test . build test
 this executes `build` and `test` tasks in the package located in `../package1` directory, then runs `build` and `test`
 tasks in current one.
 
-`run-z` command line options `.`, `..`, and the one started with `./` and `../` are relative URLs to package external
+`run-z` command line options `.`, `..`, and the ones started with `./` or `../` are relative URLs to package
 directories. The following tasks searched for and executed in target packages.
 
 
@@ -191,14 +223,14 @@ packages in a batch:
 ```shell script
 run-z ./packages//  build # Executes `build` in each package
                           # inside `./packages` directory.
-run-z ./packages/// build # Executes `build` in each package in `./packages` directory
-                          # and deeply nested within of it.
+run-z ./packages/// build # Executes `build` in `./packages` directory
+                          # and in each package deeply nested within it.
 ```
 
 The `//` syntax selects all directly nested directories. The `///` syntax selects the directory and all directories
-deeply nested within it. The hidden directories and directories without `package.json` files ignored. 
+deeply nested within it. The hidden directories and directories without `package.json` file ignored. 
 
-It is also possible to specify multiple package selectors. They selected packages would be united:
+It is also possible to specify multiple package selectors. All selected packages would be united:
 ```shell script
 run-z ./3rd-party// ./packages// build # Executes `build` in each package
                                        # inside `./3rd-party` and `./packages` directories.
@@ -234,7 +266,7 @@ So, with the following `package.json`:
 ```
 it is possible to batch tasks across packages in `./3rd-party` and `./packages` directories:
 ```shell script
-yarn each /build each /test  # Batch `build` task, then `test` one across all packages.  
+yarn each /build each /test  # Batch `build`, then `test` across all packages.  
 ```
 
 
@@ -244,9 +276,9 @@ Named Batches
 When working with [Yarn Workspaces] or [Lerna] it is often necessary to run the task across multiple packages.
 It is quite doable via specifying package selectors. Still, there is a better solution utilizing named batches.
 
-Let's say we have a root package (worktree root) and several packages within `packages/` directory.
+Let's say we have a root package (worktree root) and several packages within a `packages/` directory.
 
-Let's place the following scripts to root `package.json`:
+Let's place the following scripts to the root `package.json`:
 ```json
 {
   "scripts": {
@@ -272,6 +304,23 @@ The `z` task used for convenience here. It is expected to present in all package
 For example, when running inside one of the nested packages, the following command can do the same as above:
 ```shell script
 yarn build --all
+```
+
+Then named batch can have a syntax like `all/test`. When present, such named batch will be used instead of the `all/*`
+one when batching a `test` task. This can be useful, e.g. when it is necessary to pass additional parameters to
+specific tasks:
+```json
+{
+  "scripts": {
+    "all/*": "run-z ./packages//",
+    "all/test": "run-z ./packages// +test/--runInBand",
+    "z": "run-z"
+  }
+}
+```
+```shell script
+yarn build --all  # Batches `build` in generic way.
+yarn test --all   # Batches `test` with `--runInBand` option.
 ```
 
 
