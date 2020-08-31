@@ -79,7 +79,7 @@
 				<h3>Type parameters</h3>
 				<ul class="tsd-type-parameters">
 					<li>
-						<h4>TAction<span class="tsd-signature-symbol">: </span><a href="../modules/run-z.html#ZTaskSpec.Action" class="tsd-signature-type">Action</a></h4>
+						<h4>TAction<span class="tsd-signature-symbol">: </span><a href="../modules/run-z.html#ZTaskSpec.Action" class="tsd-signature-type">Action</a> = <span class="tsd-signature-type">ZTaskSpec.Action</span></h4>
 						<div class="tsd-comment tsd-typography">
 							<div class="lead">
 								<p>Task action type.</p>
@@ -110,8 +110,10 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="run-z.ZCallPlanner.html#addEntry" class="tsd-kind-icon">add<wbr>Entry</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="run-z.ZCallPlanner.html#call" class="tsd-kind-icon">call</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="run-z.ZCallPlanner.html#makeParallel" class="tsd-kind-icon">make<wbr>Parallel</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="run-z.ZCallPlanner.html#makeParallelWhen" class="tsd-kind-icon">make<wbr>Parallel<wbr>When</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="run-z.ZCallPlanner.html#order" class="tsd-kind-icon">order</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="run-z.ZCallPlanner.html#qualify" class="tsd-kind-icon">qualify</a></li>
 							</ul>
@@ -127,7 +129,7 @@
 					<div class="tsd-signature tsd-kind-icon">planned<wbr>Call<span class="tsd-signature-symbol">:</span> <a href="run-z.ZCall.html" class="tsd-signature-type">ZCall</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAction</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/plan/call-planner.ts#L29">run-z/run-z/src/core/plan/call-planner.ts:29</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/plan/call-planner.ts#L29">run-z/run-z/src/core/plan/call-planner.ts:29</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -143,7 +145,7 @@
 					<div class="tsd-signature tsd-kind-icon">setup<span class="tsd-signature-symbol">:</span> <a href="../classes/run-z.ZSetup.html" class="tsd-signature-type">ZSetup</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/plan/call-planner.ts#L22">run-z/run-z/src/core/plan/call-planner.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/plan/call-planner.ts#L22">run-z/run-z/src/core/plan/call-planner.ts:22</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -155,6 +157,41 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="addEntry" class="tsd-anchor"></a>
+					<h3>add<wbr>Entry</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Entry<span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span>, entry<span class="tsd-signature-symbol">: </span><a href="run-z.ZTask.html" class="tsd-signature-type">ZTask</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/plan/call-planner.ts#L80">run-z/run-z/src/core/plan/call-planner.ts:80</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Registers the task execution entry. I.e. the task to be executed first before the task execution.</p>
+								</div>
+								<p>This is necessary e.g. when the task is called as a prerequisite and another prerequisite precedes it.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>this: <span class="tsd-signature-type">void</span></h5>
+								</li>
+								<li>
+									<h5>entry: <a href="run-z.ZTask.html" class="tsd-signature-type">ZTask</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The entry task.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
 					<a name="call" class="tsd-anchor"></a>
 					<h3>call</h3>
@@ -165,7 +202,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/plan/call-planner.ts#L52">run-z/run-z/src/core/plan/call-planner.ts:52</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/plan/call-planner.ts#L52">run-z/run-z/src/core/plan/call-planner.ts:52</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -210,18 +247,18 @@
 					<a name="makeParallel" class="tsd-anchor"></a>
 					<h3>make<wbr>Parallel</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">make<wbr>Parallel<span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span>, tasks<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><a href="run-z.ZTaskQualifier.html" class="tsd-signature-type">ZTaskQualifier</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">make<wbr>Parallel<span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span>, tasks<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">readonly </span><a href="run-z.ZTaskQualifier.html" class="tsd-signature-type">ZTaskQualifier</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/plan/call-planner.ts#L80">run-z/run-z/src/core/plan/call-planner.ts:80</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/plan/call-planner.ts#L89">run-z/run-z/src/core/plan/call-planner.ts:89</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Allow parallel tasks execution.</p>
+									<p>Allows parallel tasks execution.</p>
 								</div>
 								<p>The call to this method does not cause any of the tasks to be executed.</p>
 							</div>
@@ -231,10 +268,76 @@
 									<h5>this: <span class="tsd-signature-type">void</span></h5>
 								</li>
 								<li>
-									<h5>tasks: <span class="tsd-signature-symbol">keyof </span><a href="run-z.ZTaskQualifier.html" class="tsd-signature-type">ZTaskQualifier</a><span class="tsd-signature-symbol">[]</span></h5>
+									<h5>tasks: <span class="tsd-signature-symbol">readonly </span><a href="run-z.ZTaskQualifier.html" class="tsd-signature-type">ZTaskQualifier</a><span class="tsd-signature-symbol">[]</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Array of qualifiers of the tasks that can be executed in parallel to each other.</p>
 									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="makeParallelWhen" class="tsd-anchor"></a>
+					<h3>make<wbr>Parallel<wbr>When</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">make<wbr>Parallel<wbr>When<span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span>, task<span class="tsd-signature-symbol">: </span><a href="run-z.ZTaskQualifier.html" class="tsd-signature-type">ZTaskQualifier</a>, condition<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span>, other<span class="tsd-signature-symbol">: </span><a href="run-z.ZTask.html" class="tsd-signature-type">ZTask</a>, task<span class="tsd-signature-symbol">: </span><a href="run-z.ZTask.html" class="tsd-signature-type">ZTask</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/plan/call-planner.ts#L100">run-z/run-z/src/core/plan/call-planner.ts:100</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Allows parallel execution with the tasks matching the given criteria.</p>
+								</div>
+								<p>This is a uni-directional check.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>this: <span class="tsd-signature-type">void</span></h5>
+								</li>
+								<li>
+									<h5>task: <a href="run-z.ZTaskQualifier.html" class="tsd-signature-type">ZTaskQualifier</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The task qualifier to check parallelism of.</p>
+									</div>
+								</li>
+								<li>
+									<h5>condition: <span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span>, other<span class="tsd-signature-symbol">: </span><a href="run-z.ZTask.html" class="tsd-signature-type">ZTask</a>, task<span class="tsd-signature-symbol">: </span><a href="run-z.ZTask.html" class="tsd-signature-type">ZTask</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Condition to check. This is a function accepting another task as its first parameter and original
+										task as the second one, and returning <code>true</code> when parallel execution is allowed for them.</p>
+									</div>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span>, other<span class="tsd-signature-symbol">: </span><a href="run-z.ZTask.html" class="tsd-signature-type">ZTask</a>, task<span class="tsd-signature-symbol">: </span><a href="run-z.ZTask.html" class="tsd-signature-type">ZTask</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>this: <span class="tsd-signature-type">void</span></h5>
+														</li>
+														<li>
+															<h5>other: <a href="run-z.ZTask.html" class="tsd-signature-type">ZTask</a></h5>
+														</li>
+														<li>
+															<h5>task: <a href="run-z.ZTask.html" class="tsd-signature-type">ZTask</a></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -251,7 +354,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/plan/call-planner.ts#L71">run-z/run-z/src/core/plan/call-planner.ts:71</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/plan/call-planner.ts#L71">run-z/run-z/src/core/plan/call-planner.ts:71</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -295,7 +398,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/plan/call-planner.ts#L39">run-z/run-z/src/core/plan/call-planner.ts:39</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/plan/call-planner.ts#L39">run-z/run-z/src/core/plan/call-planner.ts:39</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -340,9 +443,6 @@
 					<li class=" tsd-kind-module">
 						<a href="../modules/run-z_builtins.html">run-<wbr>z/builtins</a>
 					</li>
-					<li class=" tsd-kind-module">
-						<a href="../modules/run-z_internals.html">run-<wbr>z/internals</a>
-					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
@@ -358,11 +458,17 @@
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="run-z.ZCallPlanner.html#setup" class="tsd-kind-icon">setup</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="run-z.ZCallPlanner.html#addEntry" class="tsd-kind-icon">add<wbr>Entry</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
 								<a href="run-z.ZCallPlanner.html#call" class="tsd-kind-icon">call</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="run-z.ZCallPlanner.html#makeParallel" class="tsd-kind-icon">make<wbr>Parallel</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="run-z.ZCallPlanner.html#makeParallelWhen" class="tsd-kind-icon">make<wbr>Parallel<wbr>When</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="run-z.ZCallPlanner.html#order" class="tsd-kind-icon">order</a>
@@ -388,7 +494,6 @@
 				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
 				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
 				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
-				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
 				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">

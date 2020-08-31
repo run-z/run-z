@@ -89,6 +89,7 @@
 						<section class="tsd-index-section ">
 							<h3>Interfaces</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-interface tsd-parent-kind-class"><a href="../interfaces/run-z.ZTaskParams.Evaluator.html" class="tsd-kind-icon">Evaluator</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-class"><a href="../interfaces/run-z.ZTaskParams.Mutable.html" class="tsd-kind-icon">Mutable</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-class"><a href="../interfaces/run-z.ZTaskParams.Partial.html" class="tsd-kind-icon">Partial</a></li>
 							</ul>
@@ -96,6 +97,7 @@
 						<section class="tsd-index-section ">
 							<h3>Type aliases</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-type-alias tsd-parent-kind-class tsd-is-static"><a href="run-z.ZTaskParams.html#Fn" class="tsd-kind-icon">Fn</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-class tsd-is-static"><a href="run-z.ZTaskParams.html#Values" class="tsd-kind-icon">Values</a></li>
 							</ul>
 						</section>
@@ -113,6 +115,12 @@
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
+							<h3>Accessors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-static"><a href="run-z.ZTaskParams.html#empty" class="tsd-kind-icon">empty</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="run-z.ZTaskParams.html#attr" class="tsd-kind-icon">attr</a></li>
@@ -120,6 +128,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="run-z.ZTaskParams.html#extendAttrs" class="tsd-kind-icon">extend<wbr>Attrs</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="run-z.ZTaskParams.html#flag" class="tsd-kind-icon">flag</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="run-z.ZTaskParams.html#mutate" class="tsd-kind-icon">mutate</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="run-z.ZTaskParams.html#newEvaluator" class="tsd-kind-icon">new<wbr>Evaluator</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="run-z.ZTaskParams.html#newMutable" class="tsd-kind-icon">new<wbr>Mutable</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="run-z.ZTaskParams.html#update" class="tsd-kind-icon">update</a></li>
 							</ul>
@@ -130,12 +139,59 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Type aliases</h2>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-class tsd-is-static">
+					<a name="Fn" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> Fn</h3>
+					<div class="tsd-signature tsd-kind-icon">Fn<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span>, evaluator<span class="tsd-signature-symbol">: </span><a href="../interfaces/run-z.ZTaskParams.Evaluator.html" class="tsd-signature-type">Evaluator</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><a href="run-z.ZTaskParams.html" class="tsd-signature-type">ZTaskParams</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/plan/task-params.ts#L237">run-z/run-z/src/core/plan/task-params.ts:237</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Task parameters builder signature.</p>
+						</div>
+					</div>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-signature">
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias">
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span>, evaluator<span class="tsd-signature-symbol">: </span><a href="../interfaces/run-z.ZTaskParams.Evaluator.html" class="tsd-signature-type">Evaluator</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="run-z.ZTaskParams.html" class="tsd-signature-type">ZTaskParams</a></li>
+								</ul>
+								<ul class="tsd-descriptions">
+									<li class="tsd-description">
+										<div class="tsd-comment tsd-typography">
+										</div>
+										<h4 class="tsd-parameters-title">Parameters</h4>
+										<ul class="tsd-parameters">
+											<li>
+												<h5>this: <span class="tsd-signature-type">void</span></h5>
+											</li>
+											<li>
+												<h5>evaluator: <a href="../interfaces/run-z.ZTaskParams.Evaluator.html" class="tsd-signature-type">Evaluator</a></h5>
+												<div class="tsd-comment tsd-typography">
+													<div class="lead">
+														<p>Task parameters evaluation context.</p>
+													</div>
+												</div>
+											</li>
+										</ul>
+										<h4 class="tsd-returns-title">Returns <a href="run-z.ZTaskParams.html" class="tsd-signature-type">ZTaskParams</a></h4>
+										<p>Evaluated task parameters.</p>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-class tsd-is-static">
 					<a name="Values" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> Values</h3>
 					<div class="tsd-signature tsd-kind-icon">Values<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Required</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/run-z.ZTaskParams.Partial.html" class="tsd-signature-type">Partial</a><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/plan/task-params.ts#L153">run-z/run-z/src/core/plan/task-params.ts:153</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/plan/task-params.ts#L198">run-z/run-z/src/core/plan/task-params.ts:198</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -157,7 +213,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/plan/task-params.ts#L69">run-z/run-z/src/core/plan/task-params.ts:69</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/plan/task-params.ts#L114">run-z/run-z/src/core/plan/task-params.ts:114</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -186,10 +242,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="args" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> args</h3>
-					<div class="tsd-signature tsd-kind-icon">args<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
+					<div class="tsd-signature tsd-kind-icon">args<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">readonly </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/plan/task-params.ts#L69">run-z/run-z/src/core/plan/task-params.ts:69</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/plan/task-params.ts#L114">run-z/run-z/src/core/plan/task-params.ts:114</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -204,7 +260,7 @@
 					<div class="tsd-signature tsd-kind-icon">attrs<span class="tsd-signature-symbol">:</span> <a href="../modules/run-z.html#ZTaskSpec.Attrs" class="tsd-signature-type">Attrs</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/plan/task-params.ts#L64">run-z/run-z/src/core/plan/task-params.ts:64</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/plan/task-params.ts#L109">run-z/run-z/src/core/plan/task-params.ts:109</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -212,6 +268,31 @@
 							<p>Task attributes.</p>
 						</div>
 					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+					<a name="empty" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> empty</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> empty<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="run-z.ZTaskParams.html" class="tsd-signature-type">ZTaskParams</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/plan/task-params.ts#L30">run-z/run-z/src/core/plan/task-params.ts:30</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Empty task parameters.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <a href="run-z.ZTaskParams.html" class="tsd-signature-type">ZTaskParams</a></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
@@ -226,7 +307,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/plan/task-params.ts#L88">run-z/run-z/src/core/plan/task-params.ts:88</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/plan/task-params.ts#L133">run-z/run-z/src/core/plan/task-params.ts:133</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -258,7 +339,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/plan/task-params.ts#L126">run-z/run-z/src/core/plan/task-params.ts:126</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/plan/task-params.ts#L171">run-z/run-z/src/core/plan/task-params.ts:171</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -290,7 +371,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/plan/task-params.ts#L137">run-z/run-z/src/core/plan/task-params.ts:137</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/plan/task-params.ts#L182">run-z/run-z/src/core/plan/task-params.ts:182</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -322,7 +403,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/plan/task-params.ts#L103">run-z/run-z/src/core/plan/task-params.ts:103</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/plan/task-params.ts#L148">run-z/run-z/src/core/plan/task-params.ts:148</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -355,7 +436,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/plan/task-params.ts#L115">run-z/run-z/src/core/plan/task-params.ts:115</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/plan/task-params.ts#L160">run-z/run-z/src/core/plan/task-params.ts:160</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -369,6 +450,29 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="newEvaluator" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> new<wbr>Evaluator</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">new<wbr>Evaluator<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/run-z.ZTaskParams.Evaluator.html" class="tsd-signature-type">Evaluator</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/plan/task-params.ts#L39">run-z/run-z/src/core/plan/task-params.ts:39</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Creates task parameters evaluation context.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/run-z.ZTaskParams.Evaluator.html" class="tsd-signature-type">Evaluator</a></h4>
+							<p>New task parameters evaluation context instance.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
 					<a name="newMutable" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> new<wbr>Mutable</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
@@ -378,7 +482,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/plan/task-params.ts#L24">run-z/run-z/src/core/plan/task-params.ts:24</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/plan/task-params.ts#L69">run-z/run-z/src/core/plan/task-params.ts:69</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -400,7 +504,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/plan/task-params.ts#L36">run-z/run-z/src/core/plan/task-params.ts:36</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/plan/task-params.ts#L81">run-z/run-z/src/core/plan/task-params.ts:81</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -442,9 +546,6 @@
 					<li class=" tsd-kind-module">
 						<a href="../modules/run-z_builtins.html">run-<wbr>z/builtins</a>
 					</li>
-					<li class=" tsd-kind-module">
-						<a href="../modules/run-z_internals.html">run-<wbr>z/internals</a>
-					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
@@ -455,10 +556,16 @@
 						<a href="run-z.ZTaskParams.html" class="tsd-kind-icon">ZTask<wbr>Params</a>
 						<ul>
 							<li class=" tsd-kind-interface tsd-parent-kind-class">
+								<a href="../interfaces/run-z.ZTaskParams.Evaluator.html" class="tsd-kind-icon">Evaluator</a>
+							</li>
+							<li class=" tsd-kind-interface tsd-parent-kind-class">
 								<a href="../interfaces/run-z.ZTaskParams.Mutable.html" class="tsd-kind-icon">Mutable</a>
 							</li>
 							<li class=" tsd-kind-interface tsd-parent-kind-class">
 								<a href="../interfaces/run-z.ZTaskParams.Partial.html" class="tsd-kind-icon">Partial</a>
+							</li>
+							<li class=" tsd-kind-type-alias tsd-parent-kind-class tsd-is-static">
+								<a href="run-z.ZTaskParams.html#Fn" class="tsd-kind-icon">Fn</a>
 							</li>
 							<li class=" tsd-kind-type-alias tsd-parent-kind-class tsd-is-static">
 								<a href="run-z.ZTaskParams.html#Values" class="tsd-kind-icon">Values</a>
@@ -471,6 +578,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="run-z.ZTaskParams.html#attrs" class="tsd-kind-icon">attrs</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-static">
+								<a href="run-z.ZTaskParams.html#empty" class="tsd-kind-icon">empty</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="run-z.ZTaskParams.html#attr" class="tsd-kind-icon">attr</a>
@@ -486,6 +596,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="run-z.ZTaskParams.html#mutate" class="tsd-kind-icon">mutate</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="run-z.ZTaskParams.html#newEvaluator" class="tsd-kind-icon">new<wbr>Evaluator</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
 								<a href="run-z.ZTaskParams.html#newMutable" class="tsd-kind-icon">new<wbr>Mutable</a>
@@ -511,7 +624,6 @@
 				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
 				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
 				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
-				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
 				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">

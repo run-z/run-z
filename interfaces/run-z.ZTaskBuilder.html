@@ -80,7 +80,7 @@
 				<h3>Type parameters</h3>
 				<ul class="tsd-type-parameters">
 					<li>
-						<h4>TAction<span class="tsd-signature-symbol">: </span><a href="../modules/run-z.html#ZTaskSpec.Action" class="tsd-signature-type">Action</a></h4>
+						<h4>TAction<span class="tsd-signature-symbol">: </span><a href="../modules/run-z.html#ZTaskSpec.Action" class="tsd-signature-type">Action</a> = <span class="tsd-signature-type">ZTaskSpec.Action</span></h4>
 						<div class="tsd-comment tsd-typography">
 							<div class="lead">
 								<p>Task action type the builder produces.</p>
@@ -111,7 +111,6 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite"><a href="run-z.ZTaskBuilder.html#action" class="tsd-kind-icon">action</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="run-z.ZTaskBuilder.html#batching" class="tsd-kind-icon">batching</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="run-z.ZTaskBuilder.html#executor" class="tsd-kind-icon">executor</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="run-z.ZTaskBuilder.html#taskName" class="tsd-kind-icon">task<wbr>Name</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="run-z.ZTaskBuilder.html#taskTarget" class="tsd-kind-icon">task<wbr>Target</a></li>
 							</ul>
@@ -145,7 +144,7 @@
 					<aside class="tsd-sources">
 						<p>Overrides <a href="run-z.ZTaskModifier.html">ZTaskModifier</a>.<a href="run-z.ZTaskModifier.html#action">action</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/tasks/task-builder.ts#L19">run-z/run-z/src/core/tasks/task-builder.ts:19</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/tasks/task-builder.ts#L21">run-z/run-z/src/core/tasks/task-builder.ts:21</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -156,28 +155,12 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="run-z.ZTaskModifier.html">ZTaskModifier</a>.<a href="run-z.ZTaskModifier.html#batching">batching</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/tasks/task-modifier.ts#L30">run-z/run-z/src/core/tasks/task-modifier.ts:30</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/tasks/task-modifier.ts#L30">run-z/run-z/src/core/tasks/task-modifier.ts:30</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>Prerequisites batching policy.</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-					<a name="executor" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> executor</h3>
-					<div class="tsd-signature tsd-kind-icon">executor<span class="tsd-signature-symbol">:</span> <a href="../modules/run-z.html#ZTaskExecutor" class="tsd-signature-type">ZTaskExecutor</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></div>
-					<aside class="tsd-sources">
-						<p>Inherited from <a href="run-z.ZTaskModifier.html">ZTaskModifier</a>.<a href="run-z.ZTaskModifier.html#executor">executor</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/tasks/task-modifier.ts#L40">run-z/run-z/src/core/tasks/task-modifier.ts:40</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Task executor set by <a href="run-z.ZTaskBuilder.html#executeBy">executeBy</a>.</p>
 						</div>
 					</div>
 				</section>
@@ -188,7 +171,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="run-z.ZTaskModifier.html">ZTaskModifier</a>.<a href="run-z.ZTaskModifier.html#taskName">taskName</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/tasks/task-modifier.ts#L25">run-z/run-z/src/core/tasks/task-modifier.ts:25</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/tasks/task-modifier.ts#L25">run-z/run-z/src/core/tasks/task-modifier.ts:25</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -204,7 +187,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="run-z.ZTaskModifier.html">ZTaskModifier</a>.<a href="run-z.ZTaskModifier.html#taskTarget">taskTarget</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/tasks/task-modifier.ts#L20">run-z/run-z/src/core/tasks/task-modifier.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/tasks/task-modifier.ts#L20">run-z/run-z/src/core/tasks/task-modifier.ts:20</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -227,7 +210,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="run-z.ZTaskModifier.html">ZTaskModifier</a>.<a href="run-z.ZTaskModifier.html#addArg">addArg</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/tasks/task-modifier.ts#L77">run-z/run-z/src/core/tasks/task-modifier.ts:77</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/tasks/task-modifier.ts#L72">run-z/run-z/src/core/tasks/task-modifier.ts:72</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -260,7 +243,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="run-z.ZTaskModifier.html">ZTaskModifier</a>.<a href="run-z.ZTaskModifier.html#addAttr">addAttr</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/tasks/task-modifier.ts#L59">run-z/run-z/src/core/tasks/task-modifier.ts:59</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/tasks/task-modifier.ts#L54">run-z/run-z/src/core/tasks/task-modifier.ts:54</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -299,7 +282,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="run-z.ZTaskModifier.html">ZTaskModifier</a>.<a href="run-z.ZTaskModifier.html#addAttrs">addAttrs</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/tasks/task-modifier.ts#L68">run-z/run-z/src/core/tasks/task-modifier.ts:68</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/tasks/task-modifier.ts#L63">run-z/run-z/src/core/tasks/task-modifier.ts:63</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -332,7 +315,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="run-z.ZTaskModifier.html">ZTaskModifier</a>.<a href="run-z.ZTaskModifier.html#addPre">addPre</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/tasks/task-modifier.ts#L49">run-z/run-z/src/core/tasks/task-modifier.ts:49</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/tasks/task-modifier.ts#L44">run-z/run-z/src/core/tasks/task-modifier.ts:44</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -358,24 +341,25 @@
 					<a name="applyArgv" class="tsd-anchor"></a>
 					<h3>apply<wbr>Argv</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">apply<wbr>Argv<span class="tsd-signature-symbol">(</span>taskName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span>, argv<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, fromIndex<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">apply<wbr>Argv<span class="tsd-signature-symbol">(</span>taskName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span>, argv<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">readonly </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, opts<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ZOptionsParser.Opts</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/run-z.ZTaskOption.html" class="tsd-signature-type">ZTaskOption</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/tasks/task-builder.ts#L74">run-z/run-z/src/core/tasks/task-builder.ts:74</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/tasks/task-builder.ts#L78">run-z/run-z/src/core/tasks/task-builder.ts:78</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Recognizes options from process command line argument and <a href="run-z.ZTaskBuilder.html#applyOptions">applies</a> them to the task.</p>
 								</div>
-								<p>This is a method to be executed from CLI.</p>
+								<p>This is a method to be called from CLI.</p>
 								<p>When the task name specified (typically by <code>npm_lifecycle_event</code> environment variable), finds the corresponding
 									script in <code>package.json</code>, and detects the options specified explicitly. I.e. the ones following the script ones.
-									Then <a href="run-z.ZTaskBuilder.html#applyOptions">applies</a> explicit options after script options. This makes it possible to specify global
-								options even though the script contains <code>--then</code> or <code>--and</code> option.</p>
+									Then replaces matching command line prefix with the task name and <a href="run-z.ZTaskBuilder.html#applyOptions">applies</a> the resulting
+									command line options. This makes it possible to specify global options even though the script contains <code>--then</code>
+								or <code>--and</code> option.</p>
 								<p>If the above fails, just <a href="run-z.ZTaskBuilder.html#applyOptions">applies command line options</a> as they are.</p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -387,15 +371,15 @@
 									</div>
 								</li>
 								<li>
-									<h5>argv: <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+									<h5>argv: <span class="tsd-signature-symbol">readonly </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Command line arguments of the process.</p>
 									</div>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> fromIndex: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> opts: <span class="tsd-signature-type">ZOptionsParser.Opts</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/run-z.ZTaskOption.html" class="tsd-signature-type">ZTaskOption</a><span class="tsd-signature-symbol">&gt;</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>An index of command line argument to start processing from. <code>2</code> by default.</p>
+										<p>Parser options. By default, starts command line options processing from the third argument.</p>
 									</div>
 								</li>
 							</ul>
@@ -408,13 +392,13 @@
 					<a name="applyOptions" class="tsd-anchor"></a>
 					<h3>apply<wbr>Options</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">apply<wbr>Options<span class="tsd-signature-symbol">(</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, fromIndex<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">apply<wbr>Options<span class="tsd-signature-symbol">(</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">readonly </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, opts<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ZOptionsParser.Opts</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/run-z.ZTaskOption.html" class="tsd-signature-type">ZTaskOption</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/tasks/task-builder.ts#L54">run-z/run-z/src/core/tasks/task-builder.ts:54</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/tasks/task-builder.ts#L57">run-z/run-z/src/core/tasks/task-builder.ts:57</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -430,15 +414,15 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>args: <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+									<h5>args: <span class="tsd-signature-symbol">readonly </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Arguments to apply.</p>
 									</div>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> fromIndex: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> opts: <span class="tsd-signature-type">ZOptionsParser.Opts</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/run-z.ZTaskOption.html" class="tsd-signature-type">ZTaskOption</a><span class="tsd-signature-symbol">&gt;</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>An index of command line argument to start processing from. <code>0</code> by default.</p>
+										<p>Parser options.</p>
 									</div>
 								</li>
 							</ul>
@@ -458,7 +442,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="run-z.ZTaskModifier.html">ZTaskModifier</a>.<a href="run-z.ZTaskModifier.html#executeBy">executeBy</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/tasks/task-modifier.ts#L114">run-z/run-z/src/core/tasks/task-modifier.ts:114</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/tasks/task-modifier.ts#L109">run-z/run-z/src/core/tasks/task-modifier.ts:109</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -485,13 +469,13 @@
 					<a name="parse" class="tsd-anchor"></a>
 					<h3>parse</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">parse<span class="tsd-signature-symbol">(</span>commandLine<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">parse<span class="tsd-signature-symbol">(</span>commandLine<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, opts<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ZOptionsParser.Opts</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/run-z.ZTaskOption.html" class="tsd-signature-type">ZTaskOption</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/tasks/task-builder.ts#L42">run-z/run-z/src/core/tasks/task-builder.ts:42</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/tasks/task-builder.ts#L45">run-z/run-z/src/core/tasks/task-builder.ts:45</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -512,6 +496,12 @@
 										<p>Task command line to parse.</p>
 									</div>
 								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> opts: <span class="tsd-signature-type">ZOptionsParser.Opts</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/run-z.ZTaskOption.html" class="tsd-signature-type">ZTaskOption</a><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Parser options. By default, starts command line options processing from the second argument.</p>
+									</div>
+								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">this</span><span class="tsd-signature-symbol">&gt;</span></h4>
 							<p>A promise resolved to <code>this</code> instance when the command line parsed.</p>
@@ -529,7 +519,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="run-z.ZTaskModifier.html">ZTaskModifier</a>.<a href="run-z.ZTaskModifier.html#setAction">setAction</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/tasks/task-builder.ts#L31">run-z/run-z/src/core/tasks/task-builder.ts:31</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/tasks/task-builder.ts#L33">run-z/run-z/src/core/tasks/task-builder.ts:33</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -572,7 +562,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="run-z.ZTaskModifier.html">ZTaskModifier</a>.<a href="run-z.ZTaskModifier.html#setBatching">setBatching</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/tasks/task-modifier.ts#L91">run-z/run-z/src/core/tasks/task-modifier.ts:91</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/tasks/task-modifier.ts#L86">run-z/run-z/src/core/tasks/task-modifier.ts:86</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -607,7 +597,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/tasks/task-builder.ts#L85">run-z/run-z/src/core/tasks/task-builder.ts:85</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/tasks/task-builder.ts#L89">run-z/run-z/src/core/tasks/task-builder.ts:89</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -630,7 +620,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/aaa9ac3/src/core/tasks/task-builder.ts#L92">run-z/run-z/src/core/tasks/task-builder.ts:92</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/tasks/task-builder.ts#L96">run-z/run-z/src/core/tasks/task-builder.ts:96</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -657,9 +647,6 @@
 					<li class=" tsd-kind-module">
 						<a href="../modules/run-z_builtins.html">run-<wbr>z/builtins</a>
 					</li>
-					<li class=" tsd-kind-module">
-						<a href="../modules/run-z_internals.html">run-<wbr>z/internals</a>
-					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
@@ -674,9 +661,6 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 								<a href="run-z.ZTaskBuilder.html#batching" class="tsd-kind-icon">batching</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-								<a href="run-z.ZTaskBuilder.html#executor" class="tsd-kind-icon">executor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 								<a href="run-z.ZTaskBuilder.html#taskName" class="tsd-kind-icon">task<wbr>Name</a>
@@ -738,7 +722,6 @@
 				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
 				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
 				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
-				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
 				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">

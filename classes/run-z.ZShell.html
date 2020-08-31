@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ZPackageResolver | Run Z</title>
+	<title>ZShell | Run Z</title>
 	<meta name="description" content="Documentation for Run Z">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -57,10 +57,10 @@
 					<a href="../modules/run-z.html">run-z</a>
 				</li>
 				<li>
-					<a href="run-z.ZPackageResolver.html">ZPackageResolver</a>
+					<a href="run-z.ZShell.html">ZShell</a>
 				</li>
 			</ul>
-			<h1>Class ZPackageResolver</h1>
+			<h1>Class ZShell</h1>
 		</div>
 	</div>
 </header>
@@ -70,15 +70,21 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>A resolver of all discovered <a href="../interfaces/run-z.ZPackage.html">NPM packages</a>.</p>
+						<p>Task execution shell.</p>
 					</div>
+					<p>It is provided is used by <a href="../interfaces/run-z.ZCall.html#exec">task execution jobs</a> to execute commands.</p>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">ZPackageResolver</span>
+						<span class="target">ZShell</span>
+						<ul class="tsd-hierarchy">
+							<li>
+								<a href="run-z.SystemZShell.html" class="tsd-signature-type">SystemZShell</a>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -89,23 +95,22 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="run-z.ZPackageResolver.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="run-z.ZShell.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="run-z.ZPackageResolver.html#_byPath" class="tsd-kind-icon">_by<wbr>Path</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="run-z.ZPackageResolver.html#_impl" class="tsd-kind-icon">_impl</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="run-z.ZPackageResolver.html#setup" class="tsd-kind-icon">setup</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="run-z.ZShell.html#setup" class="tsd-kind-icon">setup</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="run-z.ZPackageResolver.html#byName" class="tsd-kind-icon">by<wbr>Name</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="run-z.ZPackageResolver.html#find" class="tsd-kind-icon">find</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="run-z.ZPackageResolver.html#get" class="tsd-kind-icon">get</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="run-z.ZShell.html#execCommand" class="tsd-kind-icon">exec<wbr>Command</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="run-z.ZShell.html#execScript" class="tsd-kind-icon">exec<wbr>Script</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="run-z.ZShell.html#options" class="tsd-kind-icon">options</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="run-z.ZShell.html#noop" class="tsd-kind-icon">noop</a></li>
 							</ul>
 						</section>
 					</div>
@@ -117,18 +122,18 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new ZPackage<wbr>Resolver<span class="tsd-signature-symbol">(</span>setup<span class="tsd-signature-symbol">: </span><a href="run-z.ZSetup.html" class="tsd-signature-type">ZSetup</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="run-z.ZPackageResolver.html" class="tsd-signature-type">ZPackageResolver</a></li>
+						<li class="tsd-signature tsd-kind-icon">new ZShell<span class="tsd-signature-symbol">(</span>setup<span class="tsd-signature-symbol">: </span><a href="run-z.ZSetup.html" class="tsd-signature-type">ZSetup</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="run-z.ZShell.html" class="tsd-signature-type">ZShell</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/packages/package-resolver.ts#L17">run-z/run-z/src/core/packages/package-resolver.ts:17</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/jobs/shell.ts#L29">run-z/run-z/src/core/jobs/shell.ts:29</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Constructs NPM package resolver.</p>
+									<p>Constructs task execution shell.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -142,40 +147,20 @@
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="run-z.ZPackageResolver.html" class="tsd-signature-type">ZPackageResolver</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="run-z.ZShell.html" class="tsd-signature-type">ZShell</a></h4>
 						</li>
 					</ul>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
-					<a name="_byPath" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> _by<wbr>Path</h3>
-					<div class="tsd-signature tsd-kind-icon">_by<wbr>Path<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">ZPackage$</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = new Map&lt;string, Promise&lt;ZPackage$ | undefined&gt;&gt;()</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/packages/package-resolver.ts#L16">run-z/run-z/src/core/packages/package-resolver.ts:16</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
-					<a name="_impl" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> _impl</h3>
-					<div class="tsd-signature tsd-kind-icon">_impl<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ZPackageResolver$</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/packages/package-resolver.ts#L17">run-z/run-z/src/core/packages/package-resolver.ts:17</a></li>
-						</ul>
-					</aside>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="setup" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> setup</h3>
 					<div class="tsd-signature tsd-kind-icon">setup<span class="tsd-signature-symbol">:</span> <a href="run-z.ZSetup.html" class="tsd-signature-type">ZSetup</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/packages/package-resolver.ts#L24">run-z/run-z/src/core/packages/package-resolver.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/jobs/shell.ts#L36">run-z/run-z/src/core/jobs/shell.ts:36</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -188,98 +173,133 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="byName" class="tsd-anchor"></a>
-					<h3>by<wbr>Name</h3>
+					<a name="execCommand" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> exec<wbr>Command</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">by<wbr>Name<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterable</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/run-z.ZPackage.html" class="tsd-signature-type">ZPackage</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">exec<wbr>Command<span class="tsd-signature-symbol">(</span>job<span class="tsd-signature-symbol">: </span><a href="../interfaces/run-z.ZJob.html" class="tsd-signature-type">ZJob</a>, command<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ZExecution</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/packages/package-resolver.ts#L127">run-z/run-z/src/core/packages/package-resolver.ts:127</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/jobs/shell.ts#L47">run-z/run-z/src/core/jobs/shell.ts:47</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Searches for resolved package by its name.</p>
+									<p>Executes a <a href="../modules/run-z.html#ZTaskSpec.Command">command</a>.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
+								<li>
+									<h5>job: <a href="../interfaces/run-z.ZJob.html" class="tsd-signature-type">ZJob</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The job executing command.</p>
+									</div>
+								</li>
+								<li>
+									<h5>command: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Command to execute.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ZExecution</span></h4>
+							<p>Command execution instance.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="execScript" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> exec<wbr>Script</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">exec<wbr>Script<span class="tsd-signature-symbol">(</span>job<span class="tsd-signature-symbol">: </span><a href="../interfaces/run-z.ZJob.html" class="tsd-signature-type">ZJob</a>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ZExecution</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/jobs/shell.ts#L57">run-z/run-z/src/core/jobs/shell.ts:57</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Executes an <a href="../modules/run-z.html#ZTaskSpec.Script">NPM script</a>.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>job: <a href="../interfaces/run-z.ZJob.html" class="tsd-signature-type">ZJob</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The job executing NPM script.</p>
+									</div>
+								</li>
 								<li>
 									<h5>name: <span class="tsd-signature-type">string</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>Package name.</p>
+										<p>The name of NPM script to execute.</p>
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterable</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/run-z.ZPackage.html" class="tsd-signature-type">ZPackage</a><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>An iterable of packages with requested name.</p>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ZExecution</span></h4>
+							<p>NPM script execution instance.</p>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="find" class="tsd-anchor"></a>
-					<h3>find</h3>
+					<a name="options" class="tsd-anchor"></a>
+					<h3>options</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">find<span class="tsd-signature-symbol">(</span>location<span class="tsd-signature-symbol">: </span><a href="run-z.ZPackageLocation.html" class="tsd-signature-type">ZPackageLocation</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/run-z.ZPackage.html" class="tsd-signature-type">ZPackage</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">options<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="run-z.ZTaskParser.html#SupportedOptions" class="tsd-signature-type">SupportedOptions</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/packages/package-resolver.ts#L80">run-z/run-z/src/core/packages/package-resolver.ts:80</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/jobs/shell.ts#L64">run-z/run-z/src/core/jobs/shell.ts:64</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Searches for package by its location.</p>
+									<p>Constructs command line options supported by system shell.</p>
 								</div>
+								<p>Includes options supported by <a href="../interfaces/run-z.ZExtension.html#shellOptions">extensions</a>.</p>
 							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>location: <a href="run-z.ZPackageLocation.html" class="tsd-signature-type">ZPackageLocation</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Package location.</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/run-z.ZPackage.html" class="tsd-signature-type">ZPackage</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>A promise resolved to package or <code>undefined</code> if there is no such package.</p>
+							<h4 class="tsd-returns-title">Returns <a href="run-z.ZTaskParser.html#SupportedOptions" class="tsd-signature-type">SupportedOptions</a></h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="get" class="tsd-anchor"></a>
-					<h3>get</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<span class="tsd-signature-symbol">(</span>location<span class="tsd-signature-symbol">: </span><a href="run-z.ZPackageLocation.html" class="tsd-signature-type">ZPackageLocation</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/run-z.ZPackage.html" class="tsd-signature-type">ZPackage</a><span class="tsd-signature-symbol">&gt;</span></li>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="noop" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> noop</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">noop<span class="tsd-signature-symbol">(</span>setup<span class="tsd-signature-symbol">: </span><a href="run-z.ZSetup.html" class="tsd-signature-type">ZSetup</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="run-z.ZShell.html" class="tsd-signature-type">ZShell</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/packages/package-resolver.ts#L66">run-z/run-z/src/core/packages/package-resolver.ts:66</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/jobs/shell.ts#L27">run-z/run-z/src/core/jobs/shell.ts:27</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Resolves package by its location.</p>
+									<p>Creates task execution shell that does nothing.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>location: <a href="run-z.ZPackageLocation.html" class="tsd-signature-type">ZPackageLocation</a></h5>
+									<h5>setup: <a href="run-z.ZSetup.html" class="tsd-signature-type">ZSetup</a></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>Package location.</p>
+										<p>Task execution setup.</p>
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/run-z.ZPackage.html" class="tsd-signature-type">ZPackage</a><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>A promise resolved to package.</p>
+							<h4 class="tsd-returns-title">Returns <a href="run-z.ZShell.html" class="tsd-signature-type">ZShell</a></h4>
+							<p>New task execution shell.</p>
 						</li>
 					</ul>
 				</section>
@@ -304,28 +324,25 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-module">
-						<a href="run-z.ZPackageResolver.html" class="tsd-kind-icon">ZPackage<wbr>Resolver</a>
+						<a href="run-z.ZShell.html" class="tsd-kind-icon">ZShell</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="run-z.ZPackageResolver.html#constructor" class="tsd-kind-icon">constructor</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
-								<a href="run-z.ZPackageResolver.html#_byPath" class="tsd-kind-icon">_by<wbr>Path</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
-								<a href="run-z.ZPackageResolver.html#_impl" class="tsd-kind-icon">_impl</a>
+								<a href="run-z.ZShell.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="run-z.ZPackageResolver.html#setup" class="tsd-kind-icon">setup</a>
+								<a href="run-z.ZShell.html#setup" class="tsd-kind-icon">setup</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="run-z.ZPackageResolver.html#byName" class="tsd-kind-icon">by<wbr>Name</a>
+								<a href="run-z.ZShell.html#execCommand" class="tsd-kind-icon">exec<wbr>Command</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="run-z.ZPackageResolver.html#find" class="tsd-kind-icon">find</a>
+								<a href="run-z.ZShell.html#execScript" class="tsd-kind-icon">exec<wbr>Script</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="run-z.ZPackageResolver.html#get" class="tsd-kind-icon">get</a>
+								<a href="run-z.ZShell.html#options" class="tsd-kind-icon">options</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="run-z.ZShell.html#noop" class="tsd-kind-icon">noop</a>
 							</li>
 						</ul>
 					</li>
@@ -358,7 +375,7 @@
 				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
 			</ul>
 		</div>
 	</div>

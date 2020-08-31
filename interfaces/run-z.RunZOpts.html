@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ZPackageJson | Run Z</title>
+	<title>RunZOpts | Run Z</title>
 	<meta name="description" content="Documentation for Run Z">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -57,10 +57,10 @@
 					<a href="../modules/run-z.html">run-z</a>
 				</li>
 				<li>
-					<a href="run-z.ZPackageJson.html">ZPackageJson</a>
+					<a href="run-z.RunZOpts.html">RunZOpts</a>
 				</li>
 			</ul>
-			<h1>Interface ZPackageJson</h1>
+			<h1>Interface RunZOpts</h1>
 		</div>
 	</div>
 </header>
@@ -70,7 +70,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p><code>package.json</code> file contents.</p>
+						<p><code>run-z</code> execution options.</p>
 					</div>
 				</div>
 			</section>
@@ -78,18 +78,9 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">ZPackageJson</span>
+						<span class="target">RunZOpts</span>
 					</li>
 				</ul>
-			</section>
-			<section class="tsd-panel tsd-kind-interface tsd-parent-kind-module">
-				<h3 class="tsd-before-signature">Indexable</h3>
-				<div class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></div>
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p><code>package.json</code> file contents.</p>
-					</div>
-				</div>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
@@ -98,12 +89,11 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="run-z.ZPackageJson.html#dependencies" class="tsd-kind-icon">dependencies</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="run-z.ZPackageJson.html#devDependencies" class="tsd-kind-icon">dev<wbr>Dependencies</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="run-z.ZPackageJson.html#name" class="tsd-kind-icon">name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="run-z.ZPackageJson.html#peerDependencies" class="tsd-kind-icon">peer<wbr>Dependencies</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="run-z.ZPackageJson.html#scripts" class="tsd-kind-icon">scripts</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="run-z.ZPackageJson.html#version" class="tsd-kind-icon">version</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="run-z.RunZOpts.html#fromIndex" class="tsd-kind-icon">from<wbr>Index</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="run-z.RunZOpts.html#location" class="tsd-kind-icon">location</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="run-z.RunZOpts.html#setup" class="tsd-kind-icon">setup</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="run-z.RunZOpts.html#shell" class="tsd-kind-icon">shell</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="run-z.RunZOpts.html#taskName" class="tsd-kind-icon">task<wbr>Name</a></li>
 							</ul>
 						</section>
 					</div>
@@ -112,64 +102,108 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="dependencies" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> dependencies</h3>
-					<div class="tsd-signature tsd-kind-icon">dependencies<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{}</span></div>
+					<a name="fromIndex" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> from<wbr>Index</h3>
+					<div class="tsd-signature tsd-kind-icon">from<wbr>Index<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/packages/package.json.ts#L16">run-z/run-z/src/core/packages/package.json.ts:16</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/cli/run-z.cli.ts#L33">run-z/run-z/src/cli/run-z.cli.ts:33</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>An index of command line argument to start processing from.</p>
+						</div>
+						<dl class="tsd-comment-tags">
+							<dt>default</dt>
+							<dd><p><code>2</code>.</p>
+							</dd>
+						</dl>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="devDependencies" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> dev<wbr>Dependencies</h3>
-					<div class="tsd-signature tsd-kind-icon">dev<wbr>Dependencies<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{}</span></div>
+					<a name="location" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> location</h3>
+					<div class="tsd-signature tsd-kind-icon">location<span class="tsd-signature-symbol">:</span> <a href="../classes/run-z.ZPackageLocation.html" class="tsd-signature-type">ZPackageLocation</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/packages/package.json.ts#L19">run-z/run-z/src/core/packages/package.json.ts:19</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/cli/run-z.cli.ts#L40">run-z/run-z/src/cli/run-z.cli.ts:40</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Working directory location.</p>
+						</div>
+						<dl class="tsd-comment-tags">
+							<dt>default</dt>
+							<dd><p>{@link ZPackageDirectory.open() current directory}.</p>
+							</dd>
+						</dl>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="name" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> name</h3>
-					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<a name="setup" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> setup</h3>
+					<div class="tsd-signature tsd-kind-icon">setup<span class="tsd-signature-symbol">:</span> <a href="../classes/run-z.ZSetup.html" class="tsd-signature-type">ZSetup</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/packages/package.json.ts#L11">run-z/run-z/src/core/packages/package.json.ts:11</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/cli/run-z.cli.ts#L47">run-z/run-z/src/cli/run-z.cli.ts:47</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Task execution setup.</p>
+						</div>
+						<dl class="tsd-comment-tags">
+							<dt>default</dt>
+							<dd><p>New <a href="../classes/run-z_builtins.StandardZSetup.html">StandardZSetup</a> instance.</p>
+							</dd>
+						</dl>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="peerDependencies" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> peer<wbr>Dependencies</h3>
-					<div class="tsd-signature tsd-kind-icon">peer<wbr>Dependencies<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{}</span></div>
+					<a name="shell" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> shell</h3>
+					<div class="tsd-signature tsd-kind-icon">shell<span class="tsd-signature-symbol">:</span> <a href="../classes/run-z.ZShell.html" class="tsd-signature-type">ZShell</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/packages/package.json.ts#L13">run-z/run-z/src/core/packages/package.json.ts:13</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/cli/run-z.cli.ts#L54">run-z/run-z/src/cli/run-z.cli.ts:54</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Task execution shell to use.</p>
+						</div>
+						<dl class="tsd-comment-tags">
+							<dt>default</dt>
+							<dd><p>New <a href="../classes/run-z.SystemZShell.html">SystemZShell</a> instance.</p>
+							</dd>
+						</dl>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="scripts" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> scripts</h3>
-					<div class="tsd-signature tsd-kind-icon">scripts<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{}</span></div>
+					<a name="taskName" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> task<wbr>Name</h3>
+					<div class="tsd-signature tsd-kind-icon">task<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/packages/package.json.ts#L22">run-z/run-z/src/core/packages/package.json.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/cli/run-z.cli.ts#L26">run-z/run-z/src/cli/run-z.cli.ts:26</a></li>
 						</ul>
 					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="version" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> version</h3>
-					<div class="tsd-signature tsd-kind-icon">version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/2cc84d2/src/core/packages/package.json.ts#L12">run-z/run-z/src/core/packages/package.json.ts:12</a></li>
-						</ul>
-					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Known task name.</p>
+						</div>
+						<p>Used to reconstruct original command line when issued via <code>yarn run</code> or <code>npm run</code>.</p>
+						<dl class="tsd-comment-tags">
+							<dt>default</dt>
+							<dd><p><code>process.env.npm_lifecycle_event</code>.</p>
+							</dd>
+							<dt>see</dt>
+							<dd><p><a href="run-z.ZTaskBuilder.html#applyArgv">ZTaskBuilder.applyArgv</a>.</p>
+							</dd>
+						</dl>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -192,25 +226,22 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-module">
-						<a href="run-z.ZPackageJson.html" class="tsd-kind-icon">ZPackage<wbr>Json</a>
+						<a href="run-z.RunZOpts.html" class="tsd-kind-icon">RunZOpts</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="run-z.ZPackageJson.html#dependencies" class="tsd-kind-icon">dependencies</a>
+								<a href="run-z.RunZOpts.html#fromIndex" class="tsd-kind-icon">from<wbr>Index</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="run-z.ZPackageJson.html#devDependencies" class="tsd-kind-icon">dev<wbr>Dependencies</a>
+								<a href="run-z.RunZOpts.html#location" class="tsd-kind-icon">location</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="run-z.ZPackageJson.html#name" class="tsd-kind-icon">name</a>
+								<a href="run-z.RunZOpts.html#setup" class="tsd-kind-icon">setup</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="run-z.ZPackageJson.html#peerDependencies" class="tsd-kind-icon">peer<wbr>Dependencies</a>
+								<a href="run-z.RunZOpts.html#shell" class="tsd-kind-icon">shell</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="run-z.ZPackageJson.html#scripts" class="tsd-kind-icon">scripts</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="run-z.ZPackageJson.html#version" class="tsd-kind-icon">version</a>
+								<a href="run-z.RunZOpts.html#taskName" class="tsd-kind-icon">task<wbr>Name</a>
 							</li>
 						</ul>
 					</li>
