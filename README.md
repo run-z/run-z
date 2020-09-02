@@ -325,8 +325,8 @@ specific tasks:
 }
 ```
 ```shell script
-yarn build --all  # Batches `build` in generic way.
-yarn test --all   # Batches `test` with `--runInBand` option.
+yarn z build --all  # Batches `build` in generic way.
+yarn z test --all   # Batches `test` with `--runInBand` option.
 ```
 
 
