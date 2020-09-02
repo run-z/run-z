@@ -112,8 +112,8 @@ To pass additional command line arguments to the task a special syntax can be us
 
 ```shell script
 run-z test/--ci/--runInBand     # Pass `--ci` and `--runInBand` command line argument
-                                # to command or NPM script executed by `test` task. 
-run-z test //--ci --runInBand// # Pass multiple command line options at once.                             
+                                # to command or NPM script executed by `test` task.
+run-z test //--ci --runInBand// # Pass multiple command line options at once.
 ```
 
 Single arguments can be passed by prefixing them with `/` sign. Any number of spaces may precede the `/` sign, but
@@ -130,7 +130,7 @@ arguments:
 
 ```shell script
 run-z test/attribute=value       # Pass `attribute` with `value` to `test` prerequisite.
-run-z build test attribute=value # Pass `attribute` with `value` to all the task itself ant to all of its prerequisites.
+run-z build test attribute=value # Pass `attribute` with `value` to the task itself and all of its prerequisites.
 run-z test/=if-present           # The shorthand for `if-present=on`.
 ```
 
