@@ -33,6 +33,17 @@ describe('ZDepGraph', () => {
     expect(dependantsOf(packageB)).toEqual(['packageC']);
     expect(dependenciesOf(packageC)).toEqual(['packageA', 'packageB']);
   });
+  it('reflects recurrent dependencies', async () => {
+
+    const packageA = await addPackage('packageA', { name: 'packageA', dependencies: { packageC: '*' } });
+    const packageB = await addPackage('packageB', { name: 'packageB', dependencies: { packageA: '*' } });
+    const packageC = await addPackage('packageC', { name: 'packageC', dependencies: { packageB: '*' } });
+
+    expect(dependantsOf(packageA)).toEqual(['packageC', 'packageB']);
+    expect(dependenciesOf(packageB)).toEqual(['packageC', 'packageA']);
+    expect(dependantsOf(packageB)).toEqual(['packageA', 'packageC']);
+    expect(dependenciesOf(packageC)).toEqual(['packageA', 'packageB']);
+  });
   it('ignores unresolved dependencies', async () => {
 
     const packageA = await addPackage('packageA', { name: 'packageA' });

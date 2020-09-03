@@ -36,6 +36,7 @@ export class ZDepGraph$ implements ZDepGraph {
     const collected = new Set<ZPackage$>();
 
     zPackageDeps(collected, this.target);
+    collected.delete(this.target);
 
     return this._dependencies = collected;
   }
@@ -94,6 +95,7 @@ function zPackageDeps(
     target: ZPackage$,
     deep = true,
 ): void {
+  collected.add(target);
 
   const { _resolver: resolver } = target;
   const { packageJson } = target;
@@ -135,9 +137,11 @@ function zPackageDepsOfKind(
       if (collected.has(dep)) {
         continue;
       }
+      collected.add(dep);
       if (deep) {
         zPackageDeps(collected, dep);
       }
+      collected.delete(dep);
       collected.add(dep);
     }
   }
