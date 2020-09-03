@@ -66,7 +66,9 @@
 					<h1>Run That</h1>
 				</a>
 				<p><a href="https://www.npmjs.com/package/run-z"><img src="https://img.shields.io/npm/v/run-z.svg?logo=npm" alt="NPM"></a>
-					<a href="https://github.com/run-z/run-z/actions?query=workflow%3ABuild"><img src="https://github.com/run-z/run-z/workflows/Build/badge.svg" alt="Build Status"></a>
+					<a href="https://github.com/run-z/run-z/actions?query=workflow:Build"><img src="https://github.com/run-z/run-z/workflows/Build/badge.svg" alt="Build Status"></a>
+					<a href="https://github.com/run-z/run-z/actions?query=workflow:Build@Windows"><img src="https://github.com/run-z/run-z/workflows/Build@Windows/badge.svg" alt="Build@Windows"></a>
+					<a href="https://github.com/run-z/run-z/actions?query=workflow:Build@MacOS"><img src="https://github.com/run-z/run-z/workflows/Build@MacOS/badge.svg" alt="Build@MacOS"></a>
 					<a href="https://codecov.io/gh/run-z/run-z"><img src="https://codecov.io/gh/run-z/run-z/branch/master/graph/badge.svg" alt="codecov"></a>
 					<a href="https://github.com/run-z/run-z"><img src="https://img.shields.io/static/v1?logo=github&label=GitHub&message=project&color=informational" alt="GitHub Project"></a>
 				<a href="https://run-z.github.io/run-z/"><img src="https://img.shields.io/static/v1?logo=typescript&label=API&message=docs&color=informational" alt="API Documentation"></a></p>
@@ -139,8 +141,8 @@ npm run z -- clean build  # Use a no-op `z` task for convenience.     </code></p
 				</a>
 				<p>To pass additional command line arguments to the task a special syntax can be used:</p>
 				<pre><code class="language-shell">run-z test/--ci/--runInBand     # Pass `--ci` and `--runInBand` command line argument
-                                # to command or NPM script executed by `test` task. 
-run-z test //--ci --runInBand// # Pass multiple command line options at once.                             </code></pre>
+                                # to command or NPM script executed by `test` task.
+run-z test //--ci --runInBand// # Pass multiple command line options at once.</code></pre>
 				<p>Single arguments can be passed by prefixing them with <code>/</code> sign. Any number of spaces may precede the <code>/</code> sign, but
 				should not follow it.</p>
 				<p>Multiple arguments can be passed by enclosing them with two or more <code>/</code> signs. The number of opening and closing signs
@@ -151,7 +153,7 @@ run-z test //--ci --runInBand// # Pass multiple command line options at once.   
 				<p>Task attributes are name/value pairs accepted by tasks. They can be passed to the tasks similarly to command line
 				arguments:</p>
 				<pre><code class="language-shell">run-z test/attribute=value       # Pass `attribute` with `value` to `test` prerequisite.
-run-z build test attribute=value # Pass `attribute` with `value` to all the task itself ant to all of its prerequisites.
+run-z build test attribute=value # Pass `attribute` with `value` to the task itself and all of its prerequisites.
 run-z test/=if-present           # The shorthand for `if-present=on`.</code></pre>
 				<p>Some attributes are flags. I.e. their values treated as booleans with <code>0</code>, <code>false</code>, and <code>off</code> (case-insensitive) meaning
 				<code>false</code>, and everything else meaning <code>true</code>. A shorthand syntax (<code>=flag</code>) can be used to set it to <code>on</code> meaning <code>true</code>.</p>
@@ -276,8 +278,8 @@ npm run z -- build --all # Do the same with NPM.</code></pre>
     <span class="hljs-attr">&quot;z&quot;</span>: <span class="hljs-string">&quot;run-z&quot;</span>
   }
 }</code></pre>
-				<pre><code class="language-shell">yarn build --all  # Batches `build` in generic way.
-yarn test --all   # Batches `test` with `--runInBand` option.</code></pre>
+				<pre><code class="language-shell">yarn z build --all  # Batches `build` in generic way.
+yarn z test --all   # Batches `test` with `--runInBand` option.</code></pre>
 				<a href="#dependency-graph" id="dependency-graph" style="color: inherit; text-decoration: none;">
 					<h3>Dependency Graph</h3>
 				</a>
