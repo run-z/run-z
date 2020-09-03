@@ -105,6 +105,7 @@
     "test:kill-with-code": "run-z --then node --no-warnings ./src/spec/bin/kill-with-code.js",
     "test:script": "node --no-warnings ./src/spec/bin/ok.js --script1",
     "test:silent": "run-z --then node --no-warnings ./src/spec/bin/silent.js --silent",
-    "test:stale": "node --no-warnings ./src/spec/bin/stale.js"
+    "test:stale": "node --no-warnings ./src/spec/bin/stale.js",
+    "z": "run-z"
   }
 }
