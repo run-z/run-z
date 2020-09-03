@@ -1,7 +1,8 @@
 import type { ZExecution } from '@run-z/exec-z';
 import { execZNoOp } from '@run-z/exec-z';
-import { ZOptionInput } from '@run-z/optionz';
+import { ZOptionError, ZOptionInput } from '@run-z/optionz';
 import { ZBatchDetails } from '../../batches';
+import type { ZJob } from '../../jobs';
 import type { ZPackageSet } from '../../packages';
 import type { ZCall, ZCallDetails, ZPrePlanner } from '../../plan';
 import type { ZTask } from '../task';
@@ -91,7 +92,16 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
     return target.selectTargets(targets);
   }
 
-  protected _execTask(): ZExecution {
+  protected _execTask({ params: { args } }: ZJob): ZExecution {
+    if (args.length) {
+      throw new ZOptionError(
+          {
+            args: ['run-z', this.name, ...args],
+            index: 2,
+          },
+          `Unrecognized command line option "${args[0]}" passed to task "${this.name}" in ${this.target.name}`,
+      );
+    }
     return execZNoOp();
   }
 

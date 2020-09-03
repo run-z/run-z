@@ -108,8 +108,12 @@ async function doRunZ(
  */
 function logZError(error: any): Promise<void> {
   if (error instanceof ZOptionError) {
+
+    let offset = '';
+
     for (const line of formatZOptionError(error)) {
-      console.error(line);
+      console.error(offset + line);
+      offset = '  ';
     }
   } else if (error instanceof UnknownZTaskError) {
     console.error(error.message);

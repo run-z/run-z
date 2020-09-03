@@ -1,3 +1,5 @@
+import { asis } from '@proc7ts/primitives';
+import { ZOptionError } from '@run-z/optionz';
 import { prerequisitesOf, taskId, taskIds, TestPlan } from '../../../spec';
 import { ZShell } from '../../jobs';
 import { ZTaskParams } from '../../plan';
@@ -544,6 +546,31 @@ describe('GroupZTask', () => {
       const call = await testPlan.call('test');
 
       expect(await call.exec(ZShell.noop(testPlan.setup)).whenDone()).toBeUndefined();
+    });
+    it('fails when command line argument passed', async () => {
+      testPlan.addPackage(
+          'test',
+          {
+            packageJson: {
+              scripts: {
+                test: 'run-z',
+              },
+            },
+          },
+      );
+
+      const call = await testPlan.call(
+          'test',
+          {
+            params() {
+              return { args: ['--test'] };
+            },
+          },
+      );
+
+      const error = await call.exec(ZShell.noop(testPlan.setup)).whenDone().catch(asis);
+
+      expect(error).toBeInstanceOf(ZOptionError);
     });
   });
 });
