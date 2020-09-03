@@ -14,7 +14,7 @@ describe('ZDepGraph', () => {
     root = new ZPackageTree('root', { packageJson: { name: 'root' } });
   });
 
-  it('reflects direct dependencies', async () => {
+  it('reflects direct dependency', async () => {
 
     const packageA = await addPackage('packageA', { name: 'packageA' });
     const packageB = await addPackage('packageB', { name: 'packageB', dependencies: { packageA: '*' } });
@@ -43,6 +43,30 @@ describe('ZDepGraph', () => {
     expect(dependenciesOf(packageB)).toEqual(['packageC', 'packageA']);
     expect(dependantsOf(packageB)).toEqual(['packageA', 'packageC']);
     expect(dependenciesOf(packageC)).toEqual(['packageA', 'packageB']);
+  });
+  it('reflects dependency with invalid range', async () => {
+
+    const packageA = await addPackage('packageA', { name: 'packageA', version: '1.0' });
+    const packageB = await addPackage('packageB', { name: 'packageB', dependencies: { packageA: 'wrong' } });
+
+    expect(dependantsOf(packageA)).toEqual(['packageB']);
+    expect(dependenciesOf(packageB)).toEqual(['packageA']);
+  });
+  it('reflects dependency with invalid version', async () => {
+
+    const packageA = await addPackage('packageA', { name: 'packageA', version: 'wrong' });
+    const packageB = await addPackage('packageB', { name: 'packageB', dependencies: { packageA: '*' } });
+
+    expect(dependantsOf(packageA)).toEqual(['packageB']);
+    expect(dependenciesOf(packageB)).toEqual(['packageA']);
+  });
+  it('ignores dependency not matching version range', async () => {
+
+    const packageA = await addPackage('packageA', { name: 'packageA', version: '1.9.9' });
+    const packageB = await addPackage('packageB', { name: 'packageB', dependencies: { packageA: '^2.0.0' } });
+
+    expect(dependantsOf(packageA)).toEqual([]);
+    expect(dependenciesOf(packageB)).toEqual([]);
   });
   it('ignores unresolved dependencies', async () => {
 

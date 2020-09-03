@@ -3,6 +3,7 @@
  * @module run-z
  */
 import { valueProvider } from '@proc7ts/primitives';
+import semver from 'semver';
 import type { ZDepGraph } from './dep-graph';
 import type { ZPackage$, ZPackageResolver$ } from './package.impl';
 
@@ -128,15 +129,27 @@ function zPackageDepsOfKind(
   if (!deps) {
     return;
   }
-  for (const depName of Object.keys(deps)) {
+  for (const [depName, depRange] of Object.entries(deps)) {
     if (!filter(depName)) {
       continue;
     }
+
+    const range = semver.validRange(depRange, true);
 
     for (const dep of resolver.byName(depName)) {
       if (collected.has(dep)) {
         continue;
       }
+
+      if (range) {
+
+        const version = semver.parse(dep.packageJson.version, true);
+
+        if (version && !semver.satisfies(version, range, true)) {
+          continue;
+        }
+      }
+
       collected.add(dep);
       if (deep) {
         zPackageDeps(collected, dep);
