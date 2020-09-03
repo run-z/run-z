@@ -19,10 +19,9 @@ export class ZDepGraph$ implements ZDepGraph {
 
   _init(): void {
 
-    const reported = new Set<string>();
     const collected = new Set<ZPackage$>();
 
-    zPackageDeps(reported, collected, this.target, false);
+    zPackageDeps(collected, this.target, false);
 
     for (const dep of collected) {
       dep._addDependant(this.target);
@@ -34,10 +33,9 @@ export class ZDepGraph$ implements ZDepGraph {
       return this._dependencies;
     }
 
-    const reported = new Set<string>();
     const collected = new Set<ZPackage$>();
 
-    zPackageDeps(reported, collected, this.target);
+    zPackageDeps(collected, this.target);
 
     return this._dependencies = collected;
   }
@@ -50,23 +48,26 @@ export class ZDepGraph$ implements ZDepGraph {
     this.target._resolver.buildDepGraph();
 
     const allDependants = this._allDependants();
-    const reported = new Set<string>();
     const collected = new Set<ZPackage$>();
 
-    for (const dep of allDependants) {
-      if (!reported.has(dep.name)) {
-        reported.add(dep.name);
-
-        const depCollected = new Set<ZPackage$>();
-
-        zPackageDeps(reported, depCollected, dep, true);
-        for (const d of depCollected) {
-          if (allDependants.has(d)) {
-            collected.add(d);
-          }
-        }
-        collected.add(dep);
+    for (const dependant of allDependants) {
+      if (collected.has(dependant)) {
+        continue;
       }
+      collected.add(dependant);
+
+      const depsOfDependant = new Set<ZPackage$>();
+
+      zPackageDeps(depsOfDependant, dependant, true);
+      for (const depOfDependant of depsOfDependant) {
+        if (allDependants.has(depOfDependant)) {
+          collected.add(depOfDependant);
+        }
+      }
+
+      // Make the dependant last
+      collected.delete(dependant);
+      collected.add(dependant);
     }
 
     return this._dependants = collected;
@@ -89,7 +90,6 @@ export class ZDepGraph$ implements ZDepGraph {
  * @internal
  */
 function zPackageDeps(
-    reported: Set<string>,
     collected: Set<ZPackage$>,
     target: ZPackage$,
     deep = true,
@@ -99,19 +99,18 @@ function zPackageDeps(
   const { packageJson } = target;
   const { devDependencies } = packageJson;
 
-  zPackageDepsOfKind(resolver, reported, collected, packageJson.dependencies, deep);
+  zPackageDepsOfKind(resolver, collected, packageJson.dependencies, deep);
   if (devDependencies) {
     zPackageDepsOfKind(
         resolver,
-        reported,
         collected,
         packageJson.peerDependencies,
         deep,
         depName => devDependencies[depName] != null,
     );
-    zPackageDepsOfKind(resolver, reported, collected, devDependencies, deep);
+    zPackageDepsOfKind(resolver, collected, devDependencies, deep);
   }
-  zPackageDepsOfKind(resolver, reported, collected, packageJson.peerDependencies, deep);
+  zPackageDepsOfKind(resolver, collected, packageJson.peerDependencies, deep);
 }
 
 /**
@@ -119,7 +118,6 @@ function zPackageDeps(
  */
 function zPackageDepsOfKind(
     resolver: ZPackageResolver$,
-    reported: Set<string>,
     collected: Set<ZPackage$>,
     deps: Readonly<Record<string, string>> | undefined,
     deep: boolean,
@@ -129,18 +127,16 @@ function zPackageDepsOfKind(
     return;
   }
   for (const depName of Object.keys(deps)) {
-    if (reported.has(depName)) {
-      continue;
-    }
     if (!filter(depName)) {
       continue;
     }
 
-    reported.add(depName);
-
     for (const dep of resolver.byName(depName)) {
+      if (collected.has(dep)) {
+        continue;
+      }
       if (deep) {
-        zPackageDeps(reported, collected, dep);
+        zPackageDeps(collected, dep);
       }
       collected.add(dep);
     }
