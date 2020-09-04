@@ -108,9 +108,9 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="run-z.ZTaskParser.html#applyOptions" class="tsd-kind-icon">apply<wbr>Options</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="run-z.ZTaskParser.html#isPackageSelector" class="tsd-kind-icon">is<wbr>Package<wbr>Selector</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="run-z.ZTaskParser.html#parseAttr" class="tsd-kind-icon">parse<wbr>Attr</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="run-z.ZTaskParser.html#parseCommandLine" class="tsd-kind-icon">parse<wbr>Command<wbr>Line</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="run-z.ZTaskParser.html#parseTarget" class="tsd-kind-icon">parse<wbr>Target</a></li>
 							</ul>
 						</section>
 					</div>
@@ -124,7 +124,7 @@
 					<div class="tsd-signature tsd-kind-icon">Supported<wbr>Options<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">SupportedZOptions</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/run-z.ZTaskOption.html" class="tsd-signature-type">ZTaskOption</a><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/99f3064/src/core/tasks/task-parser.ts#L133">run-z/run-z/src/core/tasks/task-parser.ts:133</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/f1d2ead/src/core/tasks/task-parser.ts#L151">run-z/run-z/src/core/tasks/task-parser.ts:151</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -146,7 +146,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/99f3064/src/core/tasks/task-parser.ts#L26">run-z/run-z/src/core/tasks/task-parser.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/f1d2ead/src/core/tasks/task-parser.ts#L27">run-z/run-z/src/core/tasks/task-parser.ts:27</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -182,7 +182,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/99f3064/src/core/tasks/task-parser.ts#L115">run-z/run-z/src/core/tasks/task-parser.ts:115</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/f1d2ead/src/core/tasks/task-parser.ts#L133">run-z/run-z/src/core/tasks/task-parser.ts:133</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -217,38 +217,6 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="isPackageSelector" class="tsd-anchor"></a>
-					<h3>is<wbr>Package<wbr>Selector</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">is<wbr>Package<wbr>Selector<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/99f3064/src/core/tasks/task-parser.ts#L44">run-z/run-z/src/core/tasks/task-parser.ts:44</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Checks whether the given string is package selector.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>value: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>A string value to check.</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
-							<p><code>true</code> if the given <code>value</code> is either <code>.</code> or <code>..</code>, or starts with either <code>./</code> or <code>.//</code>. <code>false</code> otherwise.</p>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="parseAttr" class="tsd-anchor"></a>
 					<h3>parse<wbr>Attr</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -258,7 +226,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/99f3064/src/core/tasks/task-parser.ts#L58">run-z/run-z/src/core/tasks/task-parser.ts:58</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/f1d2ead/src/core/tasks/task-parser.ts#L76">run-z/run-z/src/core/tasks/task-parser.ts:76</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -322,7 +290,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/99f3064/src/core/tasks/task-parser.ts#L84">run-z/run-z/src/core/tasks/task-parser.ts:84</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/f1d2ead/src/core/tasks/task-parser.ts#L102">run-z/run-z/src/core/tasks/task-parser.ts:102</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -343,6 +311,39 @@
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">readonly </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h4>
 							<p>Either parsed command line arguments, or <code>undefined</code> if target script can not be parsed.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="parseTarget" class="tsd-anchor"></a>
+					<h3>parse<wbr>Target</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">parse<wbr>Target<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/run-z.html#ZTaskSpec.Target" class="tsd-signature-type">Target</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/f1d2ead/src/core/tasks/task-parser.ts#L46">run-z/run-z/src/core/tasks/task-parser.ts:46</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Tries to parse <a href="../modules/run-z.html#ZTaskSpec.Target">target packages</a> specifier.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>value: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>A string value to parse.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../modules/run-z.html#ZTaskSpec.Target" class="tsd-signature-type">Target</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h4>
+							<p>A target specifier if the given <code>value</code> is either <code>.</code> or <code>..</code>, or starts with either <code>./</code>, <code>.//</code>,
+							or <code>...</code>. <code>undefined</code> otherwise.</p>
 						</li>
 					</ul>
 				</section>
@@ -382,13 +383,13 @@
 								<a href="run-z.ZTaskParser.html#applyOptions" class="tsd-kind-icon">apply<wbr>Options</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="run-z.ZTaskParser.html#isPackageSelector" class="tsd-kind-icon">is<wbr>Package<wbr>Selector</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="run-z.ZTaskParser.html#parseAttr" class="tsd-kind-icon">parse<wbr>Attr</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="run-z.ZTaskParser.html#parseCommandLine" class="tsd-kind-icon">parse<wbr>Command<wbr>Line</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="run-z.ZTaskParser.html#parseTarget" class="tsd-kind-icon">parse<wbr>Target</a>
 							</li>
 						</ul>
 					</li>

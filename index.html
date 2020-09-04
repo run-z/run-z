@@ -84,6 +84,9 @@
 					<li>The dependencies between packages respected when batching - the tasks executed in dependencies-first order.</li>
 					<li>Only one instance of <code>run-z</code> process started despite the number of tasks to execute. </li>
 				</ul>
+				<blockquote>
+					<p><a href="https://github.com/run-z/run-z/wiki">Project Wiki</a><br>See also: <a href="https://habr.com/ru/post/517506/">Сборка сложных Node.js проектов утилитой run-z</a> (Russian)</p>
+				</blockquote>
 				<a href="#setup-and-usage" id="setup-and-usage" style="color: inherit; text-decoration: none;">
 					<h2>Setup And Usage</h2>
 				</a>
@@ -231,6 +234,9 @@ run-z ./packages/// build # Executes `build` in `./packages` directory
 				<pre><code class="language-shell">run-z --batch-parallel ./packages// lint # Executes `lint` in each package
                                          # inside `./packages` directory
                                          # in parallel to each other.</code></pre>
+				<blockquote>
+					<p>See also: <a href="https://github.com/run-z/run-z/wiki/Reusing-package-selectors">Reusing package selector</a></p>
+				</blockquote>
 				<a href="#sub-tasks" id="sub-tasks" style="color: inherit; text-decoration: none;">
 					<h3>Sub-Tasks</h3>
 				</a>
