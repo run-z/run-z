@@ -10,7 +10,7 @@ export function zTaskSpecSyntax(setup: ZSetup): readonly ZOptionSyntax[] {
   return [
     ZOptionSyntax.longOptions,
     ZOptionSyntax.shortOptions,
-    zPackageRefSyntax.bind(undefined, setup),
+    zPackageSelectorSyntax.bind(undefined, setup),
     zTaskAttrSyntax.bind(undefined, setup),
     zTaskPreArgsSyntax,
     parallelZTasksSyntax,
@@ -23,11 +23,11 @@ export function zTaskSpecSyntax(setup: ZSetup): readonly ZOptionSyntax[] {
 /**
  * @internal
  */
-function zPackageRefSyntax({ taskParser }: ZSetup, args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
+function zPackageSelectorSyntax({ taskParser }: ZSetup, args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
 
   const [name] = args;
 
-  if (!taskParser.isPackageSelector(name)) {
+  if (!taskParser.parseTarget(name)) {
     return [];
   }
 

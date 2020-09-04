@@ -9,6 +9,7 @@ import shellQuote from 'shell-quote';
 import { zTaskSpecParser } from './impl/parser';
 import type { ZTaskBuilder } from './task-builder';
 import type { ZTaskOption } from './task-option';
+import type { ZTaskSpec } from './task-spec';
 
 /**
  * A parser of command line containing {@link ZTaskSpec task specifier}.
@@ -35,14 +36,31 @@ export class ZTaskParser {
   }
 
   /**
-   * Checks whether the given string is package selector.
+   * Tries to parse {@link ZTaskSpec.Target target packages} specifier.
    *
-   * @param value  A string value to check.
+   * @param value  A string value to parse.
    *
-   * @returns `true` if the given `value` is either `.` or `..`, or starts with either `./` or `.//`. `false` otherwise.
+   * @returns A target specifier if the given `value` is either `.` or `..`, or starts with either `./`, `.//`,
+   * or `...`. `undefined` otherwise.
    */
-  isPackageSelector(value: string): boolean {
-    return value === '.' || value === '..' || value.startsWith('./') || value.startsWith('../');
+  parseTarget(value: string): ZTaskSpec.Target | undefined {
+    if (value === '.' || value === '..') {
+      return { selector: value };
+    }
+    if (value.startsWith('...')) {
+      return { selector: '.', task: value.substr(3) };
+    }
+    if (!value.startsWith('./') && !value.startsWith('../')) {
+      return;
+    }
+
+    const taskSepIdx = value.indexOf('...');
+
+    if (taskSepIdx < 0) {
+      return { selector: value };
+    }
+
+    return { selector: value.substr(0, taskSepIdx), task: value.substr(taskSepIdx + 3) };
   }
 
   /**

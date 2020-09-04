@@ -3,6 +3,7 @@
  * @module run-z
  */
 import type { ZBatching } from '../batches';
+import type { ZPackageSet } from '../packages';
 import type { ZTask, ZTaskSpec } from '../tasks';
 import type { ZCall } from './call';
 import type { ZCallDetails } from './call-details';
@@ -24,6 +25,8 @@ export interface ZPrePlanner {
    * Batching policy to apply when batch transient prerequisites.
    */
   readonly batching: ZBatching;
+
+  applyTargets(this: void, targets: ZPackageSet): void;
 
   /**
    * Records a call to prerequisite task.

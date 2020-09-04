@@ -1,9 +1,9 @@
+import { noop } from '@proc7ts/primitives';
 import type { ZExecution } from '@run-z/exec-z';
 import { execZNoOp } from '@run-z/exec-z';
 import { ZOptionError, ZOptionInput } from '@run-z/optionz';
 import { ZBatchDetails } from '../../batches';
 import type { ZJob } from '../../jobs';
-import type { ZPackageSet } from '../../packages';
 import type { ZCall, ZCallDetails, ZPrePlanner } from '../../plan';
 import type { ZTask } from '../task';
 import type { ZTaskSpec } from '../task-spec';
@@ -26,6 +26,21 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
       [subTaskName, ...subArgs] = pre.args;
       if (!subTaskName || !ZOptionInput.isOptionValue(subTaskName)) {
         // No sub-task name.
+
+        // Report targets.
+        await this._planTargets(
+            this.spec.action.targets,
+            {
+              ...planner,
+              callPre<TAction extends ZTaskSpec.Action>(
+                  task: ZTask<TAction>,
+                  details?: ZCallDetails<TAction>,
+              ): Promise<ZCall> {
+                return planner.dependent.call(task, details);
+              },
+            },
+        );
+
         // Fallback to default implementation.
         return super.callAsPre(planner, pre, details);
       }
@@ -49,10 +64,24 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
     );
 
     const batching = this._builder.batching.mergeWith(planner.batching);
+    const targets = await this._planTargets(
+        this.spec.action.targets,
+        {
+          ...planner,
+          batching,
+          applyTargets: noop,
+          callPre<TAction extends ZTaskSpec.Action>(
+              task: ZTask<TAction>,
+              details?: ZCallDetails<TAction>,
+          ): Promise<ZCall> {
+            return planner.dependent.call(task, details);
+          },
+        },
+    );
 
     await batching.batchAll({
       dependent: planner.dependent,
-      targets: this._subTaskTargets(),
+      targets,
       taskName: subTaskName,
       isAnnex: pre.annex,
       batch: <TAction extends ZTaskSpec.Action>(
@@ -83,13 +112,6 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
     });
 
     return groupCall;
-  }
-
-  private _subTaskTargets(): ZPackageSet {
-
-    const { target, spec: { action: { targets } } } = this;
-
-    return target.selectTargets(targets);
   }
 
   protected _execTask({ params: { args } }: ZJob): ZExecution {

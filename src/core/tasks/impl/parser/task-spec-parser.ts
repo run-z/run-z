@@ -23,7 +23,7 @@ export function zTaskSpecParser(
 ) => Promise<ZTaskBuilder> {
 
   const parser: ZOptionsParser<ZTaskOption, DraftZTask> = customZOptionsParser({
-    options: zTaskSpecOptions(options),
+    options: zTaskSpecOptions(setup, options),
     syntax: zTaskSpecSyntax(setup),
     optionClass: zTaskSpecOptionClass,
   });
