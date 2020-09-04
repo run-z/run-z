@@ -21,6 +21,9 @@ Run That
 - The dependencies between packages respected when batching - the tasks executed in dependencies-first order.
 - Only one instance of `run-z` process started despite the number of tasks to execute. 
 
+> [Project Wiki](https://github.com/run-z/run-z/wiki)  
+> See also: [Сборка сложных Node.js проектов утилитой run-z](https://habr.com/ru/post/517506/) (Russian)
+
 [npm-image]: https://img.shields.io/npm/v/run-z.svg?logo=npm
 [npm-url]: https://www.npmjs.com/package/run-z
 [build-status-img]: https://github.com/run-z/run-z/workflows/Build/badge.svg
@@ -254,6 +257,8 @@ run-z --batch-parallel ./packages// lint # Executes `lint` in each package
                                          # inside `./packages` directory
                                          # in parallel to each other.
 ```
+
+> See also: [Reusing package selector](https://github.com/run-z/run-z/wiki/Reusing-package-selectors)
 
 
 ### Sub-Tasks
