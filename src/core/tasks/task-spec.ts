@@ -37,19 +37,22 @@ export interface ZTaskSpec<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
 export namespace ZTaskSpec {
 
   /**
-   * A reference to target package to apply a task to.
+   * Target packages to apply a task to.
    *
-   * I.e. a reference to package of prerequisite tasks.
-   *
-   * When present among {@link ZTaskSpec.pre task prerequisites} the subsequent tasks are searched in selected
-   * packages.
+   * The syntax is `[<SELECTOR>][...<TASK>]`, where `<SELECTOR>` is package selector, and `<TASK>` is a task to resolve
+   * in each of the selected packages containing further package selectors to resolve.
    */
   export interface Target {
 
     /**
-     * Relative {@link ZTaskParser.isPackageSelector package selector}.
+     * Relative package selector.
      */
     readonly selector: string;
+
+    /**
+     * A name of the task in selected package containing package selectors to reuse.
+     */
+    readonly task?: string;
 
   }
 

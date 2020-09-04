@@ -13,7 +13,7 @@ export abstract class ZPackageSet {
   /**
    * Lists packages of this set.
    *
-   * @returns Either ab iterable of packages this set consists of, or a promise-like instance resolving to one.
+   * @returns Either iterable of packages this set consists of, or a promise-like instance resolving to one.
    */
   abstract packages(): Iterable<ZPackage> | PromiseLike<Iterable<ZPackage>>;
 

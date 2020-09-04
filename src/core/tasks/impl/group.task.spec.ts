@@ -3,6 +3,7 @@ import { ZOptionError } from '@run-z/optionz';
 import { prerequisitesOf, taskId, taskIds, TestPlan } from '../../../spec';
 import { ZShell } from '../../jobs';
 import { ZTaskParams } from '../../plan';
+import { UnknownZTaskError } from '../unknown-task-error';
 import { GroupZTask } from './group.task';
 
 describe('GroupZTask', () => {
@@ -321,7 +322,7 @@ describe('GroupZTask', () => {
         {
           packageJson: {
             scripts: {
-              test: 'run-z =attr1 ./nested// dep/sub-task/=attr2',
+              test: 'run-z =attr1 ./nested//... dep/sub-task/=attr2',
             },
           },
         },
@@ -455,6 +456,7 @@ describe('GroupZTask', () => {
       attr2: ['on'],
     });
   });
+
   it('handles recurrent calls', async () => {
     testPlan.addPackage(
         'test',
@@ -480,6 +482,7 @@ describe('GroupZTask', () => {
       attr2: ['dep', 'top'],
     });
   });
+
   it('handles deep recurrent calls', async () => {
     testPlan.addPackage(
         'test',
@@ -510,6 +513,294 @@ describe('GroupZTask', () => {
       attr1: ['dep2', 'top', 'dep1'],
       attr2: ['dep2', 'dep1', 'top'],
     });
+  });
+
+  it('reuses selector', async () => {
+
+    const target = testPlan.addPackage(
+        'test',
+        {
+          packageJson: {
+            scripts: {
+              test: 'run-z ...reusable dep2/=attr2 =test',
+              reusable: 'run-z ./nested// dep1/=attr1',
+            },
+          },
+        },
+    );
+
+    testPlan.addPackage(
+        'test/nested/nested1',
+        {
+          packageJson: {
+            scripts: {
+              dep1: 'run-z dep=1.1 --then exec11',
+              dep2: 'run-z dep=1.2 --then exec12',
+            },
+          },
+        },
+    );
+
+    const nested1 = await testPlan.target();
+
+    testPlan.addPackage(
+        'test/nested/nested2',
+        {
+          packageJson: {
+            scripts: {
+              dep1: 'run-z dep=2.1 --then exec21',
+              dep2: 'run-z dep=2.2 --then exec22',
+            },
+          },
+        },
+    );
+
+    const nested2 = await testPlan.target();
+
+    await testPlan.target(target);
+
+    const call = await testPlan.call('test');
+    const dep11 = await testPlan.callOf(nested1, 'dep1');
+    const dep12 = await testPlan.callOf(nested1, 'dep2');
+    const dep21 = await testPlan.callOf(nested2, 'dep1');
+    const dep22 = await testPlan.callOf(nested2, 'dep2');
+
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep12, dep22));
+    expect(call.params(ZTaskParams.newEvaluator()).attrs).toEqual({ test: ['on'] });
+
+    expect(prerequisitesOf(dep11)).toHaveLength(0);
+    expect(dep11.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on'], test: ['on'], dep: ['1.1'] });
+
+    expect(prerequisitesOf(dep12)).toHaveLength(0);
+    expect(dep12.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr2: ['on'], test: ['on'], dep: ['1.2'] });
+
+    expect(prerequisitesOf(dep21)).toHaveLength(0);
+    expect(dep21.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on'], test: ['on'], dep: ['2.1'] });
+
+    expect(prerequisitesOf(dep22)).toHaveLength(0);
+    expect(dep22.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr2: ['on'], test: ['on'], dep: ['2.2'] });
+  });
+
+  it('reuses deep selector', async () => {
+
+    const target = testPlan.addPackage(
+        'test',
+        {
+          packageJson: {
+            scripts: {
+              test: 'run-z ...reusable1 dep2/=attr2 =test',
+              reusable1: 'run-z ...reusable2',
+              reusable2: 'run-z ./nested// dep1/=attr1',
+            },
+          },
+        },
+    );
+
+    testPlan.addPackage(
+        'test/nested/nested1',
+        {
+          packageJson: {
+            scripts: {
+              dep1: 'run-z dep=1.1 --then exec11',
+              dep2: 'run-z dep=1.2 --then exec12',
+            },
+          },
+        },
+    );
+
+    const nested1 = await testPlan.target();
+
+    testPlan.addPackage(
+        'test/nested/nested2',
+        {
+          packageJson: {
+            scripts: {
+              dep1: 'run-z dep=2.1 --then exec21',
+              dep2: 'run-z dep=2.2 --then exec22',
+            },
+          },
+        },
+    );
+
+    const nested2 = await testPlan.target();
+
+    await testPlan.target(target);
+
+    const call = await testPlan.call('test');
+    const dep11 = await testPlan.callOf(nested1, 'dep1');
+    const dep12 = await testPlan.callOf(nested1, 'dep2');
+    const dep21 = await testPlan.callOf(nested2, 'dep1');
+    const dep22 = await testPlan.callOf(nested2, 'dep2');
+
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep12, dep22));
+    expect(call.params(ZTaskParams.newEvaluator()).attrs).toEqual({ test: ['on'] });
+
+    expect(prerequisitesOf(dep11)).toHaveLength(0);
+    expect(dep11.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on'], test: ['on'], dep: ['1.1'] });
+
+    expect(prerequisitesOf(dep12)).toHaveLength(0);
+    expect(dep12.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr2: ['on'], test: ['on'], dep: ['1.2'] });
+
+    expect(prerequisitesOf(dep21)).toHaveLength(0);
+    expect(dep21.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on'], test: ['on'], dep: ['2.1'] });
+
+    expect(prerequisitesOf(dep22)).toHaveLength(0);
+    expect(dep22.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr2: ['on'], test: ['on'], dep: ['2.2'] });
+  });
+
+  it('fails to reuse selector from non-group task', async () => {
+    testPlan.addPackage(
+        'test',
+        {
+          packageJson: {
+            scripts: {
+              test: 'run-z ...non-reusable dep',
+              'non-reusable': 'exec',
+            },
+          },
+        },
+    );
+
+    const error = await testPlan.call('test').catch(asis);
+
+    expect(error).toBeInstanceOf(UnknownZTaskError);
+  });
+
+  it('reuses selector in another package', async () => {
+
+    const target = testPlan.addPackage(
+        'test',
+        {
+          packageJson: {
+            scripts: {
+              test: 'run-z ./nested//...dep1 dep2/=attr2 =test',
+            },
+          },
+        },
+    );
+
+    testPlan.addPackage(
+        'test/nested/nested1',
+        {
+          packageJson: {
+            scripts: {
+              dep1: 'run-z dep=1.1',
+              dep2: 'run-z dep=1.2 --then exec12',
+            },
+          },
+        },
+    );
+
+    const nested1 = await testPlan.target();
+
+    testPlan.addPackage(
+        'test/nested/nested2',
+        {
+          packageJson: {
+            scripts: {
+              dep1: 'run-z dep=2.1',
+              dep2: 'run-z dep=2.2 --then exec22',
+            },
+          },
+        },
+    );
+
+    const nested2 = await testPlan.target();
+
+    await testPlan.target(target);
+
+    const call = await testPlan.call('test');
+    const dep11 = await testPlan.callOf(nested1, 'dep1');
+    const dep12 = await testPlan.callOf(nested1, 'dep2');
+    const dep21 = await testPlan.callOf(nested2, 'dep1');
+    const dep22 = await testPlan.callOf(nested2, 'dep2');
+
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep12, dep22));
+    expect(call.params(ZTaskParams.newEvaluator()).attrs).toEqual({ test: ['on'] });
+
+    expect(prerequisitesOf(dep11)).toHaveLength(0);
+    expect(dep11.params(ZTaskParams.newEvaluator()).attrs).toEqual({ test: ['on'], dep: ['1.1'] });
+
+    expect(prerequisitesOf(dep12)).toHaveLength(0);
+    expect(dep12.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr2: ['on'], test: ['on'], dep: ['1.2'] });
+
+    expect(prerequisitesOf(dep21)).toHaveLength(0);
+    expect(dep21.params(ZTaskParams.newEvaluator()).attrs).toEqual({ test: ['on'], dep: ['2.1'] });
+
+    expect(prerequisitesOf(dep22)).toHaveLength(0);
+    expect(dep22.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr2: ['on'], test: ['on'], dep: ['2.2'] });
+  });
+
+  it('calls sub-tasks in packages selected by reused selector', async () => {
+
+    const target = testPlan.addPackage(
+        'test',
+        {
+          packageJson: {
+            scripts: {
+              test: 'run-z =attr1 ...select dep/sub-task/=attr2',
+              select: 'run-z wrong ./nested//...',
+              wrong: 'run-z',
+            },
+          },
+        },
+    );
+
+    testPlan.addPackage(
+        'test/nested/nested1',
+        {
+          packageJson: {
+            scripts: {
+              dep: 'run-z ...select attr3=1',
+              select: 'run-z',
+              'sub-task': 'exec1',
+            },
+          },
+        },
+    );
+
+    const nested1 = await testPlan.target();
+
+    testPlan.addPackage(
+        'test/nested/nested2',
+        {
+          packageJson: {
+            scripts: {
+              dep: 'run-z attr3=2',
+              'sub-task': 'exec2',
+            },
+          },
+        },
+    );
+
+    const nested2 = await testPlan.target();
+
+    await testPlan.target(target);
+
+    const call = await testPlan.call('test');
+    const plan = call.plan;
+    const dep1 = plan.callOf(await nested1.task('dep'));
+    const sub1 = plan.callOf(await nested1.task('sub-task'));
+    const dep2 = plan.callOf(await nested2.task('dep'));
+    const sub2 = plan.callOf(await nested2.task('sub-task'));
+
+    const callPre = prerequisitesOf(call);
+
+    expect(callPre).toContainEqual(taskId(sub1));
+    expect(callPre).toContainEqual(taskId(sub2));
+    expect(call.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on'] });
+
+    expect(prerequisitesOf(dep1)).toHaveLength(0);
+    expect(dep1.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on'], attr3: ['1'] });
+
+    expect(prerequisitesOf(sub1)).toEqual(taskIds(dep1));
+    expect(sub1.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on', 'on'], attr2: ['on'], attr3: ['1'] });
+
+    expect(prerequisitesOf(dep2)).toHaveLength(0);
+    expect(dep2.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on'], attr3: ['2'] });
+
+    expect(prerequisitesOf(sub2)).toEqual(taskIds(dep2));
+    expect(sub2.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on', 'on'], attr2: ['on'], attr3: ['2'] });
   });
 
   describe('exec', () => {

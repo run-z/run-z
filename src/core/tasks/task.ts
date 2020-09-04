@@ -43,14 +43,14 @@ export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> exte
    *
    * @typeparam TAction  Task action type.
    * @param planner  A planner to record prerequisite call(s) to.
-   * @param ref  Prerequisite specifier.
+   * @param pre  Prerequisite specifier.
    * @param details  Task call details.
    *
    * @returns A promise resolved to recorded prerequisite call.
    */
   callAsPre<TAction extends ZTaskSpec.Action>(
       planner: ZPrePlanner,
-      ref: ZTaskSpec.Pre,
+      pre: ZTaskSpec.Pre,
       details: ZCallDetails.Full<TAction>,
   ): Promise<ZCall>;
 
