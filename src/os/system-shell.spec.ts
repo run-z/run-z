@@ -1,13 +1,14 @@
+/* eslint-disable jest/no-conditional-expect */
 import { asis, noop } from '@proc7ts/primitives';
 import { AbortedZExecutionError, FailedZExecutionError } from '@run-z/exec-z';
 import chalk from 'chalk';
 import logSymbols from 'log-symbols';
+import * as os from 'os';
 import { pathToFileURL } from 'url';
 import { StandardZSetup } from '../builtins';
 import type { ZPackage, ZSetup } from '../core';
 import { ZPackageDirectory } from './package-directory';
 import { SystemZShell } from './system-shell';
-import * as os from 'os';
 
 describe('SystemZShell', () => {
 
