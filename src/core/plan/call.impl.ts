@@ -63,11 +63,16 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
     return this._records.plan;
   }
 
-  entries(): Iterable<ZTask> {
-    if (!this._entries.size) {
-      return [this.task];
+  *entries(): Iterable<ZTask> {
+
+    const entries = this._entries.size ? this._entries : [this.task];
+
+    for (const entry of entries) {
+      yield entry;
+      if (entry !== this.task) {
+        yield* this.plan.callOf(entry).entries();
+      }
     }
-    return this._entries;
   }
 
   by(task: ZTask): boolean {
