@@ -1,3 +1,9 @@
-import runAll from 'npm-run-all';
+import { spawnZ } from '@run-z/exec-z';
+import crossSpawn from 'cross-spawn';
 
-runAll('test:script', { npmPath: 'yarn' }).then(() => process.exit(), () => process.exit(1));
+spawnZ(() => crossSpawn('yarn', {
+  args: ['test:script'],
+  stdio: 'pipe',
+  windowsHide: true,
+})).whenDone().catch(() => process.exit(1));
+
