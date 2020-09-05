@@ -1,6 +1,5 @@
 import { noop } from '@proc7ts/primitives';
 import { AbortedZExecutionError } from '@run-z/exec-z';
-import ansiEscapes from 'ansi-escapes';
 import cliSpinners from 'cli-spinners';
 import cliTruncate from 'cli-truncate';
 import logSymbols from 'log-symbols';
@@ -8,6 +7,7 @@ import stringWidth from 'string-width';
 import type { ZJob } from '../../core';
 import { ZJobProgress } from './job-progress';
 import { ZProgressFormat } from './progress-format';
+import { textAtRow } from './text-at-row';
 import { ttyColumns } from './tty-columns';
 import { write2stdout } from './writer-for';
 
@@ -96,15 +96,16 @@ class RichZJobProgress extends ZJobProgress {
   async render(): Promise<void> {
 
     const firstReport = this._row == null || 0;
-    let out = '';
 
-    if (!firstReport) {
-      // Position at proper row and clean it
-      out += ansiEscapes.cursorSavePosition
-          + ansiEscapes.cursorUp(this._format.numRows - this._row!)
-          + ansiEscapes.cursorLeft
-          + ansiEscapes.eraseEndLine;
+    if (firstReport) {
+      await this._format.println(this._statusLine());
+      this._row = this._format.register(this) - 1;
+    } else {
+      await write2stdout(textAtRow(this._format.numRows - this._row!, this._statusLine()));
     }
+  }
+
+  private _statusLine(): string {
 
     const prefix = zJobRunStatus[this._status]() + ' ' + this._prefix();
     const prefixCols = stringWidth(prefix);
@@ -116,15 +117,7 @@ class RichZJobProgress extends ZJobProgress {
         },
     );
 
-    out += `${prefix}${status}`;
-
-    if (firstReport) {
-      await this._format.println(out);
-      this._row = this._format.register(this) - 1;
-    } else {
-      // Move back to original position
-      await write2stdout(out + '\n' + ansiEscapes.cursorRestorePosition);
-    }
+    return `${prefix}${status}`;
   }
 
   reportSuccess(): Promise<void> {

@@ -39,8 +39,8 @@ export interface ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
   /**
    * Returns the entry tasks of the called task execution.
    *
-   * The entry tasks is executed first before the called task execution. This is either the task itself, or its first
-   * prerequisite.
+   * The entry tasks executed before the called task execution. This is either the task itself, or its first
+   * prerequisite with its entries.
    *
    * @returns An iterable of tasks to be executed.
    *
