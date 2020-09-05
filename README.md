@@ -260,7 +260,7 @@ run-z --batch-parallel ./packages// lint # Executes `lint` in each package
 ```
 
 > See also:
-> - [Reusing package selector](https://github.com/run-z/run-z/wiki/Reusing-package-selectors)
+> - [Reusing package selectors](https://github.com/run-z/run-z/wiki/Reusing-package-selectors)
 
 
 ### Sub-Tasks
