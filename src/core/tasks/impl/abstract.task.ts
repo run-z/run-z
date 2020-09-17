@@ -118,7 +118,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
         },
       };
 
-      const targets = await this._planTargets(pre.targets, prePlanner);
+      const targets = await this._planTargets(pre.targets, pre.task, prePlanner);
       const preTasks: ZTask[] = [];
 
       prePlanner.callPre = async <TAction extends ZTaskSpec.Action>(
@@ -201,6 +201,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
 
   protected async _planTargets(
       targetSpecs: readonly ZTaskSpec.Target[],
+      forTask: string,
       prePlanner: ZPrePlanner,
   ): Promise<ZPackageSet> {
 
@@ -220,7 +221,18 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
       }
       for (const preTarget of await selected.packages()) {
 
-        const reusedTask = await preTarget.task(task);
+        let reusedTaskName = `${task}/${forTask}`;
+        let reusedTask = await preTarget.task(reusedTaskName);
+
+        if (reusedTask.spec.action.type !== 'group') {
+          reusedTaskName = `${task}/*`;
+          reusedTask = await preTarget.task(reusedTaskName);
+          if (reusedTask.spec.action.type !== 'group') {
+            reusedTaskName = task;
+            reusedTask = await preTarget.task(reusedTaskName);
+          }
+        }
+
         let hasTargets = false;
 
         await reusedTask.callAsPre(
@@ -233,7 +245,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
             },
             {
               targets: [],
-              task,
+              task: reusedTaskName,
               annex: true,
               parallel: false,
               attrs: {},
@@ -246,7 +258,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
           throw new UnknownZTaskError(
               preTarget.name,
               task,
-              `Can not reuse package selectors of task "${task}" in <${preTarget.name}>`,
+              `Can not reuse package selectors of task "${reusedTaskName}" in <${preTarget.name}>`,
           );
         }
       }
