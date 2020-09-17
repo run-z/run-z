@@ -30,6 +30,7 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
         // Report targets.
         await this._planTargets(
             this.spec.action.targets,
+            pre.task,
             {
               ...planner,
               callPre<TAction extends ZTaskSpec.Action>(
@@ -66,6 +67,7 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
     const batching = this._builder.batching.mergeWith(planner.batching);
     const targets = await this._planTargets(
         this.spec.action.targets,
+        subTaskName,
         {
           ...planner,
           batching,
