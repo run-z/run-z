@@ -26,6 +26,13 @@ export interface ZPrePlanner {
    */
   readonly batching: ZBatching;
 
+  /**
+   * Applies prerequisite targets.
+   *
+   * This is called by group tasks to reuse their package selectors.
+   *
+   * @param targets  A set of packages selected by prerequisite.
+   */
   applyTargets(this: void, targets: ZPackageSet): void;
 
   /**
