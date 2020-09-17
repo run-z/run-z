@@ -3,9 +3,10 @@
  * @module run-z
  */
 import { itsEmpty, makeIt, mapIt } from '@proc7ts/a-iterable';
-import type { ZPackage } from '../packages';
-import type { ZCall } from '../plan';
+import type { ZPackage, ZPackageSet } from '../packages';
+import { ZCall, ZCallDetails, ZPrePlanner } from '../plan';
 import type { ZTask, ZTaskSpec } from '../tasks';
+import { UnknownZTaskError } from '../tasks';
 import { ZBatchDetails } from './batch-details';
 import type { ZBatchPlanner } from './batch-planner';
 import { batchZTask } from './batcher.impl';
@@ -87,25 +88,79 @@ export const ZBatcher = {
   async batchNamed(this: void, planner: ZBatchPlanner): Promise<void> {
 
     const { taskName } = planner;
+    const processed = new Set<ZPackage>();
 
-    await Promise.all(mapIt(
-        await planner.targets.packages(),
-        (target: ZPackage): Promise<unknown> => {
+    const process = async (planner: ZBatchPlanner): Promise<void> => {
 
-          const batchNames = zBatchNames(target, taskName);
+      let recurrentTargets: ZPackageSet | undefined;
 
-          if (itsEmpty(batchNames)) {
-            // No matching sets.
-            // Fallback to default task batching.
-            return ZBatcher.batchTask({ ...planner, targets: target });
-          }
+      await Promise.all(mapIt(
+          await planner.targets.packages(),
+          async target => {
+            if (processed.has(target)) {
+              return;
+            }
+            processed.add(target);
 
-          return Promise.all(mapIt(
-              batchNames,
-              batchName => target.task(batchName).then(taskName => planner.batch(taskName)),
-          ));
-        },
-    ));
+            const batchNames = zBatchNames(target, taskName);
+
+            if (itsEmpty(batchNames)) {
+              // No matching named batches.
+              // Fallback to default task batching.
+              return ZBatcher.batchTask({ ...planner, targets: target });
+            }
+
+            return Promise.all(mapIt(
+                batchNames,
+                async batchName => {
+
+                  let hasTargets = false;
+
+                  await target.task(batchName).then(batchTask => batchTask.callAsPre(
+                      {
+                        dependent: planner.dependent,
+                        batching: ZBatching.unprocessedBatching(),
+                        applyTargets(targets) {
+                          hasTargets = true;
+                          recurrentTargets = recurrentTargets ? recurrentTargets.andPackages(targets) : targets;
+                        },
+                        callPre<TAction extends ZTaskSpec.Action>(
+                            task: ZTask<TAction>,
+                            details?: ZCallDetails<TAction>,
+                        ): Promise<ZCall> {
+                          return planner.dependent.call(task, details);
+                        },
+                        // transient: noop, /* group can not do transient calls in this case */
+                      } as ZPrePlanner,
+                      {
+                        targets: [],
+                        task: batchName,
+                        annex: true,
+                        parallel: false,
+                        attrs: {},
+                        args: [],
+                      },
+                      ZCallDetails.by(),
+                  ));
+
+                  if (!hasTargets) {
+                    throw new UnknownZTaskError(
+                        target.name,
+                        batchName,
+                        `Can not apply named batch "${batchName}" in <${target.name}>`,
+                    );
+                  }
+                },
+            ));
+          },
+      ));
+
+      if (recurrentTargets) {
+        await process({ ...planner, targets: recurrentTargets });
+      }
+    };
+
+    await process(planner);
   },
 
   /**

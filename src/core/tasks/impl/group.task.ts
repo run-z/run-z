@@ -17,39 +17,30 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
   async callAsPre(planner: ZPrePlanner, pre: ZTaskSpec.Pre, details: ZCallDetails.Full): Promise<ZCall> {
 
     const { dependent } = planner;
-    let subTaskName: string;
-    let subArgs: readonly string[];
 
-    if (this.name === pre.task) {
-      // Task name is the same as prerequisite one.
-      // First argument contains the name of sub-task to call.
-      [subTaskName, ...subArgs] = pre.args;
-      if (!subTaskName || !ZOptionInput.isOptionValue(subTaskName)) {
-        // No sub-task name.
+    // First argument contains the name of sub-task to call.
+    const [subTaskName, ...subArgs] = pre.args;
 
-        // Report targets.
-        await this._planTargets(
-            this.spec.action.targets,
-            pre.task,
-            {
-              ...planner,
-              callPre<TAction extends ZTaskSpec.Action>(
-                  task: ZTask<TAction>,
-                  details?: ZCallDetails<TAction>,
-              ): Promise<ZCall> {
-                return planner.dependent.call(task, details);
-              },
+    if (!subTaskName || !ZOptionInput.isOptionValue(subTaskName)) {
+      // No sub-task name.
+
+      // Report targets.
+      await this._planTargets(
+          this.spec.action.targets,
+          pre.task,
+          {
+            ...planner,
+            callPre<TAction extends ZTaskSpec.Action>(
+                task: ZTask<TAction>,
+                details?: ZCallDetails<TAction>,
+            ): Promise<ZCall> {
+              return planner.dependent.call(task, details);
             },
-        );
+          },
+      );
 
-        // Fallback to default implementation.
-        return super.callAsPre(planner, pre, details);
-      }
-    } else {
-      // Task name differs from prerequisite one.
-      // Prerequisite name is the name of sub-task to call.
-      subTaskName = pre.task;
-      subArgs = pre.args;
+      // Fall back to default implementation.
+      return super.callAsPre(planner, pre, details);
     }
 
     // There is a sub-task(s) to execute.

@@ -38,7 +38,7 @@ describe('ZParallelBatches', () => {
       expect(call2.isParallelTo(call1.task)).toBe(true);
     });
     it('is ignored by transient prerequisites', async () => {
-      await init();
+      await init('run-z each/test');
       await testPlan.parse('run-z --all --batch-parallel test');
 
       const call1 = await testPlan.callOf(nested1, 'test');
@@ -83,9 +83,9 @@ describe('ZParallelBatches', () => {
       expect(call1.isParallelTo(call2.task)).toBe(true);
       expect(call2.isParallelTo(call1.task)).toBe(false);
     });
-    it('is ignored by transient prerequisites', async () => {
-      await init('run-z test=main ./nested// --batch-parallel');
-      await testPlan.parse('run-z --all --batch-sequential test');
+    it('is overridden by transient prerequisites', async () => {
+      await init();
+      await testPlan.parse('run-z --batch-sequential each:p/test');
 
       const call1 = await testPlan.callOf(nested1, 'test');
       const call2 = await testPlan.callOf(nested2, 'test');
@@ -126,7 +126,7 @@ describe('ZParallelBatches', () => {
 
     testPlan = new TestPlan('root', { setup });
 
-    await init('run-z test=main ./nested// --test-parallel');
+    await init('run-z ./nested// +test --test-parallel');
     await testPlan.parse('run-z --all test');
 
     const call1 = await testPlan.callOf(nested1, 'test');
@@ -136,13 +136,15 @@ describe('ZParallelBatches', () => {
     expect(call2.isParallelTo(call1.task)).toBe(true);
   });
 
-  async function init(script = 'run-z test=main ./nested//'): Promise<void> {
+  async function init(script = 'run-z ./nested//'): Promise<void> {
     main = testPlan.addPackage(
         'main',
         {
           packageJson: {
             scripts: {
               'group/*': script,
+              each: 'run-z ./nested//',
+              'each:p': 'run-z ./nested// --batch-parallel',
             },
           },
         },
@@ -154,6 +156,7 @@ describe('ZParallelBatches', () => {
           packageJson: {
             name: 'nested1',
             scripts: {
+              all: 'run-z test',
               test: 'exec nested1',
             },
           },
@@ -170,7 +173,8 @@ describe('ZParallelBatches', () => {
               nested1: '*',
             },
             scripts: {
-              test: 'exec nested1',
+              all: 'run-z test',
+              test: 'exec nested2',
             },
           },
         },

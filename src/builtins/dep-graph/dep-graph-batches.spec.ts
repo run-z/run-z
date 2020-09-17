@@ -26,12 +26,12 @@ describe('ZDepGraphBatches', () => {
       const test2 = await testPlan.callOf(nested2, 'test');
       const test3 = await testPlan.callOf(nested3, 'test');
 
-      expect(call.hasPrerequisite(all.task)).toBe(true);
+      expect(call.hasPrerequisite(all.task)).toBe(false);
       expect(call.hasPrerequisite(test1.task)).toBe(true);
       expect(call.hasPrerequisite(test2.task)).toBe(true);
       expect(call.hasPrerequisite(test3.task)).toBe(true);
 
-      expect(test2.hasPrerequisite(all.task)).toBe(true);
+      expect(test2.hasPrerequisite(all.task)).toBe(false);
       expect(test2.hasPrerequisite(test1.task)).toBe(true);
       expect(test3.hasPrerequisite(test2.task)).toBe(true);
 
