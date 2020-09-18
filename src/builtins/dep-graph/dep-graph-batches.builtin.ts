@@ -63,7 +63,7 @@ function readZDepGraphBatches(
 ): void {
   option.setBatching(
       option.batching
-          .batchBy(ZBatcher.topmost())
+          .batchByDefault(ZBatcher.topmost())
           .rule(ZDepGraphBatches).include(included, includeSelf),
   );
   option.values(0);
