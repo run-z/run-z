@@ -2,15 +2,15 @@
  * @packageDocumentation
  * @module run-z
  */
-import { itsEmpty, makeIt, mapIt } from '@proc7ts/a-iterable';
-import type { ZPackage, ZPackageSet } from '../packages';
-import { ZCall, ZCallDetails, ZPrePlanner } from '../plan';
+import { itsEmpty } from '@proc7ts/a-iterable';
+import type { ZPackage } from '../packages';
+import type { ZCall } from '../plan';
 import type { ZTask, ZTaskSpec } from '../tasks';
-import { UnknownZTaskError } from '../tasks';
 import { ZBatchDetails } from './batch-details';
 import type { ZBatchPlanner } from './batch-planner';
 import { batchZTask } from './batcher.impl';
 import { ZBatching } from './batching';
+import { NamedZBatcher } from './named.batcher.impl';
 
 /**
  * A batcher of tasks to execute.
@@ -49,6 +49,41 @@ export namespace ZBatcher {
           target: ZPackage,
           planner: ZBatchPlanner,
       ) => undefined | ZBatcher | Promise<undefined | ZBatcher>;
+
+  /**
+   * Defines named batches to follow when discover packages to build.
+   */
+  export interface NamedBatches {
+
+    /**
+     * Named batches to limit the packages discovery by.
+     *
+     * At least one of these batches should be defined in top level package, otherwise the build will be empty.
+     *
+     * All named batches except additional ones are used when absent.
+     *
+     * Corresponds to `--only` command line option.
+     */
+    readonly only?: Iterable<string>;
+
+    /**
+     * Additional named batches to use for package discovery.
+     *
+     * This can be used to include additional batches into the build, excluded otherwise.
+     *
+     * Corresponds to `--with` command line option.
+     */
+    readonly with?: Iterable<string>;
+
+    /**
+     * Named batches to exclude from the build.
+     *
+     * Corresponds to `--except` command line option.
+     */
+    readonly except?: Iterable<string>;
+
+  }
+
 }
 
 export const ZBatcher = {
@@ -86,81 +121,23 @@ export const ZBatcher = {
    * @returns A promise resolved when batch execution planned.
    */
   async batchNamed(this: void, planner: ZBatchPlanner): Promise<void> {
+    return NamedZBatcher.default.batch(planner);
+  },
 
-    const { taskName } = planner;
-    const processed = new Set<ZPackage>();
+  /**
+   * Creates a task batcher provider that batches tasks in the given named batches.
+   *
+   * @param namedBatches  Named batches to follow when discover packages to build.
+   *
+   * @returns New batcher provider.
+   */
+  named(this: void, namedBatches?: ZBatcher.NamedBatches): ZBatcher.Provider {
 
-    const process = async (planner: ZBatchPlanner): Promise<void> => {
+    const batcher = NamedZBatcher.newInstance(namedBatches);
 
-      let recurrentTargets: ZPackageSet | undefined;
-
-      await Promise.all(mapIt(
-          await planner.targets.packages(),
-          async target => {
-            if (processed.has(target)) {
-              return;
-            }
-            processed.add(target);
-
-            const batchNames = zBatchNames(target, taskName);
-
-            if (itsEmpty(batchNames)) {
-              // No matching named batches.
-              // Fallback to default task batching.
-              return ZBatcher.batchTask({ ...planner, targets: target });
-            }
-
-            return Promise.all(mapIt(
-                batchNames,
-                async batchName => {
-
-                  let hasTargets = false;
-
-                  await target.task(batchName).then(batchTask => batchTask.callAsPre(
-                      {
-                        dependent: planner.dependent,
-                        batching: ZBatching.unprocessedBatching(),
-                        applyTargets(targets) {
-                          hasTargets = true;
-                          recurrentTargets = recurrentTargets ? recurrentTargets.andPackages(targets) : targets;
-                        },
-                        callPre<TAction extends ZTaskSpec.Action>(
-                            task: ZTask<TAction>,
-                            details?: ZCallDetails<TAction>,
-                        ): Promise<ZCall> {
-                          return planner.dependent.call(task, details);
-                        },
-                        // transient: noop, /* group can not do transient calls in this case */
-                      } as ZPrePlanner,
-                      {
-                        targets: [],
-                        task: batchName,
-                        annex: true,
-                        parallel: false,
-                        attrs: {},
-                        args: [],
-                      },
-                      ZCallDetails.by(),
-                  ));
-
-                  if (!hasTargets) {
-                    throw new UnknownZTaskError(
-                        target.name,
-                        batchName,
-                        `Can not apply named batch "${batchName}" in <${target.name}>`,
-                    );
-                  }
-                },
-            ));
-          },
-      ));
-
-      if (recurrentTargets) {
-        await process({ ...planner, targets: recurrentTargets });
-      }
-    };
-
-    await process(planner);
+    return (target: ZPackage, planner: ZBatchPlanner) => itsEmpty(batcher.names(target, planner.taskName, true))
+        ? undefined
+        : batcher.batch.bind(batcher);
   },
 
   /**
@@ -210,36 +187,12 @@ export const ZBatcher = {
 
 };
 
+
 /**
  * @internal
  */
 function defaultZBatcherProvider(target: ZPackage, planner: ZBatchPlanner): ZBatcher | undefined {
-  return itsEmpty(zBatchNames(target, planner.taskName)) ? undefined : ZBatcher.batchNamed;
-}
-
-/**
- * @internal
- */
-function zBatchNames(target: ZPackage, taskName: string): Iterable<string> {
-
-  const groups = new Map<string, string>();
-
-  for (const script of target.taskNames()) {
-
-    const slashIdx = script.lastIndexOf('/');
-
-    if (slashIdx > 0) {
-
-      const groupName = script.substr(0, slashIdx);
-      const groupTask = script.substr(slashIdx + 1);
-
-      if (groupTask === taskName || (groupTask === '*' && !groups.has(groupName))) {
-        groups.set(groupName, script);
-      }
-    }
-  }
-
-  return makeIt(() => groups.values());
+  return itsEmpty(NamedZBatcher.default.names(target, planner.taskName)) ? undefined : ZBatcher.batchNamed;
 }
 
 /**
