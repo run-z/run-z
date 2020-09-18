@@ -10,7 +10,8 @@ import { ZBatchDetails } from './batch-details';
 import type { ZBatchPlanner } from './batch-planner';
 import { batchZTask } from './batcher.impl';
 import { ZBatching } from './batching';
-import { NamedZBatcher } from './named.batcher.impl';
+import { batchNamedZBatches, namedZBatches } from './named-batches.impl';
+import { NamedZBatches } from './named-batches.rule';
 
 /**
  * A batcher of tasks to execute.
@@ -54,40 +55,6 @@ export namespace ZBatcher {
           batching: ZBatching,
       ) => undefined | ZBatcher | Promise<undefined | ZBatcher>;
 
-  /**
-   * Defines named batches to follow when discover packages to build.
-   */
-  export interface NamedBatches {
-
-    /**
-     * Named batches to limit the packages discovery by.
-     *
-     * At least one of these batches should be defined in top level package, otherwise the build will be empty.
-     *
-     * All named batches except additional ones are used when absent.
-     *
-     * Corresponds to `--only` command line option.
-     */
-    readonly only?: Iterable<string>;
-
-    /**
-     * Additional named batches to use for package discovery.
-     *
-     * This can be used to include additional batches into the build, excluded otherwise.
-     *
-     * Corresponds to `--with` command line option.
-     */
-    readonly with?: Iterable<string>;
-
-    /**
-     * Named batches to exclude from the build.
-     *
-     * Corresponds to `--except` command line option.
-     */
-    readonly except?: Iterable<string>;
-
-  }
-
 }
 
 export const ZBatcher = {
@@ -117,31 +84,21 @@ export const ZBatcher = {
    *   Such batch is processed, unless there is another named batch `batch-name/task-name` defined with the
    *   {@link ZBatchPlanner.taskName batched task name} matching `task-name`.
    *
+   * A set of named batches to process can be {@link NamedZBatches configured}.
+   *
+   * Additional batches can be defined by prefixing their names with plus sign (`+`). Such batches won't be processed
+   * unless {@link NamedZBatches.with explicitly requested}.
+   *
    * If target package has no matching named batches then batches the task by {@link ZBatcher.batchTask default
    * batcher}.
    *
    * @param planner  Batch execution planner to record batched task calls to.
+   * @param batching  Task batching policy.
    *
    * @returns A promise resolved when batch execution planned.
    */
-  async batchNamed(this: void, planner: ZBatchPlanner): Promise<void> {
-    return NamedZBatcher.default.batch(planner);
-  },
-
-  /**
-   * Creates a task batcher provider that batches tasks in the given named batches.
-   *
-   * @param namedBatches  Named batches to follow when discover packages to build.
-   *
-   * @returns New batcher provider.
-   */
-  named(this: void, namedBatches?: ZBatcher.NamedBatches): ZBatcher.Provider {
-
-    const batcher = NamedZBatcher.newInstance(namedBatches);
-
-    return (target: ZPackage, planner: ZBatchPlanner) => itsEmpty(batcher.names(target, planner.taskName, true))
-        ? undefined
-        : batcher.batch.bind(batcher);
+  batchNamed(this: void, planner: ZBatchPlanner, batching: ZBatching): Promise<void> {
+    return batchNamedZBatches(planner, batching);
   },
 
   /**
@@ -195,8 +152,10 @@ export const ZBatcher = {
 /**
  * @internal
  */
-function defaultZBatcherProvider(target: ZPackage, planner: ZBatchPlanner): ZBatcher | undefined {
-  return itsEmpty(NamedZBatcher.default.names(target, planner.taskName)) ? undefined : ZBatcher.batchNamed;
+function defaultZBatcherProvider(target: ZPackage, planner: ZBatchPlanner, batching: ZBatching): ZBatcher | undefined {
+  return itsEmpty(namedZBatches(target, planner.taskName, batching.rule(NamedZBatches), true))
+      ? undefined
+      : ZBatcher.batchNamed;
 }
 
 /**
