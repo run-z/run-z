@@ -20,6 +20,7 @@ import { NamedZBatcher } from './named.batcher.impl';
 export type ZBatcher =
 /**
  * @param planner  Batch execution planner to record batched task calls to.
+ * @param batching  Task batching policy.
  *
  * @returns Either nothing if batch execution planned synchronously, or a promise-like instance resolved when batch
  * execution planned asynchronously.
@@ -27,6 +28,7 @@ export type ZBatcher =
     (
         this: void,
         planner: ZBatchPlanner,
+        batching: ZBatching,
     ) => void | PromiseLike<unknown>;
 
 export namespace ZBatcher {
@@ -40,6 +42,7 @@ export namespace ZBatcher {
   /**
    * @param target  Target package.
    * @param planner  Target batch execution planner.
+   * @param batching  Task batching policy.
    *
    * @returns Either nothing if batch planning is impossible, a batcher instance to plan batch execution by, or
    * a promise resolving to one of the above.
@@ -48,6 +51,7 @@ export namespace ZBatcher {
           this: void,
           target: ZPackage,
           planner: ZBatchPlanner,
+          batching: ZBatching,
       ) => undefined | ZBatcher | Promise<undefined | ZBatcher>;
 
   /**
@@ -155,8 +159,8 @@ export const ZBatcher = {
       this: void,
       provider: ZBatcher.Provider = defaultZBatcherProvider,
   ): ZBatcher {
-    return async planner => {
-      if (await batchInZTarget(provider, planner, planner.dependent.plannedCall.task.target)) {
+    return async (planner, batching) => {
+      if (await batchInZTarget(provider, planner, batching, planner.dependent.plannedCall.task.target)) {
         // Try to batch in topmost target.
         return;
       }
@@ -201,13 +205,14 @@ function defaultZBatcherProvider(target: ZPackage, planner: ZBatchPlanner): ZBat
 async function batchInZTarget(
     provider: ZBatcher.Provider,
     planner: ZBatchPlanner,
+    batching: ZBatching,
     target: ZPackage,
 ): Promise<boolean> {
 
   const { parent } = target;
 
   // Try parent package first.
-  if (parent && await batchInZTarget(provider, planner, parent)) {
+  if (parent && await batchInZTarget(provider, planner, batching, parent)) {
     // Batched in parent.
     return true;
   }
@@ -236,13 +241,13 @@ async function batchInZTarget(
     },
   };
 
-  batcher = await provider(target, targetPlanner);
+  batcher = await provider(target, targetPlanner, batching);
 
   if (!batcher) {
     return false;
   }
 
-  await batcher(targetPlanner);
+  await batcher(targetPlanner, batching);
 
   return true;
 }

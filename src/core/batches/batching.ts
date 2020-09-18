@@ -189,7 +189,7 @@ export class ZBatching {
       },
     };
 
-    await (this._batcher || batchZTask)(batchPlanner);
+    await (this._batcher || batchZTask)(batchPlanner, this);
 
     const batch: ZBatch = {
       dependent: planner.dependent,
