@@ -85,7 +85,11 @@
 					<li>Only one instance of <code>run-z</code> process started despite the number of tasks to execute. </li>
 				</ul>
 				<blockquote>
-					<p><a href="https://github.com/run-z/run-z/wiki">Project Wiki</a><br>See also: <a href="https://habr.com/ru/post/517506/">Сборка сложных Node.js проектов утилитой run-z</a> (Russian)</p>
+					<p>See also:</p>
+					<ul>
+						<li><a href="https://github.com/run-z/run-z/wiki">Project Wiki</a>  </li>
+						<li><a href="https://habr.com/ru/post/517506/">Сборка сложных Node.js проектов утилитой run-z</a> (Russian)</li>
+					</ul>
 				</blockquote>
 				<a href="#setup-and-usage" id="setup-and-usage" style="color: inherit; text-decoration: none;">
 					<h2>Setup And Usage</h2>
@@ -235,7 +239,10 @@ run-z ./packages/// build # Executes `build` in `./packages` directory
                                          # inside `./packages` directory
                                          # in parallel to each other.</code></pre>
 				<blockquote>
-					<p>See also: <a href="https://github.com/run-z/run-z/wiki/Reusing-package-selectors">Reusing package selector</a></p>
+					<p>See also:</p>
+					<ul>
+						<li><a href="https://github.com/run-z/run-z/wiki/Reusing-package-selectors">Reusing package selectors</a></li>
+					</ul>
 				</blockquote>
 				<a href="#sub-tasks" id="sub-tasks" style="color: inherit; text-decoration: none;">
 					<h3>Sub-Tasks</h3>
@@ -274,7 +281,7 @@ npm run z -- build --all # Do the same with NPM.</code></pre>
 				<p>The <code>z</code> task used for convenience here. It is expected to present in all packages. Any task can be executed instead.
 				For example, when running inside one of the nested packages, the following command can do the same as above:</p>
 				<pre><code class="language-shell">yarn build --all</code></pre>
-				<p>Then named batch can have a syntax like <code>all/test</code>. When present, such named batch will be used instead of the <code>all/*</code>
+				<p>The named batch can have a syntax like <code>all/test</code>. When present, such named batch will be used instead of the <code>all/*</code>
 					one when batching a <code>test</code> task. This can be useful, e.g. when it is necessary to pass additional parameters to
 				specific tasks:</p>
 				<pre><code class="language-json">{
@@ -286,6 +293,12 @@ npm run z -- build --all # Do the same with NPM.</code></pre>
 }</code></pre>
 				<pre><code class="language-shell">yarn z build --all  # Batches `build` in generic way.
 yarn z test --all   # Batches `test` with `--runInBand` option.</code></pre>
+				<blockquote>
+					<p>See also:</p>
+					<ul>
+						<li><a href="https://github.com/run-z/run-z/wiki/Partial-builds">Partial builds</a></li>
+					</ul>
+				</blockquote>
 				<a href="#dependency-graph" id="dependency-graph" style="color: inherit; text-decoration: none;">
 					<h3>Dependency Graph</h3>
 				</a>
