@@ -715,6 +715,73 @@ describe('GroupZTask', () => {
     expect(dep22.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr2: ['on'], test: ['on'], dep: ['2.2'] });
   });
 
+  it('reuses additional selector', async () => {
+
+    const target = testPlan.addPackage(
+        'test',
+        {
+          packageJson: {
+            scripts: {
+              test: 'run-z ...reusable dep2/=attr2 =test',
+              reusable: 'run-z ./nested// dep1/=attr1',
+              '+reusable/dep2': 'run-z ./nested// dep1/=attr3',
+            },
+          },
+        },
+    );
+
+    testPlan.addPackage(
+        'test/nested/nested1',
+        {
+          packageJson: {
+            scripts: {
+              dep1: 'run-z dep=1.1 --then exec11',
+              dep2: 'run-z dep=1.2 --then exec12',
+            },
+          },
+        },
+    );
+
+    const nested1 = await testPlan.target();
+
+    testPlan.addPackage(
+        'test/nested/nested2',
+        {
+          packageJson: {
+            scripts: {
+              dep1: 'run-z dep=2.1 --then exec21',
+              dep2: 'run-z dep=2.2 --then exec22',
+            },
+          },
+        },
+    );
+
+    const nested2 = await testPlan.target();
+
+    await testPlan.target(target);
+
+    const call = await testPlan.call('test');
+    const dep11 = await testPlan.callOf(nested1, 'dep1');
+    const dep12 = await testPlan.callOf(nested1, 'dep2');
+    const dep21 = await testPlan.callOf(nested2, 'dep1');
+    const dep22 = await testPlan.callOf(nested2, 'dep2');
+
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep12, dep22));
+    expect(call.params(ZTaskParams.newEvaluator()).attrs).toEqual({ test: ['on'] });
+
+    expect(prerequisitesOf(dep11)).toHaveLength(0);
+    expect(dep11.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr3: ['on'], test: ['on'], dep: ['1.1'] });
+
+    expect(prerequisitesOf(dep12)).toHaveLength(0);
+    expect(dep12.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr2: ['on'], test: ['on'], dep: ['1.2'] });
+
+    expect(prerequisitesOf(dep21)).toHaveLength(0);
+    expect(dep21.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr3: ['on'], test: ['on'], dep: ['2.1'] });
+
+    expect(prerequisitesOf(dep22)).toHaveLength(0);
+    expect(dep22.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr2: ['on'], test: ['on'], dep: ['2.2'] });
+  });
+
   it('reuses universal selector', async () => {
 
     const target = testPlan.addPackage(

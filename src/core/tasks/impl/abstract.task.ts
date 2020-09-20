@@ -221,15 +221,12 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
       }
       for (const preTarget of await selected.packages()) {
 
-        let reusedTaskName = `${task}/${forTask}`;
-        let reusedTask = await preTarget.task(reusedTaskName);
+        let reusedTask!: ZTask;
 
-        if (reusedTask.spec.action.type !== 'group') {
-          reusedTaskName = `${task}/*`;
+        for (const reusedTaskName of reusedZBatchNames(task, forTask)) {
           reusedTask = await preTarget.task(reusedTaskName);
-          if (reusedTask.spec.action.type !== 'group') {
-            reusedTaskName = task;
-            reusedTask = await preTarget.task(reusedTaskName);
+          if (reusedTask.spec.action.type === 'group') {
+            break;
           }
         }
 
@@ -245,7 +242,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
             },
             {
               targets: [],
-              task: reusedTaskName,
+              task: reusedTask.name,
               annex: true,
               parallel: false,
               attrs: {},
@@ -258,7 +255,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
           throw new UnknownZTaskError(
               preTarget.name,
               task,
-              `Can not reuse package selectors of task "${reusedTaskName}" in <${preTarget.name}>`,
+              `Can not reuse package selectors of task "${reusedTask.name}" in <${preTarget.name}>`,
           );
         }
       }
@@ -275,4 +272,17 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
 
   protected abstract _execTask(job: ZJob<TAction>): ZExecution;
 
+}
+
+/**
+ * @internal
+ */
+function reusedZBatchNames(name: string, forTask: string): readonly string[] {
+  return [
+    `${name}/${forTask}`,
+    `+${name}/${forTask}`,
+    `${name}/*`,
+    `+${name}/*`,
+    name,
+  ];
 }
