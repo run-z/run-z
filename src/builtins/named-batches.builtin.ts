@@ -18,7 +18,7 @@ export const NamedZBatchesBuiltin: ZExtension = {
       meta: {
         group: '!builtin:batch',
         get usage() {
-          return `--only ${clz.param('BATCH')}${clz.optional(clz.param('BATCH') + '...')}`;
+          return `--only ${clz.param('BATCH')}${clz.optional(',' + clz.param('BATCH') + clz.sign('...'))}`;
         },
         description: 'Limit named batches to select to specified ones.',
       },
@@ -28,7 +28,7 @@ export const NamedZBatchesBuiltin: ZExtension = {
       meta: {
         aliasOf: '--only',
         get usage() {
-          return `-y${clz.param('BATCH')}${clz.optional(clz.param('BATCH') + '...')}`;
+          return `-y${clz.param('BATCH')}${clz.optional(',' + clz.param('BATCH') + clz.sign('...'))}`;
         },
       },
     },
@@ -37,7 +37,7 @@ export const NamedZBatchesBuiltin: ZExtension = {
       meta: {
         aliasOf: '--only',
         get usage() {
-          return `-y ${clz.param('BATCH')}${clz.optional(clz.param('BATCH') + '...')}`;
+          return `-y ${clz.param('BATCH')}${clz.optional(',' + clz.param('BATCH') + clz.sign('...'))}`;
         },
       },
     },
@@ -47,7 +47,7 @@ export const NamedZBatchesBuiltin: ZExtension = {
       meta: {
         group: '!builtin:batch',
         get usage() {
-          return `--with ${clz.param('BATCH')}${clz.optional(clz.param('BATCH') + '...')}`;
+          return `--with ${clz.param('BATCH')}${clz.optional(',' + clz.param('BATCH') + clz.sign('...'))}`;
         },
         description: 'Enable additional named batches selection. '
             + 'I.e. those with `+`-prefixed names disabled by default.',
@@ -58,7 +58,7 @@ export const NamedZBatchesBuiltin: ZExtension = {
       meta: {
         aliasOf: '--with',
         get usage() {
-          return `-w${clz.param('BATCH')}${clz.optional(clz.param('BATCH') + '...')}`;
+          return `-w${clz.param('BATCH')}${clz.optional(',' + clz.param('BATCH') + clz.sign('...'))}`;
         },
       },
     },
@@ -67,7 +67,7 @@ export const NamedZBatchesBuiltin: ZExtension = {
       meta: {
         aliasOf: '--with',
         get usage() {
-          return `-w ${clz.param('BATCH')}${clz.optional(clz.param('BATCH') + '...')}`;
+          return `-w ${clz.param('BATCH')}${clz.optional(',' + clz.param('BATCH') + clz.sign('...'))}`;
         },
       },
     },
@@ -77,7 +77,7 @@ export const NamedZBatchesBuiltin: ZExtension = {
       meta: {
         group: '!builtin:batch',
         get usage() {
-          return `--except ${clz.param('BATCH')}${clz.optional(clz.param('BATCH') + '...')}`;
+          return `--except ${clz.param('BATCH')}${clz.optional(',' + clz.param('BATCH') + clz.sign('...'))}`;
         },
         description: 'Excludes named batches selection.',
       },
@@ -87,7 +87,7 @@ export const NamedZBatchesBuiltin: ZExtension = {
       meta: {
         aliasOf: '--except',
         get usage() {
-          return `-x${clz.param('BATCH')}${clz.optional(clz.param('BATCH') + '...')}`;
+          return `-x${clz.param('BATCH')}${clz.optional(',' + clz.param('BATCH') + clz.sign('...'))}`;
         },
       },
     },
@@ -96,7 +96,7 @@ export const NamedZBatchesBuiltin: ZExtension = {
       meta: {
         aliasOf: '--except',
         get usage() {
-          return `-x ${clz.param('BATCH')}${clz.optional(clz.param('BATCH') + '...')}`;
+          return `-x ${clz.param('BATCH')}${clz.optional(',' + clz.param('BATCH') + clz.sign('...'))}`;
         },
       },
     },

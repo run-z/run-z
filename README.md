@@ -319,7 +319,7 @@ For example, when running inside one of the nested packages, the following comma
 yarn build --all
 ```
 
-Then named batch can have a syntax like `all/test`. When present, such named batch will be used instead of the `all/*`
+The named batch can have a syntax like `all/test`. When present, such named batch will be used instead of the `all/*`
 one when batching a `test` task. This can be useful, e.g. when it is necessary to pass additional parameters to
 specific tasks:
 ```json
@@ -335,6 +335,9 @@ specific tasks:
 yarn z build --all  # Batches `build` in generic way.
 yarn z test --all   # Batches `test` with `--runInBand` option.
 ```
+
+> See also:
+> - [Partial builds](https://github.com/run-z/run-z/wiki/Partial-builds)
 
 
 ### Dependency Graph
