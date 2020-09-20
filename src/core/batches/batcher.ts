@@ -2,15 +2,16 @@
  * @packageDocumentation
  * @module run-z
  */
-import { itsEmpty, makeIt, mapIt } from '@proc7ts/a-iterable';
-import type { ZPackage, ZPackageSet } from '../packages';
-import { ZCall, ZCallDetails, ZPrePlanner } from '../plan';
+import { itsEmpty } from '@proc7ts/a-iterable';
+import type { ZPackage } from '../packages';
+import type { ZCall } from '../plan';
 import type { ZTask, ZTaskSpec } from '../tasks';
-import { UnknownZTaskError } from '../tasks';
 import { ZBatchDetails } from './batch-details';
 import type { ZBatchPlanner } from './batch-planner';
 import { batchZTask } from './batcher.impl';
 import { ZBatching } from './batching';
+import { batchNamedZBatches, namedZBatches } from './named-batches.impl';
+import { NamedZBatches } from './named-batches.rule';
 
 /**
  * A batcher of tasks to execute.
@@ -20,6 +21,7 @@ import { ZBatching } from './batching';
 export type ZBatcher =
 /**
  * @param planner  Batch execution planner to record batched task calls to.
+ * @param batching  Task batching policy.
  *
  * @returns Either nothing if batch execution planned synchronously, or a promise-like instance resolved when batch
  * execution planned asynchronously.
@@ -27,6 +29,7 @@ export type ZBatcher =
     (
         this: void,
         planner: ZBatchPlanner,
+        batching: ZBatching,
     ) => void | PromiseLike<unknown>;
 
 export namespace ZBatcher {
@@ -40,6 +43,7 @@ export namespace ZBatcher {
   /**
    * @param target  Target package.
    * @param planner  Target batch execution planner.
+   * @param batching  Task batching policy.
    *
    * @returns Either nothing if batch planning is impossible, a batcher instance to plan batch execution by, or
    * a promise resolving to one of the above.
@@ -48,7 +52,9 @@ export namespace ZBatcher {
           this: void,
           target: ZPackage,
           planner: ZBatchPlanner,
+          batching: ZBatching,
       ) => undefined | ZBatcher | Promise<undefined | ZBatcher>;
+
 }
 
 export const ZBatcher = {
@@ -78,89 +84,21 @@ export const ZBatcher = {
    *   Such batch is processed, unless there is another named batch `batch-name/task-name` defined with the
    *   {@link ZBatchPlanner.taskName batched task name} matching `task-name`.
    *
+   * A set of named batches to process can be {@link NamedZBatches configured}.
+   *
+   * Additional batches can be defined by prefixing their names with plus sign (`+`). Such batches won't be processed
+   * unless {@link NamedZBatches.with explicitly requested}.
+   *
    * If target package has no matching named batches then batches the task by {@link ZBatcher.batchTask default
    * batcher}.
    *
    * @param planner  Batch execution planner to record batched task calls to.
+   * @param batching  Task batching policy.
    *
    * @returns A promise resolved when batch execution planned.
    */
-  async batchNamed(this: void, planner: ZBatchPlanner): Promise<void> {
-
-    const { taskName } = planner;
-    const processed = new Set<ZPackage>();
-
-    const process = async (planner: ZBatchPlanner): Promise<void> => {
-
-      let recurrentTargets: ZPackageSet | undefined;
-
-      await Promise.all(mapIt(
-          await planner.targets.packages(),
-          async target => {
-            if (processed.has(target)) {
-              return;
-            }
-            processed.add(target);
-
-            const batchNames = zBatchNames(target, taskName);
-
-            if (itsEmpty(batchNames)) {
-              // No matching named batches.
-              // Fallback to default task batching.
-              return ZBatcher.batchTask({ ...planner, targets: target });
-            }
-
-            return Promise.all(mapIt(
-                batchNames,
-                async batchName => {
-
-                  let hasTargets = false;
-
-                  await target.task(batchName).then(batchTask => batchTask.callAsPre(
-                      {
-                        dependent: planner.dependent,
-                        batching: ZBatching.unprocessedBatching(),
-                        applyTargets(targets) {
-                          hasTargets = true;
-                          recurrentTargets = recurrentTargets ? recurrentTargets.andPackages(targets) : targets;
-                        },
-                        callPre<TAction extends ZTaskSpec.Action>(
-                            task: ZTask<TAction>,
-                            details?: ZCallDetails<TAction>,
-                        ): Promise<ZCall> {
-                          return planner.dependent.call(task, details);
-                        },
-                        // transient: noop, /* group can not do transient calls in this case */
-                      } as ZPrePlanner,
-                      {
-                        targets: [],
-                        task: batchName,
-                        annex: true,
-                        parallel: false,
-                        attrs: {},
-                        args: [],
-                      },
-                      ZCallDetails.by(),
-                  ));
-
-                  if (!hasTargets) {
-                    throw new UnknownZTaskError(
-                        target.name,
-                        batchName,
-                        `Can not apply named batch "${batchName}" in <${target.name}>`,
-                    );
-                  }
-                },
-            ));
-          },
-      ));
-
-      if (recurrentTargets) {
-        await process({ ...planner, targets: recurrentTargets });
-      }
-    };
-
-    await process(planner);
+  batchNamed(this: void, planner: ZBatchPlanner, batching: ZBatching): Promise<void> {
+    return batchNamedZBatches(planner, batching);
   },
 
   /**
@@ -178,8 +116,8 @@ export const ZBatcher = {
       this: void,
       provider: ZBatcher.Provider = defaultZBatcherProvider,
   ): ZBatcher {
-    return async planner => {
-      if (await batchInZTarget(provider, planner, planner.dependent.plannedCall.task.target)) {
+    return async (planner, batching) => {
+      if (await batchInZTarget(provider, planner, batching, planner.dependent.plannedCall.task.target)) {
         // Try to batch in topmost target.
         return;
       }
@@ -210,36 +148,14 @@ export const ZBatcher = {
 
 };
 
-/**
- * @internal
- */
-function defaultZBatcherProvider(target: ZPackage, planner: ZBatchPlanner): ZBatcher | undefined {
-  return itsEmpty(zBatchNames(target, planner.taskName)) ? undefined : ZBatcher.batchNamed;
-}
 
 /**
  * @internal
  */
-function zBatchNames(target: ZPackage, taskName: string): Iterable<string> {
-
-  const groups = new Map<string, string>();
-
-  for (const script of target.taskNames()) {
-
-    const slashIdx = script.lastIndexOf('/');
-
-    if (slashIdx > 0) {
-
-      const groupName = script.substr(0, slashIdx);
-      const groupTask = script.substr(slashIdx + 1);
-
-      if (groupTask === taskName || (groupTask === '*' && !groups.has(groupName))) {
-        groups.set(groupName, script);
-      }
-    }
-  }
-
-  return makeIt(() => groups.values());
+function defaultZBatcherProvider(target: ZPackage, planner: ZBatchPlanner, batching: ZBatching): ZBatcher | undefined {
+  return itsEmpty(namedZBatches(target, planner.taskName, batching.rule(NamedZBatches), true))
+      ? undefined
+      : ZBatcher.batchNamed;
 }
 
 /**
@@ -248,13 +164,14 @@ function zBatchNames(target: ZPackage, taskName: string): Iterable<string> {
 async function batchInZTarget(
     provider: ZBatcher.Provider,
     planner: ZBatchPlanner,
+    batching: ZBatching,
     target: ZPackage,
 ): Promise<boolean> {
 
   const { parent } = target;
 
   // Try parent package first.
-  if (parent && await batchInZTarget(provider, planner, parent)) {
+  if (parent && await batchInZTarget(provider, planner, batching, parent)) {
     // Batched in parent.
     return true;
   }
@@ -283,13 +200,13 @@ async function batchInZTarget(
     },
   };
 
-  batcher = await provider(target, targetPlanner);
+  batcher = await provider(target, targetPlanner, batching);
 
   if (!batcher) {
     return false;
   }
 
-  await batcher(targetPlanner);
+  await batcher(targetPlanner, batching);
 
   return true;
 }

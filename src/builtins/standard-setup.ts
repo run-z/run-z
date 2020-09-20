@@ -9,14 +9,16 @@ import { ZColorsBuiltin } from './colors.builtin';
 import { ZCommandExecutionBuiltin } from './command-execution.builtin';
 import { ZDepGraphBatchesBuiltin } from './dep-graph';
 import { ZHelpBuiltin } from './help.builtin';
+import { NamedZBatchesBuiltin } from './named-batches.builtin';
 import { ZParallelBatchesBuiltin } from './parallel-batches';
 
 const builtinZExtensions: readonly ZExtension[] = [
+  NamedZBatchesBuiltin,
   ZAllBatchBuiltin,
   ZColorsBuiltin,
   ZCommandExecutionBuiltin,
-  ZHelpBuiltin,
   ZDepGraphBatchesBuiltin,
+  ZHelpBuiltin,
   ZParallelBatchesBuiltin,
 ];
 

@@ -54,7 +54,7 @@ export class ZBatching {
    *
    * @param batcher  New batcher.
    *
-   * @returns New batcher policy using the given batcher.
+   * @returns New batching policy using the given batcher.
    */
   batchBy(batcher: ZBatcher): ZBatching {
 
@@ -63,6 +63,17 @@ export class ZBatching {
     newBatcher._by(this);
 
     return newBatcher;
+  }
+
+  /**
+   * Assigns a batcher to use unless already assigned.
+   *
+   * @param batcher  New batcher.
+   *
+   * @returns New batching policy using the given batcher, or `this` one if it has a batcher already.
+   */
+  batchByDefault(batcher: ZBatcher): ZBatching {
+    return this._batcher ? this : this.batchBy(batcher);
   }
 
   /**
@@ -178,7 +189,7 @@ export class ZBatching {
       },
     };
 
-    await (this._batcher || batchZTask)(batchPlanner);
+    await (this._batcher || batchZTask)(batchPlanner, this);
 
     const batch: ZBatch = {
       dependent: planner.dependent,
