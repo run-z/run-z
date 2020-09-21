@@ -67,7 +67,7 @@ export class ZInstructionRecords {
     } else {
       call = new ZCallRecord(this, by, task, details);
       this._calls.set(task, call);
-      await call._plan(task.callDetails);
+      await call._plan(task.callDetails(call));
     }
     await call._plan(details);
 
