@@ -75,10 +75,11 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
    * Builds initial task execution parameters.
    *
    * @param _call  This task call to build parameters for.
+   * @param _evaluator  Task parameters evaluation context.
    *
    * @returns Partial task execution parameters.
    */
-  protected _callParams(_call: ZCall<TAction>): ZTaskParams {
+  protected _callParams(_call: ZCall<TAction>, _evaluator: ZTaskParams.Evaluator): ZTaskParams {
 
     const { spec: { attrs, args } } = this;
 

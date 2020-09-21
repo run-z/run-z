@@ -154,70 +154,107 @@ describe('CommandZTask', () => {
 
       expect(params.args).toEqual(['--arg3', '--arg1', '--arg2']);
     });
-  });
-  it('does not execute command when `skip` flag is set', async () => {
 
-    const shell = {
-      execCommand: jest.fn(execZNoOp),
-    } as jest.Mocked<Partial<ZShell>> as jest.Mocked<ZShell>;
+    it('applies `+cmd:command` annex parameters', async () => {
 
-    testPlan.addPackage(
-        'test',
-        {
-          packageJson: {
-            scripts: {
-              exec: 'run-z --then start --arg3',
-            },
-          },
-        },
-    );
+      const shell = {
+        execCommand: jest.fn(execZNoOp),
+      } as jest.Mocked<Partial<ZShell>> as jest.Mocked<ZShell>;
 
-    const call = await testPlan.call('exec', { params: valueProvider({ attrs: { skip: ['on'] } }) });
-
-    await call.exec(shell).whenDone();
-
-    expect(shell.execCommand).not.toHaveBeenCalled();
-  });
-  it('executes by overridden executor', async () => {
-
-    const executor = jest.fn(execZNoOp);
-
-    testPlan = new TestPlan(
-        'root',
-        {
-          setup: new StandardZSetup({
-            extensions: {
-              options: {
-                '--test'(option) {
-                  option.executeBy(executor);
-                  option.recognize();
-                },
+      testPlan.addPackage(
+          'test',
+          {
+            packageJson: {
+              scripts: {
+                test: 'run-z exec/--arg1 --arg2',
+                exec: 'run-z --then start --arg3',
               },
             },
-          }),
-        },
-    );
+          },
+      );
 
-    const shell = {
-      execCommand: jest.fn(execZNoOp),
-    } as jest.Mocked<Partial<ZShell>> as jest.Mocked<ZShell>;
+      const call = await testPlan.parse('run-z test +cmd:start/--cmd-arg/cmd=applied');
 
-    testPlan.addPackage(
-        'test',
-        {
-          packageJson: {
-            scripts: {
-              exec: 'run-z --test --then start --arg3',
+      await call.exec(shell).whenDone();
+
+      expect(shell.execCommand).toHaveBeenCalledWith(
+          expect.objectContaining({ call: await testPlan.callOf(call.task.target, 'exec') }),
+          'start',
+      );
+
+      const { params } = shell.execCommand.mock.calls[0][0];
+
+      expect(params.args).toEqual(['--cmd-arg', '--arg3', '--arg1', '--arg2']);
+      expect(params.attrs).toEqual({
+        cmd: ['applied'],
+      });
+    });
+
+    it('does not execute command when `skip` flag is set', async () => {
+
+      const shell = {
+        execCommand: jest.fn(execZNoOp),
+      } as jest.Mocked<Partial<ZShell>> as jest.Mocked<ZShell>;
+
+      testPlan.addPackage(
+          'test',
+          {
+            packageJson: {
+              scripts: {
+                exec: 'run-z --then start --arg3',
+              },
             },
           },
-        },
-    );
+      );
 
-    const call = await testPlan.call('exec');
+      const call = await testPlan.call('exec', { params: valueProvider({ attrs: { skip: ['on'] } }) });
 
-    await call.exec(shell).whenDone();
+      await call.exec(shell).whenDone();
 
-    expect(executor).toHaveBeenCalled();
-    expect(shell.execCommand).not.toHaveBeenCalled();
+      expect(shell.execCommand).not.toHaveBeenCalled();
+    });
+
+    it('executes by overridden executor', async () => {
+
+      const executor = jest.fn(execZNoOp);
+
+      testPlan = new TestPlan(
+          'root',
+          {
+            setup: new StandardZSetup({
+              extensions: {
+                options: {
+                  '--test'(option) {
+                    option.executeBy(executor);
+                    option.recognize();
+                  },
+                },
+              },
+            }),
+          },
+      );
+
+      const shell = {
+        execCommand: jest.fn(execZNoOp),
+      } as jest.Mocked<Partial<ZShell>> as jest.Mocked<ZShell>;
+
+      testPlan.addPackage(
+          'test',
+          {
+            packageJson: {
+              scripts: {
+                exec: 'run-z --test --then start --arg3',
+              },
+            },
+          },
+      );
+
+      const call = await testPlan.call('exec');
+
+      await call.exec(shell).whenDone();
+
+      expect(executor).toHaveBeenCalled();
+      expect(shell.execCommand).not.toHaveBeenCalled();
+    });
   });
 });

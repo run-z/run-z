@@ -66,5 +66,73 @@ describe('ScriptZTask', () => {
 
       expect(params.args).toEqual(['--arg1', '--arg2']);
     });
+
+    it('applies `+cmd:command` annex parameters', async () => {
+
+      const shell = {
+        execScript: jest.fn(execZNoOp),
+      } as jest.Mocked<Partial<ZShell>> as jest.Mocked<ZShell>;
+
+      testPlan.addPackage(
+          'test',
+          {
+            packageJson: {
+              scripts: {
+                test: 'run-z exec/--arg1 --arg2',
+                exec: 'start --arg3',
+              },
+            },
+          },
+      );
+
+      const call = await testPlan.parse('run-z test +cmd:start/--cmd-arg/cmd=applied');
+
+      await call.exec(shell).whenDone();
+
+      expect(shell.execScript).toHaveBeenCalledWith(
+          expect.objectContaining({ call: await testPlan.callOf(call.task.target, 'exec') }),
+          'exec',
+      );
+
+      const { params } = shell.execScript.mock.calls[0][0];
+
+      expect(params.args).toEqual(['--cmd-arg', '--arg1', '--arg2']);
+      expect(params.attrs).toEqual({
+        cmd: ['applied'],
+      });
+    });
+
+    it('does not apply `+cmd:command` annex parameters to non-parsable command', async () => {
+
+      const shell = {
+        execScript: jest.fn(execZNoOp),
+      } as jest.Mocked<Partial<ZShell>> as jest.Mocked<ZShell>;
+
+      testPlan.addPackage(
+          'test',
+          {
+            packageJson: {
+              scripts: {
+                test: 'run-z exec/--arg1 --arg2',
+                exec: 'start --arg3 > out',
+              },
+            },
+          },
+      );
+
+      const call = await testPlan.parse('run-z test +cmd:start/--cmd-arg/cmd=applied');
+
+      await call.exec(shell).whenDone();
+
+      expect(shell.execScript).toHaveBeenCalledWith(
+          expect.objectContaining({ call: await testPlan.callOf(call.task.target, 'exec') }),
+          'exec',
+      );
+
+      const { params } = shell.execScript.mock.calls[0][0];
+
+      expect(params.args).toEqual(['--arg1', '--arg2']);
+      expect(params.attrs).toEqual({});
+    });
   });
 });
