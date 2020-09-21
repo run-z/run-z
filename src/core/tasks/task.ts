@@ -31,6 +31,14 @@ export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> exte
   readonly spec: ZTaskSpec<TAction>;
 
   /**
+   * Task names this one is alike.
+   *
+   * If the task is alike another one, the task parameters and parallel execution rules applied to another are applied
+   * to the task itself.
+   */
+  readonly alike: Iterable<string>;
+
+  /**
    * Builds initial details for {@link call calling} this task.
    *
    * @param call  This task call to build details of.

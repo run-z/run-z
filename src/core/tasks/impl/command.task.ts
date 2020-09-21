@@ -1,6 +1,6 @@
 import type { ZExecution } from '@run-z/exec-z';
 import type { ZJob } from '../../jobs';
-import { ZCall, ZTaskParams } from '../../plan';
+import type { ZTaskParams } from '../../plan';
 import type { ZTaskSpec } from '../task-spec';
 import { AbstractZTask } from './abstract.task';
 
@@ -9,20 +9,18 @@ import { AbstractZTask } from './abstract.task';
  */
 export class CommandZTask extends AbstractZTask<ZTaskSpec.Command> {
 
-  protected _callParams(call: ZCall<ZTaskSpec.Command>, evaluator: ZTaskParams.Evaluator): ZTaskParams {
+  get alike(): Iterable<string> {
 
-    const { spec: { attrs, args, action: { command, args: commandArgs } } } = this;
-    const params = ZTaskParams.newMutable();
+    const { spec: { action: { command } } } = this;
 
-    const cmdCall = call.plan.findCallOf(this.target, `cmd:${command}`);
+    return [`cmd:${command}`];
+  }
 
-    if (cmdCall) {
-      ZTaskParams.update(params, cmdCall.params(evaluator));
-    }
+  protected _callParams(): ZTaskParams.Partial {
 
-    ZTaskParams.update(params, { attrs, args: [...commandArgs, ...args] });
+    const { spec: { attrs, args, action: { args: commandArgs } } } = this;
 
-    return new ZTaskParams(params);
+    return { attrs, args: [...commandArgs, ...args] };
   }
 
   protected _isParallel(): boolean {

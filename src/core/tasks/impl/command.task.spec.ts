@@ -82,7 +82,38 @@ describe('CommandZTask', () => {
     expect(prerequisitesOf(dep2)).toEqual(taskIds(dep1));
     expect(dep2.isParallelTo(dep1.task)).toBe(true);
   });
-  it('executed parallel with prerequisites', async () => {
+
+  it('calls parallel prerequisites specified by `+cmd:COMMAND` annex', async () => {
+    testPlan.addPackage(
+        'test',
+        {
+          packageJson: {
+            scripts: {
+              test: 'run-z dep1 dep2 +cmd:exec1,+cmd:exec2 --then exec --cmd',
+              dep1: 'run-z --then exec1',
+              dep2: 'exec2',
+            },
+          },
+        },
+    );
+
+    const call = await testPlan.call('test');
+    const target = call.task.target;
+    const plan = call.plan;
+    const dep1 = plan.callOf(await target.task('dep1'));
+    const dep2 = plan.callOf(await target.task('dep2'));
+
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep2));
+    expect(call.isParallelTo(dep1.task)).toBe(false);
+
+    expect(prerequisitesOf(dep1)).toHaveLength(0);
+    expect(dep1.isParallelTo(dep2.task)).toBe(true);
+
+    expect(prerequisitesOf(dep2)).toEqual(taskIds(dep1));
+    expect(dep2.isParallelTo(dep1.task)).toBe(true);
+  });
+
+  it('executed in parallel with prerequisites', async () => {
     testPlan.addPackage(
         'test',
         {

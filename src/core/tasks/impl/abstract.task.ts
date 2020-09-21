@@ -24,10 +24,33 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
     this.taskQN = this.name = _builder.taskName;
   }
 
+  get alike(): Iterable<string> {
+    return [];
+  }
+
   callDetails(call: ZCall<TAction>): ZCallDetails.Full<TAction> {
     return {
-      params: this._callParams.bind(this, call),
+
+      params: evaluator => {
+
+        const params = ZTaskParams.newMutable();
+
+        for (const alike of this.alike) {
+
+          const alikeCall = call.plan.findCallOf(this.target, alike);
+
+          if (alikeCall) {
+            ZTaskParams.update(params, alikeCall.params(evaluator));
+          }
+        }
+
+        ZTaskParams.update(params, this._callParams());
+
+        return new ZTaskParams(params);
+      },
+
       plan: this._planCall.bind(this),
+
     };
   }
 
@@ -74,16 +97,13 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   /**
    * Builds initial task execution parameters.
    *
-   * @param _call  This task call to build parameters for.
-   * @param _evaluator  Task parameters evaluation context.
-   *
    * @returns Partial task execution parameters.
    */
-  protected _callParams(_call: ZCall<TAction>, _evaluator: ZTaskParams.Evaluator): ZTaskParams {
+  protected _callParams(): ZTaskParams.Partial {
 
     const { spec: { attrs, args } } = this;
 
-    return new ZTaskParams({ attrs, args });
+    return { attrs, args };
   }
 
   /**

@@ -58,7 +58,19 @@ export class ZInstructionRecords {
   }
 
   private _qualifiersOf(task: ZTask): Iterable<ZTaskQualifier> {
-    return this._qualifiers.get(task) || [task];
+
+    const result = Array.from(this._qualifiers.get(task) || [task]);
+
+    for (const alike of task.alike) {
+
+      const alikeCall = this.plan.findCallOf(task.target, alike);
+
+      if (alikeCall) {
+        result.push(alikeCall.task);
+      }
+    }
+
+    return result;
   }
 
   async call<TAction extends ZTaskSpec.Action>(
