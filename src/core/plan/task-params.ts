@@ -152,42 +152,6 @@ export class ZTaskParams {
     return attr != null && !falseZTaskFlagValues[attr.toLowerCase()];
   }
 
-  /**
-   * Builds a mutable representation of this parameters instance.
-   *
-   * @returns A mutable task execution parameters containing this parameters values.
-   */
-  mutate(): ZTaskParams.Mutable {
-    return ZTaskParams.update(ZTaskParams.newMutable(), this);
-  }
-
-  /**
-   * Extends task execution parameters.
-   *
-   * @param extension  Task parameters extension.
-   *
-   * @returns Task execution parameters containing these parameter values updated with the given `extension`.
-   */
-  extend(extension: ZTaskParams.Partial | undefined): ZTaskParams {
-    return new ZTaskParams(ZTaskParams.update(this.mutate(), extension));
-  }
-
-  /**
-   * Extends task execution attributes.
-   *
-   * @param extension  Task parameters extension.
-   *
-   * @returns Task execution parameters containing these parameter attributes updated with the given `extension`.
-   */
-  extendAttrs(extension: ZTaskParams.Partial | undefined): ZTaskParams {
-
-    const params = this.mutate();
-
-    params.args = [];
-
-    return new ZTaskParams(ZTaskParams.update(params, extension));
-  }
-
 }
 
 export namespace ZTaskParams {

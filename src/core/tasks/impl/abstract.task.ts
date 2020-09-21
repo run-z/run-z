@@ -1,6 +1,5 @@
 import { noop } from '@proc7ts/primitives';
 import type { ZExecution } from '@run-z/exec-z';
-import { execZNoOp } from '@run-z/exec-z';
 import { ZBatchDetails } from '../../batches';
 import type { ZJob } from '../../jobs';
 import type { ZPackage, ZPackageSet } from '../../packages';
@@ -35,15 +34,20 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
       { attrs, args }: ZTaskSpec.Pre,
       details: ZCallDetails.Full,
   ): Promise<ZCall> {
-
-    const { plannedCall } = planner.dependent;
-    const taskParams = plannedCall.extendAttrs({ attrs, args });
-
     return planner.callPre(
         this,
         {
           ...details,
-          params: evaluator => taskParams(evaluator).extend(details.params(evaluator)),
+          params: evaluator => ZTaskParams.update(
+              ZTaskParams.update(
+                  ZTaskParams.update(
+                    ZTaskParams.newMutable(),
+                    { attrs: planner.dependent.plannedCall.task.spec.attrs }, // Dependent task attrs
+                  ),
+                  { attrs, args }, // Extend with explicit prerequisite parameters
+              ),
+              details.params(evaluator), // Extend with additional parameters
+          ),
         },
     );
   }
@@ -59,10 +63,6 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
     if (executor) {
       // Overridden executor
       return executor(job);
-    }
-    if (job.params.flag('skip')) {
-      // Skip execution
-      return execZNoOp();
     }
 
     // Normal execution

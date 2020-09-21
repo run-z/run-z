@@ -50,7 +50,6 @@ describe('GroupZTask', () => {
 
     expect(prerequisitesOf(dep2)).toHaveLength(0);
     expect(dep2.params(ZTaskParams.newEvaluator()).attrs).toEqual({
-      test: ['1'],
       dep1: ['2'],
     });
   });
@@ -84,20 +83,18 @@ describe('GroupZTask', () => {
 
     expect(prerequisitesOf(dep1)).toEqual(taskIds(dep2));
     expect(dep1.params(ZTaskParams.newEvaluator()).attrs).toEqual({
-      attr1: ['on'],
-      attr2: ['off', 'on', 'on'],
+      attr2: ['off', 'on'],
     });
 
     expect(prerequisitesOf(dep2)).toHaveLength(0);
     expect(dep2.params(ZTaskParams.newEvaluator()).attrs).toEqual({
-      attr1: ['on'],
-      attr2: ['off', 'on', 'on'],
+      attr2: ['off'],
     });
 
     expect(prerequisitesOf(dep3)).toEqual(taskIds(dep1));
     expect(dep3.params(ZTaskParams.newEvaluator()).attrs).toEqual({
       attr1: ['on'],
-      attr2: ['on', 'off', 'on'],
+      attr2: ['on'],
     });
   });
 
@@ -130,10 +127,10 @@ describe('GroupZTask', () => {
     expect(dep1.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr2: ['off', 'on'] });
 
     expect(prerequisitesOf(dep2)).toHaveLength(0);
-    expect(dep2.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr2: ['off', 'on'] });
+    expect(dep2.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr2: ['off'] });
 
     expect(prerequisitesOf(dep3)).toHaveLength(0);
-    expect(dep3.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on'], attr2: ['on', 'off', 'on'] });
+    expect(dep3.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on'], attr2: ['on'] });
   });
 
   it('calls external prerequisites', async () => {
@@ -375,13 +372,13 @@ describe('GroupZTask', () => {
     expect(dep1.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on'], attr3: ['1'] });
 
     expect(prerequisitesOf(sub1)).toEqual(taskIds(dep1));
-    expect(sub1.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on', 'on'], attr2: ['on'], attr3: ['1'] });
+    expect(sub1.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on'], attr2: ['on'] });
 
     expect(prerequisitesOf(dep2)).toHaveLength(0);
     expect(dep2.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on'], attr3: ['2'] });
 
     expect(prerequisitesOf(sub2)).toEqual(taskIds(dep2));
-    expect(sub2.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on', 'on'], attr2: ['on'], attr3: ['2'] });
+    expect(sub2.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on'], attr2: ['on'] });
   });
 
   it('delegates to sub-tasks in other packages', async () => {
@@ -446,13 +443,13 @@ describe('GroupZTask', () => {
 
     expect(prerequisitesOf(sub1)).toEqual(taskIds(dep));
     expect(sub1.params(ZTaskParams.newEvaluator()).attrs).toEqual({
-      attr1: ['on', 'on'],
+      attr1: ['on'],
       attr2: ['on'],
     });
 
     expect(prerequisitesOf(sub2)).toEqual(taskIds(dep));
     expect(sub2.params(ZTaskParams.newEvaluator()).attrs).toEqual({
-      attr1: ['on', 'on'],
+      attr1: ['on'],
       attr2: ['on'],
     });
   });
@@ -474,11 +471,11 @@ describe('GroupZTask', () => {
     const dep = await testPlan.callOf(call.task.target, 'dep');
 
     expect(call.params(ZTaskParams.newEvaluator()).attrs).toEqual({
-      attr1: ['top', 'dep'],
+      attr1: ['dep'],
       attr2: ['top', 'dep'],
     });
     expect(dep.params(ZTaskParams.newEvaluator()).attrs).toEqual({
-      attr1: ['dep', 'top'],
+      attr1: ['top'],
       attr2: ['dep', 'top'],
     });
   });
@@ -502,16 +499,16 @@ describe('GroupZTask', () => {
     const dep2 = await testPlan.callOf(call.task.target, 'dep2');
 
     expect(call.params(ZTaskParams.newEvaluator()).attrs).toEqual({
-      attr1: ['top', 'dep1', 'dep2'],
-      attr2: ['top', 'dep2', 'dep1'],
+      attr1: ['dep2'],
+      attr2: ['top', 'dep2'],
     });
     expect(dep1.params(ZTaskParams.newEvaluator()).attrs).toEqual({
-      attr1: ['dep1', 'dep2', 'top'],
-      attr2: ['dep1', 'top', 'dep2'],
+      attr1: ['top'],
+      attr2: ['dep1', 'top'],
     });
     expect(dep2.params(ZTaskParams.newEvaluator()).attrs).toEqual({
-      attr1: ['dep2', 'top', 'dep1'],
-      attr2: ['dep2', 'dep1', 'top'],
+      attr1: ['dep1'],
+      attr2: ['dep2', 'dep1'],
     });
   });
 
@@ -569,13 +566,13 @@ describe('GroupZTask', () => {
     expect(call.params(ZTaskParams.newEvaluator()).attrs).toEqual({ test: ['on'] });
 
     expect(prerequisitesOf(dep11)).toHaveLength(0);
-    expect(dep11.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on'], test: ['on'], dep: ['1.1'] });
+    expect(dep11.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on'], dep: ['1.1'] });
 
     expect(prerequisitesOf(dep12)).toHaveLength(0);
     expect(dep12.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr2: ['on'], test: ['on'], dep: ['1.2'] });
 
     expect(prerequisitesOf(dep21)).toHaveLength(0);
-    expect(dep21.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on'], test: ['on'], dep: ['2.1'] });
+    expect(dep21.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on'], dep: ['2.1'] });
 
     expect(prerequisitesOf(dep22)).toHaveLength(0);
     expect(dep22.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr2: ['on'], test: ['on'], dep: ['2.2'] });
@@ -636,13 +633,13 @@ describe('GroupZTask', () => {
     expect(call.params(ZTaskParams.newEvaluator()).attrs).toEqual({ test: ['on'] });
 
     expect(prerequisitesOf(dep11)).toHaveLength(0);
-    expect(dep11.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on'], test: ['on'], dep: ['1.1'] });
+    expect(dep11.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on'], dep: ['1.1'] });
 
     expect(prerequisitesOf(dep12)).toHaveLength(0);
     expect(dep12.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr2: ['on'], test: ['on'], dep: ['1.2'] });
 
     expect(prerequisitesOf(dep21)).toHaveLength(0);
-    expect(dep21.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on'], test: ['on'], dep: ['2.1'] });
+    expect(dep21.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on'], dep: ['2.1'] });
 
     expect(prerequisitesOf(dep22)).toHaveLength(0);
     expect(dep22.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr2: ['on'], test: ['on'], dep: ['2.2'] });
@@ -703,13 +700,13 @@ describe('GroupZTask', () => {
     expect(call.params(ZTaskParams.newEvaluator()).attrs).toEqual({ test: ['on'] });
 
     expect(prerequisitesOf(dep11)).toHaveLength(0);
-    expect(dep11.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr3: ['on'], test: ['on'], dep: ['1.1'] });
+    expect(dep11.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr3: ['on'], dep: ['1.1'] });
 
     expect(prerequisitesOf(dep12)).toHaveLength(0);
     expect(dep12.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr2: ['on'], test: ['on'], dep: ['1.2'] });
 
     expect(prerequisitesOf(dep21)).toHaveLength(0);
-    expect(dep21.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr3: ['on'], test: ['on'], dep: ['2.1'] });
+    expect(dep21.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr3: ['on'], dep: ['2.1'] });
 
     expect(prerequisitesOf(dep22)).toHaveLength(0);
     expect(dep22.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr2: ['on'], test: ['on'], dep: ['2.2'] });
@@ -770,13 +767,13 @@ describe('GroupZTask', () => {
     expect(call.params(ZTaskParams.newEvaluator()).attrs).toEqual({ test: ['on'] });
 
     expect(prerequisitesOf(dep11)).toHaveLength(0);
-    expect(dep11.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr3: ['on'], test: ['on'], dep: ['1.1'] });
+    expect(dep11.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr3: ['on'], dep: ['1.1'] });
 
     expect(prerequisitesOf(dep12)).toHaveLength(0);
     expect(dep12.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr2: ['on'], test: ['on'], dep: ['1.2'] });
 
     expect(prerequisitesOf(dep21)).toHaveLength(0);
-    expect(dep21.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr3: ['on'], test: ['on'], dep: ['2.1'] });
+    expect(dep21.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr3: ['on'], dep: ['2.1'] });
 
     expect(prerequisitesOf(dep22)).toHaveLength(0);
     expect(dep22.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr2: ['on'], test: ['on'], dep: ['2.2'] });
@@ -837,13 +834,13 @@ describe('GroupZTask', () => {
     expect(call.params(ZTaskParams.newEvaluator()).attrs).toEqual({ test: ['on'] });
 
     expect(prerequisitesOf(dep11)).toHaveLength(0);
-    expect(dep11.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr3: ['on'], test: ['on'], dep: ['1.1'] });
+    expect(dep11.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr3: ['on'], dep: ['1.1'] });
 
     expect(prerequisitesOf(dep12)).toHaveLength(0);
     expect(dep12.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr2: ['on'], test: ['on'], dep: ['1.2'] });
 
     expect(prerequisitesOf(dep21)).toHaveLength(0);
-    expect(dep21.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr3: ['on'], test: ['on'], dep: ['2.1'] });
+    expect(dep21.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr3: ['on'], dep: ['2.1'] });
 
     expect(prerequisitesOf(dep22)).toHaveLength(0);
     expect(dep22.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr2: ['on'], test: ['on'], dep: ['2.2'] });
@@ -995,13 +992,13 @@ describe('GroupZTask', () => {
     expect(dep1.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on'], attr3: ['1'] });
 
     expect(prerequisitesOf(sub1)).toEqual(taskIds(dep1));
-    expect(sub1.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on', 'on'], attr2: ['on'], attr3: ['1'] });
+    expect(sub1.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on'], attr2: ['on'] });
 
     expect(prerequisitesOf(dep2)).toHaveLength(0);
     expect(dep2.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on'], attr3: ['2'] });
 
     expect(prerequisitesOf(sub2)).toEqual(taskIds(dep2));
-    expect(sub2.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on', 'on'], attr2: ['on'], attr3: ['2'] });
+    expect(sub2.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr1: ['on'], attr2: ['on'] });
   });
 
   describe('exec', () => {

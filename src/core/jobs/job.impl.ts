@@ -1,6 +1,6 @@
 import { mapIt } from '@proc7ts/a-iterable';
 import { noop } from '@proc7ts/primitives';
-import { execZ, execZAfter, execZAll, ZExecution } from '@run-z/exec-z';
+import { execZ, execZAfter, execZAll, execZNoOp, ZExecution } from '@run-z/exec-z';
 import type { ZTaskParams } from '../plan';
 import { ZCallRecord } from '../plan/call.impl';
 import type { ZTask, ZTaskSpec } from '../tasks';
@@ -62,6 +62,10 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
   }
 
   start(): this {
+    if (this.params.flag('skip')) {
+      this._exec = this._execAndPre = execZNoOp();
+      return this;
+    }
 
     const whenPre = this._execPre();
     const whenReady = this._whenReady();

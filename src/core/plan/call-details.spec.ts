@@ -5,18 +5,23 @@ import { ZTaskParams } from './task-params';
 describe('ZCallDetails', () => {
   describe('by', () => {
     it('reconstructs parameters', () => {
-      expect(ZCallDetails.by().params(ZTaskParams.newEvaluator()).mutate()).toEqual({ attrs: {}, args: [] });
+
+      const params = ZCallDetails.by().params(ZTaskParams.newEvaluator());
+
+      expect(params.attrs).toEqual({});
+      expect(params.args).toEqual([]);
     });
     it('respects parameters', () => {
-      expect(ZCallDetails.by({
+
+      const params = ZCallDetails.by({
         params: valueProvider({
           attrs: { attr: ['1'] },
           args: ['arg'],
         }),
-      }).params(ZTaskParams.newEvaluator()).mutate()).toEqual({
-        attrs: { attr: ['1'] },
-        args: ['arg'],
-      });
+      }).params(ZTaskParams.newEvaluator());
+
+      expect(params.attrs).toEqual({ attr: ['1'] });
+      expect(params.args).toEqual(['arg']);
     });
     it('reconstructs plan', async () => {
       expect(await (ZCallDetails.by() as any).plan()).toBeUndefined();

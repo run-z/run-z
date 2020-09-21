@@ -5,6 +5,7 @@ import { ZOptionError, ZOptionInput } from '@run-z/optionz';
 import { ZBatchDetails } from '../../batches';
 import type { ZJob } from '../../jobs';
 import type { ZCall, ZCallDetails, ZPrePlanner } from '../../plan';
+import { ZTaskParams } from '../../plan';
 import type { ZTask } from '../task';
 import type { ZTaskSpec } from '../task-spec';
 import { AbstractZTask } from './abstract.task';
@@ -49,9 +50,13 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
         this,
         {
           ...details,
-          params: evaluator => dependent.plannedCall
-              .params(evaluator)
-              .extendAttrs(details.params(evaluator)),
+          params: evaluator => ZTaskParams.update(
+              ZTaskParams.update(
+                  ZTaskParams.newMutable(),
+                  { attrs: dependent.plannedCall.task.spec.attrs }, // Dependent task attrs
+              ),
+              details.params(evaluator), // Extend with additional parameters
+          ),
         },
     );
 
@@ -88,7 +93,7 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
             planner.transient(batching),
             { ...pre, args: subArgs, task: subTask.name },
             {
-              params: evaluator => groupCall.params(evaluator).extendAttrs(params(evaluator)),
+              params,
               plan: async subPlanner => {
                 if (!pre.annex) {
                   // Execute sub-tasks after the grouping one

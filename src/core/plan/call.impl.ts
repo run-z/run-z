@@ -148,10 +148,6 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
     );
   }
 
-  extendAttrs(extension: ZTaskParams.Partial): ZTaskParams.Fn {
-    return evaluator => this.params(evaluator).extendAttrs(extension);
-  }
-
   prerequisites(): Iterable<ZCall> {
     return this._records.prerequisitesOf(this.task);
   }
