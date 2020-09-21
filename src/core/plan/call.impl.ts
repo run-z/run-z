@@ -33,7 +33,14 @@ export type ZCallDepth =
 /**
  * @returns The depth of the call.
  */
-    (this: void) => number;
+    (this: void, evaluator: ZTaskParams.Evaluator) => number;
+
+/**
+ * @internal
+ */
+const ZCallDepth__key: ZTaskParams.ValueKey<number> = {
+  empty: Number.MAX_VALUE,
+};
 
 /**
  * @internal
@@ -55,7 +62,7 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
       readonly task: ZTask<TAction>,
       details: ZCallDetails<TAction>,
   ) {
-    this._currDepth = _parent ? () => _parent._depth() + 1 : valueProvider(0);
+    this._currDepth = _parent ? evaluator => _parent._depth(evaluator) + 1 : valueProvider(0);
     this._addParams(details, this._depth.bind(this));
   }
 
@@ -79,19 +86,19 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
     return this.task === task || (!!this._parent && this._parent.by(task));
   }
 
-  private _depth(): number {
-    return this._currDepth();
+  private _depth(evaluator: ZTaskParams.Evaluator): number {
+    return evaluator.valueOf(ZCallDepth__key, this, () => this._currDepth(evaluator));
   }
 
   _call(details: ZCallDetails<TAction>, by: ZCallRecord): this {
 
-    const paramDepth: ZCallDepth = () => by._depth() + 1;
+    const paramDepth: ZCallDepth = evaluator => by._depth(evaluator) + 1;
 
     if (!by.by(this.task)) {
 
       const prevDepth = this._currDepth;
 
-      this._currDepth = () => Math.min(prevDepth(), paramDepth());
+      this._currDepth = evaluator => Math.min(prevDepth(evaluator), paramDepth(evaluator));
     }
 
     this._addParams(details, paramDepth);
@@ -130,7 +137,7 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
 
           // Sort the calls from deepest to closest.
           const allParams = this._params.map(
-              ([params, depth]) => [depth(), params] as const,
+              ([params, depth]) => [depth(evaluator), params] as const,
           ).sort(
               ([firstDepth], [secondDepth]) => secondDepth - firstDepth,
           );

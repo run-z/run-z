@@ -38,26 +38,37 @@ export class ZTaskParams {
    */
   static newEvaluator(): ZTaskParams.Evaluator {
 
-    const evaluated = new Map<ZCall, ZTaskParams>();
+    const evaluated = new Map<unknown, Map<ZCall, any>>();
 
     return {
 
       paramsOf(source: ZCall, params: (this: void) => ZTaskParams): ZTaskParams {
+        return this.valueOf(ZTaskParams, source, params);
+      },
 
-        const cached = evaluated.get(source);
+      valueOf<TValue>(key: ZTaskParams.ValueKey<TValue>, source: ZCall, evaluate: (this: void) => TValue): TValue {
 
-        if (cached) {
-          return cached;
+        let cache = evaluated.get(key);
+
+        if (cache) {
+
+          const cached = cache.get(source);
+
+          if (cached !== undefined) {
+            return cached;
+          }
+        } else {
+          evaluated.set(key, cache = new Map());
         }
 
         // Prevent infinite recursion.
-        evaluated.set(source, ZTaskParams.empty);
+        cache.set(source, key.empty);
 
-        const newParams = params();
+        const newValue = evaluate();
 
-        evaluated.set(source, newParams);
+        cache.set(source, newValue);
 
-        return newParams;
+        return newValue;
       },
 
     };
@@ -219,9 +230,35 @@ export namespace ZTaskParams {
      * @param source  The task call the parameters evaluated from.
      * @param params  The task parameters builder function. It is called unless a recursion detected.
      *
-     * @returns  Evaluated task parameters, or empty ones if recursion detected.
+     * @returns Evaluated task parameters, or empty ones if recursion detected.
      */
     paramsOf(source: ZCall, params: (this: void) => ZTaskParams): ZTaskParams;
+
+    /**
+     * Evaluates a value for the given task call.
+     *
+     * @typeparam TValue  Value type.
+     * @param key  Value key.
+     * @param source  The task call the value evaluated for.
+     * @param evaluate  The value evaluation function. It is called unless a recursion detected.
+     *
+     * @returns Evaluated value, or {@link ValueKey.empty empty one} if recursion detected.
+     */
+    valueOf<TValue>(key: ValueKey<TValue>, source: ZCall, evaluate: (this: void) => TValue): TValue;
+
+  }
+
+  /**
+   * A key of the value evaluated per the task call.
+   *
+   * @typeparam TValue  Value type.
+   */
+  export interface ValueKey<TValue> {
+
+    /**
+     * Empty value used when recursion detected.
+     */
+    readonly empty: TValue;
 
   }
 
