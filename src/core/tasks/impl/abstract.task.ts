@@ -1,6 +1,5 @@
 import { noop } from '@proc7ts/primitives';
 import type { ZExecution } from '@run-z/exec-z';
-import { execZNoOp } from '@run-z/exec-z';
 import { ZBatchDetails } from '../../batches';
 import type { ZJob } from '../../jobs';
 import type { ZPackage, ZPackageSet } from '../../packages';
@@ -64,10 +63,6 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
     if (executor) {
       // Overridden executor
       return executor(job);
-    }
-    if (job.params.flag('skip')) {
-      // Skip execution
-      return execZNoOp();
     }
 
     // Normal execution
