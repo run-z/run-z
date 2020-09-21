@@ -1,4 +1,3 @@
-import { asis } from '@proc7ts/primitives';
 import type { ZOptionsParser } from '@run-z/optionz';
 import { StandardZSetup } from '../builtins';
 import type { ZCall, ZCallDetails, ZPackageLocation, ZPlan, ZSetup } from '../core';
@@ -71,8 +70,8 @@ export class TestPlan {
     return this.lastPlan.callOf(await target.task(taskName));
   }
 
-  noCallOf(target: ZPackage, taskName: string): Promise<any> {
-    return this.callOf(target, taskName).catch(asis);
+  findCallOf(target: ZPackage, taskName: string): ZCall | undefined {
+    return this.lastPlan.findCallOf(target, taskName);
   }
 
 }

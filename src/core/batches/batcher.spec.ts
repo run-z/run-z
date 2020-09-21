@@ -78,9 +78,9 @@ describe('ZBatcher', () => {
       await testPlan.parse('run-z --all other');
 
       expect((await testPlan.callOf(nested1, 'other')).params(ZTaskParams.newEvaluator()).attr('test')).toBe('other');
-      expect(await testPlan.noCallOf(nested1, 'test')).toBeInstanceOf(TypeError);
-      expect(await testPlan.noCallOf(nested2, 'other')).toBeInstanceOf(TypeError);
-      expect(await testPlan.noCallOf(nested2, 'test')).toBeInstanceOf(TypeError);
+      expect(testPlan.findCallOf(nested1, 'test')).toBeUndefined();
+      expect(testPlan.findCallOf(nested2, 'other')).toBeUndefined();
+      expect(testPlan.findCallOf(nested2, 'test')).toBeUndefined();
     });
 
     it('falls back to default batcher if no named batches defined', async () => {
@@ -184,8 +184,8 @@ describe('ZBatcher', () => {
     await testPlan.parse('run-z --all test');
 
     expect((await testPlan.callOf(nested1, 'test')).params(ZTaskParams.newEvaluator()).attr('test')).toBe('main');
-    expect(await testPlan.noCallOf(nested1, 'other')).toBeInstanceOf(TypeError);
+    expect(testPlan.findCallOf(nested1, 'other')).toBeUndefined();
     expect((await testPlan.callOf(nested2, 'test')).params(ZTaskParams.newEvaluator()).attr('test')).toBe('main');
-    expect(await testPlan.noCallOf(nested2, 'other')).toBeInstanceOf(TypeError);
+    expect(testPlan.findCallOf(nested2, 'other')).toBeUndefined();
   }
 });

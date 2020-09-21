@@ -18,13 +18,15 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   readonly target: ZPackage;
   readonly name: string;
   readonly taskQN: string;
-  readonly callDetails: ZCallDetails.Full<TAction>;
 
   constructor(protected readonly _builder: ZTaskBuilder$, readonly spec: ZTaskSpec<TAction>) {
     this.target = _builder.taskTarget;
     this.taskQN = this.name = _builder.taskName;
-    this.callDetails = {
-      params: this._callParams.bind(this),
+  }
+
+  callDetails(call: ZCall<TAction>): ZCallDetails.Full<TAction> {
+    return {
+      params: this._callParams.bind(this, call),
       plan: this._planCall.bind(this),
     };
   }
@@ -72,9 +74,12 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   /**
    * Builds initial task execution parameters.
    *
+   * @param _call  This task call to build parameters for.
+   * @param _evaluator  Task parameters evaluation context.
+   *
    * @returns Partial task execution parameters.
    */
-  protected _callParams(): ZTaskParams {
+  protected _callParams(_call: ZCall<TAction>, _evaluator: ZTaskParams.Evaluator): ZTaskParams {
 
     const { spec: { attrs, args } } = this;
 

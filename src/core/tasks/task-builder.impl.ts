@@ -6,7 +6,7 @@ import type { AbstractZTask } from './impl';
 import { CommandZTask, GroupZTask, ScriptZTask, UnknownZTask } from './impl';
 import type { ZTaskBuilder } from './task-builder';
 import type { ZTaskOption } from './task-option';
-import { ZTaskSpec } from './task-spec';
+import type { ZTaskSpec } from './task-spec';
 import { addZTaskAttr, addZTaskAttrs } from './task-spec.impl';
 
 /**
@@ -76,10 +76,18 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
       }: ZOptionsParser.Opts<ZTaskOption> = {},
   ): Promise<this> {
 
-    const args = this.taskTarget.setup.taskParser.parseCommandLine(commandLine);
+    const args = this.taskTarget.setup.taskParser.parseCommandLine(commandLine, { script: true });
 
-    if (!args) {
-      this.setAction(ZTaskSpec.scriptAction);
+    if (!args || args[0] !== 'run-z') {
+
+      const [command, ...rest] = args || [];
+
+      this.setAction({
+        type: 'script',
+        command,
+        args: rest,
+      });
+
       return this;
     }
 

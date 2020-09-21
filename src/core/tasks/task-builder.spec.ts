@@ -43,6 +43,31 @@ describe('ZTaskBuilder', () => {
         },
       });
     });
+    it('falls back when task command is not `run-z`', async () => {
+
+      const builder = await newTask({
+        name: 'test',
+        scripts: {
+          test: 'not-run-z attr=val1 --then exec',
+        },
+      });
+
+      await builder.applyArgv('test', ['/usr/bin/node', 'run-z.js', 'attr=val1', '--then', 'exec', 'attr=val2']);
+
+      expect(builder.spec()).toEqual({
+        pre: [],
+        attrs: {
+          attr: ['val1'],
+        },
+        args: [],
+        action: {
+          type: 'command',
+          command: 'exec',
+          parallel: false,
+          args: ['attr=val2'],
+        },
+      });
+    });
     it('falls back when task name absent', async () => {
 
       const builder = await newTask({

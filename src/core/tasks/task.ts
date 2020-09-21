@@ -31,9 +31,13 @@ export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> exte
   readonly spec: ZTaskSpec<TAction>;
 
   /**
-   * Initial details for {@link call calling} this task.
+   * Builds initial details for {@link call calling} this task.
+   *
+   * @param call  This task call to build details of.
+   *
+   * @return Full task call details.
    */
-  readonly callDetails: ZCallDetails.Full<TAction>;
+  callDetails(call: ZCall<TAction>): ZCallDetails.Full<TAction>;
 
     /**
      * Plans a call to this task as a prerequisite of another one.
