@@ -74,22 +74,6 @@ describe('ZCall', () => {
     });
   });
 
-  describe('extendAttrs', () => {
-    it('extends params', async () => {
-
-      const call = await plan();
-
-      expect(call.extendAttrs({
-        attrs: { attr1: ['attr1-val2'] },
-        args: ['arg2'],
-      })(ZTaskParams.newEvaluator())).toEqual({
-        ...initParams,
-        attrs: { ...initParams.attrs, attr1: ['attr1-val', 'attr1-val2'] },
-        args: ['arg2'],
-      });
-    });
-  });
-
   function plan(params: ZTaskParams.Partial = {}): Promise<ZCall> {
     return task.call({ params: valueProvider(params) });
   }

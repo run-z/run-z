@@ -35,15 +35,20 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
       { attrs, args }: ZTaskSpec.Pre,
       details: ZCallDetails.Full,
   ): Promise<ZCall> {
-
-    const { plannedCall } = planner.dependent;
-    const taskParams = plannedCall.extendAttrs({ attrs, args });
-
     return planner.callPre(
         this,
         {
           ...details,
-          params: evaluator => taskParams(evaluator).extend(details.params(evaluator)),
+          params: evaluator => ZTaskParams.update(
+              ZTaskParams.update(
+                  ZTaskParams.update(
+                    ZTaskParams.newMutable(),
+                    { attrs: planner.dependent.plannedCall.task.spec.attrs }, // Dependent task attrs
+                  ),
+                  { attrs, args }, // Extend with explicit prerequisite parameters
+              ),
+              details.params(evaluator), // Extend with additional parameters
+          ),
         },
     );
   }
