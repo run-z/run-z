@@ -1,6 +1,7 @@
 import { overNone, thruIt } from '@proc7ts/a-iterable';
 import { nextSkip } from '@proc7ts/call-thru';
 import { ZExecutor } from '../jobs/job.impl';
+import type { ZPackage } from '../packages';
 import type { ZSetup } from '../setup';
 import type { ZTask, ZTaskQualifier, ZTaskSpec } from '../tasks';
 import type { ZCall } from './call';
@@ -18,6 +19,7 @@ export class ZInstructionRecords {
   readonly executor: ZExecutor = new ZExecutor();
   private readonly _qualifiers = new Map<ZTask, Set<ZTaskQualifier>>();
   private readonly _calls = new Map<ZTask, ZCallRecord>();
+  private readonly _targetCalls = new Map<ZPackage, Map<string, ZCall>>();
   private readonly _prerequisites = new Map<ZTask, Set<ZTask>>();
   private readonly _parallel = new Map<ZTaskQualifier, Set<ZTaskQualifier>>();
   private readonly _parallelWhen = new Map<ZTaskQualifier, Set<(this: void, other: ZTask, task: ZTask) => boolean>>();
@@ -34,6 +36,12 @@ export class ZInstructionRecords {
         }
 
         return call;
+      },
+      findCallOf: (target: ZPackage, taskName: string): ZCall | undefined => {
+
+        const calls = this._targetCalls.get(target);
+
+        return calls && calls.get(taskName);
       },
     };
   }
@@ -67,6 +75,15 @@ export class ZInstructionRecords {
     } else {
       call = new ZCallRecord(this, by, task, details);
       this._calls.set(task, call);
+
+      const targetCalls = this._targetCalls.get(task.target);
+
+      if (targetCalls) {
+        targetCalls.set(task.name, call);
+      } else {
+        this._targetCalls.set(task.target, new Map([[task.name, call]]));
+      }
+
       await call._plan(task.callDetails(call));
     }
     await call._plan(details);
