@@ -96,10 +96,15 @@ export class ZTaskParser {
    * environment variable substitution, or comment.
    *
    * @param commandLine  A command line to parse.
+   * @param script  Whether to allow NPM scripts. When `false` (by default), the command line is rejected, unless
+   * the command is `run-z`.
    *
    * @returns Either parsed command line arguments, or `undefined` if target script can not be parsed.
    */
-  parseCommandLine(commandLine: string): readonly string[] | undefined {
+  parseCommandLine(
+      commandLine: string,
+      { script }: { script?: boolean } = {},
+  ): readonly string[] | undefined {
 
     let withEnv = false;
     const detectEnv = (): undefined => {
@@ -108,8 +113,8 @@ export class ZTaskParser {
     };
     const entries = shellQuote.parse(commandLine, detectEnv);
 
-    if (entries[0] !== 'run-z') {
-      return; // Not a run-z script.
+    if (!script && entries[0] !== 'run-z') {
+      return; // Not a `run-z` command.
     }
     if (withEnv) {
       return; // Environment variable substitution supported in NPM scripts only.

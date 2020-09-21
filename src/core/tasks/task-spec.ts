@@ -159,7 +159,9 @@ export namespace ZTaskSpec {
 
     readonly type: 'script';
 
-    readonly command?: undefined;
+    readonly command?: string;
+
+    readonly args: readonly string[];
 
   }
 
@@ -201,13 +203,6 @@ const unknownZTaskAction: ZTaskSpec.Unknown = {
   type: 'unknown',
 };
 
-/**
- * @internal
- */
-const scriptZTaskAction: ZTaskSpec.Script = {
-  type: 'script',
-};
-
 export const ZTaskSpec = {
 
   /**
@@ -215,13 +210,6 @@ export const ZTaskSpec = {
    */
   get unknownAction(): ZTaskSpec.Unknown {
     return unknownZTaskAction;
-  },
-
-  /**
-   * NPM script execution task specifier.
-   */
-  get scriptAction(): ZTaskSpec.Script {
-    return scriptZTaskAction;
   },
 
 };

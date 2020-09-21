@@ -5,7 +5,7 @@ import { ZPackage, ZPackageTree } from '../packages';
 import { ZSetup } from '../setup';
 import type { ZTaskBuilder } from './task-builder';
 import { ZTaskParser } from './task-parser';
-import { ZTaskSpec } from './task-spec';
+import type { ZTaskSpec } from './task-spec';
 
 describe('ZTaskParser', () => {
 
@@ -19,25 +19,25 @@ describe('ZTaskParser', () => {
 
     const spec = await parseSpec('some command');
 
-    expect(spec.action).toBe(ZTaskSpec.scriptAction);
+    expect(spec.action).toEqual({ type: 'script', command: 'some', args: ['command'] });
   });
   it('treats task with comment as NPM script', async () => {
 
     const spec = await parseSpec('run-z command #comment');
 
-    expect(spec.action).toBe(ZTaskSpec.scriptAction);
+    expect(spec.action).toEqual({ type: 'script', args: [] });
   });
   it('treats task with shell commands as NPM script', async () => {
 
     const spec = await parseSpec('run-z command > out');
 
-    expect(spec.action).toBe(ZTaskSpec.scriptAction);
+    expect(spec.action).toEqual({ type: 'script', args: [] });
   });
   it('treats task with environment variable substitution as NPM script', async () => {
 
     const spec = await parseSpec('run-z comm${some_env}');
 
-    expect(spec.action).toBe(ZTaskSpec.scriptAction);
+    expect(spec.action).toEqual({ type: 'script', args: [] });
   });
   it('recognizes prerequisites', async () => {
 
