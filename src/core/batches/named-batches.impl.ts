@@ -1,7 +1,9 @@
 import { itsEmpty, makeIt, mapIt } from '@proc7ts/a-iterable';
 import type { ZPackage, ZPackageSet } from '../packages';
-import { ZCall, ZCallDetails, ZPrePlanner } from '../plan';
-import { UnknownZTaskError, ZTask, ZTaskSpec } from '../tasks';
+import type { ZCall, ZPrePlanner } from '../plan';
+import { ZCallDetails } from '../plan';
+import type { ZTask, ZTaskSpec } from '../tasks';
+import { UnknownZTaskError } from '../unknown-task-error';
 import type { ZBatchPlanner } from './batch-planner';
 import { batchZTask } from './batcher.impl';
 import { ZBatching } from './batching';

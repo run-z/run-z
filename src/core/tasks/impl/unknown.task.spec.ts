@@ -1,7 +1,7 @@
 import { asis } from '@proc7ts/primitives';
 import { TestPlan } from '../../../spec';
 import { ZShell } from '../../jobs';
-import { UnknownZTaskError } from '../unknown-task-error';
+import { UnknownZTaskError } from '../../unknown-task-error';
 import { UnknownZTask } from './unknown.task';
 
 describe('UnknownZTask', () => {

@@ -3,7 +3,7 @@ import { ZOptionError } from '@run-z/optionz';
 import { prerequisitesOf, taskId, taskIds, TestPlan } from '../../../spec';
 import { ZShell } from '../../jobs';
 import { ZTaskParams } from '../../plan';
-import { UnknownZTaskError } from '../unknown-task-error';
+import { UnknownZTaskError } from '../../unknown-task-error';
 import { GroupZTask } from './group.task';
 
 describe('GroupZTask', () => {

@@ -6,3 +6,4 @@ export * from './packages';
 export * from './plan';
 export * from './setup';
 export * from './tasks';
+export * from './unknown-task-error';

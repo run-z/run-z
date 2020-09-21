@@ -1,9 +1,9 @@
 import type { ZExecution } from '@run-z/exec-z';
 import { execZNoOp, failZ } from '@run-z/exec-z';
 import type { ZJob } from '../../jobs';
+import { UnknownZTaskError } from '../../unknown-task-error';
 import type { ZTaskBuilder$ } from '../task-builder.impl';
 import { ZTaskSpec } from '../task-spec';
-import { UnknownZTaskError } from '../unknown-task-error';
 import { AbstractZTask } from './abstract.task';
 
 /**

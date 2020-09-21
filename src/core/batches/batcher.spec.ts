@@ -2,7 +2,7 @@ import { asis } from '@proc7ts/primitives';
 import { TestPlan } from '../../spec';
 import type { ZPackage, ZPackageTree } from '../packages';
 import { ZTaskParams } from '../plan';
-import { UnknownZTaskError } from '../tasks';
+import { UnknownZTaskError } from '../unknown-task-error';
 
 describe('ZBatcher', () => {
 
