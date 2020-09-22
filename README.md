@@ -22,6 +22,7 @@ Run That
 - Only one instance of `run-z` process started despite the number of tasks to execute. 
 
 > See also:
+> - [API Documentation]
 > - [Project Wiki](https://github.com/run-z/run-z/wiki)  
 > - [Сборка сложных Node.js проектов утилитой run-z](https://habr.com/ru/post/517506/) (Russian)
 
