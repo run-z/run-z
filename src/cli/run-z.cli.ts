@@ -35,7 +35,7 @@ export interface RunZOpts {
   /**
    * Working directory location.
    *
-   * @default {@link ZPackageDirectory.open() current directory}.
+   * @default {@link ZPackageDirectory.open current directory}.
    */
   readonly location?: ZPackageLocation;
 

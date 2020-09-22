@@ -6,7 +6,7 @@
 /**
  * Task specifier.
  *
- * Built by {@link ZTaskParser.parse parsing command line}.
+ * Built by {@link ZTaskParser parsing command line}.
  */
 export interface ZTaskSpec<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
 

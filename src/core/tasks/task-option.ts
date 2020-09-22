@@ -74,7 +74,7 @@ export namespace ZTaskOption {
     readonly taskName?: string;
 
     /**
-     * Whether the started task is an {@link ZTaskSpec.annex annex}.
+     * Whether the started task is an {@link ZTaskSpec.Pre.annex annex}.
      */
     readonly isAnnex: boolean;
 
