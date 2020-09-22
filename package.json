@@ -64,7 +64,7 @@
     "@rollup/plugin-node-resolve": "^9.0.0",
     "@types/cross-spawn": "^6.0.2",
     "@types/jest": "^26.0.14",
-    "@types/node": "^12.12.59",
+    "@types/node": "^12.12.62",
     "@types/semver": "^7.3.4",
     "@types/shell-quote": "^1.7.0",
     "@types/wrap-ansi": "^3.0.0",
