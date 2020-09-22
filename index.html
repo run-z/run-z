@@ -164,33 +164,22 @@ run-z build test attribute=value # Pass `attribute` with `value` to the task its
 run-z test/=if-present           # The shorthand for `if-present=on`.</code></pre>
 				<p>Some attributes are flags. I.e. their values treated as booleans with <code>0</code>, <code>false</code>, and <code>off</code> (case-insensitive) meaning
 				<code>false</code>, and everything else meaning <code>true</code>. A shorthand syntax (<code>=flag</code>) can be used to set it to <code>on</code> meaning <code>true</code>.</p>
-				<p>If attribute value set multiple times, the last value takes precedence.</p>
-				<p>Attributes passed to the task prerequisites transitively. The deepest attribute value has lower precedence than the
-				one passed from the dependent task. The attribute passed from command line always has the highest precedence.</p>
+				<p>If attribute value set multiple times, the last value takes precedence. If set both by a task and its prerequisite,
+					the value set prerequisite has lower precedence. The attribute value passed from command line always has the highest
+				precedence.</p>
 				<p>The following attributes supported:</p>
 				<ul>
 					<li><code>if-present</code> - a flag indicating that the task should be executed only if corresponding script defined.
 					This can be useful for batched tasks.</li>
 					<li><code>skip</code> - when this flag set the task won&#39;t be executed.</li>
 				</ul>
-				<p>Other attributes aren&#39;t used currently, but still can be set.</p>
-				<a href="#task-annexes" id="task-annexes" style="color: inherit; text-decoration: none;">
-					<h3>Task Annexes</h3>
-				</a>
-				<p>Task annex is a task name prefixed with <code>+</code> sign. It does the same as the task, except the task execution.</p>
-				<p>This can be used e.g. to pass additional parameters to the task <em>IF</em> the task executed.</p>
-				<p>Note that each task executed once. Still, it can be specified multiple times. Each time with its own set of parameters
-				and attributes.</p>
-				<p>So, for example, with the following <code>package.json</code> file:</p>
-				<pre><code class="language-json">{
-  <span class="hljs-attr">&quot;scripts&quot;</span>: {
-    <span class="hljs-attr">&quot;test&quot;</span>: <span class="hljs-string">&quot;run-z +z jest&quot;</span>,
-    <span class="hljs-attr">&quot;z&quot;</span>: <span class="hljs-string">&quot;run-z +test/--runInBand&quot;</span>
-  }
-}</code></pre>
-				<p>executing the</p>
-				<pre><code>yarn <span class="hljs-built_in">test</span></code></pre>
-				<p>would always apply a <code>--runInBand</code> option to <code>jest</code>.</p>
+				<p>Other attributes aren&#39;t currently used, but still can be set.</p>
+				<blockquote>
+					<p>See also:</p>
+					<ul>
+						<li><a href="https://github.com/run-z/run-z/wiki/Task-annexes">Task annexes</a></li>
+					</ul>
+				</blockquote>
 				<a href="#parallel-and-sequential-execution" id="parallel-and-sequential-execution" style="color: inherit; text-decoration: none;">
 					<h2>Parallel And Sequential Execution</h2>
 				</a>

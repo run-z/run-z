@@ -124,7 +124,7 @@
 					<div class="tsd-signature tsd-kind-icon">Supported<wbr>Options<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">SupportedZOptions</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/run-z.ZTaskOption.html" class="tsd-signature-type">ZTaskOption</a><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/4927265/src/core/tasks/task-parser.ts#L151">run-z/run-z/src/core/tasks/task-parser.ts:151</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/52361f9/src/core/tasks/task-parser.ts#L156">run-z/run-z/src/core/tasks/task-parser.ts:156</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -146,7 +146,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/4927265/src/core/tasks/task-parser.ts#L27">run-z/run-z/src/core/tasks/task-parser.ts:27</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/52361f9/src/core/tasks/task-parser.ts#L27">run-z/run-z/src/core/tasks/task-parser.ts:27</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -182,7 +182,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/4927265/src/core/tasks/task-parser.ts#L133">run-z/run-z/src/core/tasks/task-parser.ts:133</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/52361f9/src/core/tasks/task-parser.ts#L138">run-z/run-z/src/core/tasks/task-parser.ts:138</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -226,7 +226,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/4927265/src/core/tasks/task-parser.ts#L76">run-z/run-z/src/core/tasks/task-parser.ts:76</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/52361f9/src/core/tasks/task-parser.ts#L76">run-z/run-z/src/core/tasks/task-parser.ts:76</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -284,13 +284,13 @@
 					<a name="parseCommandLine" class="tsd-anchor"></a>
 					<h3>parse<wbr>Command<wbr>Line</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">parse<wbr>Command<wbr>Line<span class="tsd-signature-symbol">(</span>commandLine<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">readonly </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
+						<li class="tsd-signature tsd-kind-icon">parse<wbr>Command<wbr>Line<span class="tsd-signature-symbol">(</span>commandLine<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, __namedParameters<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">{ </span>script<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">readonly </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/4927265/src/core/tasks/task-parser.ts#L102">run-z/run-z/src/core/tasks/task-parser.ts:102</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/52361f9/src/core/tasks/task-parser.ts#L104">run-z/run-z/src/core/tasks/task-parser.ts:104</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -308,6 +308,18 @@
 										<p>A command line to parse.</p>
 									</div>
 								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> __namedParameters: <span class="tsd-signature-symbol">{ </span>script<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = {}</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter">
+											<h5>script<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></h5>
+											<div class="tsd-comment tsd-typography">
+												<p>Whether to allow NPM scripts. When <code>false</code> (by default), the command line is rejected, unless
+												the command is <code>run-z</code>.</p>
+											</div>
+										</li>
+									</ul>
+								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">readonly </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h4>
 							<p>Either parsed command line arguments, or <code>undefined</code> if target script can not be parsed.</p>
@@ -324,7 +336,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/4927265/src/core/tasks/task-parser.ts#L46">run-z/run-z/src/core/tasks/task-parser.ts:46</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/52361f9/src/core/tasks/task-parser.ts#L46">run-z/run-z/src/core/tasks/task-parser.ts:46</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
