@@ -78,6 +78,11 @@ Setup And Usage
     npm run z -- clean build  # Use a no-op `z` task for convenience.     
     ```
 
+Or just use `npx` for your existing project. No need to install `run-z` or modify `package.json`:
+```shell script
+npx run-z clean build
+```
+
 
 Tasks
 -----
