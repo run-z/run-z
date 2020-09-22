@@ -141,10 +141,9 @@ run-z test/=if-present           # The shorthand for `if-present=on`.
 Some attributes are flags. I.e. their values treated as booleans with `0`, `false`, and `off` (case-insensitive) meaning
 `false`, and everything else meaning `true`. A shorthand syntax (`=flag`) can be used to set it to `on` meaning `true`.
 
-If attribute value set multiple times, the last value takes precedence.
-
-Attributes passed to the task prerequisites transitively. The deepest attribute value has lower precedence than the
-one passed from the dependent task. The attribute passed from command line always has the highest precedence.
+If attribute value set multiple times, the last value takes precedence. If set both by a task and its prerequisite,
+the value set prerequisite has lower precedence. The attribute value passed from command line always has the highest
+precedence.
 
 The following attributes supported:
 
@@ -152,32 +151,11 @@ The following attributes supported:
   This can be useful for batched tasks.
 - `skip` - when this flag set the task won't be executed.
 
-Other attributes aren't used currently, but still can be set.
+Other attributes aren't currently used, but still can be set.
 
 
-### Task Annexes
-
-Task annex is a task name prefixed with `+` sign. It does the same as the task, except the task execution.
-
-This can be used e.g. to pass additional parameters to the task _IF_ the task executed.
-
-Note that each task executed once. Still, it can be specified multiple times. Each time with its own set of parameters
-and attributes.
-
-So, for example, with the following `package.json` file:
-```json
-{
-  "scripts": {
-    "test": "run-z +z jest",
-    "z": "run-z +test/--runInBand"
-  }
-}
-```
-executing the
-```
-yarn test
-```
-would always apply a `--runInBand` option to `jest`.
+> See also:
+> - [Task annexes](https://github.com/run-z/run-z/wiki/Task-annexes)
 
 
 Parallel And Sequential Execution
