@@ -17,7 +17,7 @@ Run That
 - Additional [parameters] can be passed to any task. 
 - Tasks can be executed [in parallel or sequentially].
 - Tasks may belong to [different packages]. This is especially helpful with [Yarn Workspaces] or [Lerna].
-- Tasks can be [batched] - the same-named tasks can executed in each of the selected packages. 
+- Tasks can be [batched] - the same-named tasks can be executed in each of the selected packages. 
 - The dependencies between packages respected when batching - the tasks executed in dependencies-first order.
 - Only one instance of `run-z` process started despite the number of tasks to execute. 
 
