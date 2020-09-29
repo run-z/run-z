@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module run-z
  */
-import { flatMapIt, mapIt, overNone } from '@proc7ts/a-iterable';
+import { flatMapIt, mapIt, overElementsOf, overNone, overOne } from '@proc7ts/push-iterator';
 import type { ZPackageJson } from './package.json';
 
 /**
@@ -113,7 +113,7 @@ export abstract class ZPackageLocation {
       );
     }
 
-    return deep ? flatMapIt([[root], allNested]) : allNested;
+    return deep ? overElementsOf(overOne(root), allNested) : allNested;
   }
 
 }

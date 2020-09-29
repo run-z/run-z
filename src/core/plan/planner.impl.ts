@@ -1,5 +1,5 @@
-import { overNone, thruIt } from '@proc7ts/a-iterable';
-import { nextSkip } from '@proc7ts/call-thru';
+import { isPresent } from '@proc7ts/primitives';
+import { filterIt, mapIt, overNone } from '@proc7ts/push-iterator';
 import { ZExecutor } from '../jobs/job.impl';
 import type { ZPackage } from '../packages';
 import type { ZSetup } from '../setup';
@@ -122,9 +122,12 @@ export class ZInstructionRecords {
       return overNone();
     }
 
-    return thruIt(
-        prerequisites,
-        task => this._calls.get(task) || nextSkip,
+    return filterIt<ZCallRecord | undefined, ZCallRecord>(
+        mapIt(
+            prerequisites,
+            task => this._calls.get(task),
+        ),
+        isPresent,
     );
   }
 

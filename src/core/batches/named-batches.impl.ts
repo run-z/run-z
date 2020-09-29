@@ -1,4 +1,4 @@
-import { itsEmpty, makeIt, mapIt } from '@proc7ts/a-iterable';
+import { itsEmpty, mapIt } from '@proc7ts/push-iterator';
 import type { ZPackage, ZPackageSet } from '../packages';
 import type { ZCall, ZPrePlanner } from '../plan';
 import { ZCallDetails } from '../plan';
@@ -81,7 +81,7 @@ export function namedZBatches(
     }
   }
 
-  return makeIt(() => batchTaskNames.values());
+  return { [Symbol.iterator]: () => batchTaskNames.values() };
 }
 
 /**

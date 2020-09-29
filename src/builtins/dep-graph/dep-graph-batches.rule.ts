@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module run-z/builtins
  */
-import { mapIt } from '@proc7ts/a-iterable';
 import { noop } from '@proc7ts/primitives';
+import { mapIt } from '@proc7ts/push-iterator';
 import type { ZBatching, ZBatchRule } from '../../core/batches';
 import type { ZPackage } from '../../core/packages';
 import type { ZTaskParams } from '../../core/plan';

@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module run-z
  */
-import { flatMapIt } from '@proc7ts/a-iterable';
 import { arrayOfElements } from '@proc7ts/primitives';
+import { flatMapIt } from '@proc7ts/push-iterator';
 import type { ZExecution } from '@run-z/exec-z';
 import { execZNoOp } from '@run-z/exec-z';
 import type { ZSetup } from '../setup';

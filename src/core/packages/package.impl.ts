@@ -1,5 +1,5 @@
-import { filterIt, mapIt } from '@proc7ts/a-iterable';
 import { isPresent } from '@proc7ts/primitives';
+import { filterIt, mapIt } from '@proc7ts/push-iterator';
 import type { ZSetup } from '../setup';
 import type { ZTask } from '../tasks';
 import { ZTaskSpec } from '../tasks';

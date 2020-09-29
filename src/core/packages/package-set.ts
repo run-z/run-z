@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module run-z
  */
-import { flatMapIt, mapIt } from '@proc7ts/a-iterable';
+import { flatMapIt, mapIt } from '@proc7ts/push-iterator';
 import type { ZPackage } from './package';
 
 /**

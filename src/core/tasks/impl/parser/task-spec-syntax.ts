@@ -1,5 +1,5 @@
-import { thruIt } from '@proc7ts/a-iterable';
-import { nextSkip } from '@proc7ts/call-thru';
+import { overNone } from '@proc7ts/a-iterable';
+import { filterIt } from '@proc7ts/push-iterator';
 import { ZOptionInput, ZOptionSyntax } from '@run-z/optionz';
 import type { ZSetup } from '../../../setup';
 
@@ -191,17 +191,15 @@ function zTaskPreSyntax(args: readonly [string, ...string[]]): Iterable<ZOptionI
   const [name, ...preArgs] = entry.split('/');
 
   if (!name || !preArgs.length) {
-    return [];
+    return overNone();
   }
 
   return [
     {
       name,
       values: Array.from(
-          thruIt(
-              preArgs,
-              preArg => preArg ? '/' + preArg : nextSkip,
-          ),
+          filterIt(preArgs, preArg => !!preArg),
+          preArg => '/' + preArg,
       ),
       tail: args.slice(1),
       retry: true,
