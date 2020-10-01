@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module run-z
  */
-import { flatMapIt } from '@proc7ts/a-iterable';
 import { arrayOfElements, valueByRecipe } from '@proc7ts/primitives';
+import { flatMapIt } from '@proc7ts/push-iterator';
 import type { ZConfig } from './config';
 import type { ZExtension } from './extension';
 import { ZPackageResolver } from './packages';

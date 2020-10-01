@@ -40,11 +40,10 @@
     "node": ">=12"
   },
   "dependencies": {
-    "@proc7ts/a-iterable": "^2.7.0",
-    "@proc7ts/call-thru": "^4.0.0",
     "@proc7ts/primitives": "^1.1.0",
+    "@proc7ts/push-iterator": "^1.0.0-dev",
     "@run-z/exec-z": "^1.1.1",
-    "@run-z/optionz": "^1.0.0",
+    "@run-z/optionz": "^1.1.0",
     "ansi-escapes": "^4.3.1",
     "chalk": "^4.1.0",
     "cli-spinners": "^2.4.0",
@@ -81,7 +80,7 @@
     "rollup-plugin-typescript2": "^0.27.3",
     "run-z": "~1.0.3",
     "shx": "^0.3.2",
-    "ts-jest": "^26.4.0",
+    "ts-jest": "^26.4.1",
     "tslib": "^2.0.1",
     "typedoc": "^0.19.0",
     "typedoc-plugin-external-module-name": "^4.0.3",

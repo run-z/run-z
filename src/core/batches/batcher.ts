@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module run-z
  */
-import { itsEmpty } from '@proc7ts/a-iterable';
+import { itsEmpty } from '@proc7ts/push-iterator';
 import type { ZPackage } from '../packages';
 import type { ZCall } from '../plan';
 import type { ZTask, ZTaskSpec } from '../tasks';

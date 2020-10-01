@@ -1,5 +1,5 @@
-import { itsEmpty } from '@proc7ts/a-iterable';
 import { asis } from '@proc7ts/primitives';
+import { itsEmpty } from '@proc7ts/push-iterator';
 import * as path from 'path';
 import { pathToFileURL, URL } from 'url';
 import { ZPackageDirectory } from '../../os';

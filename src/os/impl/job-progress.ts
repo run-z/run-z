@@ -1,4 +1,4 @@
-import { mapIt } from '@proc7ts/a-iterable';
+import { mapIt } from '@proc7ts/push-iterator';
 import chalk from 'chalk';
 import stringWidth from 'string-width';
 import type { ZJob } from '../../core';

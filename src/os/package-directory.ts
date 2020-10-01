@@ -2,8 +2,8 @@
  * @packageDocumentation
  * @module run-z
  */
-import { filterIt, flatMapIt, mapIt } from '@proc7ts/a-iterable';
 import { isPresent, valueProvider } from '@proc7ts/primitives';
+import { filterIt, flatMapIt, mapIt, overElementsOf, overOne } from '@proc7ts/push-iterator';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath, pathToFileURL, URL } from 'url';
@@ -110,7 +110,7 @@ export class ZPackageDirectory extends ZPackageLocation {
           const deeper = await nested.deeplyNested();
 
           if (await zPackageJsonPath(nested)) {
-            return flatMapIt([[nested], deeper]);
+            return overElementsOf(overOne(nested), deeper);
           }
 
           return deeper;
