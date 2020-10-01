@@ -1,6 +1,6 @@
 {
   "name": "run-z",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Run that, then this. package.json scripts and deps runner",
   "keywords": [
     "cli",
