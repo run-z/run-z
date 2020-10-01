@@ -80,7 +80,7 @@
     "rollup-plugin-typescript2": "^0.27.3",
     "run-z": "~1.0.3",
     "shx": "^0.3.2",
-    "ts-jest": "^26.4.0",
+    "ts-jest": "^26.4.1",
     "tslib": "^2.0.1",
     "typedoc": "^0.19.0",
     "typedoc-plugin-external-module-name": "^4.0.3",
