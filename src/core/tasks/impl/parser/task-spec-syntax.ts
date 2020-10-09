@@ -1,4 +1,3 @@
-import { filterIt } from '@proc7ts/push-iterator';
 import { ZOptionInput, ZOptionSyntax } from '@run-z/optionz';
 import type { ZSetup } from '../../../setup';
 
@@ -199,10 +198,7 @@ function zTaskPreSyntax(args: readonly [string, ...string[]]): readonly ZOptionI
   return [
     {
       name,
-      values: Array.from(
-          filterIt(preArgs, preArg => !!preArg),
-          preArg => '/' + preArg,
-      ),
+      values: preArgs.filter(preArg => !!preArg).map(preArg => '/' + preArg),
       tail: args.slice(1),
       retry: true,
     },

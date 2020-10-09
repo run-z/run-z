@@ -67,7 +67,7 @@ describe('ZPackageTree', () => {
 
   describe('nested', () => {
     it('lists nested packages', () => {
-      expect(Array.from(root.nested()).map(n => n.path)).toEqual([
+      expect(root.nested().map(n => n.path)).toEqual([
         'root/nested1',
         'root/nested2',
       ]);
@@ -76,7 +76,7 @@ describe('ZPackageTree', () => {
 
   describe('deeplyNested', () => {
     it('lists deeply nested packages', () => {
-      expect(Array.from(root.deeplyNested()).map(n => n.path)).toEqual([
+      expect(root.deeplyNested().map(n => n.path)).toEqual([
         'root/nested1',
         'root/nested1/nested1.1',
         'root/nested2',
@@ -135,7 +135,7 @@ describe('ZPackageTree', () => {
     });
 
     async function select(pattern: string): Promise<string[]> {
-      return Array.from(await root.select(pattern), ({ path }) => path);
+      return (await root.select(pattern)).map(({ path }) => path);
     }
 
   });

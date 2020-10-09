@@ -1,5 +1,4 @@
 import { isPresent } from '@proc7ts/primitives';
-import { filterIt, mapIt, overNone } from '@proc7ts/push-iterator';
 import { ZExecutor } from '../jobs/job.impl';
 import type { ZPackage } from '../packages';
 import type { ZSetup } from '../setup';
@@ -57,9 +56,10 @@ export class ZInstructionRecords {
     }
   }
 
-  private _qualifiersOf(task: ZTask): Iterable<ZTaskQualifier> {
+  private _qualifiersOf(task: ZTask): readonly ZTaskQualifier[] {
 
-    const result = Array.from(this._qualifiers.get(task) || [task]);
+    const foundQualifiers = this._qualifiers.get(task);
+    const result = foundQualifiers ? [...foundQualifiers] : [task];
 
     for (const alike of task.alike) {
 
@@ -114,21 +114,15 @@ export class ZInstructionRecords {
     }
   }
 
-  prerequisitesOf(dependent: ZTask): Iterable<ZCall> {
+  prerequisitesOf(dependent: ZTask): readonly ZCall[] {
 
     const prerequisites = this._prerequisites.get(dependent);
 
     if (!prerequisites) {
-      return overNone();
+      return [];
     }
 
-    return filterIt<ZCallRecord | undefined, ZCallRecord>(
-        mapIt(
-            prerequisites,
-            task => this._calls.get(task),
-        ),
-        isPresent,
-    );
+    return [...prerequisites].map(task => this._calls.get(task)).filter(isPresent);
   }
 
   isPrerequisiteOf(target: ZTask, toCheck: ZTask, checked: Set<ZTask>): boolean {

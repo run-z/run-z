@@ -1,5 +1,4 @@
 import { noop } from '@proc7ts/primitives';
-import { mapIt } from '@proc7ts/push-iterator';
 import { execZ, execZAfter, execZAll, execZNoOp, ZExecution } from '@run-z/exec-z';
 import type { ZTaskParams } from '../plan';
 import { ZCallRecord } from '../plan/call.impl';
@@ -82,10 +81,7 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
 
   private _execPre(): ZExecution {
     return execZAll(
-        mapIt(
-            this.call.prerequisites(),
-            pre => pre.exec(this.shell),
-        ),
+        this.call.prerequisites().map(pre => pre.exec(this.shell)),
         noop,
     );
   }

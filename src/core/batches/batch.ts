@@ -27,6 +27,6 @@ export interface ZBatch {
   /**
    * Batched task calls.
    */
-  readonly batched: Iterable<ZCall>;
+  readonly batched: readonly ZCall[];
 
 }

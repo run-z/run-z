@@ -2,7 +2,6 @@
  * @packageDocumentation
  * @module run-z
  */
-import { flatMapIt, mapIt, overElementsOf, overNone, overOne } from '@proc7ts/push-iterator';
 import type { ZPackageJson } from './package.json';
 
 /**
@@ -51,7 +50,7 @@ export abstract class ZPackageLocation {
    * @returns Either an iterable of all package locations immediately nested in this one one, or a promise-like
    * instance resolving to one.
    */
-  abstract nested(): Iterable<ZPackageLocation> | Promise<Iterable<ZPackageLocation>>;
+  abstract nested(): readonly ZPackageLocation[] | Promise<readonly ZPackageLocation[]>;
 
   /**
    * Lists deeply nested package locations.
@@ -59,7 +58,7 @@ export abstract class ZPackageLocation {
    * @returns Either an iterable of all package locations nested in this one or deeper, or a promise-like instance
    * resolving to one.
    */
-  abstract deeplyNested(): Iterable<ZPackageLocation> | Promise<Iterable<ZPackageLocation>>;
+  abstract deeplyNested(): readonly ZPackageLocation[] | Promise<readonly ZPackageLocation[]>;
 
   /**
    * Tries to load `package.json` from this location.
@@ -80,7 +79,7 @@ export abstract class ZPackageLocation {
    *
    * @returns A promise resolving to iterable of matching package locations.
    */
-  async select(selector: string): Promise<Iterable<ZPackageLocation>> {
+  async select(selector: string): Promise<readonly ZPackageLocation[]> {
 
     const index = selector.indexOf('//');
 
@@ -88,7 +87,7 @@ export abstract class ZPackageLocation {
 
       const relative = this.relative(selector);
 
-      return relative ? [relative] : overNone();
+      return relative ? [relative] : [];
     }
 
     const prefix = selector.substr(0, index);
@@ -97,23 +96,18 @@ export abstract class ZPackageLocation {
     const root = this.relative(prefix);
 
     if (!root) {
-      return overNone();
+      return [];
     }
 
-    const allNested: Iterable<ZPackageLocation> = deep ? await root.deeplyNested() : await root.nested();
+    const allNested: readonly ZPackageLocation[] = deep ? await root.deeplyNested() : await root.nested();
 
     if (suffix) {
-      return flatMapIt(
-          await Promise.all(
-              mapIt(
-                  allNested,
-                  nested => nested.select(suffix),
-              ),
-          ),
-      );
+      return (await Promise.all(
+          allNested.map(nested => nested.select(suffix)),
+      )).flat();
     }
 
-    return deep ? overElementsOf(overOne(root), allNested) : allNested;
+    return deep ? [[root], allNested].flat() : allNested;
   }
 
 }

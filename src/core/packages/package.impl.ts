@@ -1,5 +1,4 @@
 import { isPresent } from '@proc7ts/primitives';
-import { filterIt, mapIt } from '@proc7ts/push-iterator';
 import type { ZSetup } from '../setup';
 import type { ZTask } from '../tasks';
 import { ZTaskSpec } from '../tasks';
@@ -16,7 +15,7 @@ export interface ZPackageResolver$ {
   readonly setup: ZSetup;
   rev: number;
   addPackage(pkg: ZPackage$): void;
-  byName(name: string): Iterable<ZPackage$>;
+  byName(name: string): readonly ZPackage$[];
   buildDepGraph(): void;
 }
 
@@ -121,7 +120,7 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
         : unscopedName.substr(slashIdx + 1);
   }
 
-  packages(): Iterable<this> {
+  packages(): readonly [this] {
     return [this];
   }
 
@@ -201,15 +200,14 @@ class SelectedZPackages extends ZPackageSet {
     super();
   }
 
-  async packages(): Promise<Iterable<ZPackage>> {
+  async packages(): Promise<readonly ZPackage[]> {
 
     const locations = await this.pkg.location.select(this.selector);
-    const found: (ZPackage | undefined)[] = await Promise.all(mapIt(
-        locations,
+    const found: (ZPackage | undefined)[] = await Promise.all(locations.map(
         (location: ZPackageLocation) => this.pkg.setup.packageResolver.find(location),
     ));
 
-    return filterIt<ZPackage | undefined, ZPackage>(found, isPresent);
+    return found.filter(isPresent);
   }
 
   toString(): string {

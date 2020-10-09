@@ -1,5 +1,4 @@
 import { asis } from '@proc7ts/primitives';
-import { itsEmpty } from '@proc7ts/push-iterator';
 import * as path from 'path';
 import { pathToFileURL, URL } from 'url';
 import { ZPackageDirectory } from '../../os';
@@ -48,7 +47,7 @@ describe('ZPackageResolver', () => {
     it('is resolved', () => {
       expect(pkg.name).toBe('anonymous');
       expect(pkg.isAnonymous).toBe(true);
-      expect(itsEmpty(resolver.byName(pkg.name))).toBe(true);
+      expect(resolver.byName(pkg.name)).toHaveLength(0);
     });
 
     describe('parent', () => {

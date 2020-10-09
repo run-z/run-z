@@ -3,7 +3,6 @@
  * @module run-z/builtins
  */
 import { noop } from '@proc7ts/primitives';
-import { mapIt } from '@proc7ts/push-iterator';
 import type { ZBatching, ZBatchRule } from '../../core/batches';
 import type { ZPackage } from '../../core/packages';
 import type { ZTaskParams } from '../../core/plan';
@@ -77,21 +76,18 @@ class ZDepGraphBatches$ implements ZDepGraphBatches {
           return dependants ? depGraph.dependants() : depGraph.dependencies();
         };
 
-        await Promise.all(mapIt(
-            batched,
-            async ({ task }) => dependent.call(
-                task,
-                {
-                  params(): ZTaskParams.Partial {
-                    return task.name !== taskName // Apply only to same-named tasks.
-                    || (includeSelf && task.target === original) // Include original task?
-                    || included().has(task.target) // Included in requested part of dep graph?
-                        ? {}
-                        : { attrs: { skip: [reason] } };
-                  },
-                },
-            ),
-        ));
+        await Promise.all(batched.map(async ({ task }) => dependent.call(
+            task,
+            {
+              params(): ZTaskParams.Partial {
+                return task.name !== taskName // Apply only to same-named tasks.
+                || (includeSelf && task.target === original) // Include original task?
+                || included().has(task.target) // Included in requested part of dep graph?
+                    ? {}
+                    : { attrs: { skip: [reason] } };
+              },
+            },
+        )));
       },
     };
   }

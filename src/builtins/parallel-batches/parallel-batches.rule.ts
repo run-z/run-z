@@ -44,7 +44,7 @@ class ZParallelBatches$ implements ZParallelBatches {
         return !transiently && ZParallelBatches$.newBatchRule(context, control.isParallel);
       },
       processBatch({ dependent, batched }) {
-        dependent.makeParallel(Array.from(batched, call => call.task));
+        dependent.makeParallel(batched.map(({ task }) => task));
       },
     };
   }

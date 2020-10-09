@@ -71,7 +71,7 @@ describe('ZPackage', () => {
   });
 
   async function packages(packageSet: ZPackageSet): Promise<string[]> {
-    return Array.from(await packageSet.packages(), ({ name }) => name);
+    return (await packageSet.packages()).map(({ name }) => name);
   }
 
   async function select(selector: string): Promise<string[]> {

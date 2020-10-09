@@ -68,15 +68,20 @@ export class ZPackageTree extends ZPackageLocation {
     return restPath ? nested.relative(restPath) : nested;
   }
 
-  *nested(): Iterable<ZPackageTree> {
-    yield* this._nested.values();
+  nested(): readonly ZPackageTree[] {
+    return [...this._nested.values()];
   }
 
-  *deeplyNested(): Iterable<ZPackageTree> {
+  deeplyNested(): readonly ZPackageTree[] {
+
+    const result: ZPackageTree[] = [];
+
     for (const nested of this._nested.values()) {
-      yield nested;
-      yield* nested.deeplyNested();
+      result.push(nested);
+      result.push(...nested.deeplyNested());
     }
+
+    return result;
   }
 
   /**

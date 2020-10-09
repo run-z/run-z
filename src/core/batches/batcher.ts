@@ -2,7 +2,6 @@
  * @packageDocumentation
  * @module run-z
  */
-import { itsEmpty } from '@proc7ts/push-iterator';
 import type { ZPackage } from '../packages';
 import type { ZCall } from '../plan';
 import type { ZTask, ZTaskSpec } from '../tasks';
@@ -153,9 +152,9 @@ export const ZBatcher = {
  * @internal
  */
 function defaultZBatcherProvider(target: ZPackage, planner: ZBatchPlanner, batching: ZBatching): ZBatcher | undefined {
-  return itsEmpty(namedZBatches(target, planner.taskName, batching.rule(NamedZBatches), true))
-      ? undefined
-      : ZBatcher.batchNamed;
+  return namedZBatches(target, planner.taskName, batching.rule(NamedZBatches), true).length
+      ? ZBatcher.batchNamed
+      : undefined;
 }
 
 /**

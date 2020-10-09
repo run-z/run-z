@@ -1,4 +1,3 @@
-import { mapIt } from '@proc7ts/push-iterator';
 import chalk from 'chalk';
 import stringWidth from 'string-width';
 import type { ZJob } from '../../core';
@@ -43,10 +42,11 @@ export abstract class ZJobProgress {
   protected abstract _scheduleRender(): void;
 
   protected _printAll(): Promise<void> {
-    this._pending = Promise.all(mapIt(
-        this._output.lines(),
-        ([line, fd]) => this._format.println(`${this._prefix()}${line}`, fd),
-    )).then();
+    this._pending = Promise.all(
+        this._output.lines().map(
+            ([line, fd]) => this._format.println(`${this._prefix()}${line}`, fd),
+        ),
+    ).then();
     if (this._row == null) {
       this._row = this._format.register(this);
     }

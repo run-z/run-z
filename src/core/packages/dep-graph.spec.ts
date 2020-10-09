@@ -1,4 +1,3 @@
-import { itsElements } from '@proc7ts/push-iterator';
 import { ZSetup } from '../setup';
 import type { ZPackage } from './package';
 import type { ZPackageResolver } from './package-resolver';
@@ -193,13 +192,13 @@ describe('ZDepGraph', () => {
   function dependenciesOf(
       target: ZPackage,
   ): readonly string[] {
-    return itsElements(target.depGraph().dependencies(), ({ name }) => name);
+    return [...target.depGraph().dependencies()].map(({ name }) => name);
   }
 
   function dependantsOf(
       target: ZPackage,
   ): readonly string[] {
-    return itsElements(target.depGraph().dependants(), ({ name }) => name);
+    return [...target.depGraph().dependants()].map(({ name }) => name);
   }
 
 });
