@@ -1,4 +1,4 @@
-import { filterIt, overNone } from '@proc7ts/push-iterator';
+import { filterIt } from '@proc7ts/push-iterator';
 import { ZOptionInput, ZOptionSyntax } from '@run-z/optionz';
 import type { ZSetup } from '../../../setup';
 
@@ -22,7 +22,10 @@ export function zTaskSpecSyntax(setup: ZSetup): readonly ZOptionSyntax[] {
 /**
  * @internal
  */
-function zPackageSelectorSyntax({ taskParser }: ZSetup, args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
+function zPackageSelectorSyntax(
+    { taskParser }: ZSetup,
+    args: readonly [string, ...string[]],
+): readonly ZOptionInput[] {
 
   const [name] = args;
 
@@ -41,7 +44,7 @@ function zPackageSelectorSyntax({ taskParser }: ZSetup, args: readonly [string, 
 /**
  * @internal
  */
-function zTaskAttrSyntax({ taskParser }: ZSetup, args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
+function zTaskAttrSyntax({ taskParser }: ZSetup, args: readonly [string, ...string[]]): readonly ZOptionInput[] {
 
   const [first] = args;
   const attr = taskParser.parseAttr(first);
@@ -75,7 +78,7 @@ function zTaskAttrSyntax({ taskParser }: ZSetup, args: readonly [string, ...stri
 /**
  * @internal
  */
-function zTaskPreArgsSyntax(args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
+function zTaskPreArgsSyntax(args: readonly [string, ...string[]]): readonly ZOptionInput[] {
 
   const [first] = args;
   const openingIdx = first.indexOf('//');
@@ -173,7 +176,7 @@ const parallelZTaskSep = /(,)/;
 /**
  * @internal
  */
-function parallelZTasksSyntax(args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
+function parallelZTasksSyntax(args: readonly [string, ...string[]]): readonly ZOptionInput[] {
 
   const [entry] = args;
   const [name, ...values] = entry.split(parallelZTaskSep).filter(name => !!name);
@@ -184,13 +187,13 @@ function parallelZTasksSyntax(args: readonly [string, ...string[]]): Iterable<ZO
 /**
  * @internal
  */
-function zTaskPreSyntax(args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
+function zTaskPreSyntax(args: readonly [string, ...string[]]): readonly ZOptionInput[] {
 
   const [entry] = args;
   const [name, ...preArgs] = entry.split('/');
 
   if (!name || !preArgs.length) {
-    return overNone();
+    return [];
   }
 
   return [
@@ -209,7 +212,7 @@ function zTaskPreSyntax(args: readonly [string, ...string[]]): Iterable<ZOptionI
 /**
  * @internal
  */
-function zTaskShorthandPreArgSyntax(args: readonly [string, ...string[]]): Iterable<ZOptionInput> {
+function zTaskShorthandPreArgSyntax(args: readonly [string, ...string[]]): readonly ZOptionInput[] {
 
   const [name] = args;
 
