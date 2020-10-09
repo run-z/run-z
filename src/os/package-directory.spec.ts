@@ -130,7 +130,7 @@ describe('ZPackageDirectory', () => {
       const dir = ZPackageDirectory.open({
         url: new URL('nested', rootURL),
       });
-      const packages: string[] = Array.from(await dir.nested(), ({ path }) => path);
+      const packages: string[] = (await dir.nested()).map(({ path }) => path);
 
       expect(packages).toEqual([fileURLToPath(new URL('nested/deeply-nested', rootURL))]);
     });
@@ -147,7 +147,7 @@ describe('ZPackageDirectory', () => {
     it('lists deeply nested dirs', async () => {
 
       const dir = ZPackageDirectory.open({ url: rootURL });
-      const packages: string[] = Array.from(await dir.deeplyNested(), ({ path }) => path);
+      const packages: string[] = (await dir.deeplyNested()).map(({ path }) => path);
 
       expect(packages).toEqual([
         fileURLToPath(new URL('nested', rootURL)),

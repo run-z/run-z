@@ -192,13 +192,13 @@ describe('ZDepGraph', () => {
   function dependenciesOf(
       target: ZPackage,
   ): readonly string[] {
-    return Array.from(target.depGraph().dependencies(), ({ name }) => name);
+    return [...target.depGraph().dependencies()].map(({ name }) => name);
   }
 
   function dependantsOf(
       target: ZPackage,
   ): readonly string[] {
-    return Array.from(target.depGraph().dependants(), ({ name }) => name);
+    return [...target.depGraph().dependants()].map(({ name }) => name);
   }
 
 });

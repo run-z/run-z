@@ -2,7 +2,6 @@
  * @packageDocumentation
  * @module run-z
  */
-import { flatMapIt, mapIt } from '@proc7ts/push-iterator';
 import type { ZPackage } from './package';
 
 /**
@@ -15,7 +14,7 @@ export abstract class ZPackageSet {
    *
    * @returns Either iterable of packages this set consists of, or a promise-like instance resolving to one.
    */
-  abstract packages(): Iterable<ZPackage> | PromiseLike<Iterable<ZPackage>>;
+  abstract packages(): readonly ZPackage[] | PromiseLike<readonly ZPackage[]>;
 
   /**
    * Combines package sets.
@@ -39,15 +38,10 @@ class CombinedZPackageSet extends ZPackageSet {
     super();
   }
 
-  async packages(): Promise<Iterable<ZPackage>> {
-    return flatMapIt(
-        await Promise.all(
-            mapIt(
-                this.sets,
-                set => set.packages(),
-            ),
-        ),
-    );
+  async packages(): Promise<readonly ZPackage[]> {
+    return (await Promise.all(
+        this.sets.map(set => set.packages()),
+    )).flat();
   }
 
   andPackages(other: ZPackageSet): ZPackageSet {

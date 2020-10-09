@@ -42,7 +42,12 @@ export class ZPackageResolver {
           named.add(pkg);
         }
       },
-      byName: name => byName.get(name) || [],
+      byName: name => {
+
+        const packages = byName.get(name);
+
+        return packages ? [...packages] : [];
+      },
       buildDepGraph() {
         if (this.rev !== depGraphRev) {
           depGraphRev = this.rev;
@@ -124,7 +129,7 @@ export class ZPackageResolver {
    *
    * @returns An iterable of packages with requested name.
    */
-  byName(name: string): Iterable<ZPackage> {
+  byName(name: string): readonly ZPackage[] {
     return this._impl.byName(name);
   }
 

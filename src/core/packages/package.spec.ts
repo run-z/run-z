@@ -39,7 +39,7 @@ describe('ZPackage', () => {
 
   describe('packages', () => {
     it('contains the package itself', () => {
-      expect(Array.from(pkg.packages())).toEqual([pkg]);
+      expect([...pkg.packages()]).toEqual([pkg]);
     });
   });
 
@@ -71,7 +71,7 @@ describe('ZPackage', () => {
   });
 
   async function packages(packageSet: ZPackageSet): Promise<string[]> {
-    return Array.from(await packageSet.packages(), ({ name }) => name);
+    return (await packageSet.packages()).map(({ name }) => name);
   }
 
   async function select(selector: string): Promise<string[]> {

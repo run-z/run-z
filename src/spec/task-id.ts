@@ -17,7 +17,6 @@ function isCall(value: ZTask | ZCall): value is ZCall {
   return 'task' in value;
 }
 
-export function taskIds(values: Iterable<ZTask | ZCall>): readonly TaskId[];
 export function taskIds(...values: (ZTask | ZCall)[]): readonly TaskId[];
 export function taskIds(...values: [Iterable<ZTask | ZCall>] | (ZTask | ZCall)[]): readonly TaskId[] {
 
@@ -29,9 +28,9 @@ export function taskIds(...values: [Iterable<ZTask | ZCall>] | (ZTask | ZCall)[]
     items = values as Iterable<ZTask | ZCall>;
   }
 
-  return Array.from(items, taskId);
+  return [...items].map(taskId);
 }
 
 export function prerequisitesOf(call: ZCall): readonly TaskId[] {
-  return taskIds(call.prerequisites());
+  return taskIds(...call.prerequisites());
 }

@@ -3,7 +3,6 @@
  * @module run-z
  */
 import { arrayOfElements, valueByRecipe } from '@proc7ts/primitives';
-import { flatMapIt } from '@proc7ts/push-iterator';
 import type { ZConfig } from './config';
 import type { ZExtension } from './extension';
 import { ZPackageResolver } from './packages';
@@ -59,10 +58,7 @@ export class ZSetup {
         this._taskParser = this._config.taskParser
             ? valueByRecipe(this._config.taskParser, this)
             : new ZTaskParser({
-              options: Array.from(flatMapIt(
-                  this.extensions,
-                  extension => arrayOfElements(extension.options),
-              )),
+              options: this.extensions.flatMap(extension => arrayOfElements(extension.options)),
             })
     );
   }

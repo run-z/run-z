@@ -106,7 +106,7 @@ export class ZTaskParams {
       if (values) {
         values.push(...v);
       } else {
-        params.attrs[k] = Array.from(v) as [string, ...string[]];
+        params.attrs[k] = [...v] as [string, ...string[]];
       }
     }
     params.args.push(...args);

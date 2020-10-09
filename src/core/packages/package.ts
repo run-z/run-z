@@ -69,7 +69,7 @@ export interface ZPackage extends ZPackageSet {
   /**
    * An iterable consisting of this package.
    */
-  packages(): Iterable<this>;
+  packages(): readonly [this];
 
   /**
    * Builds a dependency graph of this package.

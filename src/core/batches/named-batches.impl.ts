@@ -1,4 +1,3 @@
-import { itsEmpty, mapIt } from '@proc7ts/push-iterator';
 import type { ZPackage, ZPackageSet } from '../packages';
 import type { ZCall, ZPrePlanner } from '../plan';
 import { ZCallDetails } from '../plan';
@@ -17,7 +16,7 @@ export function namedZBatches(
     taskName: string,
     namedBatches: NamedZBatches,
     hardLimit?: boolean,
-): Iterable<string> {
+): readonly string[] {
 
   const batchTaskNames = new Map<string, string>();
   const softInclusions = new Set<string>();
@@ -81,7 +80,7 @@ export function namedZBatches(
     }
   }
 
-  return { [Symbol.iterator]: () => batchTaskNames.values() };
+  return [...batchTaskNames.values()];
 }
 
 /**
@@ -104,8 +103,7 @@ async function doBatchNamedZBatches(
   const { taskName } = planner;
   let recurrentTargets: ZPackageSet | undefined;
 
-  await Promise.all(mapIt(
-      await planner.targets.packages(),
+  await Promise.all((await planner.targets.packages()).map(
       async target => {
         if (processed.has(target)) {
           return;
@@ -114,14 +112,13 @@ async function doBatchNamedZBatches(
 
         const batchNames = namedZBatches(target, taskName, namedBatches, hardLimit);
 
-        if (itsEmpty(batchNames)) {
+        if (!batchNames.length) {
           // No matching named batches.
           // Fallback to default task batching.
           return batchZTask({ ...planner, targets: target });
         }
 
-        return Promise.all(mapIt(
-            batchNames,
+        return Promise.all(batchNames.map(
             async batchName => {
 
               let hasTargets = false;

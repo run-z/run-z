@@ -50,7 +50,7 @@ describe('CommandZTask', () => {
     const call = await testPlan.call('test');
     const dep = call.plan.callOf(await call.task.target.task('dep'));
 
-    expect(prerequisitesOf(call)).toEqual(taskIds([dep]));
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep));
     expect(dep.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr: ['on'] });
   });
   it('calls parallel prerequisites', async () => {

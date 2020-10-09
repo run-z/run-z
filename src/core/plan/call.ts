@@ -46,7 +46,7 @@ export interface ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
    *
    * @see ZCallPlanner.addEntry
    */
-  entries(): Iterable<ZTask>;
+  entries(): readonly ZTask[];
 
   /**
    * Returns immediate prerequisites of this task.
@@ -55,7 +55,7 @@ export interface ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
    *
    * @see ZCallPlanner.order
    */
-  prerequisites(): Iterable<ZCall>;
+  prerequisites(): readonly ZCall[];
 
   /**
    * Checks whether a call to the given task is a prerequisite of this one.

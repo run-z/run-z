@@ -51,7 +51,7 @@ export class ZJobOutput {
     }
   }
 
-  lines(): Iterable<[string, 0 | 1]> {
+  lines(): readonly ([string, 0 | 1])[] {
     return this._lines;
   }
 

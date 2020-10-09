@@ -70,16 +70,19 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
     return this._records.plan;
   }
 
-  *entries(): Iterable<ZTask> {
+  entries(): readonly ZTask[] {
 
     const entries = this._entries.size ? this._entries : [this.task];
+    const result: ZTask[] = [];
 
     for (const entry of entries) {
-      yield entry;
+      result.push(entry);
       if (entry !== this.task) {
-        yield* this.plan.callOf(entry).entries();
+        result.push(...this.plan.callOf(entry).entries());
       }
     }
+
+    return result;
   }
 
   by(task: ZTask): boolean {
@@ -155,7 +158,7 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
     );
   }
 
-  prerequisites(): Iterable<ZCall> {
+  prerequisites(): readonly ZCall[] {
     return this._records.prerequisitesOf(this.task);
   }
 
