@@ -3,7 +3,6 @@
  * @module run-z
  */
 import { arrayOfElements } from '@proc7ts/primitives';
-import { flatMapIt } from '@proc7ts/push-iterator';
 import type { ZExecution } from '@run-z/exec-z';
 import { execZNoOp } from '@run-z/exec-z';
 import type { ZSetup } from '../setup';
@@ -62,12 +61,7 @@ export abstract class ZShell {
    * Includes options supported by {@link ZExtension.shellOptions extensions}.
    */
   options(): ZTaskParser.SupportedOptions {
-    return Array.from(
-        flatMapIt(
-            this.setup.extensions,
-            ({ shellOptions }) => arrayOfElements(shellOptions),
-        ),
-    );
+    return this.setup.extensions.flatMap(({ shellOptions }) => arrayOfElements(shellOptions));
   }
 
 }
