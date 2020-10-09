@@ -39,7 +39,7 @@ describe('ZPackage', () => {
 
   describe('packages', () => {
     it('contains the package itself', () => {
-      expect(Array.from(pkg.packages())).toEqual([pkg]);
+      expect([...pkg.packages()]).toEqual([pkg]);
     });
   });
 

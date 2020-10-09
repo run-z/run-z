@@ -1,4 +1,5 @@
 import { isIterable } from '@proc7ts/primitives';
+import { itsElements } from '@proc7ts/push-iterator';
 import type { ZCall, ZTask } from '../core';
 
 export interface TaskId {
@@ -29,7 +30,7 @@ export function taskIds(...values: [Iterable<ZTask | ZCall>] | (ZTask | ZCall)[]
     items = values as Iterable<ZTask | ZCall>;
   }
 
-  return Array.from(items, taskId);
+  return itsElements(items, taskId);
 }
 
 export function prerequisitesOf(call: ZCall): readonly TaskId[] {
