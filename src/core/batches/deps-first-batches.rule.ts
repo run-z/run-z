@@ -70,9 +70,7 @@ class ZDepsFirstBatches$ implements ZDepsFirstBatches {
               if (depCalls) {
                 for (const depCall of depCalls) {
                   for (const entry of call.entries()) {
-                    for (const depEntry of depCall.entries()) {
-                      dependent.order(depEntry, entry);
-                    }
+                    dependent.order(depCall.task, entry);
                   }
                   orderTaskAndDeps(depCall);
                 }
