@@ -14,6 +14,7 @@ on:
 jobs:
   # This workflow contains a single job called "build"
   build:
+    name: build@macos
     # The type of runner that the job will run on
     runs-on: macos-latest
 
