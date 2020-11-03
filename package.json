@@ -42,6 +42,7 @@
   "dependencies": {
     "@proc7ts/primitives": "^1.1.0",
     "@run-z/exec-z": "^1.1.1",
+    "@run-z/log-z": "^1.0.0-dev.1",
     "@run-z/optionz": "^2.0.0",
     "ansi-escapes": "^4.3.1",
     "chalk": "^4.1.0",

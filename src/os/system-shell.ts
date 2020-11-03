@@ -5,6 +5,7 @@
 import { arrayOfElements } from '@proc7ts/primitives';
 import type { ZExecution, ZExecutionStarter } from '@run-z/exec-z';
 import { poolZExecutions, spawnZ } from '@run-z/exec-z';
+import { zlogDetails, zlogError } from '@run-z/log-z';
 import type { ZOption } from '@run-z/optionz';
 import { clz } from '@run-z/optionz/colors';
 import type { ChildProcessByStdio } from 'child_process';
@@ -14,7 +15,9 @@ import type { Readable } from 'stream';
 import kill from 'tree-kill';
 import type { ZJob } from '../core';
 import { ZShell, ZTaskParser } from '../core';
-import { RichZProgressFormat, TextZProgressFormat, ttyColorLevel, ttyColumns, ZProgressFormat } from './impl';
+import { ttyColorLevel, ttyColumns, ZProgressFormat } from './impl';
+import { RichZProgressFormat } from './impl/rich';
+import { TextZProgressFormat } from './impl/text';
 
 /**
  * Operating system-specific task execution shell.
@@ -186,8 +189,8 @@ By default ${clz.usage('rich')} format is used for color terminals, and ${clz.us
                 },
             ) as ChildProcessByStdio<null, Readable, Readable>;
 
-            childProcess.stdout.on('data', chunk => progress.report(chunk));
-            childProcess.stderr.on('data', chunk => progress.report(chunk, 1));
+            childProcess.stdout.on('data', chunk => progress.log.info(chunk.toString()));
+            childProcess.stderr.on('data', chunk => progress.log.error(chunk.toString()));
 
             progress.start();
 
@@ -205,14 +208,16 @@ By default ${clz.usage('rich')} format is used for color terminals, and ${clz.us
         whenDone() {
           return spawned.whenDone()
               .then(
-                  () => progress.reportSuccess(),
+                  () => {
+                    progress.stop();
+                    progress.log.info(zlogDetails({ success: true }));
+                  },
               ).catch(
-                  async error => {
-                    await progress.reportError(error);
+                  error => {
+                    progress.stop();
+                    progress.log.error(String(error), zlogError(error));
                     return Promise.reject(error);
                   },
-              ).finally(
-                  () => progress.stop(),
               );
         },
         abort: spawned.abort.bind(spawned),

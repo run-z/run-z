@@ -31,7 +31,7 @@ describe('ZJobOutput', () => {
 
   describe('status', () => {
     it('is predefined initially', () => {
-      expect(output.status).toBe('Running...');
+      expect(output.status).toBe('');
     });
     it('is equal to the last non-blank line', () => {
       output.add('line1\nline2\n\n\n');
@@ -39,7 +39,7 @@ describe('ZJobOutput', () => {
     });
     it('is predefined if all lines are blank', () => {
       output.add('  \n \n\n\n');
-      expect(output.status).toBe('Running...');
+      expect(output.status).toBe('');
     });
   });
 

@@ -3,8 +3,8 @@
  * @module run-z
  */
 import { noop } from '@proc7ts/primitives';
+import type { ZOptionsParser } from '@run-z/optionz';
 import { SupportedZOptions, ZOptionInput } from '@run-z/optionz';
-import type { ZOptionsParser } from '@run-z/optionz/d.ts/options-parser';
 import shellQuote from 'shell-quote';
 import { zTaskSpecParser } from './impl/parser';
 import type { ZTaskBuilder } from './task-builder';
