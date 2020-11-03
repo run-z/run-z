@@ -99,9 +99,9 @@ Defaults to the number of CPUs when no ${clz.param('LIMIT')} set.
 ${clz.param('FORMAT')} can be one of:
 
 ${clz.bullet()} ${clz.usage('rich')} - rich progress format,
-${clz.bullet()} ${clz.usage('text')} - report progress by logging task output.
-${clz.bullet()} ${clz.usage('auto')} or none - use ${clz.usage('rich')} progress format for color terminals,
-or ${clz.usage('text')} otherwise.
+${clz.bullet()} ${clz.usage('text')} - report progress by logging task output,
+${clz.bullet()} ${clz.usage('auto')} or none - use ${clz.usage('rich')} format for color terminals, or ${
+                clz.usage('text')} otherwise.
 
 By default ${clz.usage('text')} format is used.
             `;
@@ -119,6 +119,29 @@ By default ${clz.usage('text')} format is used.
             aliasOf: '--progress',
             get usage() {
               return `--progress=${clz.param('FORMAT')}`;
+            },
+          },
+        },
+        '-g': {
+          read: (option: ZOption) => {
+            this.setProgressFormat('auto');
+            option.recognize();
+          },
+          meta: {
+            aliasOf: '--progress',
+          },
+        },
+        '-g*': {
+          read: (option: ZOption) => {
+
+            const [name] = option.values();
+
+            this.setProgressFormat(name as 'rich' | 'text' | 'auto');
+          },
+          meta: {
+            aliasOf: '--progress',
+            get usage() {
+              return `-g${clz.param('FORMAT')}`;
             },
           },
         },
