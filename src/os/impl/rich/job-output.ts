@@ -1,15 +1,22 @@
-import { stripControlChars } from './strip-control-chars';
+import type { ZLogMessage } from '@run-z/log-z';
+import { ZLogLevel, zlogMessage } from '@run-z/log-z';
+import { stripControlChars } from '../strip-control-chars';
 
 /**
  * @internal
  */
 export class ZJobOutput {
 
+  private _statusMessage: ZLogMessage | null = null;
   private readonly _lines: [string, 0 | 1][] = [];
   private _lastNL = true;
 
+  get statusMessage(): ZLogMessage {
+    return this._statusMessage || zlogMessage(ZLogLevel.Info, this.status);
+  }
+
   get status(): string {
-    return this.lastLine || 'Running...';
+    return this.lastLine || '';
   }
 
   get lastLine(): string | undefined {
@@ -25,9 +32,13 @@ export class ZJobOutput {
     return;
   }
 
-  add(chunk: string | Buffer, fd: 0 | 1 = 0): void {
+  setStatus(statusMessage: ZLogMessage): ZLogMessage {
+    return this._statusMessage = statusMessage;
+  }
 
-    const lines = String(chunk).split('\n');
+  add(chunk: string, fd: 0 | 1 = 0): void {
+
+    const lines = chunk.split('\n');
 
     for (let i = 0; i < lines.length; ++i) {
 
