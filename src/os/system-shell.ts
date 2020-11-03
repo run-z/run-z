@@ -2,7 +2,7 @@
  * @packageDocumentation
  * @module run-z
  */
-import { arrayOfElements } from '@proc7ts/primitives';
+import { arrayOfElements, lazyValue } from '@proc7ts/primitives';
 import type { ZExecution, ZExecutionStarter } from '@run-z/exec-z';
 import { poolZExecutions, spawnZ } from '@run-z/exec-z';
 import { zlogDetails, zlogError } from '@run-z/log-z';
@@ -20,12 +20,27 @@ import { RichZProgressFormat } from './impl/rich';
 import { TextZProgressFormat } from './impl/text';
 
 /**
+ * @internal
+ */
+const zProgressFormats = {
+  auto(this: void) {
+    return ttyColorLevel() ? new RichZProgressFormat() : new TextZProgressFormat();
+  },
+  rich(this: void) {
+    return new RichZProgressFormat();
+  },
+  text(this: void) {
+    return new TextZProgressFormat();
+  },
+};
+
+/**
  * Operating system-specific task execution shell.
  */
 export class SystemZShell extends ZShell {
 
   private _exec: (this: void, starter: ZExecutionStarter) => ZExecution = poolZExecutions();
-  private _format?: ZProgressFormat;
+  private _format: (this: void) => ZProgressFormat = lazyValue(zProgressFormats.text);
 
   /**
    * Constructs command line options supported by system shell.
@@ -73,7 +88,7 @@ Defaults to the number of CPUs when no ${clz.param('LIMIT')} set.
         },
         '--progress': {
           read: (option: ZOption) => {
-            this.setProgressFormat('rich');
+            this.setProgressFormat('auto');
             option.recognize();
           },
           meta: {
@@ -83,10 +98,12 @@ Defaults to the number of CPUs when no ${clz.param('LIMIT')} set.
               return `
 ${clz.param('FORMAT')} can be one of:
 
-${clz.bullet()} ${clz.usage('rich')} or none - rich progress format,
-${clz.bullet()} ${clz.usage('text')} - report progress by logging task output.
+${clz.bullet()} ${clz.usage('rich')} - rich progress format,
+${clz.bullet()} ${clz.usage('text')} - report progress by logging task output,
+${clz.bullet()} ${clz.usage('auto')} or none - use ${clz.usage('rich')} format for color terminals, or ${
+                clz.usage('text')} otherwise.
 
-By default ${clz.usage('rich')} format is used for color terminals, and ${clz.usage('text')} otherwise.
+By default ${clz.usage('text')} format is used.
             `;
             },
           },
@@ -96,12 +113,35 @@ By default ${clz.usage('rich')} format is used for color terminals, and ${clz.us
 
             const [name] = option.values();
 
-            this.setProgressFormat(name as 'rich' | 'text');
+            this.setProgressFormat(name as 'rich' | 'text' | 'auto');
           },
           meta: {
             aliasOf: '--progress',
             get usage() {
               return `--progress=${clz.param('FORMAT')}`;
+            },
+          },
+        },
+        '-g': {
+          read: (option: ZOption) => {
+            this.setProgressFormat('auto');
+            option.recognize();
+          },
+          meta: {
+            aliasOf: '--progress',
+          },
+        },
+        '-g*': {
+          read: (option: ZOption) => {
+
+            const [name] = option.values();
+
+            this.setProgressFormat(name as 'rich' | 'text' | 'auto');
+          },
+          meta: {
+            aliasOf: '--progress',
+            get usage() {
+              return `-g${clz.param('FORMAT')}`;
             },
           },
         },
@@ -127,17 +167,22 @@ By default ${clz.usage('rich')} format is used for color terminals, and ${clz.us
    *
    * The following values accepted:
    *
-   * - `rich` or none - rich progress format.
-   * - `text` - reports progress by logging task output.
+   * - `rich` - rich progress format.
+   * - `text` - reports progress by logging task output
+   * - `auto` or none - rich format for color terminals, or text one otherwise.
    *
-   * By default uses `rich` format for color terminals, and `text` otherwise.
+   * By default uses `text` format.
    *
    * @param name  New progress report format name.
    *
    * @returns `this` instance.
    */
-  setProgressFormat(name: 'rich' | 'text'): this {
-    this._format = name === 'text' ? new TextZProgressFormat() : new RichZProgressFormat();
+  setProgressFormat(name: 'rich' | 'text' | 'auto'): this {
+    this._format = name === 'rich'
+        ? lazyValue(zProgressFormats.rich)
+        : name === 'auto'
+            ? lazyValue(zProgressFormats.auto)
+            : lazyValue(zProgressFormats.text);
     return this;
   }
 
@@ -163,11 +208,8 @@ By default ${clz.usage('rich')} format is used for color terminals, and ${clz.us
   }
 
   private _run(job: ZJob, command: string, args: readonly string[]): ZExecution {
-    if (!this._format) {
-      this._format = ttyColorLevel() ? new RichZProgressFormat() : new TextZProgressFormat();
-    }
 
-    const progress = this._format.jobProgress(job);
+    const progress = this._format().jobProgress(job);
 
     return this._exec(() => {
 
