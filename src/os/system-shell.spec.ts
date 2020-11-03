@@ -205,11 +205,27 @@ describe('SystemZShell', () => {
     });
 
     describe('--color', () => {
+      it('enables text progress format', async () => {
+
+        const builder = setup.taskFactory.newTask(pkg, 'no-progress-reporting-task');
+
+        await builder.parse('run-z --color test:script', { options: shell.options() });
+
+        const task = builder.task();
+        const call = await task.call();
+
+        await call.exec(shell).whenDone();
+
+        expect(writeSpy).not.toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
+      });
+    });
+
+    describe('--color --progress', () => {
       it('enables rich progress format', async () => {
 
         const builder = setup.taskFactory.newTask(pkg, 'progress-reporting-task');
 
-        await builder.parse('run-z --color test:script', { options: shell.options() });
+        await builder.parse('run-z --color --progress test:script', { options: shell.options() });
 
         const task = builder.task();
         const call = await task.call();
@@ -221,12 +237,12 @@ describe('SystemZShell', () => {
       });
     });
 
-    describe('--no-colors', () => {
+    describe('--no-colors --progress', () => {
       it('enables text progress format', async () => {
 
         const builder = setup.taskFactory.newTask(pkg, 'no-progress-reporting-task');
 
-        await builder.parse('run-z --no-colors test:script', { options: shell.options() });
+        await builder.parse('run-z --no-colors --progress test:script', { options: shell.options() });
 
         const task = builder.task();
         const call = await task.call();
@@ -238,12 +254,12 @@ describe('SystemZShell', () => {
       });
     });
 
-    describe('--progress', () => {
+    describe('--color --progress=auto', () => {
       it('enables rich progress format', async () => {
 
         const builder = setup.taskFactory.newTask(pkg, 'progress-reporting-task');
 
-        await builder.parse('run-z --no-colors --progress test:script', { options: shell.options() });
+        await builder.parse('run-z --color --progress=auto test:script', { options: shell.options() });
 
         const task = builder.task();
         const call = await task.call();
@@ -253,41 +269,14 @@ describe('SystemZShell', () => {
 
         expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
       });
-      it('enables rich progress format without value', async () => {
+    });
 
-        const builder = setup.taskFactory.newTask(pkg, 'progress-reporting-task');
+    describe('--no-colors --progress=auto', () => {
+      it('enables text progress format', async () => {
 
-        await builder.parse('run-z --progress --no-colors test:script', { options: shell.options() });
+        const builder = setup.taskFactory.newTask(pkg, 'no-progress-reporting-task');
 
-        const task = builder.task();
-        const call = await task.call();
-        const job = call.exec(shell);
-
-        await job.whenDone();
-
-        expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
-      });
-      it('reports failure', async () => {
-
-        const builder = setup.taskFactory.newTask(pkg, 'error-reporting-task');
-
-        await builder.parse('run-z --progress test:fail', { options: shell.options() });
-
-        const task = builder.task();
-        const call = await task.call();
-        const job = call.exec(shell);
-        const error = await job.whenDone().catch(asis);
-
-        expect(error).toBeInstanceOf(FailedZExecutionError);
-        expect(error.failure).toBe(13);
-
-        expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.error), expect.any(Function));
-      });
-      it('displays status when silent task succeeds', async () => {
-
-        const builder = setup.taskFactory.newTask(pkg, 'silently-reporting-task');
-
-        await builder.parse('run-z --progress test:silent', { options: shell.options() });
+        await builder.parse('run-z --no-colors --progress=auto test:script', { options: shell.options() });
 
         const task = builder.task();
         const call = await task.call();
@@ -295,7 +284,7 @@ describe('SystemZShell', () => {
 
         await job.whenDone();
 
-        expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(' Ok'), expect.any(Function));
+        expect(writeSpy).toHaveBeenCalledWith(expect.not.stringContaining(logSymbols.success), expect.any(Function));
       });
     });
 
@@ -313,6 +302,50 @@ describe('SystemZShell', () => {
         await job.whenDone();
 
         expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
+      });
+      it('enables rich progress format without colors', async () => {
+
+        const builder = setup.taskFactory.newTask(pkg, 'progress-reporting-task');
+
+        await builder.parse('run-z --progress=rich --no-colors test:script', { options: shell.options() });
+
+        const task = builder.task();
+        const call = await task.call();
+        const job = call.exec(shell);
+
+        await job.whenDone();
+
+        expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
+      });
+      it('reports failure', async () => {
+
+        const builder = setup.taskFactory.newTask(pkg, 'error-reporting-task');
+
+        await builder.parse('run-z --progress=rich test:fail', { options: shell.options() });
+
+        const task = builder.task();
+        const call = await task.call();
+        const job = call.exec(shell);
+        const error = await job.whenDone().catch(asis);
+
+        expect(error).toBeInstanceOf(FailedZExecutionError);
+        expect(error.failure).toBe(13);
+
+        expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.error), expect.any(Function));
+      });
+      it('displays status when silent task succeeds', async () => {
+
+        const builder = setup.taskFactory.newTask(pkg, 'silently-reporting-task');
+
+        await builder.parse('run-z --progress=rich test:silent', { options: shell.options() });
+
+        const task = builder.task();
+        const call = await task.call();
+        const job = call.exec(shell);
+
+        await job.whenDone();
+
+        expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(' Ok'), expect.any(Function));
       });
     });
 
