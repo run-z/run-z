@@ -22,9 +22,9 @@ node_modules
 
 # Build configurations
 /.*
+/*.cjs
 /*.js
-/ts*.json
-/typedoc.json
+/*.json
 
 # Package lock
 /yarn.lock

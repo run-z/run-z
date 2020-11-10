@@ -1,5 +1,4 @@
 {
-  "main": "../dist/run-z.builtins.js",
-  "module": "../dist/run-z.builtins.mjs",
+  "module": "../dist/run-z.builtins.js",
   "types": "index.d.ts"
 }

@@ -22,16 +22,11 @@
     "url": "https://github.com/run-z/run-z/issues"
   },
   "type": "module",
-  "main": "dist/run-z.js",
   "module": "dist/run-z.js",
   "types": "index.d.ts",
   "exports": {
-    ".": {
-      "import": "./dist/run-z.js"
-    },
-    "./builtins": {
-      "import": "./dist/run-z.builtins.js"
-    }
+    ".": "./dist/run-z.js",
+    "./builtins": "./dist/run-z.builtins.js"
   },
   "bin": {
     "run-z": "bin/run-z.js"
