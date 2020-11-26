@@ -22,23 +22,23 @@
     "url": "https://github.com/run-z/run-z/issues"
   },
   "type": "module",
-  "module": "dist/run-z.js",
-  "types": "index.d.ts",
+  "module": "./dist/run-z.js",
+  "types": "./index.d.ts",
   "exports": {
     ".": "./dist/run-z.js",
     "./builtins": "./dist/run-z.builtins.js"
   },
   "bin": {
-    "run-z": "bin/run-z.js"
+    "run-z": "./bin/run-z.js"
   },
   "engines": {
     "node": ">=12"
   },
   "dependencies": {
     "@proc7ts/primitives": "^1.5.1",
-    "@run-z/exec-z": "^1.2.0",
-    "@run-z/log-z": "^1.2.0",
-    "@run-z/optionz": "^2.1.0",
+    "@run-z/exec-z": "^1.2.1",
+    "@run-z/log-z": "^1.2.1",
+    "@run-z/optionz": "^2.1.1",
     "ansi-escapes": "^4.3.1",
     "chalk": "^4.1.0",
     "cli-spinners": "^2.5.0",
@@ -86,7 +86,7 @@
     "bootstrap": "rollup --config ./rollup.config.js",
     "build": "run-z +z bootstrap",
     "ci:all": "run-z all +test/--ci/--runInBand",
-    "clean": "run-z +z --then shx rm -rf d.ts dist target",
+    "clean": "run-z +z --then shx rm -rf index.d.ts dist target",
     "doc": "run-z +z --then typedoc",
     "doc:publish": "run-z doc --then gh-pages --dist target/typedoc --dotfiles",
     "lint": "run-z +z --then eslint .",

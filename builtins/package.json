@@ -1,4 +1,3 @@
 {
-  "module": "../dist/run-z.builtins.js",
-  "types": "index.d.ts"
+  "module": "../dist/run-z.builtins.js"
 }

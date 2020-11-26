@@ -28,4 +28,5 @@ package-lock.json
 /dist
 
 # Type definitions
-/d.ts
+*.d.ts
+*.d.ts.map

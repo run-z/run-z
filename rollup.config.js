@@ -1,4 +1,5 @@
 import { externalModules } from '@proc7ts/rollup-helpers';
+import flatDts from '@proc7ts/rollup-plugin-flat-dts';
 import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import path from 'path';
@@ -27,16 +28,16 @@ export default {
   ],
   external: externalModules(),
   manualChunks(id) {
-    if (id.startsWith(path.join(__dirname, 'src', 'builtins') + path.sep)) {
+    if (id.startsWith(path.resolve('src', 'builtins') + path.sep)) {
       return 'run-z.builtins';
     }
-    if (id.startsWith(path.join(__dirname, 'src', 'cli') + path.sep)) {
+    if (id.startsWith(path.resolve('src', 'cli') + path.sep)) {
       return 'run-z.cli';
     }
-    if (id.startsWith(path.join(__dirname, 'src', 'core') + path.sep)) {
+    if (id.startsWith(path.resolve('src', 'core') + path.sep)) {
       return 'run-z.core';
     }
-    if (id.startsWith(path.join(__dirname, 'src', 'os') + path.sep)) {
+    if (id.startsWith(path.resolve('src', 'os') + path.sep)) {
       return 'run-z.os';
     }
 
@@ -45,9 +46,18 @@ export default {
   output: {
     format: 'esm',
     sourcemap: true,
-    dir: './dist',
-    entryFileNames: '[name].js',
-    chunkFileNames: `_[name].js`,
+    dir: '.',
+    entryFileNames: 'dist/[name].js',
+    chunkFileNames: 'dist/_[name].js',
     hoistTransitiveImports: false,
+    plugins: [
+      flatDts({
+        tsconfig: 'tsconfig.main.json',
+        lib: true,
+        entries: {
+          builtins: {},
+        },
+      }),
+    ],
   },
 };
