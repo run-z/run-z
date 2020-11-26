@@ -54,7 +54,7 @@
   "devDependencies": {
     "@proc7ts/eslint-config": "^2.0.5",
     "@proc7ts/rollup-helpers": "^1.1.1",
-    "@proc7ts/rollup-plugin-flat-dts": "^1.1.0",
+    "@proc7ts/rollup-plugin-flat-dts": "^1.1.1",
     "@rollup/plugin-commonjs": "^16.0.0",
     "@rollup/plugin-node-resolve": "^10.0.0",
     "@types/cross-spawn": "^6.0.2",
