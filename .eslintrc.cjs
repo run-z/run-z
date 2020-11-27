@@ -2,7 +2,7 @@ module.exports = {
   root: true,
   ignorePatterns: ['bin/', 'node_modules/', 'dist/', 'target/', 'd.ts/', '*.d.ts'],
   extends: [
-    '@proc7ts',
+    '@run-z',
   ],
   overrides: [
     {
@@ -14,7 +14,7 @@ module.exports = {
     {
       files: ['*.ts'],
       extends: [
-        '@proc7ts/eslint-config/typescript',
+        '@run-z/eslint-config/typescript',
       ],
       parser: '@typescript-eslint/parser',
       parserOptions: {
@@ -27,7 +27,7 @@ module.exports = {
     {
       files: ['*.spec.ts'],
       extends: [
-        '@proc7ts/eslint-config/jest',
+        '@run-z/eslint-config/jest',
       ],
       parserOptions: {
         project: './tsconfig.spec.json',
