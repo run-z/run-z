@@ -171,15 +171,15 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
 
   task(): AbstractZTask<TAction> {
 
-    const spec: ZTaskSpec<any> = this.spec();
+    const spec: ZTaskSpec = this.spec();
 
     switch (spec.action.type) {
     case 'command':
-      return new CommandZTask(this, spec) as AbstractZTask<any>;
+      return new CommandZTask(this, spec as ZTaskSpec<ZTaskSpec.Command>) as AbstractZTask<any>;
     case 'group':
-      return new GroupZTask(this, spec) as AbstractZTask<any>;
+      return new GroupZTask(this, spec as ZTaskSpec<ZTaskSpec.Group>) as AbstractZTask<any>;
     case 'script':
-      return new ScriptZTask(this, spec) as AbstractZTask<any>;
+      return new ScriptZTask(this, spec as ZTaskSpec<ZTaskSpec.Script>) as AbstractZTask<any>;
     case 'unknown':
     default:
       return new UnknownZTask(this, spec) as AbstractZTask<any>;
