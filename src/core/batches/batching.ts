@@ -128,15 +128,12 @@ export class ZBatching {
   }
 
   private _ruleContext<TControl>(rule: ZBatchRule<TControl>): ZBatchRule.Context<TControl> {
-
-    const oldBatching = this;
-
     return {
-      updateInstance(update) {
+      updateInstance: update => {
 
-        const newBatching = new ZBatching(oldBatching._batcher);
+        const newBatching = new ZBatching(this._batcher);
 
-        newBatching._by(oldBatching, rule);
+        newBatching._by(this, rule);
 
         const newInstance = update(newBatching._ruleContext(rule));
 
