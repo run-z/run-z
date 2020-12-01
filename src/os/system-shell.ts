@@ -231,8 +231,8 @@ By default ${clz.usage('text')} format is used.
                 },
             ) as ChildProcessByStdio<null, Readable, Readable>;
 
-            childProcess.stdout.on('data', chunk => progress.log.info(chunk.toString()));
-            childProcess.stderr.on('data', chunk => progress.log.error(chunk.toString()));
+            childProcess.stdout.on('data', (chunk: string | Buffer) => progress.log.info(chunk.toString()));
+            childProcess.stderr.on('data', (chunk: string | Buffer) => progress.log.error(chunk.toString()));
 
             progress.start();
 
