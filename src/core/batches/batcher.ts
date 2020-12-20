@@ -105,8 +105,8 @@ export const ZBatcher = {
    *
    * Batches tasks in the topmost package a batcher can be created for.
    *
-   * @param provider - A provider of task batcher to plan batch execution with. By default creates a batcher that batches
-   * the named task over {@link ZBatcher.batchNamed each package in each named set}, and ignores targets
+   * @param provider - A provider of task batcher to plan batch execution with. By default creates a batcher that
+   * batches the named task over {@link ZBatcher.batchNamed each package in each named set}, and ignores targets
    * without matching named package sets.
    *
    * @returns New task batcher.
