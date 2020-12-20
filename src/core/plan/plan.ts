@@ -22,7 +22,7 @@ export interface ZPlan {
    * Returns a call of the given task.
    *
    * @typeparam TAction  Task action type.
-   * @param task  Target task.
+   * @param task - Target task.
    *
    * @returns A call to the given task.
    *
@@ -33,8 +33,8 @@ export interface ZPlan {
   /**
    * Searches for a call for the task with the given name.
    *
-   * @param target  Target package.
-   * @param taskName  Task name.
+   * @param target - Target package.
+   * @param taskName - Task name.
    *
    * @returns Either a call to the target task, or `undefined` if the call did not happen.
    */

@@ -11,9 +11,9 @@ export class UnknownZTaskError extends Error {
   /**
    * Constructs unknown task error.
    *
-   * @param packageName  Package name the task belongs to.
-   * @param taskName  Unknown task name.
-   * @param message  Error message.
+   * @param packageName - Package name the task belongs to.
+   * @param taskName - Unknown task name.
+   * @param message - Error message.
    */
   constructor(
       readonly packageName: string,

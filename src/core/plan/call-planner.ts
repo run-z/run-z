@@ -33,8 +33,8 @@ export interface ZCallPlanner<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
    *
    * Add the given qualifier to the task.
    *
-   * @param task  Target task to add qualifier to.
-   * @param qualifier  Qualifier to add to the task.
+   * @param task - Target task to add qualifier to.
+   * @param qualifier - Qualifier to add to the task.
    */
   qualify(this: void, task: ZTask, qualifier: ZTaskQualifier): void;
 
@@ -44,8 +44,8 @@ export interface ZCallPlanner<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
    * Updates already recorded call to the same task.
    *
    * @typeparam TAction  Task action type.
-   * @param task  The task to call.
-   * @param details  The details of the call.
+   * @param task - The task to call.
+   * @param details - The details of the call.
    *
    * @returns A promise resolved to the task call when it is recorded.
    */
@@ -65,8 +65,8 @@ export interface ZCallPlanner<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
    *
    * Contradictory execution order leads to unpredictable execution order.
    *
-   * @param first  The task executed first.
-   * @param second  The task executed after the first one.
+   * @param first - The task executed first.
+   * @param second - The task executed after the first one.
    */
   order(this: void, first: ZTask, second: ZTask): void;
 
@@ -75,7 +75,7 @@ export interface ZCallPlanner<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
    *
    * This is necessary e.g. when the task is called as a prerequisite and another prerequisite precedes it.
    *
-   * @param entry  The entry task.
+   * @param entry - The entry task.
    */
   addEntry(this: void, entry: ZTask): void;
 
@@ -84,7 +84,7 @@ export interface ZCallPlanner<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
    *
    * The call to this method does not cause any of the tasks to be executed.
    *
-   * @param tasks  Array of qualifiers of the tasks that can be executed in parallel to each other.
+   * @param tasks - Array of qualifiers of the tasks that can be executed in parallel to each other.
    */
   makeParallel(this: void, tasks: readonly ZTaskQualifier[]): void;
 
@@ -93,8 +93,8 @@ export interface ZCallPlanner<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
    *
    * This is a uni-directional check.
    *
-   * @param task  The task qualifier to check parallelism of.
-   * @param condition  Condition to check. This is a function accepting another task as its first parameter and original
+   * @param task - The task qualifier to check parallelism of.
+   * @param condition - Condition to check. This is a function accepting another task as its first parameter and original
    * task as the second one, and returning `true` when parallel execution is allowed for them.
    */
   makeParallelWhen(

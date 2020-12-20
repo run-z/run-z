@@ -30,7 +30,7 @@ export interface ZDepGraphBatches {
   /**
    * Enables task batching in included part of dependency graph.
    *
-   * @param included  The part of dependency graph to {@link included include} into task batching.
+   * @param included - The part of dependency graph to {@link included include} into task batching.
    * @param includeSelf `true` (the default) to enable task batching in original package, or `false` to disable it.
    *
    * @returns Updated batching policy.

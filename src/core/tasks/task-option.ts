@@ -31,7 +31,7 @@ export interface ZTaskOption extends ZOption, ZTaskModifier {
    *
    * The task action defaults to {@link Group grouping task} unless reassigned by this call.
    *
-   * @param action  The action to assign to the task.
+   * @param action - The action to assign to the task.
    *
    * @returns `this` instance.
    */
@@ -85,8 +85,8 @@ export namespace ZTaskOption {
      *
      * The prerequisite will be added as soon as its specification {@link conclude concluded}.
      *
-     * @param taskName  The name of prerequisite task.
-     * @param annex  Whether the started prerequisite is a task annex.
+     * @param taskName - The name of prerequisite task.
+     * @param annex - Whether the started prerequisite is a task annex.
      *
      * @returns `this` instance.
      */
@@ -95,8 +95,8 @@ export namespace ZTaskOption {
     /**
      * Appends prerequisite attribute.
      *
-     * @param name  Target attribute name.
-     * @param value  Attribute value to append.
+     * @param name - Target attribute name.
+     * @param value - Attribute value to append.
      *
      * @returns `this` instance.
      */
@@ -105,7 +105,7 @@ export namespace ZTaskOption {
     /**
      * Appends prerequisite attributes.
      *
-     * @param attrs  Attributes to append.
+     * @param attrs - Attributes to append.
      *
      * @returns `this` instance.
      */
@@ -114,7 +114,7 @@ export namespace ZTaskOption {
     /**
      * Appends raw prerequisite argument(s).
      *
-     * @param args  Prerequisite arguments to add.
+     * @param args - Prerequisite arguments to add.
      *
      * @returns `this` instance.
      */
@@ -123,7 +123,7 @@ export namespace ZTaskOption {
     /**
      * Appends arbitrary prerequisite option.
      *
-     * @param option  The option to append. This can be either an {@link addAttr attribute} specifier, or an
+     * @param option - The option to append. This can be either an {@link addAttr attribute} specifier, or an
      * {@link addArg argument}.
      *
      * @returns `this` instance.
@@ -142,7 +142,7 @@ export namespace ZTaskOption {
      *
      * {@link conclude Concludes} current prerequisite.
      *
-     * @param targets  Task target specifier(s) to add.
+     * @param targets - Task target specifier(s) to add.
      */
     nextTarget(...targets: ZTaskSpec.Target[]): void;
 

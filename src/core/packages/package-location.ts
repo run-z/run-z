@@ -38,7 +38,7 @@ export abstract class ZPackageLocation {
   /**
    * Constructs location relatively to this one.
    *
-   * @param path  Relative path starting with `./` or `../` and using `/` as directory separators.
+   * @param path - Relative path starting with `./` or `../` and using `/` as directory separators.
    *
    * @returns Either relative location, or `undefined` if the given `path` does not lead to package location.
    */
@@ -75,7 +75,7 @@ export abstract class ZPackageLocation {
    *
    * It may include `//` to include all immediately nested packages, or `///` to include all deeply nested packages.
    *
-   * @param selector  Package selector.
+   * @param selector - Package selector.
    *
    * @returns A promise resolving to iterable of matching package locations.
    */

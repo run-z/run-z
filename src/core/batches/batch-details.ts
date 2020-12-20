@@ -46,7 +46,7 @@ export const ZBatchDetails = {
    * Reconstructs full details of the task batching by partial ones.
    *
    * @typeparam TAction  Task action type.
-   * @param details  Partial task call details.
+   * @param details - Partial task call details.
    *
    * @returns Full task batching details.
    */

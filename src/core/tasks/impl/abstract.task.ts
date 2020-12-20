@@ -111,7 +111,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
    *
    * Records initial task execution instructions.
    *
-   * @param planner  Task execution planner to record instructions to.
+   * @param planner - Task execution planner to record instructions to.
    *
    * @returns Either nothing when instructions recorded synchronously, or a promise-like instance resolved when
    * instructions recorded asynchronously.

@@ -44,7 +44,7 @@ export class ZSetup {
   /**
    * Constructs setup instance.
    *
-   * @param config  Task execution configuration.
+   * @param config - Task execution configuration.
    */
   constructor(config: ZConfig = {}) {
     this._config = config;

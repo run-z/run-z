@@ -41,7 +41,7 @@ export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> exte
   /**
    * Builds initial details for {@link call calling} this task.
    *
-   * @param call  This task call to build details of.
+   * @param call - This task call to build details of.
    *
    * @return Full task call details.
    */
@@ -54,9 +54,9 @@ export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> exte
    * arguments as arguments to this sub-task. A task of any other type calls to itself.
    *
    * @typeparam TAction  Task action type.
-   * @param planner  A planner to record prerequisite call(s) to.
-   * @param pre  Prerequisite specifier.
-   * @param details  Task call details.
+   * @param planner - A planner to record prerequisite call(s) to.
+   * @param pre - Prerequisite specifier.
+   * @param details - Task call details.
    *
    * @returns A promise resolved to recorded prerequisite call.
    */
@@ -72,7 +72,7 @@ export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> exte
    * The plan would execute the task after executing all of its prerequisites.
    *
    * @typeparam TAction  Task action type.
-   * @param details  Task call details.
+   * @param details - Task call details.
    *
    * @returns A promise resolved to execution call of this task.
    *
@@ -83,7 +83,7 @@ export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> exte
   /**
    * Performs task execution.
    *
-   * @param job  This task execution job.
+   * @param job - This task execution job.
    *
    * @returns Task execution instance.
    */

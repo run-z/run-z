@@ -37,7 +37,7 @@ export interface ZTaskModifier {
   /**
    * Appends a task prerequisite.
    *
-   * @param pre  Prerequisite specifier to append.
+   * @param pre - Prerequisite specifier to append.
    *
    * @returns `this` instance.
    */
@@ -46,8 +46,8 @@ export interface ZTaskModifier {
   /**
    * Appends a task attribute.
    *
-   * @param name  Target attribute name.
-   * @param value  Attribute value to append.
+   * @param name - Target attribute name.
+   * @param value - Attribute value to append.
    *
    * @returns `this` instance.
    */
@@ -56,7 +56,7 @@ export interface ZTaskModifier {
   /**
    * Appends task attributes.
    *
-   * @param attrs  Attributes to append
+   * @param attrs - Attributes to append
    *
    * @returns `this` instance.
    */
@@ -65,7 +65,7 @@ export interface ZTaskModifier {
   /**
    * Appends raw command line argument(s) to the task.
    *
-   * @param args  Command line argument(s) to append.
+   * @param args - Command line argument(s) to append.
    *
    * @returns `this` instance.
    */
@@ -79,7 +79,7 @@ export interface ZTaskModifier {
    *
    * A single task call will be planned {@link ZBatcher.batchTask by default}.
    *
-   * @param batching  New batching policy.
+   * @param batching - New batching policy.
    *
    * @returns `this` instance.
    */
@@ -91,7 +91,7 @@ export interface ZTaskModifier {
    * The task action defaults to {@link Group grouping task} unless reassigned by this call.
    *
    * @typeparam TNewAction  New task action type.
-   * @param action  Action to assign to the task.
+   * @param action - Action to assign to the task.
    *
    * @returns `this` instance.
    */
@@ -102,7 +102,7 @@ export interface ZTaskModifier {
    *
    * This method call overrides normal task execution. E.g. to display help info.
    *
-   * @param executor  New executor for task execution.
+   * @param executor - New executor for task execution.
    *
    * @returns `this` instance.
    */

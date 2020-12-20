@@ -39,7 +39,7 @@ export class StandardZSetup extends ZSetup {
   /**
    * Constructs standard setup instance.
    *
-   * @param config  Task execution configuration.
+   * @param config - Task execution configuration.
    */
   constructor(config: ZConfig = {}) {
     super({

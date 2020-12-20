@@ -152,7 +152,7 @@ By default ${clz.usage('text')} format is used.
   /**
    * Assigns the maximum number of simultaneously running jobs.
    *
-   * @param limit  The maximum number of simultaneously running jobs. Zero or negative value means no limit.
+   * @param limit - The maximum number of simultaneously running jobs. Zero or negative value means no limit.
    * Equals to the number of CPUs by default.
    *
    * @returns `this` instance.
@@ -173,7 +173,7 @@ By default ${clz.usage('text')} format is used.
    *
    * By default uses `text` format.
    *
-   * @param name  New progress report format name.
+   * @param name - New progress report format name.
    *
    * @returns `this` instance.
    */

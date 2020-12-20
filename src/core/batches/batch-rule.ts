@@ -18,7 +18,7 @@ export interface ZBatchRule<TControl> {
   /**
    * Create batch processing rule instance.
    *
-   * @param context  Batch processing rule context.
+   * @param context - Batch processing rule context.
    *
    * @returns New batch processing rule instance.
    */
@@ -40,7 +40,7 @@ export namespace ZBatchRule {
     /**
      * Updates batch processing policy by replacing the rule processing instance with new one.
      *
-     * @param update  A function accepting new processing rule context, and returning either new rule instance or
+     * @param update - A function accepting new processing rule context, and returning either new rule instance or
      * nothing to remove the rule from new batch processing policy.
      *
      * @returns Updated batch processing policy.
@@ -71,8 +71,8 @@ export namespace ZBatchRule {
     /**
      * Applies this instance to another batch processing policy.
      *
-     * @param context  Batch processing rule context bound to another processing policy instance.
-     * @param transiently  Whether to move to transient policy. E.g. to task prerequisites.
+     * @param context - Batch processing rule context bound to another processing policy instance.
+     * @param transiently - Whether to move to transient policy. E.g. to task prerequisites.
      *
      * @returns Batch processing rule instance bound to new context, or `false` or nothing nothing if the instance
      * is not applicable to new context.
@@ -82,7 +82,7 @@ export namespace ZBatchRule {
     /**
      * Processes the batch.
      *
-     * @param batch  The batch to process.
+     * @param batch - The batch to process.
      *
      * @returns Either nothing if batch processing completed synchronously, or a promise-like instance resolved when
      * the batch processed asynchronously.

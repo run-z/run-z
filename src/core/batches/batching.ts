@@ -22,7 +22,7 @@ export class ZBatching {
   /**
    * Creates new task batching policy with default batch processing rules enabled.
    *
-   * @param batcher  Task batcher to use.
+   * @param batcher - Task batcher to use.
    *
    * @returns New task batching policy.
    */
@@ -34,7 +34,7 @@ export class ZBatching {
   /**
    * Creates new task batching policy without any batch processing rules enabled.
    *
-   * @param batcher  Task batcher to use.
+   * @param batcher - Task batcher to use.
    *
    * @returns New task batching policy with default batch processing rules enabled.
    */
@@ -52,7 +52,7 @@ export class ZBatching {
   /**
    * Updates a batcher to use.
    *
-   * @param batcher  New batcher.
+   * @param batcher - New batcher.
    *
    * @returns New batching policy using the given batcher.
    */
@@ -68,7 +68,7 @@ export class ZBatching {
   /**
    * Assigns a batcher to use unless already assigned.
    *
-   * @param batcher  New batcher.
+   * @param batcher - New batcher.
    *
    * @returns New batching policy using the given batcher, or `this` one if it has a batcher already.
    */
@@ -80,7 +80,7 @@ export class ZBatching {
    * Retrieves control instance for batch processing rule.
    *
    * @typeparam TControl  A type of batch processing rule control.
-   * @param rule  Batch processing rule to retrieve control of.
+   * @param rule - Batch processing rule to retrieve control of.
    *
    * @returns A control instance for target batch processing rule.
    */
@@ -96,7 +96,7 @@ export class ZBatching {
   /**
    * Merges batching policies.
    *
-   * @param other  Batching policy to merge with this one. Its settings have precedence over the ones of this policy.
+   * @param other - Batching policy to merge with this one. Its settings have precedence over the ones of this policy.
    *
    * @returns Merged batching policy.
    */
@@ -107,7 +107,7 @@ export class ZBatching {
   /**
    * Merges batching policy with transient one.
    *
-   * @param other  Transient batching policy to merge with this one. Its settings have precedence over the ones of this
+   * @param other - Transient batching policy to merge with this one. Its settings have precedence over the ones of this
    * policy.
    *
    * @returns Merged batching policy.
@@ -164,7 +164,7 @@ export class ZBatching {
    *
    * Records tasks to be executed in batch by {@link batchBy batcher} and applies {@link rule batching rules} to them.
    *
-   * @param planner  Batch execution planner to record batched task calls to.
+   * @param planner - Batch execution planner to record batched task calls to.
    *
    * @returns A promise resolved when batch execution planned.
    */

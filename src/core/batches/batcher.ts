@@ -19,8 +19,8 @@ import { NamedZBatches } from './named-batches.rule';
  */
 export type ZBatcher =
 /**
- * @param planner  Batch execution planner to record batched task calls to.
- * @param batching  Task batching policy.
+ * @param planner - Batch execution planner to record batched task calls to.
+ * @param batching - Task batching policy.
  *
  * @returns Either nothing if batch execution planned synchronously, or a promise-like instance resolved when batch
  * execution planned asynchronously.
@@ -40,9 +40,9 @@ export namespace ZBatcher {
    */
   export type Provider =
   /**
-   * @param target  Target package.
-   * @param planner  Target batch execution planner.
-   * @param batching  Task batching policy.
+   * @param target - Target package.
+   * @param planner - Target batch execution planner.
+   * @param batching - Task batching policy.
    *
    * @returns Either nothing if batch planning is impossible, a batcher instance to plan batch execution by, or
    * a promise resolving to one of the above.
@@ -63,7 +63,7 @@ export const ZBatcher = {
    *
    * This is the default {@link ZBatcher task batcher}.
    *
-   * @param planner  Batch execution planner to record batched task call to.
+   * @param planner - Batch execution planner to record batched task call to.
    *
    * @returns A promise resolved when task call recorded.
    */
@@ -91,8 +91,8 @@ export const ZBatcher = {
    * If target package has no matching named batches then batches the task by {@link ZBatcher.batchTask default
    * batcher}.
    *
-   * @param planner  Batch execution planner to record batched task calls to.
-   * @param batching  Task batching policy.
+   * @param planner - Batch execution planner to record batched task calls to.
+   * @param batching - Task batching policy.
    *
    * @returns A promise resolved when batch execution planned.
    */
@@ -105,7 +105,7 @@ export const ZBatcher = {
    *
    * Batches tasks in the topmost package a batcher can be created for.
    *
-   * @param provider  A provider of task batcher to plan batch execution with. By default creates a batcher that batches
+   * @param provider - A provider of task batcher to plan batch execution with. By default creates a batcher that batches
    * the named task over {@link ZBatcher.batchNamed each package in each named set}, and ignores targets
    * without matching named package sets.
    *

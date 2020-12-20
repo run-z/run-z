@@ -31,7 +31,7 @@ export interface ZPrePlanner {
    *
    * This is called by group tasks to reuse their package selectors.
    *
-   * @param targets  A set of packages selected by prerequisite.
+   * @param targets - A set of packages selected by prerequisite.
    */
   applyTargets(this: void, targets: ZPackageSet): void;
 
@@ -41,8 +41,8 @@ export interface ZPrePlanner {
    * Updates already recorded call to the same task.
    *
    * @typeparam TAction  Task action type.
-   * @param task  The task to call.
-   * @param details  The details of the call.
+   * @param task - The task to call.
+   * @param details - The details of the call.
    *
    * @returns A promise resolved to the task call when it is recorded.
    */
@@ -55,7 +55,7 @@ export interface ZPrePlanner {
   /**
    * Builds a transient prerequisites planner based on this one with updated batching policy for prerequisites.
    *
-   * @param batching  Transient prerequisites batching policy.
+   * @param batching - Transient prerequisites batching policy.
    *
    * @returns New prerequisites planner.
    */

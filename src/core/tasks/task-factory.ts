@@ -16,8 +16,8 @@ export class ZTaskFactory {
   /**
    * Creates new task builder.
    *
-   * @param target  Target package the new task is to be applied to.
-   * @param name  New task name.
+   * @param target - Target package the new task is to be applied to.
+   * @param name - New task name.
    *
    * @returns New task builder.
    */

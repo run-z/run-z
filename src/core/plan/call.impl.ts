@@ -15,7 +15,7 @@ import { ZTaskParams } from './task-params';
  */
 export type ZCallParams =
 /**
- * @param evaluator  Task parameters evaluation context.
+ * @param evaluator - Task parameters evaluation context.
  *
  * @returns Partial task execution parameters.
  */

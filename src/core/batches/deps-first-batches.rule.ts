@@ -21,7 +21,7 @@ export interface ZDepsFirstBatches {
   /**
    * Makes batched tasks execute in dependencies-first order to each other.
    *
-   * @param depsFirst  `true` or nothing to execute batched tasks in dependencies-first order, or `false` to execute
+   * @param depsFirst - `true` or nothing to execute batched tasks in dependencies-first order, or `false` to execute
    * them in arbitrary order.
    *
    * @returns Updated batching policy.

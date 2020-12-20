@@ -21,10 +21,10 @@ export class ZPackageTree extends ZPackageLocation {
   /**
    * Constructs package tree.
    *
-   * @param baseName  Base name of the package path.
-   * @param packageJson  Either `package.json` contents, a promise resolving to it, or nothing.
-   * @param parent  Parent package tree or `undefined` if there is no parent location.
-   * @param shell  Command execution shell to use at this location. The one from the `parent` is used by default,
+   * @param baseName - Base name of the package path.
+   * @param packageJson - Either `package.json` contents, a promise resolving to it, or nothing.
+   * @param parent - Parent package tree or `undefined` if there is no parent location.
+   * @param shell - Command execution shell to use at this location. The one from the `parent` is used by default,
    * or {@link ZShell.noop no-op shell} if there is no `parent`.
    */
   constructor(
@@ -89,9 +89,9 @@ export class ZPackageTree extends ZPackageLocation {
    *
    * Replaces a previous package tree with the same name.
    *
-   * @param path  Nested slash-separated package path.
-   * @param packageJson  Either new `package.json` contents, a promise resolving to it, or nothing.
-   * @param shell  Command execution shell to use in new package tree.
+   * @param path - Nested slash-separated package path.
+   * @param packageJson - Either new `package.json` contents, a promise resolving to it, or nothing.
+   * @param shell - Command execution shell to use in new package tree.
    *
    * @returns New nested package tree.
    */

@@ -16,7 +16,7 @@ export class ZPlanner {
   /**
    * Constructs execution planner.
    *
-   * @param setup  Task execution setup.
+   * @param setup - Task execution setup.
    */
   constructor(readonly setup: ZSetup) {
   }
@@ -27,8 +27,8 @@ export class ZPlanner {
    * The plan would execute the task after executing all of its prerequisites.
    *
    * @typeparam TAction  Task action type.
-   * @param task  Top-level task to call.
-   * @param details  Task call details.
+   * @param task - Top-level task to call.
+   * @param details - Task call details.
    *
    * @returns A promise resolved to top-level task execution call.
    */

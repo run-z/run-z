@@ -16,7 +16,7 @@ export interface ZCallDetails<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
   /**
    * Evaluates parameters of the call.
    *
-   * @param evaluator  Task parameters evaluation context.
+   * @param evaluator - Task parameters evaluation context.
    *
    * @returns Partial task parameters.
    */
@@ -27,7 +27,7 @@ export interface ZCallDetails<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
    *
    * Records further task execution instructions.
    *
-   * @param planner  Task execution planner to record instructions to.
+   * @param planner - Task execution planner to record instructions to.
    *
    * @returns Either nothing when instructions recorded synchronously, or a promise-like instance resolved when
    * instructions recorded asynchronously.
@@ -48,7 +48,7 @@ export namespace ZCallDetails {
     /**
      * Evaluates parameters of the call.
      *
-     * @param evaluator  Task parameters evaluation context.
+     * @param evaluator - Task parameters evaluation context.
      *
      * @returns Evaluated task parameters.
      */
@@ -59,7 +59,7 @@ export namespace ZCallDetails {
      *
      * Records further task execution instructions.
      *
-     * @param planner  Task execution planner to record instructions to.
+     * @param planner - Task execution planner to record instructions to.
      *
      * @returns A promise resolved when instructions recorded.
      */
@@ -75,7 +75,7 @@ export const ZCallDetails = {
    * Reconstructs full details of the task call by partial ones.
    *
    * @typeparam TAction  Task action type.
-   * @param details  Partial task call details.
+   * @param details - Partial task call details.
    *
    * @returns Full task call details.
    */

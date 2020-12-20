@@ -30,7 +30,7 @@ export interface ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
   /**
    * Evaluates task execution parameters.
    *
-   * @param evaluator  Task parameters evaluator.
+   * @param evaluator - Task parameters evaluator.
    *
    * @returns Task execution parameters instance.
    */
@@ -62,7 +62,7 @@ export interface ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
    *
    * Checks recursively among all immediate and deep prerequisites.
    *
-   * @param task  The task to check.
+   * @param task - The task to check.
    *
    * @returns `true` if the given `task` is {@link ZCallPlanner.order ordered} before this one, or `false` otherwise.
    */
@@ -71,7 +71,7 @@ export interface ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
   /**
    * Checks whether this task call can be executed in parallel to a call to the given task.
    *
-   * @param task  The task to check.
+   * @param task - The task to check.
    *
    * @returns `true` if tasks can be executed in parallel, or `false` otherwise.
    *
@@ -82,7 +82,7 @@ export interface ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
   /**
    * Executes this call.
    *
-   * @param shell  Task execution shell.
+   * @param shell - Task execution shell.
    *
    * @returns Either new task execution job, or the one already started.
    */

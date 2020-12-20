@@ -85,7 +85,7 @@ export interface ZPackage extends ZPackageSet {
    *
    * It may include `//` to include all immediately nested packages, or `///` to include all deeply nested packages.
    *
-   * @param selector  Package selector.
+   * @param selector - Package selector.
    *
    * @returns Selected package set.
    */
@@ -94,7 +94,7 @@ export interface ZPackage extends ZPackageSet {
   /**
    * Returns a task by its name.
    *
-   * @param name  Task name.
+   * @param name - Task name.
    *
    * @returns A promise resolved to task instance. May have {@link ZTaskSpec.Unknown unknown action} if the task is not
    * present in `scripts` section of {@link packageJson `package.json`}.

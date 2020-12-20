@@ -26,7 +26,7 @@ export interface ZTaskBuilder<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
    * The task action defaults to {@link Group grouping task} unless reassigned by this call.
    *
    * @typeparam TNewAction  New task action type.
-   * @param action  Action to assign to the task.
+   * @param action - Action to assign to the task.
    *
    * @returns `this` instance producing a task with new action type.
    */
@@ -35,8 +35,8 @@ export interface ZTaskBuilder<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
   /**
    * Parses a command line and {@link applyOptions applies} recognized options to the task.
    *
-   * @param commandLine  Task command line to parse.
-   * @param opts  Parser options. By default, starts command line options processing from the second argument.
+   * @param commandLine - Task command line to parse.
+   * @param opts - Parser options. By default, starts command line options processing from the second argument.
    *
    * @returns A promise resolved to `this` instance when the command line parsed.
    *
@@ -47,8 +47,8 @@ export interface ZTaskBuilder<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
   /**
    * Recognized options from command line arguments and applies them to the task.
    *
-   * @param args  Arguments to apply.
-   * @param opts  Parser options.
+   * @param args - Arguments to apply.
+   * @param opts - Parser options.
    *
    * @returns A promise resolved to `this` instance when command line options applied.
    *
@@ -69,9 +69,9 @@ export interface ZTaskBuilder<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
    *
    * If the above fails, just {@link applyOptions applies command line options} as they are.
    *
-   * @param taskName  Known task name.
-   * @param argv  Command line arguments of the process.
-   * @param opts  Parser options. By default, starts command line options processing from the third argument.
+   * @param taskName - Known task name.
+   * @param argv - Command line arguments of the process.
+   * @param opts - Parser options. By default, starts command line options processing from the third argument.
    *
    * @returns A promise resolved to `this` instance when command line options applied.
    */

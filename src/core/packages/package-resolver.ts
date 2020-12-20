@@ -19,7 +19,7 @@ export class ZPackageResolver {
   /**
    * Constructs NPM package resolver.
    *
-   * @param setup  Task execution setup.
+   * @param setup - Task execution setup.
    */
   constructor(readonly setup: ZSetup) {
 
@@ -64,7 +64,7 @@ export class ZPackageResolver {
   /**
    * Resolves package by its location.
    *
-   * @param location  Package location.
+   * @param location - Package location.
    *
    * @returns A promise resolved to package.
    */
@@ -78,7 +78,7 @@ export class ZPackageResolver {
   /**
    * Searches for package by its location.
    *
-   * @param location  Package location.
+   * @param location - Package location.
    *
    * @returns A promise resolved to package or `undefined` if there is no such package.
    */
@@ -125,7 +125,7 @@ export class ZPackageResolver {
   /**
    * Searches for resolved package by its name.
    *
-   * @param name  Package name.
+   * @param name - Package name.
    *
    * @returns An iterable of packages with requested name.
    */

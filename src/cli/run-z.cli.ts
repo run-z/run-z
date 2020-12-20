@@ -60,8 +60,8 @@ export interface RunZOpts {
  *
  * Logs execution errors.
  *
- * @param args  Command line arguments. `process.argv` by default.
- * @param opts  Execution options.
+ * @param args - Command line arguments. `process.argv` by default.
+ * @param opts - Execution options.
  *
  * @returns A promise resolved when execution succeeds or rejected when it is failed.
  */

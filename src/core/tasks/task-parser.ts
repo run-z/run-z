@@ -29,7 +29,7 @@ export class ZTaskParser {
   /**
    * Constructs task parser.
    *
-   * @param config  Task parser configuration.
+   * @param config - Task parser configuration.
    */
   constructor(config: ZTaskParser.Config = {}) {
     this._config = config;
@@ -38,7 +38,7 @@ export class ZTaskParser {
   /**
    * Tries to parse {@link ZTaskSpec.Target target packages} specifier.
    *
-   * @param value  A string value to parse.
+   * @param value - A string value to parse.
    *
    * @returns A target specifier if the given `value` is either `.` or `..`, or starts with either `./`, `.//`,
    * or `...`. `undefined` otherwise.
@@ -66,8 +66,8 @@ export class ZTaskParser {
   /**
    * Parses attribute and adds it to attributes collection.
    *
-   * @param value  A string value potentially containing attribute.
-   * @param onAttr  A function that accepts attribute name and value as parameters and returns `false` when attribute
+   * @param value - A string value potentially containing attribute.
+   * @param onAttr - A function that accepts attribute name and value as parameters and returns `false` when attribute
    * ignored.
    *
    * @returns `true` if attribute is added to target attributes collection, or `false` if the given string `value` does
@@ -95,8 +95,8 @@ export class ZTaskParser {
    * The command line can not be parsed properly when it contains a special shell sequence such as glob pattern,
    * environment variable substitution, or comment.
    *
-   * @param commandLine  A command line to parse.
-   * @param script  Whether to allow NPM scripts. When `false` (by default), the command line is rejected, unless
+   * @param commandLine - A command line to parse.
+   * @param script - Whether to allow NPM scripts. When `false` (by default), the command line is rejected, unless
    * the command is `run-z`.
    *
    * @returns Either parsed command line arguments, or `undefined` if target script can not be parsed.
@@ -129,9 +129,9 @@ export class ZTaskParser {
   /**
    * Recognized options from command line arguments and applies them to the task.
    *
-   * @param builder  Target task builder to apply recognized task options with.
-   * @param args  Arguments to apply.
-   * @param opts  Parser options.
+   * @param builder - Target task builder to apply recognized task options with.
+   * @param args - Arguments to apply.
+   * @param opts - Parser options.
    *
    * @returns A promise resolved to task builder when command line options applied.
    */

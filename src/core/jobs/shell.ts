@@ -19,7 +19,7 @@ export abstract class ZShell {
   /**
    * Creates task execution shell that does nothing.
    *
-   * @param setup  Task execution setup.
+   * @param setup - Task execution setup.
    *
    * @returns New task execution shell.
    */
@@ -30,7 +30,7 @@ export abstract class ZShell {
   /**
    * Constructs task execution shell.
    *
-   * @param setup  Task execution setup.
+   * @param setup - Task execution setup.
    */
   constructor(readonly setup: ZSetup) {
   }
@@ -38,8 +38,8 @@ export abstract class ZShell {
   /**
    * Executes a {@link ZTaskSpec.Command command}.
    *
-   * @param job  The job executing command.
-   * @param command  Command to execute.
+   * @param job - The job executing command.
+   * @param command - Command to execute.
    *
    * @returns Command execution instance.
    */
@@ -48,8 +48,8 @@ export abstract class ZShell {
   /**
    * Executes an {@link ZTaskSpec.Script NPM script}.
    *
-   * @param job  The job executing NPM script.
-   * @param name  The name of NPM script to execute.
+   * @param job - The job executing NPM script.
+   * @param name - The name of NPM script to execute.
    *
    * @returns NPM script execution instance.
    */

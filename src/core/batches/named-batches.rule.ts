@@ -41,7 +41,7 @@ export interface NamedZBatches {
   /**
    * Assigns batch names to limit the package selection by.
    *
-   * @param batchNames  An iterable of batch names to limit package selection by.
+   * @param batchNames - An iterable of batch names to limit package selection by.
    *
    * @returns Updated batching policy.
    */
@@ -50,7 +50,7 @@ export interface NamedZBatches {
   /**
    * Adds batch names to use for package selection.
    *
-   * @param batchNames  An iterable of additional batch names.
+   * @param batchNames - An iterable of additional batch names.
    *
    * @returns Updated batching policy.
    */
@@ -59,7 +59,7 @@ export interface NamedZBatches {
   /**
    * Add batch names to exclude from package selection.
    *
-   * @param batchNames  An iterable of excluded batch names.
+   * @param batchNames - An iterable of excluded batch names.
    *
    * @returns Updated batching policy.
    */

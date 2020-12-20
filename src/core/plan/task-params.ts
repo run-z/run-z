@@ -84,8 +84,8 @@ export class ZTaskParams {
   /**
    * Updates mutable task execution parameters with the given partial update.
    *
-   * @param params  Parameters to update.
-   * @param update  Partial update of parameters.
+   * @param params - Parameters to update.
+   * @param update - Partial update of parameters.
    *
    * @returns Updated parameters (`params` argument).
    */
@@ -127,7 +127,7 @@ export class ZTaskParams {
   /**
    * Constructs task execution parameters.
    *
-   * @param values  Task execution parameter values.
+   * @param values - Task execution parameter values.
    */
   constructor(values: ZTaskParams.Values) {
     this.attrs = values.attrs;
@@ -137,7 +137,7 @@ export class ZTaskParams {
   /**
    * Returns the most recent attribute value.
    *
-   * @param name  Attribute name.
+   * @param name - Attribute name.
    *
    * @returns The most recent (last) attribute value, or `undefined` if attribute is not set.
    */
@@ -151,7 +151,7 @@ export class ZTaskParams {
   /**
    * Checks whether the given flag attribute set.
    *
-   * @param name  Flag attribute name.
+   * @param name - Flag attribute name.
    *
    * @returns `true` if attribute with the given name is set, and its most recent lower-cased value value is not one of
    * `0`, `false`, or `off`. `false` otherwise.
@@ -211,7 +211,7 @@ export namespace ZTaskParams {
    */
   export type Fn =
   /**
-   * @param evaluator  Task parameters evaluation context.
+   * @param evaluator - Task parameters evaluation context.
    *
    * @returns Evaluated task parameters.
    */
@@ -227,8 +227,8 @@ export namespace ZTaskParams {
     /**
      * Evaluates parameters of the given task call.
      *
-     * @param source  The task call the parameters evaluated from.
-     * @param params  The task parameters builder function. It is called unless a recursion detected.
+     * @param source - The task call the parameters evaluated from.
+     * @param params - The task parameters builder function. It is called unless a recursion detected.
      *
      * @returns Evaluated task parameters, or empty ones if recursion detected.
      */
@@ -238,9 +238,9 @@ export namespace ZTaskParams {
      * Evaluates a value for the given task call.
      *
      * @typeparam TValue  Value type.
-     * @param key  Value key.
-     * @param source  The task call the value evaluated for.
-     * @param evaluate  The value evaluation function. It is called unless a recursion detected.
+     * @param key - Value key.
+     * @param source - The task call the value evaluated for.
+     * @param evaluate - The value evaluation function. It is called unless a recursion detected.
      *
      * @returns Evaluated value, or {@link ValueKey.empty empty one} if recursion detected.
      */

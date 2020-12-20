@@ -13,7 +13,7 @@ import type { ZJob } from './job';
  */
 export type ZTaskExecutor<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> =
 /**
- * @param job  Task execution job.
+ * @param job - Task execution job.
  *
  * @returns Task execution instance.
  */

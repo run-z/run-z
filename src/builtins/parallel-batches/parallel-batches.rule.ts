@@ -17,7 +17,7 @@ export interface ZParallelBatches {
   /**
    * Makes batched tasks execute in parallel to each other.
    *
-   * @param parallel  `true` or nothing to execute batched tasks in parallel to each other, or `false` to execute them
+   * @param parallel - `true` or nothing to execute batched tasks in parallel to each other, or `false` to execute them
    * sequentially.
    *
    * @returns Updated batching policy.

@@ -19,7 +19,7 @@ export abstract class ZPackageSet {
   /**
    * Combines package sets.
    *
-   * @param other  A package set co combine with this one.
+   * @param other - A package set co combine with this one.
    *
    * @returns A set of all packages from `this` and `other` package sets.
    */

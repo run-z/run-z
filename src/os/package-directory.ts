@@ -17,8 +17,8 @@ export class ZPackageDirectory extends ZPackageLocation {
   /**
    * Opens NPM package directory.
    *
-   * @param url  URL of directory without.
-   * @param rootURL  Root URL containing all packages.
+   * @param url - URL of directory without.
+   * @param rootURL - Root URL containing all packages.
    *
    * @returns New NPM package directory instance.
    */
