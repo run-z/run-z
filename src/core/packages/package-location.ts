@@ -31,7 +31,7 @@ export abstract class ZPackageLocation {
   /**
    * Base name of the package path.
    *
-   * I.e. the last segment of the [[path]].
+   * I.e. the last segment of the {@link path}.
    */
   readonly abstract baseName: string;
 
