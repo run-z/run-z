@@ -7,6 +7,7 @@
 	<meta name="description" content="Documentation for Run Z">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/main.css">
+	<script async src="assets/js/search.js" id="search-script"></script>
 </head>
 <body>
 <header>
@@ -49,11 +50,6 @@
 	</div>
 	<div class="tsd-page-title">
 		<div class="container">
-			<ul class="tsd-breadcrumb">
-				<li>
-					<a href="globals.html">Globals</a>
-				</li>
-			</ul>
 			<h1>Run Z</h1>
 		</div>
 	</div>
@@ -101,16 +97,17 @@
 yarn add run-z --dev         # Using Yarn</code></pre>
 					</li>
 					<li><p>Add script(s) to <code>package.json</code> executing <code>run-z</code>:</p>
-						<pre><code class="language-json">{
-  <span class="hljs-attr">&quot;scripts&quot;</span>: {
-    <span class="hljs-attr">&quot;all&quot;</span>: <span class="hljs-string">&quot;run-z build lint,test&quot;</span>,
-    <span class="hljs-attr">&quot;build&quot;</span>: <span class="hljs-string">&quot;run-z --then tsc -p .&quot;</span>,
-    <span class="hljs-attr">&quot;clean&quot;</span>: <span class="hljs-string">&quot;run-z --then shx rm -rf ./dist&quot;</span>,
-    <span class="hljs-attr">&quot;lint&quot;</span>: <span class="hljs-string">&quot;run-z --then eslint .&quot;</span>,
-    <span class="hljs-attr">&quot;test&quot;</span>: <span class="hljs-string">&quot;run-z --then jest&quot;</span>,
-    <span class="hljs-attr">&quot;z&quot;</span>: <span class="hljs-string">&quot;run-z&quot;</span>
-  }
-}</code></pre>
+						<pre><code class="language-json"><span style="color: #000000">{</span>
+<span style="color: #000000">  </span><span style="color: #0451A5">&quot;scripts&quot;</span><span style="color: #000000">: {</span>
+<span style="color: #000000">    </span><span style="color: #0451A5">&quot;all&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;run-z build lint,test&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #0451A5">&quot;build&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;run-z --then tsc -p .&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #0451A5">&quot;clean&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;run-z --then shx rm -rf ./dist&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #0451A5">&quot;lint&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;run-z --then eslint .&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #0451A5">&quot;test&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;run-z --then jest&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #0451A5">&quot;z&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;run-z&quot;</span>
+<span style="color: #000000">  }</span>
+<span style="color: #000000">}</span>
+</code></pre>
 					</li>
 					<li><p>Execute tasks:</p>
 						<pre><code class="language-shell">npm run all               # Run single task with NPM
@@ -243,11 +240,12 @@ run-z ./packages/// build # Executes `build` in `./packages` directory
 					The rest are parameters to this task. This can be used to batch tasks without specifying the package directories every
 				time.</p>
 				<p>So, with the following <code>package.json</code>:</p>
-				<pre><code class="language-json">{
-  <span class="hljs-attr">&quot;scripts&quot;</span>: {
-    <span class="hljs-attr">&quot;each&quot;</span>: <span class="hljs-string">&quot;run-z ./3rd-party// ./packages//&quot;</span>
-  }
-}</code></pre>
+				<pre><code class="language-json"><span style="color: #000000">{</span>
+<span style="color: #000000">  </span><span style="color: #0451A5">&quot;scripts&quot;</span><span style="color: #000000">: {</span>
+<span style="color: #000000">    </span><span style="color: #0451A5">&quot;each&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;run-z ./3rd-party// ./packages//&quot;</span>
+<span style="color: #000000">  }</span>
+<span style="color: #000000">}</span>
+</code></pre>
 				<p>it is possible to batch tasks across packages in <code>./3rd-party</code> and <code>./packages</code> directories:</p>
 				<pre><code class="language-shell">yarn each /build each /test  # Batch `build`, then `test` across all packages.  </code></pre>
 				<a href="#named-batches" id="named-batches" style="color: inherit; text-decoration: none;">
@@ -257,12 +255,13 @@ run-z ./packages/// build # Executes `build` in `./packages` directory
 				It is quite doable via specifying package selectors. Still, there is a better solution utilizing named batches.</p>
 				<p>Let&#39;s say we have a root package (worktree root) and several packages within a <code>packages/</code> directory.</p>
 				<p>Let&#39;s place the following scripts to the root <code>package.json</code>:</p>
-				<pre><code class="language-json">{
-  <span class="hljs-attr">&quot;scripts&quot;</span>: {
-    <span class="hljs-attr">&quot;all/*&quot;</span>: <span class="hljs-string">&quot;run-z ./packages//&quot;</span>,
-    <span class="hljs-attr">&quot;z&quot;</span>: <span class="hljs-string">&quot;run-z&quot;</span>
-  }
-}</code></pre>
+				<pre><code class="language-json"><span style="color: #000000">{</span>
+<span style="color: #000000">  </span><span style="color: #0451A5">&quot;scripts&quot;</span><span style="color: #000000">: {</span>
+<span style="color: #000000">    </span><span style="color: #0451A5">&quot;all/*&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;run-z ./packages//&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #0451A5">&quot;z&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;run-z&quot;</span>
+<span style="color: #000000">  }</span>
+<span style="color: #000000">}</span>
+</code></pre>
 				<p>The <code>all/*</code> script is a named batch specifier. The <code>z</code> task is a handy NPM script, that just runs <code>run-z</code>.</p>
 				<p>With these present it becomes possible to batch tasks by executing <code>run-z</code> in either root package directory, or in
 				any of the nested packages:</p>
@@ -276,13 +275,14 @@ npm run z -- build --all # Do the same with NPM.</code></pre>
 				<p>The named batch can have a syntax like <code>all/test</code>. When present, such named batch will be used instead of the <code>all/*</code>
 					one when batching a <code>test</code> task. This can be useful, e.g. when it is necessary to pass additional parameters to
 				specific tasks:</p>
-				<pre><code class="language-json">{
-  <span class="hljs-attr">&quot;scripts&quot;</span>: {
-    <span class="hljs-attr">&quot;all/*&quot;</span>: <span class="hljs-string">&quot;run-z ./packages//&quot;</span>,
-    <span class="hljs-attr">&quot;all/test&quot;</span>: <span class="hljs-string">&quot;run-z ./packages// +test/--runInBand&quot;</span>,
-    <span class="hljs-attr">&quot;z&quot;</span>: <span class="hljs-string">&quot;run-z&quot;</span>
-  }
-}</code></pre>
+				<pre><code class="language-json"><span style="color: #000000">{</span>
+<span style="color: #000000">  </span><span style="color: #0451A5">&quot;scripts&quot;</span><span style="color: #000000">: {</span>
+<span style="color: #000000">    </span><span style="color: #0451A5">&quot;all/*&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;run-z ./packages//&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #0451A5">&quot;all/test&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;run-z ./packages// +test/--runInBand&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #0451A5">&quot;z&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;run-z&quot;</span>
+<span style="color: #000000">  }</span>
+<span style="color: #000000">}</span>
+</code></pre>
 				<pre><code class="language-shell">yarn z build --all  # Batches `build` in generic way.
 yarn z test --all   # Batches `test` with `--runInBand` option.</code></pre>
 				<blockquote>
@@ -309,14 +309,14 @@ yarn build --only-dependants  # Batch the `build` task across packages
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
 				<ul>
-					<li class="globals  ">
-						<a href="globals.html"><em>Globals</em></a>
+					<li class=" ">
+						<a href="modules.html">Modules</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/run-z.html">run-<wbr>z</a>
+						<a href="modules/run_z.html">run-<wbr>z</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/run-z_builtins.html">run-<wbr>z/builtins</a>
+						<a href="modules/run_z_builtins.html">run-<wbr>z/builtins</a>
 					</li>
 				</ul>
 			</nav>
@@ -333,9 +333,9 @@ yarn build --only-dependants  # Batch the `build` task across packages
 		<div class="tsd-legend-group">
 			<ul class="tsd-legend">
 				<li class="tsd-kind-namespace"><span class="tsd-kind-icon">Namespace</span></li>
-				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
 				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
 				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
 				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">
