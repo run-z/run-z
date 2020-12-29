@@ -1,3 +1,7 @@
+/**
+ * @packageDocumentation
+ * @module run-z/builtins
+ */
 export * from './all-batch.builtin';
 export * from './colors.builtin';
 export * from './command-execution.builtin';
