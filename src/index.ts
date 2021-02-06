@@ -1,6 +1,6 @@
 /**
  * @packageDocumentation
- * @module run-z
+ * @module Module run-z
  */
 export { StandardZSetup } from './builtins';
 export * from './cli';

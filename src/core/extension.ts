@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module run-z
- */
 import type { ZTaskParser } from './tasks';
 
 /**

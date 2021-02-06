@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module run-z/builtins
- */
 import { chalkZColorOptions } from '@run-z/optionz/colors';
 import type { ZExtension } from '../core';
 

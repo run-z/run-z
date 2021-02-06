@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module run-z
- */
 import { arrayOfElements, lazyValue } from '@proc7ts/primitives';
 import type { ZExecution, ZExecutionStarter } from '@run-z/exec-z';
 import { poolZExecutions, spawnZ } from '@run-z/exec-z';

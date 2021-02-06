@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module run-z
- */
 import type { ZCall, ZCallPlanner } from '../plan';
 
 /**

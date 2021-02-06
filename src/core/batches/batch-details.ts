@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module run-z
- */
 import { ZCallDetails } from '../plan';
 import type { ZTaskSpec } from '../tasks';
 import { ZBatching } from './batching';

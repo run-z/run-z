@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module run-z
- */
 import type { ZOption, ZOptionReader } from '@run-z/optionz';
 import type { ZTaskModifier } from './task-modifier';
 import type { ZTaskSpec } from './task-spec';

@@ -1,9 +1,4 @@
 /**
- * @packageDocumentation
- * @module run-z
- */
-
-/**
  * An error thrown when unknown task executed.
  */
 export class UnknownZTaskError extends Error {

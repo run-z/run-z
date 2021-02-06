@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module run-z
- */
 import type { ZExecution } from '@run-z/exec-z';
 import type { ZCall, ZTaskParams } from '../plan';
 import type { ZTaskSpec } from '../tasks';

@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module run-z/builtins
- */
 import { arrayOfElements } from '@proc7ts/primitives';
 import { ZConfig, ZExtension, ZSetup } from '../core';
 import { ZAllBatchBuiltin } from './all-batch.builtin';

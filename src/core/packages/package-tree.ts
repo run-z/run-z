@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module run-z
- */
 import { valueProvider } from '@proc7ts/primitives';
 import { ZPackageLocation } from './package-location';
 import type { ZPackageJson } from './package.json';

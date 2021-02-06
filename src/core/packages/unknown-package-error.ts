@@ -1,9 +1,4 @@
 /**
- * @packageDocumentation
- * @module run-z
- */
-
-/**
  * An error thrown when the package can not be resolved.
  */
 export class UnknownZPackageError extends Error {

@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module run-z
- */
 import type { ZBatch } from './batch';
 import type { ZBatching } from './batching';
 

@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module run-z
- */
 import type { ZBatching } from '../batches';
 import type { ZPackageSet } from '../packages';
 import type { ZTask, ZTaskSpec } from '../tasks';

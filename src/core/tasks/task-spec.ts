@@ -1,9 +1,4 @@
 /**
- * @packageDocumentation
- * @module run-z
- */
-
-/**
  * Task specifier.
  *
  * Built by {@link ZTaskParser parsing command line}.

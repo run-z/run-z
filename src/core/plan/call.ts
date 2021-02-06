@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module run-z
- */
 import type { ZJob, ZShell } from '../jobs';
 import type { ZTask, ZTaskSpec } from '../tasks';
 import type { ZPlan } from './plan';

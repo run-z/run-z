@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module run-z/builtins
- */
 import type { ZExtension, ZTaskOption } from '../../core';
 import { ZParallelBatches } from './parallel-batches.rule';
 

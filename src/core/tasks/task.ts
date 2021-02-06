@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module run-z
- */
 import type { ZExecution } from '@run-z/exec-z';
 import type { ZJob } from '../jobs';
 import type { ZPackage } from '../packages';

@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module run-z/builtins
- */
 import { clz } from '@run-z/optionz/colors';
 import type { ZExtension, ZTaskOption } from '../core';
 

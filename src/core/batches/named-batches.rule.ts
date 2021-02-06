@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module run-z
- */
 import { noop } from '@proc7ts/primitives';
 import type { ZBatchRule } from './batch-rule';
 import type { ZBatching } from './batching';

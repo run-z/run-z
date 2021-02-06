@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module run-z
- */
 import type { ZExtension } from './extension';
 import type { ZPackageResolver } from './packages';
 import type { ZPlanner } from './plan';

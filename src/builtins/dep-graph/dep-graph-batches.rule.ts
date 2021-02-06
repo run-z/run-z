@@ -1,11 +1,5 @@
-/**
- * @packageDocumentation
- * @module run-z/builtins
- */
 import { noop } from '@proc7ts/primitives';
-import type { ZBatching, ZBatchRule } from '../../core/batches';
-import type { ZPackage } from '../../core/packages';
-import type { ZTaskParams } from '../../core/plan';
+import type { ZBatching, ZBatchRule, ZPackage, ZTaskParams } from '../../core';
 
 /**
  * Dependency graph batches control.

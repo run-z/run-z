@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module run-z
- */
 import type { ZSetup } from '../setup';
 import type { ZTask } from '../tasks';
 import type { ZDepGraph } from './dep-graph';

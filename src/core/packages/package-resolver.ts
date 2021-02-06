@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module run-z
- */
 import type { ZSetup } from '../setup';
 import type { ZPackage } from './package';
 import type { ZPackageLocation } from './package-location';

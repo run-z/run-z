@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module run-z
- */
 import { AbortedZExecutionError, FailedZExecutionError } from '@run-z/exec-z';
 import { ZOptionError } from '@run-z/optionz';
 import { StandardZSetup } from '../builtins';

@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module run-z/builtins
- */
 import { noop } from '@proc7ts/primitives';
 import { execZ } from '@run-z/exec-z';
 import type { ZOptionMeta, ZOptionReader } from '@run-z/optionz';

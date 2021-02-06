@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module run-z
- */
 import type { ZPackage } from '../packages';
 import type { ZTaskBuilder } from './task-builder';
 import { ZTaskBuilder$ } from './task-builder.impl';

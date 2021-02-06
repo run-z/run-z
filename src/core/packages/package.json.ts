@@ -1,9 +1,4 @@
 /**
- * @packageDocumentation
- * @module run-z
- */
-
-/**
  * `package.json` file contents.
  */
 export interface ZPackageJson {

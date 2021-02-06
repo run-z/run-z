@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module run-z/builtins
- */
 import type { ZBatching, ZBatchRule } from '../../core';
 
 /**

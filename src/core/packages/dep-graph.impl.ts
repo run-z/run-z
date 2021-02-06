@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module run-z
- */
 import { valueProvider } from '@proc7ts/primitives';
 import semver from 'semver';
 import type { ZDepGraph } from './dep-graph';

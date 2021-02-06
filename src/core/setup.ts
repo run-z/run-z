@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module run-z
- */
 import { arrayOfElements, valueByRecipe } from '@proc7ts/primitives';
 import type { ZConfig } from './config';
 import type { ZExtension } from './extension';

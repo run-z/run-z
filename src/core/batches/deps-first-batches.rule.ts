@@ -1,7 +1,3 @@
-/**
- * @packageDocumentation
- * @module run-z
- */
 import type { ZPackage } from '../packages';
 import type { ZCall } from '../plan';
 import type { ZTask } from '../tasks';
