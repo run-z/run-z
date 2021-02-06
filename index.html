@@ -93,8 +93,9 @@
 				</a>
 				<ol>
 					<li><p>Add <code>run-z</code> as development dependency of your package:</p>
-						<pre><code class="language-shell">npm install run-z --save-dev # Using NPM
-yarn add run-z --dev         # Using Yarn</code></pre>
+						<pre><code class="language-shell"><span style="color: #000000">npm install run-z --save-dev </span><span style="color: #008000"># Using NPM</span>
+<span style="color: #000000">yarn add run-z --dev         </span><span style="color: #008000"># Using Yarn</span>
+</code></pre>
 					</li>
 					<li><p>Add script(s) to <code>package.json</code> executing <code>run-z</code>:</p>
 						<pre><code class="language-json"><span style="color: #000000">{</span>
@@ -110,17 +111,19 @@ yarn add run-z --dev         # Using Yarn</code></pre>
 </code></pre>
 					</li>
 					<li><p>Execute tasks:</p>
-						<pre><code class="language-shell">npm run all               # Run single task with NPM
-yarn all                  # Run single task with Yarn
+						<pre><code class="language-shell"><span style="color: #000000">npm run all               </span><span style="color: #008000"># Run single task with NPM</span>
+<span style="color: #000000">yarn all                  </span><span style="color: #008000"># Run single task with Yarn</span>
 
-yarn clean build          # Run multiple tasks with Yarn
-npm run clean -- build    # Run multiple tasks with NPM
+<span style="color: #000000">yarn clean build          </span><span style="color: #008000"># Run multiple tasks with Yarn</span>
+<span style="color: #000000">npm run clean -- build    </span><span style="color: #008000"># Run multiple tasks with NPM</span>
 
-npm run z -- clean build  # Use a no-op `z` task for convenience.     </code></pre>
+<span style="color: #000000">npm run z -- clean build  </span><span style="color: #008000"># Use a no-op `z` task for convenience.     </span>
+</code></pre>
 					</li>
 				</ol>
 				<p>Or just use <code>npx</code> for your existing project. No need to install <code>run-z</code> or modify <code>package.json</code>:</p>
-				<pre><code class="language-shell">npx run-z clean build</code></pre>
+				<pre><code class="language-shell"><span style="color: #000000">npx run-z clean build</span>
+</code></pre>
 				<a href="#tasks" id="tasks" style="color: inherit; text-decoration: none;">
 					<h2>Tasks</h2>
 				</a>
@@ -128,7 +131,8 @@ npm run z -- clean build  # Use a no-op `z` task for convenience.     </code></p
 					If executed script is a <code>run-z</code> command, the latter treats every script as task. Such a task can be used as a
 				prerequisite of another one. <code>run-z</code> executes prerequisites prior to the task itself. </p>
 				<p>To specify a task prerequisite just add its name to <code>run-z</code> command line:</p>
-				<pre><code class="language-shell">run-z prerequisite1 prerequisite2 --then node ./my-script.js --arg</code></pre>
+				<pre><code class="language-shell"><span style="color: #000000">run-z prerequisite1 prerequisite2 --then node ./my-script.js --arg</span>
+</code></pre>
 				<p>This task would execute <code>prerequsite1</code>, then <code>prerequisite2</code>, and finally the <code>node ./my-script.js --arg</code> command.</p>
 				<p>The following types of tasks supported:</p>
 				<ul>
@@ -147,9 +151,10 @@ npm run z -- clean build  # Use a no-op `z` task for convenience.     </code></p
 					<h3>Task Parameters</h3>
 				</a>
 				<p>To pass additional command line arguments to the task a special syntax can be used:</p>
-				<pre><code class="language-shell">run-z test/--ci/--runInBand     # Pass `--ci` and `--runInBand` command line argument
-                                # to command or NPM script executed by `test` task.
-run-z test //--ci --runInBand// # Pass multiple command line options at once.</code></pre>
+				<pre><code class="language-shell"><span style="color: #000000">run-z test/--ci/--runInBand     </span><span style="color: #008000"># Pass `--ci` and `--runInBand` command line argument</span>
+<span style="color: #000000">                                </span><span style="color: #008000"># to command or NPM script executed by `test` task.</span>
+<span style="color: #000000">run-z </span><span style="color: #795E26">test</span><span style="color: #000000"> //--ci --runInBand// </span><span style="color: #008000"># Pass multiple command line options at once.</span>
+</code></pre>
 				<p>Single arguments can be passed by prefixing them with <code>/</code> sign. Any number of spaces may precede the <code>/</code> sign, but
 				should not follow it.</p>
 				<p>Multiple arguments can be passed by enclosing them with two or more <code>/</code> signs. The number of opening and closing signs
@@ -159,9 +164,10 @@ run-z test //--ci --runInBand// # Pass multiple command line options at once.</c
 				</a>
 				<p>Task attributes are name/value pairs accepted by tasks. They can be passed to the tasks similarly to command line
 				arguments:</p>
-				<pre><code class="language-shell">run-z test/attribute=value       # Pass `attribute` with `value` to `test` prerequisite.
-run-z build test attribute=value # Pass `attribute` with `value` to the task itself and all of its prerequisites.
-run-z test/=if-present           # The shorthand for `if-present=on`.</code></pre>
+				<pre><code class="language-shell"><span style="color: #000000">run-z test/attribute=value       </span><span style="color: #008000"># Pass `attribute` with `value` to `test` prerequisite.</span>
+<span style="color: #000000">run-z build </span><span style="color: #795E26">test</span><span style="color: #000000"> attribute=value </span><span style="color: #008000"># Pass `attribute` with `value` to the task itself and all of its prerequisites.</span>
+<span style="color: #000000">run-z test/=if-present           </span><span style="color: #008000"># The shorthand for `if-present=on`.</span>
+</code></pre>
 				<p>Some attributes are flags. I.e. their values treated as booleans with <code>0</code>, <code>false</code>, and <code>off</code> (case-insensitive) meaning
 				<code>false</code>, and everything else meaning <code>true</code>. A shorthand syntax (<code>=flag</code>) can be used to set it to <code>on</code> meaning <code>true</code>.</p>
 				<p>If attribute value set multiple times, the last value takes precedence. If set both by a task and its prerequisite,
@@ -185,22 +191,26 @@ run-z test/=if-present           # The shorthand for `if-present=on`.</code></pr
 				</a>
 				<p>Tasks executed sequentially unless parallel execution allowed for them. To allow two or more tasks to be executed
 				in parallel to each other, separate their names with commas:</p>
-				<pre><code class="language-shell">run-z clean build lint,test  # Arbitrary number of spaces allowed around comma.</code></pre>
+				<pre><code class="language-shell"><span style="color: #000000">run-z clean build lint,test  </span><span style="color: #008000"># Arbitrary number of spaces allowed around comma.</span>
+</code></pre>
 				<p>This would execute <code>lint</code> and <code>test</code> tasks in parallel to each other, but only when <code>build</code> one completed.
 				While the <code>build</code> task would be executed only when <code>clean</code> one completed.</p>
 				<p>It is also possible to execute a command in parallel to its prerequisite. For that an <code>--and</code> option could be used
 				instead of <code>--then</code>:</p>
-				<pre><code class="language-shell">run-z copy-assets --and tsc -p .  # Copies assets and compiles TypeScript simultaneously.</code></pre>
+				<pre><code class="language-shell"><span style="color: #000000">run-z copy-assets --and tsc -p </span><span style="color: #795E26">.</span><span style="color: #000000">  </span><span style="color: #008000"># Copies assets and compiles TypeScript simultaneously.</span>
+</code></pre>
 				<p>By default, the maximum number of tasks that can be executed simultaneously is limited to the number of CPUs.
 				The <code>--max-jobs</code> (<code>-j</code>) option can be used to change the limit:</p>
-				<pre><code class="language-shell">run-z build,lint,test -j2          # Only two jobs can run simultaneously. The third one would pend.
-run-z build,lint,test -max-jobs 1  # Effectively disables parallel execution.
-run-z build,lint,test -j0          # Remove the limit completely.</code></pre>
+				<pre><code class="language-shell"><span style="color: #000000">run-z build,lint,test -j2          </span><span style="color: #008000"># Only two jobs can run simultaneously. The third one would pend.</span>
+<span style="color: #000000">run-z build,lint,test -max-jobs 1  </span><span style="color: #008000"># Effectively disables parallel execution.</span>
+<span style="color: #000000">run-z build,lint,test -j0          </span><span style="color: #008000"># Remove the limit completely.</span>
+</code></pre>
 				<a href="#running-across-multiple-packages" id="running-across-multiple-packages" style="color: inherit; text-decoration: none;">
 					<h2>Running Across Multiple Packages</h2>
 				</a>
 				<p>It is possible to execute tasks from other packages:</p>
-				<pre><code class="language-shell">run-z ../package1 build test . build test</code></pre>
+				<pre><code class="language-shell"><span style="color: #000000">run-z ../package1 build </span><span style="color: #795E26">test</span><span style="color: #000000"> </span><span style="color: #795E26">.</span><span style="color: #000000"> build </span><span style="color: #795E26">test</span>
+</code></pre>
 				<p>this executes <code>build</code> and <code>test</code> tasks in the package located in <code>../package1</code> directory, then runs <code>build</code> and <code>test</code>
 				tasks in current one.</p>
 				<p><code>run-z</code> command line options <code>.</code>, <code>..</code>, and the ones started with <code>./</code> or <code>../</code> are relative URLs to package
@@ -210,23 +220,26 @@ run-z build,lint,test -j0          # Remove the limit completely.</code></pre>
 				</a>
 				<p>The package selector may select multiple packages. The task following it would be executed in each of the selected
 				packages in a batch:</p>
-				<pre><code class="language-shell">run-z ./packages//  build # Executes `build` in each package
-                          # inside `./packages` directory.
-run-z ./packages/// build # Executes `build` in `./packages` directory
-                          # and in each package deeply nested within it.</code></pre>
+				<pre><code class="language-shell"><span style="color: #000000">run-z ./packages//  build </span><span style="color: #008000"># Executes `build` in each package</span>
+<span style="color: #000000">                          </span><span style="color: #008000"># inside `./packages` directory.</span>
+<span style="color: #000000">run-z ./packages/// build </span><span style="color: #008000"># Executes `build` in `./packages` directory</span>
+<span style="color: #000000">                          </span><span style="color: #008000"># and in each package deeply nested within it.</span>
+</code></pre>
 				<p>The <code>//</code> syntax selects all directly nested directories. The <code>///</code> syntax selects the directory and all directories
 				deeply nested within it. The hidden directories and directories without <code>package.json</code> file ignored. </p>
 				<p>It is also possible to specify multiple package selectors. All selected packages would be united:</p>
-				<pre><code class="language-shell">run-z ./3rd-party// ./packages// build # Executes `build` in each package
-                                       # inside `./3rd-party` and `./packages` directories.</code></pre>
+				<pre><code class="language-shell"><span style="color: #000000">run-z ./3rd-party// ./packages// build </span><span style="color: #008000"># Executes `build` in each package</span>
+<span style="color: #000000">                                       </span><span style="color: #008000"># inside `./3rd-party` and `./packages` directories.</span>
+</code></pre>
 				<p>The tasks within a batch executed in a dependency-first order. I.e. if one of the target packages depends on another,
 				the task would be executed in dependency first, and in dependent package after that.</p>
 				<p>The tasks in independent packages executed in parallel to each other.</p>
 				<p>It is also possible to forcibly execute all batched tasks in parallel to each other with <code>--batch-parallel</code> (<code>--bap</code>)
 				option:</p>
-				<pre><code class="language-shell">run-z --batch-parallel ./packages// lint # Executes `lint` in each package
-                                         # inside `./packages` directory
-                                         # in parallel to each other.</code></pre>
+				<pre><code class="language-shell"><span style="color: #000000">run-z --batch-parallel ./packages// lint </span><span style="color: #008000"># Executes `lint` in each package</span>
+<span style="color: #000000">                                         </span><span style="color: #008000"># inside `./packages` directory</span>
+<span style="color: #000000">                                         </span><span style="color: #008000"># in parallel to each other.</span>
+</code></pre>
 				<blockquote>
 					<p>See also:</p>
 					<ul>
@@ -247,7 +260,8 @@ run-z ./packages/// build # Executes `build` in `./packages` directory
 <span style="color: #000000">}</span>
 </code></pre>
 				<p>it is possible to batch tasks across packages in <code>./3rd-party</code> and <code>./packages</code> directories:</p>
-				<pre><code class="language-shell">yarn each /build each /test  # Batch `build`, then `test` across all packages.  </code></pre>
+				<pre><code class="language-shell"><span style="color: #000000">yarn each /build each /test  </span><span style="color: #008000"># Batch `build`, then `test` across all packages.  </span>
+</code></pre>
 				<a href="#named-batches" id="named-batches" style="color: inherit; text-decoration: none;">
 					<h2>Named Batches</h2>
 				</a>
@@ -265,13 +279,15 @@ run-z ./packages/// build # Executes `build` in `./packages` directory
 				<p>The <code>all/*</code> script is a named batch specifier. The <code>z</code> task is a handy NPM script, that just runs <code>run-z</code>.</p>
 				<p>With these present it becomes possible to batch tasks by executing <code>run-z</code> in either root package directory, or in
 				any of the nested packages:</p>
-				<pre><code class="language-shell">yarn z build --all       # Batch `build` task across all packages.
-npm run z -- build --all # Do the same with NPM.</code></pre>
+				<pre><code class="language-shell"><span style="color: #000000">yarn z build --all       </span><span style="color: #008000"># Batch `build` task across all packages.</span>
+<span style="color: #000000">npm run z -- build --all </span><span style="color: #008000"># Do the same with NPM.</span>
+</code></pre>
 				<p>With <code>--all</code> option specified the <code>run-z</code> searches for topmost package containing named batch(-es) specifier,
 				and batches the task across selected packages.</p>
 				<p>The <code>z</code> task used for convenience here. It is expected to present in all packages. Any task can be executed instead.
 				For example, when running inside one of the nested packages, the following command can do the same as above:</p>
-				<pre><code class="language-shell">yarn build --all</code></pre>
+				<pre><code class="language-shell"><span style="color: #000000">yarn build --all</span>
+</code></pre>
 				<p>The named batch can have a syntax like <code>all/test</code>. When present, such named batch will be used instead of the <code>all/*</code>
 					one when batching a <code>test</code> task. This can be useful, e.g. when it is necessary to pass additional parameters to
 				specific tasks:</p>
@@ -283,8 +299,9 @@ npm run z -- build --all # Do the same with NPM.</code></pre>
 <span style="color: #000000">  }</span>
 <span style="color: #000000">}</span>
 </code></pre>
-				<pre><code class="language-shell">yarn z build --all  # Batches `build` in generic way.
-yarn z test --all   # Batches `test` with `--runInBand` option.</code></pre>
+				<pre><code class="language-shell"><span style="color: #000000">yarn z build --all  </span><span style="color: #008000"># Batches `build` in generic way.</span>
+<span style="color: #000000">yarn z </span><span style="color: #795E26">test</span><span style="color: #000000"> --all   </span><span style="color: #008000"># Batches `test` with `--runInBand` option.</span>
+</code></pre>
 				<blockquote>
 					<p>See also:</p>
 					<ul>
@@ -295,15 +312,16 @@ yarn z test --all   # Batches `test` with `--runInBand` option.</code></pre>
 					<h3>Dependency Graph</h3>
 				</a>
 				<p>With named batches it is possible to batch tasks across part of package dependency graph.</p>
-				<pre><code class="language-shell">yarn build --with-deps        # Batch the `build` task across package dependencies,
-                              # and the package itself.
-yarn build --only-deps        # Batch the `build` task across package dependencies.
-                              # Do not run for the package itself.
-yarn build --with-dependants  # Batch the `build` task for the package,
-                              # and all the packages depending on it.
-yarn build --only-dependants  # Batch the `build` task across packages
-                              # depending on current one.
-                              # Do not run for the package itself.</code></pre>
+				<pre><code class="language-shell"><span style="color: #000000">yarn build --with-deps        </span><span style="color: #008000"># Batch the `build` task across package dependencies,</span>
+<span style="color: #000000">                              </span><span style="color: #008000"># and the package itself.</span>
+<span style="color: #000000">yarn build --only-deps        </span><span style="color: #008000"># Batch the `build` task across package dependencies.</span>
+<span style="color: #000000">                              </span><span style="color: #008000"># Do not run for the package itself.</span>
+<span style="color: #000000">yarn build --with-dependants  </span><span style="color: #008000"># Batch the `build` task for the package,</span>
+<span style="color: #000000">                              </span><span style="color: #008000"># and all the packages depending on it.</span>
+<span style="color: #000000">yarn build --only-dependants  </span><span style="color: #008000"># Batch the `build` task across packages</span>
+<span style="color: #000000">                              </span><span style="color: #008000"># depending on current one.</span>
+<span style="color: #000000">                              </span><span style="color: #008000"># Do not run for the package itself.</span>
+</code></pre>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -313,10 +331,10 @@ yarn build --only-dependants  # Batch the `build` task across packages
 						<a href="modules.html">Modules</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/run_z.html">run-<wbr>z</a>
+						<a href="modules/module_run_z.html">Module run-<wbr>z</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/run_z_builtins.html">run-<wbr>z/builtins</a>
+						<a href="modules/module_run_z_builtins.html">Module run-<wbr>z/builtins</a>
 					</li>
 				</ul>
 			</nav>
