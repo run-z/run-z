@@ -47,7 +47,7 @@
     "log-symbols": "^4.0.0",
     "semver": "^7.3.4",
     "shell-quote": "^1.7.2",
-    "string-width": "^4.2.0",
+    "string-width": "^4.2.1",
     "strip-ansi": "^6.0.0",
     "tree-kill": "^1.2.2"
   },
