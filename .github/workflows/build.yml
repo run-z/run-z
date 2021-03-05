@@ -34,14 +34,10 @@ jobs:
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('package.json') }}
 
     - name: Use Node.js
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v2
       with:
-        node-version: '12.x'
+        node-version: '12'
     - name: Install dependencies
       run: yarn
     - name: Build the project
       run: yarn ci:all
-    - name: Upload code coverage report
-      env:
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-      run: yarn codecov --disable=gcov

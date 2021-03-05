@@ -5,7 +5,6 @@ Run That
 [![Build Status][build-status-img]][build-status-link]
 [![Build@Windows][build-windows-img]][build-windows-link]
 [![Build@MacOS][build-macos-img]][build-macos-link]
-[![codecov][codecov-image]][codecov-url]
 [![GitHub Project][github-image]][github-url]
 [![API Documentation][api-docs-image]][API documentation]
 
@@ -34,8 +33,6 @@ Run That
 [build-status-link]: https://github.com/run-z/run-z/actions?query=workflow:Build
 [build-windows-link]: https://github.com/run-z/run-z/actions?query=workflow:Build@Windows
 [build-macos-link]: https://github.com/run-z/run-z/actions?query=workflow:Build@MacOS
-[codecov-image]: https://codecov.io/gh/run-z/run-z/branch/master/graph/badge.svg
-[codecov-url]: https://codecov.io/gh/run-z/run-z
 [github-image]: https://img.shields.io/static/v1?logo=github&label=GitHub&message=project&color=informational
 [github-url]: https://github.com/run-z/run-z
 [api-docs-image]: https://img.shields.io/static/v1?logo=typescript&label=API&message=docs&color=informational
