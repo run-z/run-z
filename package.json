@@ -1,6 +1,6 @@
 {
   "name": "run-z",
-  "version": "1.7.0-bootstrap",
+  "version": "1.7.0",
   "description": "Run that, then this. package.json scripts and deps runner",
   "keywords": [
     "cli",
@@ -73,7 +73,7 @@
     "rollup-plugin-flat-dts": "^1.0.3",
     "rollup-plugin-sourcemaps": "^0.6.3",
     "rollup-plugin-typescript2": "^0.30.0",
-    "run-z": "=1.6.1-bootstrap",
+    "run-z": "=1.7.0-bootstrap",
     "shx": "^0.3.3",
     "ts-jest": "^26.5.3",
     "tslib": "^2.1.0",
