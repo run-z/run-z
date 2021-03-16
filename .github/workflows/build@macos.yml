@@ -40,4 +40,4 @@ jobs:
     - name: Install dependencies
       run: yarn
     - name: Build the project
-      run: yarn ci:all
+      run: yarn ci:all +cmd:jest/--test-timeout=10000
