@@ -85,7 +85,7 @@
     "bootstrap": "rollup --config ./rollup.config.js",
     "build": "run-z +z bootstrap",
     "ci:all": "run-z all +test/--ci/--runInBand",
-    "clean": "run-z +z --then shx rm -rf index.d.ts dist target",
+    "clean": "run-z +z --then shx rm -rf 'index.d.ts?(.map)' dist target",
     "doc": "run-z +z --then typedoc",
     "doc:publish": "run-z doc --then gh-pages --dist target/typedoc --dotfiles",
     "lint": "run-z +z --then eslint .",
