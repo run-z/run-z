@@ -214,17 +214,22 @@ By default ${clz.usage('text')} format is used.
 
     const { npm_execpath: npmPath = 'npm' } = env;
     const npmExt = path.extname(npmPath);
-    const isYarn = path.basename(npmPath, npmExt) === 'yarn';
+    const npmBase = path.basename(npmPath, npmExt);
     const npmPathIsJs = /\.m?js/.test(npmExt);
-    const command = npmPathIsJs ? process.execPath : npmPath;
-    const args: [string, ...string[]] = npmPathIsJs ? [command, npmPath, 'run'] : [command, 'run'];
+    const command: [string, ...string[]] = npmPathIsJs
+        ? [process.execPath /* /usr/bin/node */, npmPath /* ./path/to/npm.js */, 'run']
+        : [npmPath /* npm */, 'run'];
 
-    if (!isYarn) {
-      args.push('--');
+    if (npmBase !== 'yarn') {
+      // Yarn discourages the usage of `--` after the command name.
+      // NPM requires it.
+      // PNPM prefers it, as it tries to interpret subsequent options otherwise.
+      command.push('--');
     }
-    args.push(name, ...job.params.args);
 
-    return args;
+    command.push(name, ...job.params.args);
+
+    return command;
   }
 
   private _run(job: ZJob, command: string, ...args: string[]): ZExecution {
