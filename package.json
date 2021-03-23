@@ -1,6 +1,6 @@
 {
   "name": "run-z",
-  "version": "1.7.0",
+  "version": "1.7.1-bootstrap",
   "description": "Run that, then this. package.json scripts and deps runner",
   "keywords": [
     "cli",
@@ -29,7 +29,7 @@
     "./builtins": "./dist/run-z.builtins.js"
   },
   "bin": {
-    "run-z": "./bin/run-z.js"
+    "run-z": "bin/run-z.js"
   },
   "engines": {
     "node": ">=12"
