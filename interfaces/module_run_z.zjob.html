@@ -116,10 +116,10 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="module_run_z.zjob.html#abort" class="tsd-kind-icon">abort</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="module_run_z.zjob.html#whendone" class="tsd-kind-icon">when<wbr>Done</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite"><a href="module_run_z.zjob.html#abort" class="tsd-kind-icon">abort</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite"><a href="module_run_z.zjob.html#whendone" class="tsd-kind-icon">when<wbr>Done</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="module_run_z.zjob.html#whenfinished" class="tsd-kind-icon">when<wbr>Finished</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="module_run_z.zjob.html#whenstarted" class="tsd-kind-icon">when<wbr>Started</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite"><a href="module_run_z.zjob.html#whenstarted" class="tsd-kind-icon">when<wbr>Started</a></li>
 							</ul>
 						</section>
 					</div>
@@ -133,7 +133,7 @@
 					<div class="tsd-signature tsd-kind-icon">call<span class="tsd-signature-symbol">:</span> <a href="module_run_z.zcall.html" class="tsd-signature-type" data-tsd-kind="Interface">ZCall</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TAction</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/fb3f5dd/src/core/jobs/job.ts#L21">run-z/run-z/src/core/jobs/job.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/bf6dbcc/src/core/jobs/job.ts#L21">run-z/run-z/src/core/jobs/job.ts:21</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -148,7 +148,7 @@
 					<div class="tsd-signature tsd-kind-icon">params<span class="tsd-signature-symbol">:</span> <a href="../classes/module_run_z.ztaskparams-1.html" class="tsd-signature-type" data-tsd-kind="Class">ZTaskParams</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/fb3f5dd/src/core/jobs/job.ts#L26">run-z/run-z/src/core/jobs/job.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/bf6dbcc/src/core/jobs/job.ts#L26">run-z/run-z/src/core/jobs/job.ts:26</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -163,7 +163,7 @@
 					<div class="tsd-signature tsd-kind-icon">shell<span class="tsd-signature-symbol">:</span> <a href="../classes/module_run_z.zshell.html" class="tsd-signature-type" data-tsd-kind="Class">ZShell</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/run-z/run-z/blob/fb3f5dd/src/core/jobs/job.ts#L16">run-z/run-z/src/core/jobs/job.ts:16</a></li>
+							<li>Defined in <a href="https://github.com/run-z/run-z/blob/bf6dbcc/src/core/jobs/job.ts#L16">run-z/run-z/src/core/jobs/job.ts:16</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -175,17 +175,18 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite">
 					<a name="abort" class="tsd-anchor"></a>
 					<h3>abort</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite">
 						<li class="tsd-signature tsd-kind-icon">abort<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Overrides ZExecution.abort</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/fb3f5dd/src/core/jobs/job.ts#L53">run-z/run-z/src/core/jobs/job.ts:53</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/bf6dbcc/src/core/jobs/job.ts#L53">run-z/run-z/src/core/jobs/job.ts:53</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -197,17 +198,18 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite">
 					<a name="whendone" class="tsd-anchor"></a>
 					<h3>when<wbr>Done</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite">
 						<li class="tsd-signature tsd-kind-icon">when<wbr>Done<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Overrides ZExecution.whenDone</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/fb3f5dd/src/core/jobs/job.ts#L48">run-z/run-z/src/core/jobs/job.ts:48</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/bf6dbcc/src/core/jobs/job.ts#L48">run-z/run-z/src/core/jobs/job.ts:48</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -231,7 +233,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/fb3f5dd/src/core/jobs/job.ts#L40">run-z/run-z/src/core/jobs/job.ts:40</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/bf6dbcc/src/core/jobs/job.ts#L40">run-z/run-z/src/core/jobs/job.ts:40</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -244,17 +246,18 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite">
 					<a name="whenstarted" class="tsd-anchor"></a>
 					<h3>when<wbr>Started</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite">
 						<li class="tsd-signature tsd-kind-icon">when<wbr>Started<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Overrides ZExecution.whenStarted</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/run-z/run-z/blob/fb3f5dd/src/core/jobs/job.ts#L33">run-z/run-z/src/core/jobs/job.ts:33</a></li>
+									<li>Defined in <a href="https://github.com/run-z/run-z/blob/bf6dbcc/src/core/jobs/job.ts#L33">run-z/run-z/src/core/jobs/job.ts:33</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -299,16 +302,16 @@
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="module_run_z.zjob.html#shell" class="tsd-kind-icon">shell</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite">
 								<a href="module_run_z.zjob.html#abort" class="tsd-kind-icon">abort</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite">
 								<a href="module_run_z.zjob.html#whendone" class="tsd-kind-icon">when<wbr>Done</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="module_run_z.zjob.html#whenfinished" class="tsd-kind-icon">when<wbr>Finished</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-overwrite">
 								<a href="module_run_z.zjob.html#whenstarted" class="tsd-kind-icon">when<wbr>Started</a>
 							</li>
 						</ul>
