@@ -51,32 +51,72 @@ describe('SystemZShell', () => {
 
     const task = await pkg.task('test:script');
     const call = await task.call();
+    const job = call.exec(shell);
 
-    expect(await call.exec(shell).whenDone()).toBeUndefined();
+    expect(shell.scriptCommand(
+        job,
+        'test:script',
+        {
+          env: {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            npm_execpath: 'some-package-manager',
+          },
+        },
+    )).toEqual(['some-package-manager', 'run', '--', 'test:script', ...job.params.args]);
   });
   it('executes NPM script with npm by default', async () => {
-    delete process.env.npm_execpath;
 
     const task = await pkg.task('test:script');
     const call = await task.call();
+    const job = call.exec(shell);
+
+    expect(shell.scriptCommand(
+        job,
+        'test:script',
+        {
+          env: {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            npm_execpath: undefined,
+          },
+        },
+    )).toEqual(['npm', 'run', '--', 'test:script', ...job.params.args]);
 
     expect(await call.exec(shell).whenDone()).toBeUndefined();
   });
   it('executes NPM script with Yarn when possible', async () => {
-    process.env.npm_execpath = 'yarn';
 
     const task = await pkg.task('test:script');
     const call = await task.call();
+    const job = call.exec(shell);
 
-    expect(await call.exec(shell).whenDone()).toBeUndefined();
+    expect(shell.scriptCommand(
+        job,
+        'test:script',
+        {
+          env: {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            npm_execpath: 'yarn',
+          },
+        },
+    )).toEqual(['yarn', 'run', 'test:script', ...job.params.args]);
   });
   it('executes NPM script with node when npm_execpath points to `.js` file', async () => {
-    process.env.npm_execpath = './src/spec/bin/yarn.js';
 
+    const yarnPath = './src/spec/bin/yarn.js';
     const task = await pkg.task('test:script');
     const call = await task.call();
+    const job = call.exec(shell);
 
-    expect(await call.exec(shell).whenDone()).toBeUndefined();
+    expect(shell.scriptCommand(
+        job,
+        'test:script',
+        {
+          env: {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            npm_execpath: yarnPath,
+          },
+        },
+    )).toEqual([process.execPath, yarnPath, 'run', 'test:script', ...job.params.args]);
   });
   it('executes command', async () => {
     shell.setProgressFormat('rich');

@@ -6,7 +6,9 @@ import type { ZOption } from '@run-z/optionz';
 import { clz } from '@run-z/optionz/colors';
 import type { ChildProcessByStdio } from 'child_process';
 import spawn from 'cross-spawn';
+import npmRunPath from 'npm-run-path';
 import * as path from 'path';
+import pathKey from 'path-key';
 import type { Readable } from 'stream';
 import kill from 'tree-kill';
 import type { ZJob } from '../core';
@@ -14,6 +16,7 @@ import { ZShell, ZTaskParser } from '../core';
 import { ttyColorLevel, ttyColumns, ZProgressFormat } from './impl';
 import { RichZProgressFormat } from './impl/rich';
 import { TextZProgressFormat } from './impl/text';
+import ProcessEnv = NodeJS.ProcessEnv;
 
 /**
  * @internal
@@ -183,27 +186,53 @@ By default ${clz.usage('text')} format is used.
   }
 
   execCommand(job: ZJob, command: string): ZExecution {
-    return this._run(job, command, job.params.args);
+    return this._run(job, command, ...job.params.args);
   }
 
   execScript(job: ZJob, name: string): ZExecution {
-
-    const { npm_execpath: npmPath = 'npm' } = process.env;
-    const npmExt = path.extname(npmPath);
-    const npmPathIsJs = /\.m?js/.test(npmExt);
-    const isYarn = path.basename(npmPath, npmExt) === 'yarn';
-    const command = npmPathIsJs ? process.execPath : npmPath;
-    const args = npmPathIsJs ? [npmPath, 'run'] : ['run'];
-
-    if (!isYarn) {
-      args.push('--');
-    }
-    args.push(name, ...job.params.args);
-
-    return this._run(job, command, args);
+    return this._run(job, ...this.scriptCommand(job, name));
   }
 
-  private _run(job: ZJob, command: string, args: readonly string[]): ZExecution {
+  /**
+   * Builds a command to execute a script.
+   *
+   * @param job - The job executing NPM script.
+   * @param name - The name of NPM script to execute.
+   * @param env - Environment variables. `process.env` by default.
+   *
+   * @returns Command line arguments.
+   */
+  scriptCommand(
+      job: ZJob,
+      name: string,
+      {
+        env = process.env,
+      }: {
+        env?: ProcessEnv;
+      } = {},
+  ): readonly [command: string, ...args: string[]] {
+
+    const { npm_execpath: npmPath = 'npm' } = env;
+    const npmExt = path.extname(npmPath);
+    const npmBase = path.basename(npmPath, npmExt);
+    const npmPathIsJs = /\.m?js/.test(npmExt);
+    const command: [string, ...string[]] = npmPathIsJs
+        ? [process.execPath /* /usr/bin/node */, npmPath /* ./path/to/npm.js */, 'run']
+        : [npmPath /* npm */, 'run'];
+
+    if (npmBase !== 'yarn') {
+      // Yarn discourages the usage of `--` after the command name.
+      // NPM requires it.
+      // PNPM prefers it, as it tries to interpret subsequent options otherwise.
+      command.push('--');
+    }
+
+    command.push(name, ...job.params.args);
+
+    return command;
+  }
+
+  private _run(job: ZJob, command: string, ...args: string[]): ZExecution {
 
     const progress = this._format().jobProgress(job);
 
@@ -212,13 +241,15 @@ By default ${clz.usage('text')} format is used.
       const spawned = spawnZ(
           () => {
 
+            const cwd = job.call.task.target.location.path;
             const childProcess = spawn(
                 command,
                 args,
                 {
-                  cwd: job.call.task.target.location.path,
+                  cwd,
                   env: {
                     ...process.env,
+                    [pathKey()]: npmRunPath({ cwd }),
                     COLUMNS: String(ttyColumns()),
                     FORCE_COLOR: String(ttyColorLevel()),
                   },
