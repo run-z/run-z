@@ -16,6 +16,7 @@ import { ZShell, ZTaskParser } from '../core';
 import { ttyColorLevel, ttyColumns, ZProgressFormat } from './impl';
 import { RichZProgressFormat } from './impl/rich';
 import { TextZProgressFormat } from './impl/text';
+import ProcessEnv = NodeJS.ProcessEnv;
 
 /**
  * @internal
@@ -185,27 +186,48 @@ By default ${clz.usage('text')} format is used.
   }
 
   execCommand(job: ZJob, command: string): ZExecution {
-    return this._run(job, command, job.params.args);
+    return this._run(job, command, ...job.params.args);
   }
 
   execScript(job: ZJob, name: string): ZExecution {
+    return this._run(job, ...this.scriptCommand(job, name));
+  }
 
-    const { npm_execpath: npmPath = 'npm' } = process.env;
+  /**
+   * Builds a command to execute a script.
+   *
+   * @param job - The job executing NPM script.
+   * @param name - The name of NPM script to execute.
+   * @param env - Environment variables. `process.env` by default.
+   *
+   * @returns Command line arguments.
+   */
+  scriptCommand(
+      job: ZJob,
+      name: string,
+      {
+        env = process.env,
+      }: {
+        env?: ProcessEnv;
+      } = {},
+  ): readonly [command: string, ...args: string[]] {
+
+    const { npm_execpath: npmPath = 'npm' } = env;
     const npmExt = path.extname(npmPath);
-    const npmPathIsJs = /\.m?js/.test(npmExt);
     const isYarn = path.basename(npmPath, npmExt) === 'yarn';
+    const npmPathIsJs = /\.m?js/.test(npmExt);
     const command = npmPathIsJs ? process.execPath : npmPath;
-    const args = npmPathIsJs ? [npmPath, 'run'] : ['run'];
+    const args: [string, ...string[]] = npmPathIsJs ? [command, npmPath, 'run'] : [command, 'run'];
 
     if (!isYarn) {
       args.push('--');
     }
     args.push(name, ...job.params.args);
 
-    return this._run(job, command, args);
+    return args;
   }
 
-  private _run(job: ZJob, command: string, args: readonly string[]): ZExecution {
+  private _run(job: ZJob, command: string, ...args: string[]): ZExecution {
 
     const progress = this._format().jobProgress(job);
 
