@@ -45,6 +45,8 @@
     "cli-truncate": "^2.1.0",
     "cross-spawn": "^7.0.3",
     "log-symbols": "^4.1.0",
+    "npm-run-path": "^4.0.1",
+    "path-key": "^3.1.1",
     "semver": "^7.3.4",
     "shell-quote": "^1.7.2",
     "string-width": "^4.2.2",

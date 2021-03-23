@@ -6,7 +6,9 @@ import type { ZOption } from '@run-z/optionz';
 import { clz } from '@run-z/optionz/colors';
 import type { ChildProcessByStdio } from 'child_process';
 import spawn from 'cross-spawn';
+import npmRunPath from 'npm-run-path';
 import * as path from 'path';
+import pathKey from 'path-key';
 import type { Readable } from 'stream';
 import kill from 'tree-kill';
 import type { ZJob } from '../core';
@@ -212,13 +214,15 @@ By default ${clz.usage('text')} format is used.
       const spawned = spawnZ(
           () => {
 
+            const cwd = job.call.task.target.location.path;
             const childProcess = spawn(
                 command,
                 args,
                 {
-                  cwd: job.call.task.target.location.path,
+                  cwd,
                   env: {
                     ...process.env,
+                    [pathKey()]: npmRunPath({ cwd }),
                     COLUMNS: String(ttyColumns()),
                     FORCE_COLOR: String(ttyColorLevel()),
                   },
