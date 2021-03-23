@@ -26,18 +26,19 @@ jobs:
     - name: Cache
       uses: actions/cache@v2
       env:
-        cache-name: cache-node-modules-v2
+        cache-name: cache-node-modules-v3
       with:
-        # A directory to store and save the cache
-        path: ~/.cache/yarn
-        # An explicit key for restoring and saving the cache
+        path: ~/.pnpm-store
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('package.json') }}
 
     - name: Use Node.js
       uses: actions/setup-node@v2
       with:
         node-version: '12'
+    - name: Install pnpm
+      run: npm i -g pnpm
     - name: Install dependencies
-      run: yarn
+      run: pnpm install
+
     - name: Build the project
-      run: yarn ci:all
+      run: pnpm ci:all
