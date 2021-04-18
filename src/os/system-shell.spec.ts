@@ -118,6 +118,24 @@ describe('SystemZShell', () => {
         },
     )).toEqual([process.execPath, yarnPath, 'run', 'test:script', ...job.params.args]);
   });
+  it('executes NPM script with node when npm_execpath points to `.cjs` file', async () => {
+
+    const pnpmPath = './src/spec/bin/pnpm.cjs';
+    const task = await pkg.task('test:script');
+    const call = await task.call();
+    const job = call.exec(shell);
+
+    expect(shell.scriptCommand(
+        job,
+        'test:script',
+        {
+          env: {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            npm_execpath: pnpmPath,
+          },
+        },
+    )).toEqual([process.execPath, pnpmPath, 'run', '--', 'test:script', ...job.params.args]);
+  });
   it('executes command', async () => {
     shell.setProgressFormat('rich');
 

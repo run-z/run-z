@@ -215,7 +215,7 @@ By default ${clz.usage('text')} format is used.
     const { npm_execpath: npmPath = 'npm' } = env;
     const npmExt = path.extname(npmPath);
     const npmBase = path.basename(npmPath, npmExt);
-    const npmPathIsJs = /\.m?js/.test(npmExt);
+    const npmPathIsJs = /\.[cm]?js/.test(npmExt);
     const command: [string, ...string[]] = npmPathIsJs
         ? [process.execPath /* /usr/bin/node */, npmPath /* ./path/to/npm.js */, 'run']
         : [npmPath /* npm */, 'run'];
