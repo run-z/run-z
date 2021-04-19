@@ -93,6 +93,7 @@
 				<ol>
 					<li><p>Add <code>run-z</code> as development dependency of your package:</p>
 						<pre><code class="language-shell"><span style="color: #000000">npm install run-z --save-dev </span><span style="color: #008000"># Using NPM</span>
+<span style="color: #000000">pnpm add run-z -D            </span><span style="color: #008000"># Using PNPM</span>
 <span style="color: #000000">yarn add run-z --dev         </span><span style="color: #008000"># Using Yarn</span>
 </code></pre>
 					</li>
@@ -110,13 +111,18 @@
 </code></pre>
 					</li>
 					<li><p>Execute tasks:</p>
-						<pre><code class="language-shell"><span style="color: #000000">npm run all               </span><span style="color: #008000"># Run single task with NPM</span>
-<span style="color: #000000">yarn all                  </span><span style="color: #008000"># Run single task with Yarn</span>
+						<pre><code class="language-shell"><span style="color: #008000"># Run single task</span>
+<span style="color: #000000">npm run all  </span><span style="color: #008000"># (npm)</span>
+<span style="color: #000000">pnpm all     </span><span style="color: #008000"># (pnpm)</span>
+<span style="color: #000000">yarn all     </span><span style="color: #008000"># (yarn)</span>
 
-<span style="color: #000000">yarn clean build          </span><span style="color: #008000"># Run multiple tasks with Yarn</span>
-<span style="color: #000000">npm run clean -- build    </span><span style="color: #008000"># Run multiple tasks with NPM</span>
+<span style="color: #008000"># Run multiple tasks</span>
+<span style="color: #000000">npm run clean -- build  </span><span style="color: #008000"># (npm)</span>
+<span style="color: #000000">pnpm clean build        </span><span style="color: #008000"># (pnpm)</span>
+<span style="color: #000000">yarn clean build        </span><span style="color: #008000"># (yarn)</span>
 
-<span style="color: #000000">npm run z -- clean build  </span><span style="color: #008000"># Use a no-op `z` task for convenience.     </span>
+<span style="color: #008000"># Use a no-op `z` task for convenience</span>
+<span style="color: #000000">npm run z -- clean build     </span>
 </code></pre>
 					</li>
 				</ol>
@@ -259,7 +265,10 @@
 <span style="color: #000000">}</span>
 </code></pre>
 				<p>it is possible to batch tasks across packages in <code>./3rd-party</code> and <code>./packages</code> directories:</p>
-				<pre><code class="language-shell"><span style="color: #000000">yarn each /build each /test  </span><span style="color: #008000"># Batch `build`, then `test` across all packages.  </span>
+				<pre><code class="language-shell"><span style="color: #008000"># Batch `build`, then `test` across all packages.</span>
+<span style="color: #000000">npm run each -- /build each /test  </span><span style="color: #008000"># (npm)</span>
+<span style="color: #000000">pnpm each /build each /test        </span><span style="color: #008000"># (pnpm)</span>
+<span style="color: #000000">yarn each /build each /test        </span><span style="color: #008000"># (yarn)  </span>
 </code></pre>
 				<a href="#named-batches" id="named-batches" style="color: inherit; text-decoration: none;">
 					<h2>Named Batches</h2>
@@ -278,14 +287,18 @@
 				<p>The <code>all/*</code> script is a named batch specifier. The <code>z</code> task is a handy NPM script, that just runs <code>run-z</code>.</p>
 				<p>With these present it becomes possible to batch tasks by executing <code>run-z</code> in either root package directory, or in
 				any of the nested packages:</p>
-				<pre><code class="language-shell"><span style="color: #000000">yarn z build --all       </span><span style="color: #008000"># Batch `build` task across all packages.</span>
-<span style="color: #000000">npm run z -- build --all </span><span style="color: #008000"># Do the same with NPM.</span>
+				<pre><code class="language-shell"><span style="color: #008000"># Batch `build` task across all packages.</span>
+<span style="color: #000000">npm run z -- build --all  </span><span style="color: #008000"># (npm)</span>
+<span style="color: #000000">pnpm z build -- --all     </span><span style="color: #008000"># (pnpm)</span>
+<span style="color: #000000">yarn z build --all        </span><span style="color: #008000"># (yarn)</span>
 </code></pre>
 				<p>With <code>--all</code> option specified the <code>run-z</code> searches for topmost package containing named batch(-es) specifier,
 				and batches the task across selected packages.</p>
 				<p>The <code>z</code> task used for convenience here. It is expected to present in all packages. Any task can be executed instead.
 				For example, when running inside one of the nested packages, the following command can do the same as above:</p>
-				<pre><code class="language-shell"><span style="color: #000000">yarn build --all</span>
+				<pre><code class="language-shell"><span style="color: #000000">npm run build -- --all  </span><span style="color: #008000"># (npm)</span>
+<span style="color: #000000">pnpm build -- --all     </span><span style="color: #008000"># (pnpm)</span>
+<span style="color: #000000">yarn build --all        </span><span style="color: #008000"># (yarn)</span>
 </code></pre>
 				<p>The named batch can have a syntax like <code>all/test</code>. When present, such named batch will be used instead of the <code>all/*</code>
 					one when batching a <code>test</code> task. This can be useful, e.g. when it is necessary to pass additional parameters to
@@ -298,8 +311,15 @@
 <span style="color: #000000">  }</span>
 <span style="color: #000000">}</span>
 </code></pre>
-				<pre><code class="language-shell"><span style="color: #000000">yarn z build --all  </span><span style="color: #008000"># Batches `build` in generic way.</span>
-<span style="color: #000000">yarn z </span><span style="color: #795E26">test</span><span style="color: #000000"> --all   </span><span style="color: #008000"># Batches `test` with `--runInBand` option.</span>
+				<pre><code class="language-shell"><span style="color: #008000"># Batches `build` in generic way.</span>
+<span style="color: #000000">npm run z -- build --all  </span><span style="color: #008000"># (npm)</span>
+<span style="color: #000000">pnpm z build -- --all     </span><span style="color: #008000"># (pnpm)</span>
+<span style="color: #000000">yarn z build --all        </span><span style="color: #008000"># (yarn)</span>
+
+<span style="color: #008000"># Batches `test` with `--runInBand` option.</span>
+<span style="color: #000000">npm run z -- </span><span style="color: #795E26">test</span><span style="color: #000000"> --all   </span><span style="color: #008000"># (npm)</span>
+<span style="color: #000000">pnpm z </span><span style="color: #795E26">test</span><span style="color: #000000"> -- --all      </span><span style="color: #008000"># (pnpm)</span>
+<span style="color: #000000">yarn z </span><span style="color: #795E26">test</span><span style="color: #000000"> --all         </span><span style="color: #008000"># (yarn)</span>
 </code></pre>
 				<blockquote>
 					<p>See also:</p>
@@ -311,15 +331,27 @@
 					<h3>Dependency Graph</h3>
 				</a>
 				<p>With named batches it is possible to batch tasks across part of package dependency graph.</p>
-				<pre><code class="language-shell"><span style="color: #000000">yarn build --with-deps        </span><span style="color: #008000"># Batch the `build` task across package dependencies,</span>
-<span style="color: #000000">                              </span><span style="color: #008000"># and the package itself.</span>
-<span style="color: #000000">yarn build --only-deps        </span><span style="color: #008000"># Batch the `build` task across package dependencies.</span>
-<span style="color: #000000">                              </span><span style="color: #008000"># Do not run for the package itself.</span>
-<span style="color: #000000">yarn build --with-dependants  </span><span style="color: #008000"># Batch the `build` task for the package,</span>
-<span style="color: #000000">                              </span><span style="color: #008000"># and all the packages depending on it.</span>
-<span style="color: #000000">yarn build --only-dependants  </span><span style="color: #008000"># Batch the `build` task across packages</span>
-<span style="color: #000000">                              </span><span style="color: #008000"># depending on current one.</span>
-<span style="color: #000000">                              </span><span style="color: #008000"># Do not run for the package itself.</span>
+				<pre><code class="language-shell"><span style="color: #008000"># Batch the `build` task across package dependencies and the package itself.</span>
+<span style="color: #000000">npm run build -- --with-deps  </span><span style="color: #008000"># (npm)</span>
+<span style="color: #000000">pnpm build -- --with-deps     </span><span style="color: #008000"># (pnpm)</span>
+<span style="color: #000000">yarn build --with-deps        </span><span style="color: #008000"># (yarn)</span>
+
+<span style="color: #008000"># Batch the `build` task across package dependencies.</span>
+<span style="color: #008000"># Do not run for the package itself.</span>
+<span style="color: #000000">npm run build -- --only-deps  </span><span style="color: #008000"># (npm)</span>
+<span style="color: #000000">pnpm build -- --only-deps     </span><span style="color: #008000"># (pnpm)</span>
+<span style="color: #000000">yarn build --only-deps        </span><span style="color: #008000"># (yarn)</span>
+
+<span style="color: #008000"># Batch the `build` task for the package and all the packages depending on it.</span>
+<span style="color: #000000">npm run build -- --with-dependants  </span><span style="color: #008000"># (npm)</span>
+<span style="color: #000000">pnpm build -- --with-dependants     </span><span style="color: #008000"># (pnpm)</span>
+<span style="color: #000000">yarn build --with-dependants        </span><span style="color: #008000"># (yarn)</span>
+
+<span style="color: #008000"># Batch the `build` task across packages depending on current one.</span>
+<span style="color: #008000"># Do not run for the package itself.</span>
+<span style="color: #000000">npm run build -- --only-dependants  </span><span style="color: #008000"># (npm)  </span>
+<span style="color: #000000">pnpm build -- --only-dependants     </span><span style="color: #008000"># (pnpm)  </span>
+<span style="color: #000000">yarn build --only-dependants        </span><span style="color: #008000"># (yarn)  </span>
 </code></pre>
 			</div>
 		</div>
