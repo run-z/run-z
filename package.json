@@ -40,7 +40,7 @@
     "@run-z/log-z": "^1.3.0",
     "@run-z/optionz": "^2.2.0",
     "ansi-escapes": "^4.3.2",
-    "chalk": "^4.1.0",
+    "chalk": "^4.1.1",
     "cli-spinners": "^2.6.0",
     "cli-truncate": "^2.1.0",
     "cross-spawn": "^7.0.3",
@@ -79,7 +79,7 @@
     "shx": "^0.3.3",
     "ts-jest": "^26.5.5",
     "tslib": "^2.2.0",
-    "typedoc": "^0.20.35",
+    "typedoc": "^0.20.36",
     "typescript": "^4.2.4"
   },
   "scripts": {
