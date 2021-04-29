@@ -76,6 +76,7 @@ describe('NamedZBatchesBuiltin', () => {
     });
   });
 
+  // eslint-disable-next-line jest/no-identical-title
   describe.each([['--except'], ['-x']])('%s', option => {
     it('excludes batches', async () => {
       await init();
@@ -108,6 +109,7 @@ describe('NamedZBatchesBuiltin', () => {
     });
   });
 
+  // eslint-disable-next-line jest/no-identical-title
   describe.each([['--with'], ['-w']])('%s', option => {
     it('selects additional batches', async () => {
       await init({
