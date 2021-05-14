@@ -35,7 +35,7 @@
     "node": ">=12"
   },
   "dependencies": {
-    "@proc7ts/primitives": "^2.0.0",
+    "@proc7ts/primitives": "^2.1.0",
     "@run-z/exec-z": "^1.3.0",
     "@run-z/log-z": "^1.3.0",
     "@run-z/optionz": "^2.2.0",
