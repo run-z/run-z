@@ -140,7 +140,7 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
 
           // Sort the calls from deepest to closest.
           const allParams = this._params.map(
-              ([params, depth]) => [depth(evaluator), params] as const,
+              ([params, depth]): readonly [number, ZCallParams] => [depth(evaluator), params],
           ).sort(
               ([firstDepth], [secondDepth]) => secondDepth - firstDepth,
           );
