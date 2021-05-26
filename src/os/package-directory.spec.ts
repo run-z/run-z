@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from '@jest/globals';
 import * as path from 'path';
 import { fileURLToPath, pathToFileURL, URL } from 'url';
 import { ZPackageDirectory } from './package-directory';
@@ -15,7 +16,7 @@ describe('ZPackageDirectory', () => {
       expect(() => ZPackageDirectory.open({
         url: pathToFileURL('/other'),
         rootURL,
-      })).toThrow(TypeError);
+      })).toThrow(new TypeError('file:///other is not inside file:///root'));
     });
   });
 

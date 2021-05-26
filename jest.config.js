@@ -1,5 +1,5 @@
 export default {
-  preset: 'ts-jest',
+  preset: 'ts-jest/presets/default-esm',
   collectCoverage: true,
   collectCoverageFrom: [
     'src/**/*.ts',
@@ -20,6 +20,7 @@ export default {
       lines: 100,
     },
   },
+  extensionsToTreatAsEsm: ['.ts'],
   reporters: [
     'default',
     [
@@ -38,6 +39,7 @@ export default {
   globals: {
     'ts-jest': {
       tsconfig: 'tsconfig.spec.json',
+      useESM: true,
     },
   },
 };

@@ -1,7 +1,9 @@
 /* eslint-disable jest/no-conditional-expect */
+import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { asis, noop } from '@proc7ts/primitives';
 import { AbortedZExecutionError, FailedZExecutionError } from '@run-z/exec-z';
 import chalk from 'chalk';
+import type { SpyInstance } from 'jest-mock';
 import logSymbols from 'log-symbols';
 import * as os from 'os';
 import { pathToFileURL } from 'url';
@@ -205,11 +207,11 @@ describe('SystemZShell', () => {
 
   describe('options', () => {
 
-    let writeSpy: jest.SpyInstance;
+    let writeSpy: SpyInstance<boolean, Parameters<(typeof process['stdout'])['write']>>;
 
     beforeEach(() => {
       writeSpy = jest.spyOn(process.stdout, 'write');
-      writeSpy.mockImplementation((_chunk: any, cb: () => void) => {
+      writeSpy.mockImplementation((_chunk: any, cb: any) => {
         cb();
         return true;
       });
@@ -220,7 +222,7 @@ describe('SystemZShell', () => {
 
     describe('--help', () => {
 
-      let logSpy: jest.SpyInstance;
+      let logSpy: SpyInstance<void, any[]>;
 
       beforeEach(() => {
         logSpy = jest.spyOn(console, 'log');
@@ -338,7 +340,7 @@ describe('SystemZShell', () => {
 
         await job.whenDone();
 
-        expect(writeSpy).toHaveBeenCalledWith(expect.not.stringContaining(logSymbols.success), expect.any(Function));
+        expect(writeSpy).not.toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
       });
     });
 
@@ -355,7 +357,7 @@ describe('SystemZShell', () => {
 
         await job.whenDone();
 
-        expect(writeSpy).toHaveBeenCalledWith(expect.not.stringContaining(logSymbols.success), expect.any(Function));
+        expect(writeSpy).not.toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
       });
     });
 
@@ -406,7 +408,7 @@ describe('SystemZShell', () => {
 
         await job.whenDone();
 
-        expect(writeSpy).toHaveBeenCalledWith(expect.not.stringContaining(logSymbols.success), expect.any(Function));
+        expect(writeSpy).not.toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
       });
     });
 
@@ -423,7 +425,7 @@ describe('SystemZShell', () => {
 
         await job.whenDone();
 
-        expect(writeSpy).toHaveBeenCalledWith(expect.not.stringContaining(logSymbols.success), expect.any(Function));
+        expect(writeSpy).not.toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
       });
     });
 
@@ -504,7 +506,7 @@ describe('SystemZShell', () => {
 
     describe('--max-jobs', () => {
 
-      let setMaxJobs: jest.SpyInstance;
+      let setMaxJobs: SpyInstance<ReturnType<SystemZShell['setMaxJobs']>, Parameters<SystemZShell['setMaxJobs']>>;
 
       beforeEach(() => {
         setMaxJobs = jest.spyOn(shell, 'setMaxJobs');

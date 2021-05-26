@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from '@jest/globals';
 import { prerequisitesOf, taskIds, TestPlan } from '../../spec';
 import type { ZCall } from './call';
 import type { ZPlan } from './plan';
@@ -26,7 +27,7 @@ describe('ZPlan', () => {
 
       const otherTask = await call.task.target.task('other');
 
-      expect(() => plan.callOf(otherTask)).toThrow(TypeError);
+      expect(() => plan.callOf(otherTask)).toThrow(new TypeError('Task "other" from <root> is never called'));
     });
   });
 

@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from '@jest/globals';
 import { asis } from '@proc7ts/primitives';
 import { TestPlan } from '../../../spec';
 import { ZShell } from '../../jobs';

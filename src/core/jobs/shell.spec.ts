@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from '@jest/globals';
 import { execZNoOp } from '@run-z/exec-z';
 import { ZSetup } from '../setup';
 import { ZShell } from './shell';
@@ -13,12 +14,12 @@ describe('ZShell', () => {
 
     describe('execCommand', () => {
       it('does nothing', () => {
-        expect((shell as any).execCommand()).toBe(execZNoOp());
+        expect(shell.execCommand(null!, null!)).toBe(execZNoOp());
       });
     });
     describe('execScript', () => {
       it('does nothing', () => {
-        expect((shell as any).execScript()).toBe(execZNoOp());
+        expect(shell.execScript(null!, null!)).toBe(execZNoOp());
       });
     });
   });
