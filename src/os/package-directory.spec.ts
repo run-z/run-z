@@ -16,7 +16,7 @@ describe('ZPackageDirectory', () => {
       expect(() => ZPackageDirectory.open({
         url: pathToFileURL('/other'),
         rootURL,
-      })).toThrow(new TypeError('file:///other is not inside file:///root'));
+      })).toThrow(TypeError as any);
     });
   });
 
