@@ -1,3 +1,4 @@
+import { describe, expect, it, jest } from '@jest/globals';
 import { valueProvider } from '@proc7ts/primitives';
 import { ZCallDetails } from './call-details';
 import { ZTaskParams } from './task-params';
@@ -29,7 +30,7 @@ describe('ZCallDetails', () => {
     it('respects plan', async () => {
 
       const planner = { name: 'planner' } as any;
-      const plan = jest.fn();
+      const plan = jest.fn<void, []>();
 
       await ZCallDetails.by({ plan }).plan(planner);
 

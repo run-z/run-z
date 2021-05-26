@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { execZNoOp } from '@run-z/exec-z';
 import { TestPlan } from '../../../spec';
 import type { ZShell } from '../../jobs';
@@ -38,8 +39,8 @@ describe('ScriptZTask', () => {
     it('executes NPM script', async () => {
 
       const shell = {
-        execScript: jest.fn(execZNoOp),
-      } as jest.Mocked<Partial<ZShell>> as jest.Mocked<ZShell>;
+        execScript: jest.fn<ReturnType<ZShell['execScript']>, Parameters<ZShell['execScript']>>(execZNoOp),
+      };
 
       testPlan.addPackage(
           'test',
@@ -55,7 +56,7 @@ describe('ScriptZTask', () => {
 
       const call = await testPlan.call('test');
 
-      await call.exec(shell).whenDone();
+      await call.exec(shell as Partial<ZShell> as ZShell).whenDone();
 
       expect(shell.execScript).toHaveBeenCalledWith(
           expect.objectContaining({ call: await testPlan.callOf(call.task.target, 'exec') }),
@@ -70,8 +71,8 @@ describe('ScriptZTask', () => {
     it('applies `+cmd:command` annex parameters', async () => {
 
       const shell = {
-        execScript: jest.fn(execZNoOp),
-      } as jest.Mocked<Partial<ZShell>> as jest.Mocked<ZShell>;
+        execScript: jest.fn<ReturnType<ZShell['execScript']>, Parameters<ZShell['execScript']>>(execZNoOp),
+      };
 
       testPlan.addPackage(
           'test',
@@ -87,7 +88,7 @@ describe('ScriptZTask', () => {
 
       const call = await testPlan.parse('run-z test +cmd:start/--cmd-arg/cmd=applied');
 
-      await call.exec(shell).whenDone();
+      await call.exec(shell as Partial<ZShell> as ZShell).whenDone();
 
       expect(shell.execScript).toHaveBeenCalledWith(
           expect.objectContaining({ call: await testPlan.callOf(call.task.target, 'exec') }),
@@ -105,8 +106,8 @@ describe('ScriptZTask', () => {
     it('does not apply `+cmd:command` annex parameters to non-parsable command', async () => {
 
       const shell = {
-        execScript: jest.fn(execZNoOp),
-      } as jest.Mocked<Partial<ZShell>> as jest.Mocked<ZShell>;
+        execScript: jest.fn<ReturnType<ZShell['execScript']>, Parameters<ZShell['execScript']>>(execZNoOp),
+      };
 
       testPlan.addPackage(
           'test',
@@ -122,7 +123,7 @@ describe('ScriptZTask', () => {
 
       const call = await testPlan.parse('run-z test +cmd:start/--cmd-arg/cmd=applied');
 
-      await call.exec(shell).whenDone();
+      await call.exec(shell as Partial<ZShell> as ZShell).whenDone();
 
       expect(shell.execScript).toHaveBeenCalledWith(
           expect.objectContaining({ call: await testPlan.callOf(call.task.target, 'exec') }),

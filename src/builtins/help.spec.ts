@@ -1,6 +1,8 @@
+import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { asis, noop } from '@proc7ts/primitives';
 import { execZNoOp } from '@run-z/exec-z';
 import { ZOptionError } from '@run-z/optionz';
+import type { SpyInstance } from 'jest-mock';
 import { ZSetup, ZShell } from '../core';
 import { SystemZShell } from '../os';
 import { TestPlan } from '../spec';
@@ -16,7 +18,7 @@ describe('ZHelpBuiltin', () => {
     shell = new SystemZShell(testPlan.setup);
   });
 
-  let logSpy: jest.SpyInstance;
+  let logSpy: SpyInstance<void, any[]>;
 
   beforeEach(() => {
     logSpy = jest.spyOn(console, 'log');
@@ -56,7 +58,8 @@ describe('ZHelpBuiltin', () => {
 
       await call.exec(ZShell.noop(testPlan.setup)).whenDone();
 
-      expect(logSpy).toHaveBeenCalledWith(expect.not.stringContaining('--test-option'));
+      expect(logSpy).toHaveBeenCalledTimes(1);
+      expect(logSpy).not.toHaveBeenCalledWith(expect.stringContaining('--test-option'));
     });
   });
 

@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { valueProvider } from '@proc7ts/primitives';
 import { execZNoOp } from '@run-z/exec-z';
 import { StandardZSetup } from '../../../builtins';
@@ -157,8 +158,8 @@ describe('CommandZTask', () => {
     it('executes command', async () => {
 
       const shell = {
-        execCommand: jest.fn(execZNoOp),
-      } as jest.Mocked<Partial<ZShell>> as jest.Mocked<ZShell>;
+        execCommand: jest.fn<ReturnType<ZShell['execCommand']>, Parameters<ZShell['execCommand']>>(execZNoOp),
+      };
 
       testPlan.addPackage(
           'test',
@@ -174,7 +175,7 @@ describe('CommandZTask', () => {
 
       const call = await testPlan.call('test');
 
-      await call.exec(shell).whenDone();
+      await call.exec(shell as Partial<ZShell> as ZShell).whenDone();
 
       expect(shell.execCommand).toHaveBeenCalledWith(
           expect.objectContaining({ call: await testPlan.callOf(call.task.target, 'exec') }),
@@ -189,8 +190,8 @@ describe('CommandZTask', () => {
     it('applies `+cmd:command` annex parameters', async () => {
 
       const shell = {
-        execCommand: jest.fn(execZNoOp),
-      } as jest.Mocked<Partial<ZShell>> as jest.Mocked<ZShell>;
+        execCommand: jest.fn<ReturnType<ZShell['execCommand']>, Parameters<ZShell['execCommand']>>(execZNoOp),
+      };
 
       testPlan.addPackage(
           'test',
@@ -206,7 +207,7 @@ describe('CommandZTask', () => {
 
       const call = await testPlan.parse('run-z test +cmd:start/--cmd-arg/cmd=applied');
 
-      await call.exec(shell).whenDone();
+      await call.exec(shell as Partial<ZShell> as ZShell).whenDone();
 
       expect(shell.execCommand).toHaveBeenCalledWith(
           expect.objectContaining({ call: await testPlan.callOf(call.task.target, 'exec') }),
@@ -224,8 +225,8 @@ describe('CommandZTask', () => {
     it('does not execute command when `skip` flag is set', async () => {
 
       const shell = {
-        execCommand: jest.fn(execZNoOp),
-      } as jest.Mocked<Partial<ZShell>> as jest.Mocked<ZShell>;
+        execCommand: jest.fn<ReturnType<ZShell['execCommand']>, Parameters<ZShell['execCommand']>>(execZNoOp),
+      };
 
       testPlan.addPackage(
           'test',
@@ -240,7 +241,7 @@ describe('CommandZTask', () => {
 
       const call = await testPlan.call('exec', { params: valueProvider({ attrs: { skip: ['on'] } }) });
 
-      await call.exec(shell).whenDone();
+      await call.exec(shell as Partial<ZShell> as ZShell).whenDone();
 
       expect(shell.execCommand).not.toHaveBeenCalled();
     });
@@ -266,8 +267,8 @@ describe('CommandZTask', () => {
       );
 
       const shell = {
-        execCommand: jest.fn(execZNoOp),
-      } as jest.Mocked<Partial<ZShell>> as jest.Mocked<ZShell>;
+        execCommand: jest.fn<ReturnType<ZShell['execCommand']>, Parameters<ZShell['execCommand']>>(execZNoOp),
+      };
 
       testPlan.addPackage(
           'test',
@@ -282,7 +283,7 @@ describe('CommandZTask', () => {
 
       const call = await testPlan.call('exec');
 
-      await call.exec(shell).whenDone();
+      await call.exec(shell as Partial<ZShell> as ZShell).whenDone();
 
       expect(executor).toHaveBeenCalled();
       expect(shell.execCommand).not.toHaveBeenCalled();

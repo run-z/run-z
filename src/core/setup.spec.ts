@@ -1,3 +1,4 @@
+import { describe, expect, it } from '@jest/globals';
 import { valueProvider } from '@proc7ts/primitives';
 import { ZPackageResolver } from './packages';
 import { ZPlanner } from './plan';

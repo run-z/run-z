@@ -1,3 +1,4 @@
+import { describe, expect, it } from '@jest/globals';
 import { URL } from 'url';
 import { isRootURL, urlBaseName, urlOfFile } from './url';
 
