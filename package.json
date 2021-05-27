@@ -72,16 +72,16 @@
     "jest": "^27.0.1",
     "jest-junit": "^12.1.0",
     "jest-mock": "^27.0.1",
-    "rollup": "^2.50.1",
+    "rollup": "^2.50.2",
     "rollup-plugin-flat-dts": "^1.2.1",
     "rollup-plugin-sourcemaps": "^0.6.3",
     "rollup-plugin-typescript2": "^0.30.0",
     "run-z": "=1.7.2-bootstrap",
     "shx": "^0.3.3",
-    "ts-jest": "^27.0.0",
+    "ts-jest": "^27.0.1",
     "tslib": "^2.2.0",
     "typedoc": "^0.20.36",
-    "typescript": "^4.3.1-rc"
+    "typescript": "^4.3.2"
   },
   "scripts": {
     "all": "run-z build,lint,test",
