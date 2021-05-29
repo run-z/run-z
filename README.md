@@ -156,9 +156,20 @@ precedence.
 
 The following attributes supported:
 
-- `if-present` - a flag indicating that the task should be executed only if corresponding script defined.
+- `env:NAME` - Sets environment variable `NAME`.
+
+  Multiple values for the same environment variable are joined: \
+  `env:NODE_OPTIONS=--experimental-vm-modules env:NODE_OPTIONS=--no-warnings` sets 
+  `NODE_OPTIONS='--experimental-vm-modules --no-warnings'`
+  
+  To override the value a `:=` sign can be used instead of `=`: \
+  `env:NODE_OPTIONS=--no-warnings env:NODE_OPTIONS:=--no-deprecation` sets `NODE_OPTIONS='--no-deprecation'`
+
+- `if-present` - A flag indicating that the task should be executed only if corresponding script defined.
+
   This can be useful for batched tasks.
-- `skip` - when this flag set the task won't be executed.
+
+- `skip` - When this flag set the task won't be executed.
 
 Other attributes aren't currently used, but still can be set.
 
