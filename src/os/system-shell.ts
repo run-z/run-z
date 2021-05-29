@@ -54,7 +54,7 @@ export class SystemZShell extends ZShell {
       ...arrayOfElements(super.options()),
       {
         '--max-jobs': {
-          read: readMaxZJobs.bind(this),
+          read: SystemZShell$readMaxJobs.bind(this),
           meta: {
             group: '!builtin:shell:max-jobs',
             get usage() {
@@ -71,7 +71,7 @@ Defaults to the number of CPUs when no ${clz.param('LIMIT')} set.
           },
         },
         '-j*': {
-          read: readMaxZJobs.bind(this),
+          read: SystemZShell$readMaxJobs.bind(this),
           meta: {
             aliasOf: '--max-jobs',
             get usage() {
@@ -80,7 +80,7 @@ Defaults to the number of CPUs when no ${clz.param('LIMIT')} set.
           },
         },
         '-j': {
-          read: readMaxZJobs.bind(this),
+          read: SystemZShell$readMaxJobs.bind(this),
           meta: {
             hidden: true,
           },
@@ -293,6 +293,7 @@ By default ${clz.usage('text')} format is used.
         [pathKey()]: npmRunPath({ cwd }),
         COLUMNS: String(ttyColumns(env)),
         FORCE_COLOR: String(ttyColorLevel()),
+        ...SystemZShell$attrEnv(job),
       },
     };
   }
@@ -382,10 +383,7 @@ export interface SystemZExecutable {
 
 }
 
-/**
- * @internal
- */
-function readMaxZJobs(this: SystemZShell, option: ZOption): void {
+function SystemZShell$readMaxJobs(this: SystemZShell, option: ZOption): void {
 
   const [value] = option.values();
   let limit: number | undefined = parseInt(value, 10);
@@ -397,4 +395,20 @@ function readMaxZJobs(this: SystemZShell, option: ZOption): void {
   }
 
   this.setMaxJobs(limit);
+}
+
+function SystemZShell$attrEnv(job: ZJob): Record<string, string> {
+
+  const env: Record<string, string> = {};
+
+  for (const [attr, value] of job.params.allAttrs('env')) {
+
+    const envName = attr.substr(4); // Remove `env:` prefix
+
+    if (envName) {
+      env[envName] = value;
+    }
+  }
+
+  return env;
 }
