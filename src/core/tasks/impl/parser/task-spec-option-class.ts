@@ -77,6 +77,12 @@ export function zTaskSpecOptionClass<TArgs extends any[]>(
       return this;
     }
 
+    removeAttr(name: string): this {
+      this.pre.conclude();
+      this._draft.builder.removeAttr(name);
+      return this;
+    }
+
     addArg(...args: string[]): this {
       if (!args.length) {
         return this;

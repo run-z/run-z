@@ -220,6 +220,9 @@ describe('CommandZTask', () => {
       expect(params.attrs).toEqual({
         cmd: ['applied'],
       });
+      expect([...params.allAttrs('cmd')]).toEqual([
+        ['cmd', 'applied'],
+      ]);
     });
 
     it('does not execute command when `skip` flag is set', async () => {

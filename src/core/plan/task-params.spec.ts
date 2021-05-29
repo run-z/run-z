@@ -46,6 +46,12 @@ describe('ZTaskParams', () => {
 
       expect(params.attr('absent')).toBeUndefined();
     });
+    it('returns `undefined` for removed attribute', () => {
+
+      const params = new ZTaskParams({ ...initial, attrs: { removed: null } });
+
+      expect(params.attr('removed')).toBeUndefined();
+    });
     it('returns the only attribute value', () => {
 
       const params = new ZTaskParams(initial);

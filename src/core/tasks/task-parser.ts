@@ -63,16 +63,16 @@ export class ZTaskParser {
    * Parses attribute and adds it to attributes collection.
    *
    * @param value - A string value potentially containing attribute.
-   * @param onAttr - A function that accepts attribute name and value as parameters and returns `false` when attribute
-   * ignored.
+   * @param onAttr - A function that accepts attribute name, its value, and the value replacement flag as parameters
+   * and returns `false` when attribute ignored.
    *
    * @returns `true` if attribute is added to target attributes collection, or `false` if the given string `value` does
    * not contain attribute specifier or it is ignored.
    */
   parseAttr(
       value: string,
-      onAttr: (this: void, name: string, value: string) => boolean | void = noop,
-  ): readonly [string, string] | undefined {
+      onAttr: (this: void, name: string, value: string, replacement: boolean) => boolean | void = noop,
+  ): readonly [name: string, value: string, replacement: boolean] | undefined {
     if (ZOptionInput.isOptionValue(value)) {
 
       const eqIdx = value.indexOf('=');
@@ -165,25 +165,24 @@ export namespace ZTaskParser {
 
 }
 
-/**
- * @internal
- */
 function extractZTaskAttr(
     arg: string,
     eqIdx: number,
-    onAttr: (this: void, name: string, value: string) => boolean | void,
-): readonly [string, string] | undefined {
+    onAttr: (this: void, name: string, value: string, replacement: boolean) => boolean | void,
+): readonly [name: string, value: string, replacement: boolean] | undefined {
 
+  const replacement = arg[eqIdx - 1] === ':';
+  const nameEnd = replacement ? eqIdx - 1 : eqIdx;
   let name: string;
   let value: string;
 
-  if (eqIdx) {
-    name = arg.substr(0, eqIdx);
+  if (nameEnd) {
+    name = arg.substr(0, nameEnd);
     value = arg.substr(eqIdx + 1);
   } else {
-    name = arg.substr(1);
+    name = arg.substr(eqIdx + 1);
     value = 'on';
   }
 
-  return onAttr(name, value) !== false ? [name, value] : undefined;
+  return onAttr(name, value, replacement) !== false ? [name, value, replacement] : undefined;
 }

@@ -104,17 +104,19 @@ export namespace ZTaskSpec {
     /**
      * The task is not executed when this {@link ZTaskParams.flag flag} is set.
      */
-    readonly skip?: readonly [string, ...string[]];
+    readonly skip?: readonly [string, ...string[]] | null;
 
     /**
      * Unknown task execution throws {@link UnknownZTaskError} unless this {@link ZTaskParams.flag flag} is set.
      */
-    readonly 'if-present'?: readonly [string, ...string[]];
+    readonly 'if-present'?: readonly [string, ...string[]] | null;
 
     /**
      * A map of attribute values by their names.
+     *
+     * A `null` value means the attribute has been {@link ZTaskModifier.removeAttr removed}.
      */
-    readonly [name: string]: readonly [string, ...string[]] | undefined;
+    readonly [name: string]: readonly [string, ...string[]] | null | undefined;
 
   }
 

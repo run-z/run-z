@@ -60,6 +60,7 @@ export default {
         entries: {
           builtins: {},
         },
+        internal: ['**/impl/**', '**/*.impl.ts'],
       }),
     ],
   },
