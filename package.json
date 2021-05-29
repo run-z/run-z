@@ -92,7 +92,7 @@
     "doc": "run-z +z --then typedoc",
     "doc:publish": "run-z doc --then gh-pages --dist target/typedoc --dotfiles",
     "lint": "run-z +z --then eslint .",
-    "test": "run-z +z --then jest",
+    "test": "run-z +z env:NODE_OPTIONS='--experimental-vm-modules --no-warnings' --then jest",
     "test:all": "run-z test:command/--command2 test:script/--script2 --all3",
     "test:command": "run-z env=wrong env:NODE_OPTIONS=--no-warnings env:NODE_OPTIONS=--no-deprecation --then node ./src/spec/bin/ok.js --command1",
     "test:fail": "run-z --then node --no-warnings ./src/spec/bin/fail.js",
@@ -101,6 +101,6 @@
     "test:script": "node --no-warnings ./src/spec/bin/ok.js --script1",
     "test:silent": "run-z --then node --no-warnings ./src/spec/bin/silent.js --silent",
     "test:stale": "node --no-warnings ./src/spec/bin/stale.js",
-    "z": "run-z +bootstrap,+doc,+lint,+test"
+    "z": "run-z +cmd:rollup,+cmd:typedoc,+cmd:eslint,+cmd:jest"
   }
 }

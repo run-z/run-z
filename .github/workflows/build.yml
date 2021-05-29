@@ -41,6 +41,4 @@ jobs:
       run: pnpm install
 
     - name: Build the project
-      env:
-        NODE_OPTIONS: --experimental-vm-modules --no-warnings
       run: pnpm ci:all
