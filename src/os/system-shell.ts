@@ -399,16 +399,31 @@ function SystemZShell$readMaxJobs(this: SystemZShell, option: ZOption): void {
 
 function SystemZShell$attrEnv(job: ZJob): Record<string, string> {
 
-  const env: Record<string, string> = {};
+  const env = new Map<string, Set<string>>();
 
   for (const [attr, value] of job.params.allAttrs('env')) {
 
     const envName = attr.substr(4); // Remove `env:` prefix
 
     if (envName) {
-      env[envName] = value;
+
+      const prevValues = env.get(envName);
+
+      if (prevValues) {
+        // Add as last
+        prevValues.delete(value);
+        prevValues.add(value);
+      } else {
+        env.set(envName, new Set<string>().add(value));
+      }
     }
   }
 
-  return env;
+  const result: Record<string, string> = {};
+
+  for (const [envName, values] of env) {
+    result[envName] = [...values].join(' ');
+  }
+
+  return result;
 }

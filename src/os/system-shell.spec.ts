@@ -222,7 +222,7 @@ describe('SystemZShell', () => {
           [pathKey()]: npmRunPath({ cwd }),
           COLUMNS: String(ttyColumns(env)),
           FORCE_COLOR: String(ttyColorLevel()),
-          NODE_OPTIONS: '--no-warnings',
+          NODE_OPTIONS: '--no-warnings --no-deprecation',
         },
       });
     });
