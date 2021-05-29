@@ -72,7 +72,7 @@
     "jest": "^27.0.1",
     "jest-junit": "^12.1.0",
     "jest-mock": "^27.0.1",
-    "rollup": "^2.50.2",
+    "rollup": "^2.50.4",
     "rollup-plugin-flat-dts": "^1.2.2",
     "rollup-plugin-sourcemaps": "^0.6.3",
     "rollup-plugin-typescript2": "^0.30.0",
