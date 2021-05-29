@@ -94,7 +94,7 @@
     "lint": "run-z +z --then eslint .",
     "test": "run-z +z --then jest",
     "test:all": "run-z test:command/--command2 test:script/--script2 --all3",
-    "test:command": "run-z --then node --no-warnings ./src/spec/bin/ok.js --command1",
+    "test:command": "run-z env=wrong env:NODE_OPTIONS=--no-warnings env:NODE_OPTIONS=--no-deprecation --then node ./src/spec/bin/ok.js --command1",
     "test:fail": "run-z --then node --no-warnings ./src/spec/bin/fail.js",
     "test:kill": "run-z --then node --no-warnings ./src/spec/bin/kill.js",
     "test:kill-with-code": "run-z --then node --no-warnings ./src/spec/bin/kill-with-code.js",

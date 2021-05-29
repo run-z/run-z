@@ -1,6 +1,8 @@
+import ProcessEnv = NodeJS.ProcessEnv;
+
 /**
  * @internal
  */
-export function ttyColumns(): number {
-  return process.stdout.columns || Number(process.env.COLUMNS) || 80;
+export function ttyColumns(env: ProcessEnv = process.env): number {
+  return process.stdout.columns || Number(env.COLUMNS) || 80;
 }

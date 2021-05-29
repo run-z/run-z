@@ -5,10 +5,13 @@ import { AbortedZExecutionError, FailedZExecutionError } from '@run-z/exec-z';
 import chalk from 'chalk';
 import type { SpyInstance } from 'jest-mock';
 import logSymbols from 'log-symbols';
+import npmRunPath from 'npm-run-path';
 import * as os from 'os';
+import pathKey from 'path-key';
 import { pathToFileURL } from 'url';
 import { StandardZSetup } from '../builtins';
 import type { ZPackage, ZSetup } from '../core';
+import { ttyColorLevel, ttyColumns } from './impl';
 import { ZPackageDirectory } from './package-directory';
 import { SystemZShell } from './system-shell';
 
@@ -49,95 +52,182 @@ describe('SystemZShell', () => {
     chalk.level = prevColorLevel;
   });
 
-  it('executes NPM script', async () => {
+  describe('scriptExecutable', () => {
+    it('executes NPM script', async () => {
 
-    const task = await pkg.task('test:script');
-    const call = await task.call();
-    const job = call.exec(shell);
+      const task = await pkg.task('test:script');
+      const call = await task.call();
+      const job = call.exec(shell);
+      const cwd = job.call.task.target.location.path;
+      const env = {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        npm_execpath: 'some-package-manager',
+      };
 
-    expect(shell.scriptCommand(
-        job,
-        'test:script',
-        {
-          env: {
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            npm_execpath: 'some-package-manager',
+      expect(shell.scriptExecutable(
+          job,
+          'test:script',
+          {
+            env,
           },
+      )).toEqual({
+        command: 'some-package-manager',
+        args: ['run', '--', 'test:script', ...job.params.args],
+        cwd,
+        env: {
+          ...env,
+          [pathKey()]: npmRunPath({ cwd }),
+          COLUMNS: String(ttyColumns(env)),
+          FORCE_COLOR: String(ttyColorLevel()),
         },
-    )).toEqual(['some-package-manager', 'run', '--', 'test:script', ...job.params.args]);
-  });
-  it('executes NPM script with npm by default', async () => {
+      });
+    });
+    it('executes NPM script with npm by default', async () => {
 
-    const task = await pkg.task('test:script');
-    const call = await task.call();
-    const job = call.exec(shell);
+      const task = await pkg.task('test:script');
+      const call = await task.call();
+      const job = call.exec(shell);
+      const cwd = job.call.task.target.location.path;
+      const env = {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        npm_execpath: undefined,
+      };
 
-    expect(shell.scriptCommand(
-        job,
-        'test:script',
-        {
-          env: {
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            npm_execpath: undefined,
+      expect(shell.scriptExecutable(
+          job,
+          'test:script',
+          {
+            env,
           },
+      )).toEqual({
+        command: 'npm',
+        args: ['run', '--', 'test:script', ...job.params.args],
+        cwd,
+        env: {
+          ...env,
+          [pathKey()]: npmRunPath({ cwd }),
+          COLUMNS: String(ttyColumns(env)),
+          FORCE_COLOR: String(ttyColorLevel()),
         },
-    )).toEqual(['npm', 'run', '--', 'test:script', ...job.params.args]);
+      });
 
-    expect(await call.exec(shell).whenDone()).toBeUndefined();
-  });
-  it('executes NPM script with Yarn when possible', async () => {
+      expect(await call.exec(shell).whenDone()).toBeUndefined();
+    });
+    it('executes NPM script with Yarn when possible', async () => {
 
-    const task = await pkg.task('test:script');
-    const call = await task.call();
-    const job = call.exec(shell);
+      const task = await pkg.task('test:script');
+      const call = await task.call();
+      const job = call.exec(shell);
+      const cwd = job.call.task.target.location.path;
+      const env = {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        npm_execpath: 'yarn',
+      };
 
-    expect(shell.scriptCommand(
-        job,
-        'test:script',
-        {
-          env: {
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            npm_execpath: 'yarn',
+      expect(shell.scriptExecutable(
+          job,
+          'test:script',
+          {
+            env,
           },
+      )).toEqual({
+        command: 'yarn',
+        args: ['run', 'test:script', ...job.params.args],
+        cwd,
+        env: {
+          ...env,
+          [pathKey()]: npmRunPath({ cwd }),
+          COLUMNS: String(ttyColumns(env)),
+          FORCE_COLOR: String(ttyColorLevel()),
         },
-    )).toEqual(['yarn', 'run', 'test:script', ...job.params.args]);
-  });
-  it('executes NPM script with node when npm_execpath points to `.js` file', async () => {
+      });
+    });
+    it('executes NPM script with node when npm_execpath points to `.js` file', async () => {
 
-    const yarnPath = './src/spec/bin/yarn.js';
-    const task = await pkg.task('test:script');
-    const call = await task.call();
-    const job = call.exec(shell);
+      const yarnPath = './src/spec/bin/yarn.js';
+      const task = await pkg.task('test:script');
+      const call = await task.call();
+      const job = call.exec(shell);
+      const cwd = job.call.task.target.location.path;
+      const env = {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        npm_execpath: yarnPath,
+      };
 
-    expect(shell.scriptCommand(
-        job,
-        'test:script',
-        {
-          env: {
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            npm_execpath: yarnPath,
+      expect(shell.scriptExecutable(
+          job,
+          'test:script',
+          {
+            env,
           },
+      )).toEqual({
+        command: process.execPath,
+        args: [yarnPath, 'run', 'test:script', ...job.params.args],
+        cwd,
+        env: {
+          ...env,
+          [pathKey()]: npmRunPath({ cwd }),
+          COLUMNS: String(ttyColumns(env)),
+          FORCE_COLOR: String(ttyColorLevel()),
         },
-    )).toEqual([process.execPath, yarnPath, 'run', 'test:script', ...job.params.args]);
-  });
-  it('executes NPM script with node when npm_execpath points to `.cjs` file', async () => {
+      });
+    });
+    it('executes NPM script with node when npm_execpath points to `.cjs` file', async () => {
 
-    const pnpmPath = './src/spec/bin/pnpm.cjs';
-    const task = await pkg.task('test:script');
-    const call = await task.call();
-    const job = call.exec(shell);
+      const pnpmPath = './src/spec/bin/pnpm.cjs';
+      const task = await pkg.task('test:script');
+      const call = await task.call();
+      const job = call.exec(shell);
+      const cwd = job.call.task.target.location.path;
+      const env = {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        npm_execpath: pnpmPath,
+      };
 
-    expect(shell.scriptCommand(
-        job,
-        'test:script',
-        {
-          env: {
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            npm_execpath: pnpmPath,
+      expect(shell.scriptExecutable(
+          job,
+          'test:script',
+          {
+            env,
           },
+      )).toEqual({
+        command: process.execPath,
+        args: [pnpmPath, 'run', '--', 'test:script', ...job.params.args],
+        cwd,
+        env: {
+          ...env,
+          [pathKey()]: npmRunPath({ cwd }),
+          COLUMNS: String(ttyColumns(env)),
+          FORCE_COLOR: String(ttyColorLevel()),
         },
-    )).toEqual([process.execPath, pnpmPath, 'run', '--', 'test:script', ...job.params.args]);
+      });
+    });
   });
+
+  describe('commandExecutable', () => {
+    it('executes command', async () => {
+
+      const task = await pkg.task('test:command');
+      const call = await task.call();
+      const job = call.exec(shell);
+      const cwd = job.call.task.target.location.path;
+      const env = process.env;
+
+      expect(shell.commandExecutable(job, 'node')).toEqual({
+        command: 'node',
+        args: job.params.args,
+        cwd,
+        env: {
+          ...env,
+          [pathKey()]: npmRunPath({ cwd }),
+          COLUMNS: String(ttyColumns(env)),
+          FORCE_COLOR: String(ttyColorLevel()),
+          NODE_OPTIONS: '--no-warnings --no-deprecation',
+        },
+      });
+    });
+  });
+
   it('executes command', async () => {
     shell.setProgressFormat('rich');
 

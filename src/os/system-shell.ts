@@ -54,7 +54,7 @@ export class SystemZShell extends ZShell {
       ...arrayOfElements(super.options()),
       {
         '--max-jobs': {
-          read: readMaxZJobs.bind(this),
+          read: SystemZShell$readMaxJobs.bind(this),
           meta: {
             group: '!builtin:shell:max-jobs',
             get usage() {
@@ -71,7 +71,7 @@ Defaults to the number of CPUs when no ${clz.param('LIMIT')} set.
           },
         },
         '-j*': {
-          read: readMaxZJobs.bind(this),
+          read: SystemZShell$readMaxJobs.bind(this),
           meta: {
             aliasOf: '--max-jobs',
             get usage() {
@@ -80,7 +80,7 @@ Defaults to the number of CPUs when no ${clz.param('LIMIT')} set.
           },
         },
         '-j': {
-          read: readMaxZJobs.bind(this),
+          read: SystemZShell$readMaxJobs.bind(this),
           meta: {
             hidden: true,
           },
@@ -100,7 +100,7 @@ ${clz.param('FORMAT')} can be one of:
 ${clz.bullet()} ${clz.usage('rich')} - rich progress format,
 ${clz.bullet()} ${clz.usage('text')} - report progress by logging task output,
 ${clz.bullet()} ${clz.usage('auto')} or none - use ${clz.usage('rich')} format for color terminals, or ${
-                clz.usage('text')} otherwise.
+                  clz.usage('text')} otherwise.
 
 By default ${clz.usage('text')} format is used.
             `;
@@ -186,23 +186,53 @@ By default ${clz.usage('text')} format is used.
   }
 
   execCommand(job: ZJob, command: string): ZExecution {
-    return this._run(job, command, ...job.params.args);
-  }
-
-  execScript(job: ZJob, name: string): ZExecution {
-    return this._run(job, ...this.scriptCommand(job, name));
+    return this._run(job, this.commandExecutable(job, command));
   }
 
   /**
-   * Builds a command to execute a script.
+   * Creates a {@link ZTaskSpec.Command command} executable.
+   *
+   * @param job - The job executing a command.
+   * @param job - The job executing command.
+   * @param command - Command to execute.
+   * @param name - The name of NPM script to execute.
+   * @param env - Environment variables. `process.env` by default.
+   *
+   * @returns New executable.
+   */
+  commandExecutable(
+      job: ZJob,
+      command: string,
+      {
+        env = process.env,
+      }: {
+        env?: ProcessEnv;
+      } = {},
+  ): SystemZExecutable {
+    return this._buildExecutable(
+        job,
+        {
+          command,
+          args: job.params.args,
+          env,
+        },
+    );
+  }
+
+  execScript(job: ZJob, name: string): ZExecution {
+    return this._run(job, this.scriptExecutable(job, name));
+  }
+
+  /**
+   * Creates an {@link ZTaskSpec.Script NPM script} executable.
    *
    * @param job - The job executing NPM script.
    * @param name - The name of NPM script to execute.
    * @param env - Environment variables. `process.env` by default.
    *
-   * @returns Command line arguments.
+   * @returns New executable.
    */
-  scriptCommand(
+  scriptExecutable(
       job: ZJob,
       name: string,
       {
@@ -210,29 +240,65 @@ By default ${clz.usage('text')} format is used.
       }: {
         env?: ProcessEnv;
       } = {},
-  ): readonly [command: string, ...args: string[]] {
+  ): SystemZExecutable {
 
     const { npm_execpath: npmPath = 'npm' } = env;
     const npmExt = path.extname(npmPath);
     const npmBase = path.basename(npmPath, npmExt);
     const npmPathIsJs = /\.[cm]?js/.test(npmExt);
-    const command: [string, ...string[]] = npmPathIsJs
-        ? [process.execPath /* /usr/bin/node */, npmPath /* ./path/to/npm.js */, 'run']
-        : [npmPath /* npm */, 'run'];
+    let command: string;
+    let args: string[];
+
+    if (npmPathIsJs) {
+      command = process.execPath; // /usr/bin/node
+      args = [npmPath /* ./path/to/npm.js */, 'run'];
+    } else {
+      command = npmPath; // npm
+      args = ['run'];
+    }
 
     if (npmBase !== 'yarn') {
       // Yarn discourages the usage of `--` after the command name.
       // NPM requires it.
       // PNPM prefers it, as it tries to interpret subsequent options otherwise.
-      command.push('--');
+      args.push('--');
     }
 
-    command.push(name, ...job.params.args);
+    args.push(name, ...job.params.args);
 
-    return command;
+    return this._buildExecutable(job, { command, args, env });
   }
 
-  private _run(job: ZJob, command: string, ...args: string[]): ZExecution {
+  private _buildExecutable(
+      job: ZJob,
+      {
+        command,
+        args,
+        env,
+      }: {
+        command: string;
+        args: readonly string[];
+        env: ProcessEnv;
+      },
+  ): SystemZExecutable {
+
+    const cwd = job.call.task.target.location.path;
+
+    return {
+      command,
+      args,
+      cwd,
+      env: {
+        ...env,
+        [pathKey()]: npmRunPath({ cwd }),
+        COLUMNS: String(ttyColumns(env)),
+        FORCE_COLOR: String(ttyColorLevel()),
+        ...SystemZShell$attrEnv(job),
+      },
+    };
+  }
+
+  private _run(job: ZJob, { command, args, cwd, env }: SystemZExecutable): ZExecution {
 
     const progress = this._format().jobProgress(job);
 
@@ -241,18 +307,12 @@ By default ${clz.usage('text')} format is used.
       const spawned = spawnZ(
           () => {
 
-            const cwd = job.call.task.target.location.path;
             const childProcess = spawn(
                 command,
                 args,
                 {
                   cwd,
-                  env: {
-                    ...process.env,
-                    [pathKey()]: npmRunPath({ cwd }),
-                    COLUMNS: String(ttyColumns()),
-                    FORCE_COLOR: String(ttyColorLevel()),
-                  },
+                  env,
                   stdio: ['ignore', 'pipe', 'pipe'],
                   windowsHide: true,
                 },
@@ -297,9 +357,33 @@ By default ${clz.usage('text')} format is used.
 }
 
 /**
- * @internal
+ * A command executable by system shell.
  */
-function readMaxZJobs(this: SystemZShell, option: ZOption): void {
+export interface SystemZExecutable {
+
+  /**
+   * A command to execute.
+   */
+  readonly command: string;
+
+  /**
+   * Command line arguments.
+   */
+  readonly args: readonly string[];
+
+  /**
+   * A working directory of the command.
+   */
+  readonly cwd: string;
+
+  /**
+   * Environment variables to apply.
+   */
+  readonly env: ProcessEnv;
+
+}
+
+function SystemZShell$readMaxJobs(this: SystemZShell, option: ZOption): void {
 
   const [value] = option.values();
   let limit: number | undefined = parseInt(value, 10);
@@ -311,4 +395,35 @@ function readMaxZJobs(this: SystemZShell, option: ZOption): void {
   }
 
   this.setMaxJobs(limit);
+}
+
+function SystemZShell$attrEnv(job: ZJob): Record<string, string> {
+
+  const env = new Map<string, Set<string>>();
+
+  for (const [attr, value] of job.params.allAttrs('env')) {
+
+    const envName = attr.substr(4); // Remove `env:` prefix
+
+    if (envName) {
+
+      const prevValues = env.get(envName);
+
+      if (prevValues) {
+        // Add as last
+        prevValues.delete(value);
+        prevValues.add(value);
+      } else {
+        env.set(envName, new Set<string>().add(value));
+      }
+    }
+  }
+
+  const result: Record<string, string> = {};
+
+  for (const [envName, values] of env) {
+    result[envName] = [...values].join(' ');
+  }
+
+  return result;
 }
