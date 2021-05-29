@@ -91,6 +91,9 @@ export namespace ZTaskOption {
     /**
      * Appends prerequisite attribute.
      *
+     * If the `name` specifies a sub-attribute (i.e. has a form `attr:sub-attr`), then also adds an `attr=sub-attr`
+     * attribute value.
+     *
      * @param name - Target attribute name.
      * @param value - Attribute value to append.
      *
@@ -106,6 +109,17 @@ export namespace ZTaskOption {
      * @returns `this` instance.
      */
     addAttrs(attrs: ZTaskSpec.Attrs): this;
+
+    /**
+     * Removes prerequisite attribute.
+     *
+     * Removes all values of the target attribute.
+     *
+     * @param name - Target attribute name.
+     *
+     * @returns `this` instance.
+     */
+    removeAttr(name: string): this;
 
     /**
      * Appends raw prerequisite argument(s).

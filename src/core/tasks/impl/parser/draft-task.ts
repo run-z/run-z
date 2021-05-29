@@ -2,7 +2,7 @@ import { ZOptionError } from '@run-z/optionz';
 import type { ZTaskBuilder } from '../../task-builder';
 import type { ZTaskOption } from '../../task-option';
 import type { ZTaskSpec } from '../../task-spec';
-import { addZTaskAttr, addZTaskAttrs } from '../../task-spec.impl';
+import { addZTaskAttr, addZTaskAttrs, removeZTaskAttr } from '../../task-spec.impl';
 
 /**
  * @internal
@@ -61,7 +61,7 @@ function draftZTaskPre(
   let preTaskName: string | undefined;
   let preAnnex = false;
   let preOptionAt = -1;
-  let preAttrs: Record<string, [string, ...string[]]> = {};
+  let preAttrs: Record<string, [string, ...string[]] | null> = {};
   let preArgs: string[] = [];
 
   const addPreOption = (): void => {
@@ -100,6 +100,11 @@ function draftZTaskPre(
       addZTaskAttrs(preAttrs, attrs);
       return this;
     },
+    removeAttr(name) {
+      addPreOption();
+      removeZTaskAttr(preAttrs, name);
+      return this;
+    },
     addArg(...args: readonly string[]) {
       addPreOption();
       preArgs.push(...args);
@@ -109,8 +114,17 @@ function draftZTaskPre(
       addPreOption();
 
       const { taskParser } = draft._option.taskTarget.setup;
+      const onAttr = (name: string, value: string, replacement: boolean): true => {
+        if (replacement) {
+          this.removeAttr(name);
+        }
 
-      if (!taskParser.parseAttr(value, (name, value) => !!this.addAttr(name, value))) {
+        this.addAttr(name, value);
+
+        return true;
+      };
+
+      if (!taskParser.parseAttr(value, onAttr)) {
         this.addArg(value);
       }
 

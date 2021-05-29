@@ -141,7 +141,41 @@ export class ZTaskParams {
 
     const values = this.attrs[name];
 
-    return values && values[values.length - 1];
+    if (!values) {
+      return;
+    }
+
+    return values[values.length - 1];
+  }
+
+  /**
+   * Returns all attribute and sub-attributes with their values.
+   *
+   * @param name - Attribute name.
+   *
+   * @returns An iterable of name/value pairs.
+   */
+  *allAttrs(name: string): IterableIterator<readonly [string, string]> {
+
+    const values = this.attrs[name];
+
+    if (!values) {
+      return;
+    }
+
+    for (const value of values) {
+
+      const subAttrName = `${name}:${value}`;
+      const subAttrValues = this.attrs[subAttrName];
+
+      if (subAttrValues !== undefined) {
+        // Sub-attribute.
+        yield* this.allAttrs(subAttrName);
+      } else {
+        // Regular attribute.
+        yield [name, value];
+      }
+    }
   }
 
   /**

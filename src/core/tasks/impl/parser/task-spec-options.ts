@@ -67,7 +67,20 @@ Hidden directories ignored.
 
         const { name, taskTarget: { setup: { taskParser } } } = option;
 
-        if (taskParser.parseAttr(name, (n, v) => !n.includes('/') && !!option.addAttr(n, v))) {
+        const onAttr = (name: string, value: string, replacement: boolean): boolean => {
+          if (name.includes('/')) {
+            return false;
+          }
+
+          if (replacement) {
+            option.removeAttr(name);
+          }
+          option.addAttr(name, value);
+
+          return true;
+        };
+
+        if (taskParser.parseAttr(name, onAttr)) {
           option.recognize();
         }
       },

@@ -52,12 +52,14 @@ function zTaskAttrSyntax({ taskParser }: ZSetup, args: readonly [string, ...stri
     return [];
   }
 
-  const [attrName, attrValue] = attr;
-  const name = `${attrName}=${attrValue}`;
+  const [attrName, attrValue, attrReplacement] = attr;
+  const key = `${attrName}=${attrValue}`;
+  const name = attrReplacement ? `${attrName}:=${attrValue}` : key;
   const tail = args.slice(1);
 
   return [
     {
+      key,
       name,
       tail,
     },

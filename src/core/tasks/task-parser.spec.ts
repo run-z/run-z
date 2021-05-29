@@ -3,6 +3,7 @@ import { asis } from '@proc7ts/primitives';
 import { ZOptionError } from '@run-z/optionz';
 import { StandardZSetup } from '../../builtins';
 import { ZPackage, ZPackageTree } from '../packages';
+import { ZTaskParams } from '../plan';
 import { ZSetup } from '../setup';
 import type { ZTaskBuilder } from './task-builder';
 import { ZTaskParser } from './task-parser';
@@ -468,6 +469,26 @@ describe('ZTaskParser', () => {
     });
     expect(spec.action).toEqual({ type: 'group', targets: [] });
   });
+  it('recognizes attribute replacement', async () => {
+
+    const spec = await parseSpec('run-z attr=val1 attr:=val2 attr=val3');
+
+    expect(spec.attrs).toEqual({
+      attr: ['val2', 'val3'],
+    });
+    expect(spec.action).toEqual({ type: 'group', targets: [] });
+  });
+  it('recognizes sub-attributes', async () => {
+
+    const task = await parseParams('run-z attr:sub1=val1 attr:sub2=val2 attr=val3');
+
+    expect([...task.allAttrs('attr')]).toEqual([
+        ['attr:sub1', 'val1'],
+        ['attr:sub2', 'val2'],
+        ['attr', 'val3'],
+    ]);
+    expect([...task.allAttrs('missing')]).toEqual([]);
+  });
   it('recognizes prerequisite attributes', async () => {
 
     const spec = await parseSpec('run-z attr1=val1 dep/attr2=/=attr3/arg1/--arg2=2/attr3=val3');
@@ -480,6 +501,23 @@ describe('ZTaskParser', () => {
         parallel: false,
         attrs: { attr2: [''], attr3: ['on', 'val3'] },
         args: ['arg1', '--arg2=2'],
+      },
+    ]);
+    expect(spec.attrs).toEqual({ attr1: ['val1'] });
+    expect(spec.action).toEqual({ type: 'group', targets: [] });
+  });
+  it('recognizes prerequisite attribute replacement', async () => {
+
+    const spec = await parseSpec('run-z attr1=val1 dep/attr=val1/:=attr/attr=val3');
+
+    expect(spec.pre).toEqual([
+      {
+        targets: [],
+        task: 'dep',
+        annex: false,
+        parallel: false,
+        attrs: { attr: ['on', 'val3'] },
+        args: [],
       },
     ]);
     expect(spec.attrs).toEqual({ attr1: ['val1'] });
@@ -674,5 +712,14 @@ describe('ZTaskParser', () => {
     await builder.parse(commandLine);
 
     return builder.spec();
+  }
+
+  async function parseParams(commandLine: string): Promise<ZTaskParams> {
+
+    const builder = await newTask();
+    await builder.parse(commandLine);
+    const call = await builder.task().call();
+
+    return call.params(ZTaskParams.newEvaluator());
   }
 });

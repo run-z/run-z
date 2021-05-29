@@ -7,7 +7,7 @@ import { CommandZTask, GroupZTask, ScriptZTask, UnknownZTask } from './impl';
 import type { ZTaskBuilder } from './task-builder';
 import type { ZTaskOption } from './task-option';
 import type { ZTaskSpec } from './task-spec';
-import { addZTaskAttr, addZTaskAttrs } from './task-spec.impl';
+import { addZTaskAttr, addZTaskAttrs, removeZTaskAttr } from './task-spec.impl';
 
 /**
  * @internal
@@ -18,7 +18,7 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
   private _executor?: ZTaskExecutor;
   private readonly _commandLine: string[] = [];
   private readonly _pre: ZTaskSpec.Pre[] = [];
-  private readonly _attrs: Record<string, [string, ...string[]]> = {};
+  private readonly _attrs: Record<string, [string, ...string[]] | null> = {};
   private readonly _args: string[] = [];
   private _action?: ZTaskSpec.Action;
 
@@ -45,6 +45,11 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
 
   addAttrs(attrs: ZTaskSpec.Attrs): this {
     addZTaskAttrs(this._attrs, attrs);
+    return this;
+  }
+
+  removeAttr(name: string): this {
+    removeZTaskAttr(this._attrs, name);
     return this;
   }
 
