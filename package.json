@@ -54,7 +54,7 @@
     "tree-kill": "^1.2.2"
   },
   "devDependencies": {
-    "@jest/globals": "^27.0.1",
+    "@jest/globals": "^27.0.3",
     "@rollup/plugin-commonjs": "^19.0.0",
     "@rollup/plugin-node-resolve": "^13.0.0",
     "@run-z/eslint-config": "^1.2.1",
@@ -69,9 +69,9 @@
     "eslint": "^7.27.0",
     "eslint-plugin-jest": "^24.3.6",
     "gh-pages": "^3.2.0",
-    "jest": "^27.0.1",
+    "jest": "^27.0.3",
     "jest-junit": "^12.1.0",
-    "jest-mock": "^27.0.1",
+    "jest-mock": "^27.0.3",
     "rollup": "^2.50.4",
     "rollup-plugin-flat-dts": "^1.2.2",
     "rollup-plugin-sourcemaps": "^0.6.3",
