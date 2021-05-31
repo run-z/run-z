@@ -14,7 +14,7 @@
     "importHelpers": true,
     "noEmitHelpers": true,
     "lib": [
-      "ES2019",
+      "ES2019"
     ],
     "types": [
       "cross-spawn",
