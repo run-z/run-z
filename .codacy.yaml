@@ -1,0 +1,6 @@
+---
+engines:
+  duplication:
+    exclude_paths:
+    - "src/**/*.spec.ts"
+    - "src/spec/**"
