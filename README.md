@@ -5,6 +5,8 @@ Run That
 [![Build Status][build-status-img]][build-status-link]
 [![Build@Windows][build-windows-img]][build-windows-link]
 [![Build@MacOS][build-macos-img]][build-macos-link]
+[![Code Quality][quality-img]][quality-link]
+[![Coverage][coverage-img]][coverage-link]
 [![GitHub Project][github-image]][github-url]
 [![API Documentation][api-docs-image]][API documentation]
 
@@ -33,6 +35,10 @@ Run That
 [build-status-link]: https://github.com/run-z/run-z/actions?query=workflow:Build
 [build-windows-link]: https://github.com/run-z/run-z/actions?query=workflow:Build@Windows
 [build-macos-link]: https://github.com/run-z/run-z/actions?query=workflow:Build@MacOS
+[quality-img]: https://app.codacy.com/project/badge/Grade/77caf2056ac44fa2bf0b96091b09818c
+[quality-link]: https://www.codacy.com/gh/run-z/run-z/dashboard?utm_source=github.com&utm_medium=referral&utm_content=run-z/run-z&utm_campaign=Badge_Grade
+[coverage-img]: https://app.codacy.com/project/badge/Coverage/77caf2056ac44fa2bf0b96091b09818c
+[coverage-link]: https://www.codacy.com/gh/run-z/run-z/dashboard?utm_source=github.com&utm_medium=referral&utm_content=run-z/run-z&utm_campaign=Badge_Coverage
 [github-image]: https://img.shields.io/static/v1?logo=github&label=GitHub&message=project&color=informational
 [github-url]: https://github.com/run-z/run-z
 [api-docs-image]: https://img.shields.io/static/v1?logo=typescript&label=API&message=docs&color=informational
