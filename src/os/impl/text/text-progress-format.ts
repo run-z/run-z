@@ -31,5 +31,3 @@ export class TextZProgressFormat extends ZProgressFormat {
  */
 class TextZJobProgress extends ZJobProgress {
 }
-
-

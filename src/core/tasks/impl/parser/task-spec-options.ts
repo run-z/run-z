@@ -230,5 +230,3 @@ function readNameValueZTaskOption(option: ZTaskOption): void {
     option.addArg(arg);
   }
 }
-
-
