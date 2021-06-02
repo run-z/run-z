@@ -49,5 +49,5 @@ export interface ZJobRow {
  * @internal
  */
 export function zjobRowOf(message: ZLogMessage): ZJobRow {
-  return message.details.row;
+  return message.details.row as ZJobRow;
 }

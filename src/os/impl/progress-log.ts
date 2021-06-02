@@ -100,7 +100,7 @@ export class ProgressZLogRecorder implements ZLogRecorder {
   record(message: ZLogMessage): void {
 
     const { details: { target, task } } = message;
-    const prefixUpdated = this._prefix.update(target, task);
+    const prefixUpdated = this._prefix.update(target as string, task as string);
 
     this._by.record(message);
     if (prefixUpdated) {

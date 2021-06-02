@@ -28,7 +28,7 @@ export function richProgressZLogFormatter(prefix: ProgressZLogPrefix): ZLogForma
 
   return message => {
 
-    const row: ZJobRow | undefined = message.details.row;
+    const row = message.details.row as ZJobRow | undefined;
 
     if (row == null) {
       return text(message);

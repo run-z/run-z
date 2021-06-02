@@ -38,7 +38,7 @@ describe('RichJobZLogRecorder', () => {
                   ' ',
                   (line: ZLogLine): void => {
 
-                    const row: ZJobRow | undefined = line.message.details.row;
+                    const row = line.message.details.row as ZJobRow | undefined;
 
                     if (row) {
                       line.write(`row: ${row.up()}`);
