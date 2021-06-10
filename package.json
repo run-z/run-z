@@ -70,7 +70,7 @@
     "eslint-plugin-jest": "^24.3.6",
     "gh-pages": "^3.2.0",
     "jest": "^27.0.4",
-    "jest-junit": "^12.1.0",
+    "jest-junit": "^12.2.0",
     "jest-mock": "^27.0.3",
     "remark-cli": "^9.0.0",
     "remark-preset-lint-recommended": "^5.0.0",
