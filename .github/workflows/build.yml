@@ -12,11 +12,17 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    name: build@linux
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    container: golang:latest
+    strategy:
+      matrix:
+         test_block:
+          - 1
+          - 2
+          - 3
+          - 4
+          - 5
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
