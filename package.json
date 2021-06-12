@@ -81,7 +81,7 @@
     "run-z": "=1.8.0-bootstrap",
     "shx": "^0.3.3",
     "ts-jest": "^27.0.3",
-    "tslib": "^2.2.0",
+    "tslib": "^2.3.0",
     "typedoc": "^0.20.36",
     "typescript": "^4.3.2"
   },
