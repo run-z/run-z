@@ -1,4 +1,4 @@
-import { textZLogFormatter, ZLogField, ZLogFormatter, ZLogLine } from '@run-z/log-z';
+import { textZLogFormatter, ZLogField, ZLogFormatter, ZLogWriter } from '@run-z/log-z';
 import ansiEscapes from 'ansi-escapes';
 import cliTruncate from 'cli-truncate';
 import type { ProgressZLogPrefix } from '../progress-log';
@@ -45,9 +45,9 @@ export function richProgressZLogFormatter(prefix: ProgressZLogPrefix): ZLogForma
 /**
  * @internal
  */
-function richStartZLogField(line: ZLogLine): void {
+function richStartZLogField(writer: ZLogWriter): void {
 
-  const up = zjobRowOf(line.message).up();
+  const up = zjobRowOf(writer.message).up();
   let out = '';
 
   if (up > 0) {
@@ -56,23 +56,23 @@ function richStartZLogField(line: ZLogLine): void {
   }
   out += ansiEscapes.cursorLeft;
 
-  line.write(out);
+  writer.write(out);
 }
 
 /**
  * @internal
  */
-function richEndZLogField(line: ZLogLine): void {
+function richEndZLogField(writer: ZLogWriter): void {
 
-  const row = zjobRowOf(line.message);
+  const row = zjobRowOf(writer.message);
   const down = row.up() - 1;
 
   if (down > 0) {
     // Move back to original position.
     // Offset is one less, because new line is added above.
-    line.write(ansiEscapes.eraseEndLine + '\n' + ansiEscapes.cursorDown(down));
+    writer.write(ansiEscapes.eraseEndLine + '\n' + ansiEscapes.cursorDown(down));
   } else {
-    line.write(ansiEscapes.eraseEndLine + '\n');
+    writer.write(ansiEscapes.eraseEndLine + '\n');
   }
 }
 
@@ -80,13 +80,13 @@ function richEndZLogField(line: ZLogLine): void {
  * @internal
  */
 function zjobStatusZLogField(prefix: ProgressZLogPrefix): ZLogField {
-  return line => {
+  return writer => {
 
-    const { text } = line.message;
+    const { line } = writer.message;
     const prefixCols = prefix.targetCols + prefix.taskCols + 6;
 
-    line.write(cliTruncate(
-        stripControlChars(text) || 'Running...',
+    writer.write(cliTruncate(
+        stripControlChars(line.join(' ')) || 'Running...',
         ttyColumns() - prefixCols,
         {
           preferTruncationOnSpace: true,

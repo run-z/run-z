@@ -1,4 +1,4 @@
-import type { ZLogLine } from '@run-z/log-z';
+import type { ZLogWriter } from '@run-z/log-z';
 import cliSpinners from 'cli-spinners';
 import logSymbols from 'log-symbols';
 
@@ -36,10 +36,10 @@ export const zjobStatusIndicator = {
 /**
  * @internal
  */
-export function zjobStatusIndicatorZLogField(line: ZLogLine): void {
+export function zjobStatusIndicatorZLogField(writer: ZLogWriter): void {
 
   let status: keyof typeof zjobStatusIndicator = 'progress';
-  const { error, details: { success } } = line.message;
+  const { details: { error, success } } = writer.message;
 
   if (error != null) {
     status = 'error';
@@ -47,5 +47,5 @@ export function zjobStatusIndicatorZLogField(line: ZLogLine): void {
     status = 'ok';
   }
 
-  line.write(zjobStatusIndicator[status]());
+  writer.write(zjobStatusIndicator[status]());
 }

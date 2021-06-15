@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
 import type { ZLogger } from '@run-z/log-z';
-import { levelZLogField, logZBy, messageZLogField, zlogDetails, zlogError, ZLogLine } from '@run-z/log-z';
+import { levelZLogField, logZBy, messageZLogField, zlogDetails, ZLogWriter } from '@run-z/log-z';
 import { logZToStream } from '@run-z/log-z/node';
 import { Writable } from 'stream';
 import { ZJobOutput } from './job-output';
@@ -36,12 +36,12 @@ describe('RichJobZLogRecorder', () => {
                   ' ',
                   messageZLogField(),
                   ' ',
-                  (line: ZLogLine): void => {
+                  (writer: ZLogWriter): void => {
 
-                    const row = line.message.details.row as ZJobRow | undefined;
+                    const row = writer.message.details.row as ZJobRow | undefined;
 
                     if (row) {
-                      line.write(`row: ${row.up()}`);
+                      writer.write(`row: ${row.up()}`);
                       row.done();
                     }
                   },
@@ -94,13 +94,13 @@ describe('RichJobZLogRecorder', () => {
   });
   it('reports error and prints full output', async () => {
     logger.info('Message 1\n');
-    logger.error(zlogError(new Error('Error!')));
+    logger.error(zlogDetails({ error: new Error('Error!') }));
     await logger.whenLogged();
     await logger.end();
 
     expect(lines).toEqual([
       '[INFO ] Message 1 row: 0',
-      '[INFO ] Error: Error! row: 1',
+      '[INFO ] Error! row: 1',
       '[INFO ] Message 1',
       '[ERROR] Error!',
     ]);
@@ -108,5 +108,20 @@ describe('RichJobZLogRecorder', () => {
       ['Message 1', 0],
     ]);
   });
+  it('reports string error and prints full output', async () => {
+    logger.info('Message 1\n');
+    logger.error(zlogDetails({ error: 'Error!' }));
+    await logger.whenLogged();
+    await logger.end();
 
+    expect(lines).toEqual([
+      '[INFO ] Message 1 row: 0',
+      '[INFO ] Error! row: 1',
+      '[INFO ] Message 1',
+      '[ERROR] Error!',
+    ]);
+    expect(output.lines()).toEqual([
+      ['Message 1', 0],
+    ]);
+  });
 });

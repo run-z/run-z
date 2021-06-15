@@ -1,7 +1,7 @@
 import { arrayOfElements, lazyValue } from '@proc7ts/primitives';
 import type { ZExecution, ZExecutionStarter } from '@run-z/exec-z';
 import { poolZExecutions, spawnZ } from '@run-z/exec-z';
-import { zlogDetails, zlogError } from '@run-z/log-z';
+import { zlogDetails } from '@run-z/log-z';
 import type { ZOption } from '@run-z/optionz';
 import { clz } from '@run-z/optionz/colors';
 import type { ChildProcessByStdio } from 'child_process';
@@ -344,7 +344,7 @@ By default ${clz.usage('text')} format is used.
               ).catch(
                   error => {
                     progress.stop();
-                    progress.log.error(String(error), zlogError(error));
+                    progress.log.error(zlogDetails({ error }));
                     return Promise.reject(error);
                   },
               );

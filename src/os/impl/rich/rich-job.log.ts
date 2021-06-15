@@ -18,15 +18,18 @@ export class RichJobZLogRecorder implements ZLogRecorder {
 
   record(message: ZLogMessage): void {
 
-    const { error, details: { success } } = message;
+    const { details: { error, success } } = message;
 
     if (error != null) {
+
+      const line: unknown[] = error instanceof Error ? [error.message] : [String(error)];
+
       // Error report.
       // Update status and log collected error.
       this._by.record(this._output.setStatus({
         ...message,
         level: ZLogLevel.Info,
-        text: String(error),
+        line,
         details: { ...message.details, row: this._useRow() },
       }));
 
@@ -34,24 +37,24 @@ export class RichJobZLogRecorder implements ZLogRecorder {
           zlogMessage(err ? ZLogLevel.Error : ZLogLevel.Info, message),
       ));
 
-      this._by.record(message);
+      this._by.record({ ...message, line });
     } else if (success) {
       // Final success
       // Update status.
       this._by.record(this._output.setStatus({
         ...message,
         level: ZLogLevel.Info,
-        text: this._output.lastLine || 'Ok',
+        line: [this._output.lastLine || 'Ok'],
         details: { ...message.details, row: this._useRow() },
       }));
     } else {
       // Regular message.
       // Update status and record output.
-      this._output.add(message.text, message.level >= ZLogLevel.Error ? 1 : 0);
+      this._output.add(message.line.join(' '), message.level >= ZLogLevel.Error ? 1 : 0);
       this._by.record({
         ...message,
         level: ZLogLevel.Info,
-        text: this._output.status,
+        line: [this._output.status],
         details: { ...message.details, row: this._useRow() },
       });
     }

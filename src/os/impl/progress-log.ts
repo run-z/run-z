@@ -50,7 +50,7 @@ export class ProgressZLogPrefix {
   }
 
   field(): ZLogField {
-    return line => line.write(this.text(line.message));
+    return writer => writer.write(this.text(writer.message));
   }
 
 }
