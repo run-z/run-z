@@ -1,5 +1,5 @@
 import { AbortedZExecutionError, FailedZExecutionError } from '@run-z/exec-z';
-import { messageZLogField, textZLogFormatter, ZLogFormatter, ZLogLine } from '@run-z/log-z';
+import { messageZLogField, textZLogFormatter, ZLogFormatter, ZLogWriter } from '@run-z/log-z';
 import type { ProgressZLogPrefix } from '../progress-log';
 
 /**
@@ -10,9 +10,11 @@ export function textProgressZLogFormatter(prefix: ProgressZLogPrefix): ZLogForma
       prefix,
       textZLogFormatter({
         fields: [
-          messageZLogField(),
+          1,
           ' ',
           jobErrorZLogField,
+          0,
+          messageZLogField(),
         ],
       }),
   );
@@ -21,18 +23,20 @@ export function textProgressZLogFormatter(prefix: ProgressZLogPrefix): ZLogForma
 /**
  * @internal
  */
-export function jobErrorZLogField(line: ZLogLine): void {
+export function jobErrorZLogField(writer: ZLogWriter): void {
 
-  const error = line.message.error;
+  const error = writer.extractDetail('error');
 
-  if (error instanceof AbortedZExecutionError) {
-    return; // No need to report aborted execution
+  if (error instanceof AbortedZExecutionError || error instanceof FailedZExecutionError) {
+    // No need to report aborted or failed execution
+    writer.changeMessage({ ...writer.message, line: [error.message] });
+    return;
   }
-  if (error instanceof FailedZExecutionError) {
-    return; // No need to report failed execution
+  if (error instanceof Error) {
+    writer.writeError(error);
   }
   if (error !== undefined) {
-    line.writeError(error);
+    writer.write(String(error));
   }
 }
 

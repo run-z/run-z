@@ -44,19 +44,24 @@ describe('textProgressZLogFormatter', () => {
     ]);
   });
   it('does not log abort error stack trace', async () => {
-    logger.error(new AbortedZExecutionError('Aborted!'), zlogDetails({ target: 'package', task: 'build' }));
+    logger.error(zlogDetails({ error: new AbortedZExecutionError('Aborted!'), target: 'package', task: 'build' }));
     await logger.whenLogged();
     expect(output).toEqual(['[package build] Aborted!\n']);
   });
   it('does not log failure error stack trace', async () => {
-    logger.error(new FailedZExecutionError('Failed!'), zlogDetails({ target: 'package', task: 'build' }));
+    logger.error(zlogDetails({ error: new FailedZExecutionError('Failed!'), target: 'package', task: 'build' }));
     await logger.whenLogged();
     expect(output).toEqual(['[package build] Failed!\n']);
   });
   it('logs any other error stack trace', async () => {
-    logger.error(new Error('Error!'), zlogDetails({ target: 'package', task: 'build' }));
+    logger.error(zlogDetails({ error: new Error('Error!'), target: 'package', task: 'build' }));
     await logger.whenLogged();
     expect(output[0]).toContain('Error: Error!');
     expect(output[0].split('\n').length).toBeGreaterThan(2);
+  });
+  it('logs text error', async () => {
+    logger.error(zlogDetails({ error: 'Error!', target: 'package', task: 'build' }));
+    await logger.whenLogged();
+    expect(output).toEqual(['[package build] Error!\n']);
   });
 });
