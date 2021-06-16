@@ -38,7 +38,7 @@
     "@proc7ts/logger": "^1.2.0-dev.3",
     "@proc7ts/primitives": "^3.0.0",
     "@run-z/exec-z": "^1.4.0",
-    "@run-z/log-z": "^2.0.0-dev.2",
+    "@run-z/log-z": "^2.0.0-dev.3",
     "@run-z/optionz": "^2.3.0",
     "ansi-escapes": "^5.0.0",
     "chalk": "^4.1.1",
