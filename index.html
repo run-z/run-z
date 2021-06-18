@@ -65,6 +65,8 @@
 					<a href="https://github.com/run-z/run-z/actions?query=workflow:Build"><img src="https://github.com/run-z/run-z/workflows/Build/badge.svg" alt="Build Status"></a>
 					<a href="https://github.com/run-z/run-z/actions?query=workflow:Build@Windows"><img src="https://github.com/run-z/run-z/workflows/Build@Windows/badge.svg" alt="Build@Windows"></a>
 					<a href="https://github.com/run-z/run-z/actions?query=workflow:Build@MacOS"><img src="https://github.com/run-z/run-z/workflows/Build@MacOS/badge.svg" alt="Build@MacOS"></a>
+					<a href="https://www.codacy.com/gh/run-z/run-z/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=run-z/run-z&amp;utm_campaign=Badge_Grade"><img src="https://app.codacy.com/project/badge/Grade/77caf2056ac44fa2bf0b96091b09818c" alt="Code Quality"></a>
+					<a href="https://www.codacy.com/gh/run-z/run-z/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=run-z/run-z&amp;utm_campaign=Badge_Coverage"><img src="https://app.codacy.com/project/badge/Coverage/77caf2056ac44fa2bf0b96091b09818c" alt="Coverage"></a>
 					<a href="https://github.com/run-z/run-z"><img src="https://img.shields.io/static/v1?logo=github&label=GitHub&message=project&color=informational" alt="GitHub Project"></a>
 				<a href="https://run-z.github.io/run-z/"><img src="https://img.shields.io/static/v1?logo=typescript&label=API&message=docs&color=informational" alt="API Documentation"></a></p>
 				<p><code>run-z</code> is a command line utility able to run multiple <a href="https://docs.npmjs.com/using-npm/scripts">npm-scripts</a> at once.</p>
@@ -180,9 +182,16 @@
 				precedence.</p>
 				<p>The following attributes supported:</p>
 				<ul>
-					<li><code>if-present</code> - a flag indicating that the task should be executed only if corresponding script defined.
-					This can be useful for batched tasks.</li>
-					<li><code>skip</code> - when this flag set the task won&#39;t be executed.</li>
+					<li><p><code>env:NAME</code> - Sets environment variable <code>NAME</code>.</p>
+						<p>Multiple values for the same environment variable are joined: <br><code>env:NODE_OPTIONS=--experimental-vm-modules env:NODE_OPTIONS=--no-warnings</code> sets
+						<code>NODE_OPTIONS=&#39;--experimental-vm-modules --no-warnings&#39;</code></p>
+						<p>To override the value a <code>:=</code> sign can be used instead of <code>=</code>: <br><code>env:NODE_OPTIONS=--no-warnings env:NODE_OPTIONS:=--no-deprecation</code> sets <code>NODE_OPTIONS=&#39;--no-deprecation&#39;</code></p>
+					</li>
+					<li><p><code>if-present</code> - A flag indicating that the task should be executed only if corresponding script defined.</p>
+						<p>This can be useful for batched tasks.</p>
+					</li>
+					<li><p><code>skip</code> - When this flag set the task won&#39;t be executed.</p>
+					</li>
 				</ul>
 				<p>Other attributes aren&#39;t currently used, but still can be set.</p>
 				<blockquote>
