@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@proc7ts/logger": "^1.2.0",
-    "@proc7ts/primitives": "^3.0.1",
+    "@proc7ts/primitives": "^3.0.2",
     "@run-z/exec-z": "^1.4.0",
     "@run-z/log-z": "^2.0.0",
     "@run-z/optionz": "^2.3.0",
@@ -55,7 +55,7 @@
     "tree-kill": "^1.2.2"
   },
   "devDependencies": {
-    "@jest/globals": "^27.0.3",
+    "@jest/globals": "^27.0.5",
     "@rollup/plugin-commonjs": "^19.0.0",
     "@rollup/plugin-node-resolve": "^13.0.0",
     "@run-z/eslint-config": "^1.3.0",
@@ -70,7 +70,7 @@
     "eslint": "^7.29.0",
     "eslint-plugin-jest": "^24.3.6",
     "gh-pages": "^3.2.3",
-    "jest": "^27.0.4",
+    "jest": "^27.0.5",
     "jest-junit": "^12.2.0",
     "jest-mock": "^27.0.3",
     "remark-cli": "^9.0.0",
