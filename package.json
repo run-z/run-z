@@ -57,7 +57,7 @@
   "devDependencies": {
     "@jest/globals": "^27.0.6",
     "@rollup/plugin-commonjs": "^19.0.1",
-    "@rollup/plugin-node-resolve": "^13.0.1",
+    "@rollup/plugin-node-resolve": "^13.0.2",
     "@run-z/eslint-config": "^1.3.0",
     "@run-z/rollup-helpers": "^1.1.1",
     "@types/cross-spawn": "^6.0.2",
