@@ -46,12 +46,12 @@ describe('textProgressZLogFormatter', () => {
   it('does not log abort error stack trace', async () => {
     logger.error(zlogDetails({ error: new AbortedZExecutionError('Aborted!'), target: 'package', task: 'build' }));
     await logger.whenLogged();
-    expect(output).toEqual(['[package build] Aborted!\n']);
+    expect(output).toEqual(['[package build] Execution aborted. Aborted!\n']);
   });
   it('does not log failure error stack trace', async () => {
     logger.error(zlogDetails({ error: new FailedZExecutionError('Failed!'), target: 'package', task: 'build' }));
     await logger.whenLogged();
-    expect(output).toEqual(['[package build] Failed!\n']);
+    expect(output).toEqual(['[package build] Execution failed. Failed!\n']);
   });
   it('logs any other error stack trace', async () => {
     logger.error(zlogDetails({ error: new Error('Error!'), target: 'package', task: 'build' }));
