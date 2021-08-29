@@ -38,7 +38,7 @@ export class ZBatching {
     return new ZBatching(batcher);
   }
 
-  private readonly _batcher?: ZBatcher;
+  private readonly _batcher?: ZBatcher | undefined;
   private readonly _rules = new Map<ZBatchRule<unknown>, ZBatchRule.Instance<unknown>>();
 
   private constructor(batcher?: ZBatcher) {

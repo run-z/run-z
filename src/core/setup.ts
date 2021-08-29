@@ -20,22 +20,22 @@ export class ZSetup {
   /**
    * @internal
    */
-  private _taskParser?: ZTaskParser;
+  private _taskParser?: ZTaskParser | undefined;
 
   /**
    * @internal
    */
-  private _taskFactory?: ZTaskFactory;
+  private _taskFactory?: ZTaskFactory | undefined;
 
   /**
    * @internal
    */
-  private _packageResolver?: ZPackageResolver;
+  private _packageResolver?: ZPackageResolver | undefined;
 
   /**
    * @internal
    */
-  private _planner?: ZPlanner;
+  private _planner?: ZPlanner | undefined;
 
   /**
    * Constructs setup instance.

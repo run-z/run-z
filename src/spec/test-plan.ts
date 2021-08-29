@@ -16,8 +16,8 @@ export class TestPlan {
         setup = new StandardZSetup(),
         packageJson = {},
       }: {
-        setup?: ZSetup;
-        packageJson?: ZPackageJson;
+        setup?: ZSetup | undefined;
+        packageJson?: ZPackageJson | undefined;
       } = {},
   ) {
     this.setup = setup;
@@ -42,7 +42,7 @@ export class TestPlan {
       {
         packageJson,
       }: {
-        packageJson?: ZPackageJson;
+        packageJson?: ZPackageJson | undefined;
       } = {},
   ): ZPackageTree {
     return this._target = this.root.put(name, { packageJson });

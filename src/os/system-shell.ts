@@ -206,7 +206,7 @@ By default ${clz.usage('text')} format is used.
       {
         env = process.env,
       }: {
-        env?: ProcessEnv;
+        env?: ProcessEnv | undefined;
       } = {},
   ): SystemZExecutable {
     return this._buildExecutable(
@@ -238,7 +238,7 @@ By default ${clz.usage('text')} format is used.
       {
         env = process.env,
       }: {
-        env?: ProcessEnv;
+        env?: ProcessEnv | undefined;
       } = {},
   ): SystemZExecutable {
 

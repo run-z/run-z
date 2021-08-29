@@ -210,12 +210,12 @@ export namespace ZTaskParams {
     /**
      * Task attributes.
      */
-    readonly attrs?: ZTaskSpec.Attrs;
+    readonly attrs?: ZTaskSpec.Attrs | undefined;
 
     /**
      * Command line arguments to pass to the task.
      */
-    readonly args?: readonly string[];
+    readonly args?: readonly string[] | undefined;
 
   }
 

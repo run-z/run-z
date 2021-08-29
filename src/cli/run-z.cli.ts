@@ -19,35 +19,35 @@ export interface RunZOpts {
    *
    * @see {@link ZTaskBuilder.applyArgv}.
    */
-  readonly taskName?: string;
+  readonly taskName?: string | undefined;
 
   /**
    * An index of command line argument to start processing from.
    *
    * @default `2`.
    */
-  readonly fromIndex?: number;
+  readonly fromIndex?: number | undefined;
 
   /**
    * Working directory location.
    *
    * @default {@link ZPackageDirectory.open current directory}.
    */
-  readonly location?: ZPackageLocation;
+  readonly location?: ZPackageLocation | undefined;
 
   /**
    * Task execution setup.
    *
    * @default New {@link StandardZSetup} instance.
    */
-  readonly setup?: ZSetup;
+  readonly setup?: ZSetup | undefined;
 
   /**
    * Task execution shell to use.
    *
    * @default New {@link SystemZShell} instance.
    */
-  readonly shell?: ZShell;
+  readonly shell?: ZShell | undefined;
 
 }
 

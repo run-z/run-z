@@ -23,7 +23,7 @@ export interface ZPackage extends ZPackageSet {
   /**
    * Parent NPM package.
    */
-  readonly parent?: ZPackage;
+  readonly parent?: ZPackage | undefined;
 
   /**
    * Full package name.
@@ -45,7 +45,7 @@ export interface ZPackage extends ZPackageSet {
   /**
    * Package scope name including leading `@` for scoped packages, or `undefined` for unscoped ones.
    */
-  readonly scopeName?: string;
+  readonly scopeName?: string | undefined;
 
   /**
    * Unscoped package name for scoped packages, or full package names for unscoped ones.
@@ -60,7 +60,7 @@ export interface ZPackage extends ZPackageSet {
   /**
    * Sub-package name for nested packages, or `undefined` for top-level ones.
    */
-  readonly subPackageName?: string;
+  readonly subPackageName?: string | undefined;
 
   /**
    * An iterable consisting of this package.

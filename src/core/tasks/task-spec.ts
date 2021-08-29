@@ -47,7 +47,7 @@ export namespace ZTaskSpec {
     /**
      * A name of the task in selected package containing package selectors to reuse.
      */
-    readonly task?: string;
+    readonly task?: string | undefined;
 
   }
 
@@ -104,12 +104,12 @@ export namespace ZTaskSpec {
     /**
      * The task is not executed when this {@link ZTaskParams.flag flag} is set.
      */
-    readonly skip?: readonly [string, ...string[]] | null;
+    readonly skip?: readonly [string, ...string[]] | null | undefined;
 
     /**
      * Unknown task execution throws {@link UnknownZTaskError} unless this {@link ZTaskParams.flag flag} is set.
      */
-    readonly 'if-present'?: readonly [string, ...string[]] | null;
+    readonly 'if-present'?: readonly [string, ...string[]] | null | undefined;
 
     /**
      * A map of attribute values by their names.
@@ -156,7 +156,7 @@ export namespace ZTaskSpec {
 
     readonly type: 'script';
 
-    readonly command?: string;
+    readonly command?: string | undefined;
 
     readonly args: readonly string[];
 

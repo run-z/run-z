@@ -69,8 +69,8 @@ export class ProgressZLogRecorder implements ZLogRecorder {
       }: {
         prefix: ProgressZLogPrefix;
         format: TextZLogFormat | ZLogFormatter;
-        eol?: string;
-        onPrefixUpdate?: (this: void) => void;
+        eol?: string | undefined;
+        onPrefixUpdate?: ((this: void) => void) | undefined;
       },
   ): ZLogRecorder {
 
@@ -91,7 +91,7 @@ export class ProgressZLogRecorder implements ZLogRecorder {
       {
         onPrefixUpdate = noop,
       }: {
-        onPrefixUpdate?: (this: void) => void;
+        onPrefixUpdate?: ((this: void) => void) | undefined;
       },
   ) {
     this._onPrefixUpdate = onPrefixUpdate;

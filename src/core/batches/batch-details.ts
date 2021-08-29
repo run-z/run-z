@@ -14,7 +14,7 @@ export interface ZBatchDetails<TAction extends ZTaskSpec.Action = ZTaskSpec.Acti
    *
    * @default Current batching policy.
    */
-  readonly batching?: ZBatching;
+  readonly batching?: ZBatching | undefined;
 
 }
 

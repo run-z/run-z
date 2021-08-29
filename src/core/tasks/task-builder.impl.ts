@@ -15,12 +15,12 @@ import { addZTaskAttr, addZTaskAttrs, removeZTaskAttr } from './task-spec.impl';
 export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> implements ZTaskBuilder<TAction> {
 
   batching: ZBatching = ZBatching.newBatching();
-  private _executor?: ZTaskExecutor;
+  private _executor?: ZTaskExecutor | undefined;
   private readonly _commandLine: string[] = [];
   private readonly _pre: ZTaskSpec.Pre[] = [];
   private readonly _attrs: Record<string, [string, ...string[]] | null> = {};
   private readonly _args: string[] = [];
-  private _action?: ZTaskSpec.Action;
+  private _action?: ZTaskSpec.Action | undefined;
 
   constructor(readonly taskTarget: ZPackage, readonly taskName: string) {
   }

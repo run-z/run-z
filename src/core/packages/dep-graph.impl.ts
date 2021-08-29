@@ -8,8 +8,8 @@ import type { ZPackage$, ZPackageResolver$ } from './package.impl';
  */
 export class ZDepGraph$ implements ZDepGraph {
 
-  private _dependencies?: Set<ZPackage$>;
-  private _dependants?: Set<ZPackage$>;
+  private _dependencies?: Set<ZPackage$> | undefined;
+  private _dependants?: Set<ZPackage$> | undefined;
 
   constructor(readonly target: ZPackage$) {
   }

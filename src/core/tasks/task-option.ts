@@ -67,7 +67,7 @@ export namespace ZTaskOption {
      * The name of prerequisite task passed to the most recent call to {@link start} method, unless it is already
      * {@link conclude concluded}.
      */
-    readonly taskName?: string;
+    readonly taskName?: string | undefined;
 
     /**
      * Whether the started task is an {@link ZTaskSpec.Pre.annex annex}.

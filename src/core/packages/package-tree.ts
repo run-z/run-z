@@ -29,8 +29,8 @@ export class ZPackageTree extends ZPackageLocation {
         packageJson,
         parent,
       }: {
-        packageJson?: PromiseLike<ZPackageJson | undefined> | ZPackageJson;
-        parent?: ZPackageTree;
+        packageJson?: PromiseLike<ZPackageJson | undefined> | ZPackageJson | undefined;
+        parent?: ZPackageTree | undefined;
       } = {},
   ) {
     super();
@@ -96,7 +96,7 @@ export class ZPackageTree extends ZPackageLocation {
       {
         packageJson,
       }: {
-        packageJson?: PromiseLike<ZPackageJson | undefined> | ZPackageJson;
+        packageJson?: PromiseLike<ZPackageJson | undefined> | ZPackageJson | undefined;
       } = {},
   ): ZPackageTree {
 

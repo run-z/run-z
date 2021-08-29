@@ -76,7 +76,7 @@ export interface NamedZBatches {
  */
 interface NamedZBatchesConfig {
 
-  readonly only?: ReadonlySet<string>;
+  readonly only?: ReadonlySet<string> | undefined;
 
   readonly with: ReadonlySet<string>;
 

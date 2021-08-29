@@ -15,7 +15,7 @@ export class ZTaskParser {
   /**
    * @internal
    */
-  private _specParser?: ReturnType<typeof zTaskSpecParser>;
+  private _specParser?: ReturnType<typeof zTaskSpecParser> | undefined;
 
   /**
    * @internal
@@ -159,7 +159,7 @@ export namespace ZTaskParser {
     /**
      * Additional task options to support.
      */
-    readonly options?: SupportedOptions;
+    readonly options?: SupportedOptions | undefined;
 
   }
 

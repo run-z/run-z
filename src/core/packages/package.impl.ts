@@ -27,8 +27,8 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
   readonly isAnonymous: boolean;
   readonly name: string;
   private _scopeName: string | null | undefined = null;
-  private _unscopedName?: string;
-  private _hostPackage?: ZPackage;
+  private _unscopedName?: string | undefined;
+  private _hostPackage?: ZPackage | undefined;
   private _subPackageName: string | null | undefined = null;
 
   readonly _dependants: ZPackage$[] = [];

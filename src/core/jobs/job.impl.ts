@@ -37,7 +37,7 @@ export class ZExecutor {
  */
 export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> implements ZJob<TAction> {
 
-  private _params?: ZTaskParams;
+  private _params?: ZTaskParams | undefined;
   private _exec!: ZExecution;
   private _execAndPre!: ZExecution;
 
