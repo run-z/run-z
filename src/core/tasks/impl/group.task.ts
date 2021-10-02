@@ -101,6 +101,7 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
                 }
                 // Apply task plan
                 await details.plan(subPlanner);
+
                 // Apply sub-tasks plan
                 return plan(subPlanner);
               },
@@ -122,6 +123,7 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
           `Unrecognized command line option "${args[0]}" passed to task "${this.name}" in ${this.target.name}`,
       );
     }
+
     return execZNoOp();
   }
 

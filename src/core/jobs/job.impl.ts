@@ -63,6 +63,7 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
   start(): this {
     if (this.params.flag('skip')) {
       this._exec = this._execAndPre = execZNoOp();
+
       return this;
     }
 

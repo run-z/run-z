@@ -102,6 +102,7 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
     if (this._hostPackage) {
       return this._hostPackage;
     }
+
     return this._hostPackage = this.subPackageName == null
         ? this
         : this.parent!.hostPackage;

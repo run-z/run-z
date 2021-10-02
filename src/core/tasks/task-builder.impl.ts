@@ -35,41 +35,49 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
 
   addPre(pre: ZTaskSpec.Pre): this {
     this._pre.push(pre);
+
     return this;
   }
 
   addAttr(name: string, value: string): this {
     addZTaskAttr(this._attrs, name, value);
+
     return this;
   }
 
   addAttrs(attrs: ZTaskSpec.Attrs): this {
     addZTaskAttrs(this._attrs, attrs);
+
     return this;
   }
 
   removeAttr(name: string): this {
     removeZTaskAttr(this._attrs, name);
+
     return this;
   }
 
   addArg(...args: string[]): this {
     this._args.push(...args);
+
     return this;
   }
 
   setBatching(batching: ZBatching): this {
     this.batching = batching;
+
     return this;
   }
 
   setAction<TNewAction extends ZTaskSpec.Action>(action: TNewAction): ZTaskBuilder$<TNewAction> {
     this._action = action;
+
     return this as ZTaskBuilder$<any>;
   }
 
   executeBy(executor: ZTaskExecutor): this {
     this._executor = executor;
+
     return this;
   }
 

@@ -242,6 +242,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
 
       if (!task) {
         addTargets(selected);
+
         continue;
       }
       for (const preTarget of await selected.packages()) {

@@ -44,6 +44,7 @@ export class DraftZTask {
         targets,
       });
     }
+
     return this.builder;
   }
 
@@ -88,26 +89,31 @@ function draftZTaskPre(
       }
       preTaskName = taskName;
       preAnnex = annex;
+
       return this;
     },
     addAttr(name: string, value: string) {
       addPreOption();
       addZTaskAttr(preAttrs, name, value);
+
       return this;
     },
     addAttrs(attrs: ZTaskSpec.Attrs) {
       addPreOption();
       addZTaskAttrs(preAttrs, attrs);
+
       return this;
     },
     removeAttr(name) {
       addPreOption();
       removeZTaskAttr(preAttrs, name);
+
       return this;
     },
     addArg(...args: readonly string[]) {
       addPreOption();
       preArgs.push(...args);
+
       return this;
     },
     addOption(value: string) {

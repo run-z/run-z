@@ -303,6 +303,7 @@ describe('SystemZShell', () => {
       writeSpy = jest.spyOn(process.stdout, 'write');
       writeSpy.mockImplementation((_chunk: any, cb: any) => {
         cb();
+
         return true;
       });
     });

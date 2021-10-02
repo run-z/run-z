@@ -19,6 +19,7 @@ export class UnknownZTask extends AbstractZTask<ZTaskSpec.Unknown> {
     if (params.flag('if-present')) {
       return execZNoOp();
     }
+
     return failZ(new UnknownZTaskError(this.target.name, this.name));
   }
 

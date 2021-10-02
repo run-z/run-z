@@ -120,5 +120,6 @@ function logZError(error: any): Promise<void> {
   } else {
     console.error('Unexpected error', error);
   }
+
   return Promise.reject(error);
 }

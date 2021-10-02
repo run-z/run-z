@@ -72,6 +72,7 @@ export class RichJobZLogRecorder implements ZLogRecorder {
     if (this._row != null) {
       return this._row;
     }
+
     return this._row = this._rows.add(() => this.record(this._output.statusMessage));
   }
 

@@ -90,6 +90,7 @@ export class ZPackageResolver {
       if (!location) {
         return;
       }
+
       return (await this.find(location)) || findParent(location.parent);
     };
     const discoverPackage = async (): Promise<ZPackage$ | undefined> => {
@@ -110,6 +111,7 @@ export class ZPackageResolver {
       if (pkg) {
         this._impl.addPackage(pkg);
       }
+
       return pkg;
     });
 

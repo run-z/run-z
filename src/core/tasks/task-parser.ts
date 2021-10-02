@@ -105,6 +105,7 @@ export class ZTaskParser {
     let withEnv = false;
     const detectEnv = (): undefined => {
       withEnv = true;
+
       return;
     };
     const entries = shellQuote.parse(commandLine, detectEnv);
@@ -139,6 +140,7 @@ export class ZTaskParser {
     if (!this._specParser) {
       this._specParser = zTaskSpecParser(builder.taskTarget.setup, this._config);
     }
+
     return this._specParser(builder, args, opts);
   }
 

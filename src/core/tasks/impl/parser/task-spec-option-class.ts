@@ -62,24 +62,28 @@ export function zTaskSpecOptionClass<TArgs extends any[]>(
     addPre(pre: ZTaskSpec.Pre): this {
       this.pre.conclude();
       this._draft.builder.addPre(pre);
+
       return this;
     }
 
     addAttr(name: string, value: string): this {
       this.pre.conclude();
       this._draft.builder.addAttr(name, value);
+
       return this;
     }
 
     addAttrs(attrs: ZTaskSpec.Attrs): this {
       this.pre.conclude();
       this._draft.builder.addAttrs(attrs);
+
       return this;
     }
 
     removeAttr(name: string): this {
       this.pre.conclude();
       this._draft.builder.removeAttr(name);
+
       return this;
     }
 
@@ -99,17 +103,20 @@ export function zTaskSpecOptionClass<TArgs extends any[]>(
 
     setBatching(batching: ZBatching): this {
       this._draft.builder.setBatching(batching);
+
       return this;
     }
 
     setAction(action: ZTaskSpec.Action): this {
       this.pre.conclude();
       this._draft.builder.setAction(action);
+
       return this;
     }
 
     executeBy(executor: ZTaskExecutor): this {
       this._draft.builder.executeBy(executor);
+
       return this;
     }
 

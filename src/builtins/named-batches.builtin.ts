@@ -116,6 +116,7 @@ function readZBatchNames(option: ZTaskOption): readonly string[] | undefined {
 
   if (!value) {
     option.unrecognize();
+
     return;
   }
 

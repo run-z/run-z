@@ -158,6 +158,7 @@ By default ${clz.usage('text')} format is used.
    */
   setMaxJobs(limit: number | undefined): this {
     this._exec = poolZExecutions(limit);
+
     return this;
   }
 
@@ -182,6 +183,7 @@ By default ${clz.usage('text')} format is used.
         : name === 'auto'
             ? lazyValue(zProgressFormats.auto)
             : lazyValue(zProgressFormats.text);
+
     return this;
   }
 
@@ -345,6 +347,7 @@ By default ${clz.usage('text')} format is used.
                   error => {
                     progress.stop();
                     progress.log.error(zlogDetails({ error }));
+
                     return Promise.reject(error);
                   },
               );

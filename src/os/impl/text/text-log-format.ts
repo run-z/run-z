@@ -30,6 +30,7 @@ export function jobErrorZLogField(writer: ZLogWriter): void {
   if (error instanceof AbortedZExecutionError || error instanceof FailedZExecutionError) {
     // No need to report aborted or failed execution
     writer.changeMessage({ ...writer.message, line: [error.message] });
+
     return;
   }
   if (error instanceof Error) {

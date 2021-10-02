@@ -49,6 +49,7 @@ export class ZJobOutput {
         // Last line
         if (!line) {
           this._lastNL = true;
+
           break;
         } else {
           this._lastNL = false;

@@ -32,6 +32,7 @@ export class ZPackageDirectory extends ZPackageLocation {
     if (!isRootURL(rootURL, url)) {
       throw new TypeError(`${url} is not inside ${rootURL}`);
     }
+
     return new ZPackageDirectory(url, rootURL);
   }
 

@@ -709,6 +709,7 @@ describe('ZTaskParser', () => {
   async function parseSpec(commandLine: string): Promise<ZTaskSpec> {
 
     const builder = await newTask();
+
     await builder.parse(commandLine);
 
     return builder.spec();
@@ -717,7 +718,9 @@ describe('ZTaskParser', () => {
   async function parseParams(commandLine: string): Promise<ZTaskParams> {
 
     const builder = await newTask();
+
     await builder.parse(commandLine);
+
     const call = await builder.task().call();
 
     return call.params(ZTaskParams.newEvaluator());
