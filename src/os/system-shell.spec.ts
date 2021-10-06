@@ -5,7 +5,7 @@ import { AbortedZExecutionError, FailedZExecutionError } from '@run-z/exec-z';
 import chalk from 'chalk';
 import type { SpyInstance } from 'jest-mock';
 import logSymbols from 'log-symbols';
-import npmRunPath from 'npm-run-path';
+import { npmRunPath } from 'npm-run-path';
 import * as os from 'os';
 import pathKey from 'path-key';
 import { pathToFileURL } from 'url';

@@ -6,7 +6,7 @@ import type { ZOption } from '@run-z/optionz';
 import { clz } from '@run-z/optionz/colors';
 import type { ChildProcessByStdio } from 'child_process';
 import spawn from 'cross-spawn';
-import npmRunPath from 'npm-run-path';
+import { npmRunPath } from 'npm-run-path';
 import * as path from 'path';
 import pathKey from 'path-key';
 import type { Readable } from 'stream';
