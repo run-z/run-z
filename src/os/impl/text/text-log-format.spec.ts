@@ -17,7 +17,7 @@ describe('textProgressZLogFormatter', () => {
 
     const prefix = new ProgressZLogPrefix();
     const writer = new Writable({
-      write(chunk, _encoding, cb) {
+      write(chunk: Buffer | string, _encoding, cb) {
         output.push(stripAnsi(chunk.toString()));
         cb();
       },

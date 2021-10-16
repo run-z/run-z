@@ -34,7 +34,7 @@ export class ZTaskParams {
    */
   static newEvaluator(): ZTaskParams.Evaluator {
 
-    const evaluated = new Map<unknown, Map<ZCall, any>>();
+    const evaluated = new Map<unknown, Map<ZCall, unknown>>();
 
     return {
 
@@ -48,13 +48,13 @@ export class ZTaskParams {
 
         if (cache) {
 
-          const cached = cache.get(source);
+          const cached = cache.get(source) as TValue | undefined;
 
           if (cached !== undefined) {
             return cached;
           }
         } else {
-          evaluated.set(key, cache = new Map());
+          evaluated.set(key, cache = new Map<ZCall, unknown>());
         }
 
         // Prevent infinite recursion.

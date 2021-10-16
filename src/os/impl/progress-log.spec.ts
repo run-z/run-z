@@ -22,7 +22,7 @@ describe('ProgressZLogRecorder', () => {
     lines = [];
 
     const writer = new Writable({
-      write(chunk, _encoding, cb) {
+      write(chunk: Buffer | string, _encoding, cb) {
         lines.push(chunk.toString());
         cb();
       },

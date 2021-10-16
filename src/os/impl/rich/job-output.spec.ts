@@ -36,7 +36,7 @@ describe('ZJobOutput', () => {
     });
     it('is equal to the last non-blank line', () => {
       output.add('line1\nline2\n\n\n');
-      expect(output.status).toEqual('line2');
+      expect(output.status).toBe('line2');
     });
     it('is predefined if all lines are blank', () => {
       output.add('  \n \n\n\n');
