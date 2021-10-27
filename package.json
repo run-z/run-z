@@ -98,7 +98,7 @@
     "doc:publish": "run-z doc --then gh-pages --dist target/typedoc --dotfiles",
     "lint": "run-z + lint:md --and eslint .",
     "lint:md": "run-z +z --then remark .",
-    "test": "run-z +z env:NODE_OPTIONS='--experimental-vm-modules --no-warnings' --then jest",
+    "test": "run-z +z env:NODE_OPTIONS=\"--experimental-vm-modules --no-warnings\" --then jest",
     "test:all": "run-z test:command/--command2 test:script/--script2 --all3",
     "test:command": "run-z env=wrong env:NODE_OPTIONS=--no-warnings env:NODE_OPTIONS=--no-deprecation --then node ./src/spec/bin/ok.js --command1",
     "test:fail": "run-z --then node --no-warnings ./src/spec/bin/fail.js",
