@@ -6,7 +6,7 @@ import type { ZTaskParser } from './tasks';
 export interface ZExtension {
 
   /**
-   * Addition options supported by this extension.
+   * Additional options supported by this extension.
    */
   readonly options?: ZTaskParser.SupportedOptions | undefined;
 
