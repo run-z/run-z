@@ -44,6 +44,7 @@ jobs:
       run: pnpm ci:all
 
     - name: Upload coverage report
+      if: ${{ secrets.CODACY_PROJECT_TOKEN }}
       uses: codacy/codacy-coverage-reporter-action@v1
       with:
         project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
