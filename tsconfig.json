@@ -20,6 +20,7 @@
       "cross-spawn",
       "node"
     ],
+    "skipLibCheck": true,
     "outDir": "target/js",
     "sourceMap": true,
     "newLine": "LF"

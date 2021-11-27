@@ -21,6 +21,12 @@ export default {
     },
   },
   extensionsToTreatAsEsm: ['.ts'],
+  moduleNameMapper: {
+    // Subpath imports not supported by Jest
+    // See https://github.com/facebook/jest/issues/11100
+    '^#ansi-styles$': 'ansi-styles',
+    '^#supports-color$': 'supports-color',
+  },
   reporters: [
     'default',
     [
