@@ -4,7 +4,7 @@ import type { ZLogger } from '@run-z/log-z';
 import { logZBy, zlogDetails, ZLogLevel, zlogMessage } from '@run-z/log-z';
 import { logZToStream } from '@run-z/log-z/node';
 import ansiEscapes from 'ansi-escapes';
-import { Writable } from 'stream';
+import { Writable } from 'node:stream';
 import { ProgressZLogPrefix, ProgressZLogRecorder } from './progress-log';
 import { ZJobRows } from './rich/job-rows';
 import { richProgressZLogFormatter } from './rich/rich-log-format';

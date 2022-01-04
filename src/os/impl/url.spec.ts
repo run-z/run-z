@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import { URL } from 'url';
+import { URL } from 'node:url';
 import { isRootURL, urlBaseName, urlOfFile } from './url';
 
 describe('urlOfFile', () => {

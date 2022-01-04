@@ -1,7 +1,7 @@
 import { isPresent, valueProvider } from '@proc7ts/primitives';
-import * as fs from 'fs';
-import * as path from 'path';
-import { fileURLToPath, pathToFileURL, URL } from 'url';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import { fileURLToPath, pathToFileURL, URL } from 'node:url';
 import { ZPackageJson, ZPackageLocation } from '../core';
 import { fsRoot, isRootURL, urlBaseName, urlOfFile } from './impl';
 

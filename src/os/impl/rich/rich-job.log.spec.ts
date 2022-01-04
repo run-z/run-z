@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from '@jest/globals';
 import type { ZLogger } from '@run-z/log-z';
 import { levelZLogField, logZBy, messageZLogField, zlogDetails, ZLogWriter } from '@run-z/log-z';
 import { logZToStream } from '@run-z/log-z/node';
-import { Writable } from 'stream';
+import { Writable } from 'node:stream';
 import { ZJobOutput } from './job-output';
 import { ZJobRow, ZJobRows } from './job-rows';
 import { RichJobZLogRecorder } from './rich-job.log';

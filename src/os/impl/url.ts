@@ -1,4 +1,4 @@
-import { pathToFileURL, URL } from 'url';
+import { pathToFileURL, URL } from 'node:url';
 
 /**
  * @internal
