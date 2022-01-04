@@ -10,10 +10,12 @@ The file structure of the source follows this convention:
 
     Comment until the end of line.
 
-    The paragraph immediately following a line-starting comment is what the comment is about.
+    The paragraph immediately following a line-starting comment
+    is what the comment is about.
 
-    If a comment immediately follows a paragraph, that comment is expanded explanations about the paragraph, usually the
-    content of a file.
+    If a comment immediately follows a paragraph,
+    that comment is expanded explanations about the paragraph,
+    usually the content of a file.
 
 -   `+--`
 
