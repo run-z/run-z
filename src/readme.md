@@ -6,34 +6,32 @@ These are the sources of `run-z`.
 
 The file structure of the source follows this convention:
 
-- `#`
+-   `#`
 
-  Comment until the end of line.
+    Comment until the end of line.
 
-  The paragraph immediately following a line-starting comment
-  is what the comment is about.
+    The paragraph immediately following a line-starting comment is what the comment is about.
 
-  If a comment immediately follows a paragraph,
-  that comment is expanded explanations about the paragraph,
-  usually the content of a file.
+    If a comment immediately follows a paragraph, that comment is expanded explanations about the paragraph, usually the
+    content of a file.
 
-- `+--`
+-   `+--`
 
-  Folder that is expanded in this presentation.
+    Folder that is expanded in this presentation.
 
-- `---`
+-   `---`
 
-  Folder that is collapsed in this presentation.
+    Folder that is collapsed in this presentation.
 
-- `=--`
+-   `=--`
 
-  File.
+    File.
 
-  - `<name>`
+-   `<name>`
 
     Is to be replaced by an actual functionality/module/... name without `<` or `>`.
 
-```text
+````text
 +-- src
 
     # A part of the application (we call it functionality),
@@ -51,7 +49,7 @@ The file structure of the source follows this convention:
 
         # A module containing application logic.
         =-- <module-1>.ts
-        
+
         # Inner implementations of <module-1>,
         # if it is better done separately.
         =-- <module-1>.impl.ts
@@ -89,4 +87,4 @@ The file structure of the source follows this convention:
         # Child functionalities follow the same rules as top-level functionalities.
         --- <child-functionality-name>
         ... # More child functionalities.
-```
+````

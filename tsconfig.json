@@ -13,19 +13,12 @@
     "importsNotUsedAsValues": "error",
     "importHelpers": true,
     "noEmitHelpers": true,
-    "lib": [
-      "ES2019"
-    ],
-    "types": [
-      "cross-spawn",
-      "node"
-    ],
+    "lib": ["ES2019"],
+    "types": ["cross-spawn", "node"],
     "skipLibCheck": true,
     "outDir": "target/js",
     "sourceMap": true,
     "newLine": "LF"
   },
-  "include": [
-    "src/**/*"
-  ]
+  "include": ["src/**/*"]
 }
