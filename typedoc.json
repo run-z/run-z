@@ -2,5 +2,6 @@
   "entryPoints": ["src/index.ts", "src/builtins/index.ts"],
   "name": "API docs | run-z",
   "out": "./target/typedoc",
+  "readme": "./README.md",
   "tsconfig": "tsconfig.main.json"
 }
