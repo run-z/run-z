@@ -1,10 +1,15 @@
 {
-  "configuration": {
-    "list-item-indent": "space"
+  "settings": {
+    "bullet": "-",
+    "listItemIndent": "mixed"
   },
   "plugins": [
-    "remark-preset-lint-recommended",
-    ["remark-lint-list-item-indent", "space"],
-    ["remark-lint-no-shortcut-reference-link", false]
+    "remark-preset-lint-markdown-style-guide",
+    ["remark-lint-emphasis-marker", "_"],
+    ["remark-lint-final-definition", false],
+    ["remark-lint-list-item-indent", "tab-size"],
+    ["remark-lint-maximum-line-length", 120],
+    ["remark-lint-no-shortcut-reference-link", false],
+    ["remark-lint-ordered-list-marker-value", "ordered"]
   ]
 }
