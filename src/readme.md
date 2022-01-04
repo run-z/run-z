@@ -60,8 +60,7 @@ The file structure of the source follows this convention:
         # acts as the tests file for <module-1>
         =-- <module-1>.spec.ts
 
-        # Code that apply policy or rules
-        # TODO: ?
+        # Describes a rule for batched tasks processing.
         =-- <module-1>.rule.ts
 
 
