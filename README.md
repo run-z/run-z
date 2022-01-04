@@ -53,11 +53,22 @@ Setup And Usage
 ---------------
 
 1. Add `run-z` as development dependency of your package:
-    ```shell script
-    npm install run-z --save-dev # Using NPM
-    pnpm add run-z -D            # Using PNPM
-    yarn add run-z --dev         # Using Yarn
-    ```
+    
+   - Using npm:
+     ```shell script
+     npm install run-z --save-dev
+     ```
+    
+   - Using pnpm:
+     ```shell script
+     pnpm add run-z -D
+     ```
+
+   - Using Yarn:
+     ```shell script
+     yarn add run-z --dev
+     ```
+
 2. Add script(s) to `package.json` executing `run-z`:
     ```json
     {
@@ -71,21 +82,38 @@ Setup And Usage
       }
     }
     ```
+
 3. Execute tasks:
-    ```shell script
-    # Run single task
-    npm run all  # (npm)
-    pnpm all     # (pnpm)
-    yarn all     # (yarn)
+    
+   - Using npm:
+     ```shell script
+     # Run single task
+     npm run all
 
-    # Run multiple tasks
-    npm run clean -- build  # (npm)
-    pnpm clean build        # (pnpm)
-    yarn clean build        # (yarn)
+     # Run multiple tasks
+     npm run clean -- build
 
-    # Use a no-op `z` task for convenience
-    npm run z -- clean build     
-    ```
+     # Use a no-op `z` task for convenience
+     npm run z -- clean build     
+     ```
+
+   - Using pnpm:
+     ```shell script
+     # Run single task
+     pnpm all
+
+     # Run multiple tasks
+     pnpm clean build
+     ```
+
+   - Using Yarn:
+     ```shell script
+     # Run single task
+     yarn all
+
+     # Run multiple tasks
+     yarn clean build
+     ```
 
 Or just use `npx` for your existing project. No need to install `run-z` or modify `package.json`:
 ```shell script
@@ -282,12 +310,21 @@ So, with the following `package.json`:
 }
 ```
 it is possible to batch tasks across packages in `./3rd-party` and `./packages` directories:
-```shell script
-# Batch `build`, then `test` across all packages.
-npm run each -- /build each /test  # (npm)
-pnpm each /build each /test        # (pnpm)
-yarn each /build each /test        # (yarn)  
-```
+
+- Using npm:
+  ```shell script
+  npm run each -- /build each /test  # Batch `build`, then `test` across all packages.
+  ```
+
+- Using pnpm:
+  ```shell script
+  pnpm each /build each /test        # Batch `build`, then `test` across all packages.
+  ```
+
+- Using Yarn:
+  ```shell script
+  yarn each /build each /test        # Batch `build`, then `test` across all packages.  
+  ```
 
 
 Named Batches
@@ -312,23 +349,42 @@ The `all/*` script is a named batch specifier. The `z` task is a handy NPM scrip
 
 With these present it becomes possible to batch tasks by executing `run-z` in either root package directory, or in
 any of the nested packages:
-```shell script
-# Batch `build` task across all packages.
-npm run z -- build --all  # (npm)
-pnpm z build -- --all     # (pnpm)
-yarn z build --all        # (yarn)
-```
+
+- Using npm:
+  ```shell script
+  npm run z -- build --all  # Batch `build` task across all packages.
+  ```
+
+- Using pnpm:
+  ```shell script
+  pnpm z build -- --all     # Batch `build` task across all packages.
+  ```
+
+- Using Yarn:
+  ```shell script
+  yarn z build --all        # Batch `build` task across all packages.
+  ```
 
 With `--all` option specified the `run-z` searches for topmost package containing named batch(-es) specifier,
 and batches the task across selected packages.
 
 The `z` task used for convenience here. It is expected to present in all packages. Any task can be executed instead.
 For example, when running inside one of the nested packages, the following command can do the same as above:
-```shell script
-npm run build -- --all  # (npm)
-pnpm build -- --all     # (pnpm)
-yarn build --all        # (yarn)
-```
+
+- Using npm:
+  ```shell script
+  npm run build -- --all
+  ```
+
+- Using pnpm:
+  ```shell script
+  pnpm build -- --all
+  ```
+
+- Using Yarn:
+  ```shell script
+  yarn build --all
+  ```
 
 The named batch can have a syntax like `all/test`. When present, such named batch will be used instead of the `all/*`
 one when batching a `test` task. This can be useful, e.g. when it is necessary to pass additional parameters to
@@ -342,17 +398,25 @@ specific tasks:
   }
 }
 ```
-```shell script
-# Batches `build` in generic way.
-npm run z -- build --all  # (npm)
-pnpm z build -- --all     # (pnpm)
-yarn z build --all        # (yarn)
 
-# Batches `test` with `--runInBand` option.
-npm run z -- test --all   # (npm)
-pnpm z test -- --all      # (pnpm)
-yarn z test --all         # (yarn)
-```
+- Using npm:
+  ```shell script
+  
+  npm run z -- build --all  # Batch `build` in generic way.
+  npm run z -- test --all   # Batch `test` with `--runInBand` option.
+  ```
+
+- Using pnpm:
+  ```shell script
+  pnpm z build -- --all     # Batch `build` in generic way.
+  pnpm z test -- --all      # Batch `test` with `--runInBand` option.
+  ```
+
+- Using Yarn:
+  ```shell script
+  yarn z build --all        # Batch `build` in generic way.
+  yarn z test --all         # Batch `test` with `--runInBand` option.
+  ```
 
 > See also:
 > - [Partial builds](https://github.com/run-z/run-z/wiki/Partial-builds)
@@ -361,26 +425,54 @@ yarn z test --all         # (yarn)
 ### Dependency Graph
 
 With named batches it is possible to batch tasks across part of package dependency graph.
-```shell script
-# Batch the `build` task across package dependencies and the package itself.
-npm run build -- --with-deps  # (npm)
-pnpm build -- --with-deps     # (pnpm)
-yarn build --with-deps        # (yarn)
 
-# Batch the `build` task across package dependencies.
-# Do not run for the package itself.
-npm run build -- --only-deps  # (npm)
-pnpm build -- --only-deps     # (pnpm)
-yarn build --only-deps        # (yarn)
+- Using npm:
+  ```shell script
+  # Batch the `build` task across package dependencies and the package itself.
+  npm run build -- --with-deps
+  
+  # Batch the `build` task across package dependencies.
+  # Do not run for the package itself.
+  npm run build -- --only-deps
+  
+  # Batch the `build` task for the package and all the packages depending on it.
+  npm run build -- --with-dependants
+  
+  # Batch the `build` task across packages depending on current one.
+  # Do not run for the package itself.
+  npm run build -- --only-dependants  
+  ```
 
-# Batch the `build` task for the package and all the packages depending on it.
-npm run build -- --with-dependants  # (npm)
-pnpm build -- --with-dependants     # (pnpm)
-yarn build --with-dependants        # (yarn)
+- Using pnpm:
+  ```shell script
+  # Batch the `build` task across package dependencies and the package itself.
+  pnpm build -- --with-deps
+  
+  # Batch the `build` task across package dependencies.
+  # Do not run for the package itself.
+  pnpm build -- --only-deps
+  
+  # Batch the `build` task for the package and all the packages depending on it.
+  pnpm build -- --with-dependants
+  
+  # Batch the `build` task across packages depending on current one.
+  # Do not run for the package itself.
+  pnpm build -- --only-dependants  
+  ```
 
-# Batch the `build` task across packages depending on current one.
-# Do not run for the package itself.
-npm run build -- --only-dependants  # (npm)  
-pnpm build -- --only-dependants     # (pnpm)  
-yarn build --only-dependants        # (yarn)  
-```
+- Using Yarn:
+  ```shell script
+  # Batch the `build` task across package dependencies and the package itself.
+  yarn build --with-deps
+  
+  # Batch the `build` task across package dependencies.
+  # Do not run for the package itself.
+  yarn build --only-deps
+  
+  # Batch the `build` task for the package and all the packages depending on it.
+  yarn build --with-dependants
+  
+  # Batch the `build` task across packages depending on current one.
+  # Do not run for the package itself.
+  yarn build --only-dependants  
+  ```
