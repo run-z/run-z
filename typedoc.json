@@ -1,9 +1,6 @@
 {
-  "entryPoints": [
-    "src/index.ts",
-    "src/builtins/index.ts"
-  ],
-  "name": "Run Z",
+  "entryPoints": ["src/index.ts", "src/builtins/index.ts"],
+  "name": "API docs | run-z",
   "out": "./target/typedoc",
   "tsconfig": "tsconfig.main.json"
 }
