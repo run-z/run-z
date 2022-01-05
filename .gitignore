@@ -14,9 +14,10 @@ node_modules
 !.yarn/plugins
 .pnp.*
 
-# Lock files as this is part of Yarn worktree
+# Ignore lock files as this project developed within (private) pnpm worktree
 yarn.lock
 package-lock.json
+pnpm-lock.yaml
 
 # Package archive
 *.tgz
