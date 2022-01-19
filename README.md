@@ -20,7 +20,7 @@
 > See also:
 >
 > -   [API Documentation]
-> -   [Project Wiki](https://github.com/run-z/run-z/wiki)
+> -   [Project Wiki](https://github.com/run-z/run-z/tree/master/docs/usage/wiki)
 > -   [Сборка сложных Node.js проектов утилитой run-z](https://habr.com/ru/post/517506/) (Russian)
 
 [npm-image]: https://img.shields.io/npm/v/run-z.svg?logo=npm
