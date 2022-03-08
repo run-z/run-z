@@ -109,6 +109,7 @@ export namespace ZTaskSpec {
     /**
      * Unknown task execution throws {@link UnknownZTaskError} unless this {@link ZTaskParams.flag flag} is set.
      */
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     readonly 'if-present'?: readonly [string, ...string[]] | null | undefined;
 
     /**
