@@ -4,3 +4,5 @@ engines:
     exclude_paths:
     - "src/**/*.spec.ts"
     - "src/spec/**"
+exclude_paths:
+- "**/*.md"
