@@ -7,21 +7,21 @@
 
 `run-z` is a command line utility able to run multiple [npm-scripts] at once.
 
--   Each NPM script considered a [task] to execute.
--   Each task may have _prerequisites_. I.e. other tasks to execute before it.
--   Each task executes at most once, even though it is a prerequisite of many tasks.
--   Additional [parameters] can be passed to any task.
--   Tasks can be executed [in parallel or sequentially].
--   Tasks may belong to [different packages]. This is especially helpful with [Yarn Workspaces] or [Lerna].
--   Tasks can be [batched] - the same-named tasks can be executed in each of the selected packages.
--   The dependencies between packages respected when batching - the tasks executed in dependencies-first order.
--   Only one instance of `run-z` process started despite the number of tasks to execute.
+- Each NPM script considered a [task] to execute.
+- Each task may have _prerequisites_. I.e. other tasks to execute before it.
+- Each task executes at most once, even though it is a prerequisite of many tasks.
+- Additional [parameters] can be passed to any task.
+- Tasks can be executed [in parallel or sequentially].
+- Tasks may belong to [different packages]. This is especially helpful with [Yarn Workspaces] or [Lerna].
+- Tasks can be [batched] - the same-named tasks can be executed in each of the selected packages.
+- The dependencies between packages respected when batching - the tasks executed in dependencies-first order.
+- Only one instance of `run-z` process started despite the number of tasks to execute.
 
 > See also:
 >
-> -   [API Documentation]
-> -   [Project Wiki](https://github.com/run-z/run-z/wiki)
-> -   [Сборка сложных Node.js проектов утилитой run-z](https://habr.com/ru/post/517506/) (Russian)
+> - [API Documentation]
+> - [Project Wiki](https://github.com/run-z/run-z/wiki)
+> - [Сборка сложных Node.js проектов утилитой run-z](https://habr.com/ru/post/517506/) (Russian)
 
 [npm-image]: https://img.shields.io/npm/v/run-z.svg?logo=npm
 [npm-url]: https://www.npmjs.com/package/run-z
@@ -47,72 +47,72 @@
 
 1.  Add `run-z` as development dependency of your package:
 
-    -   Using npm:
+    - Using npm:
 
-        ```shell script
-        npm install run-z --save-dev
-        ```
+      ```shell script
+      npm install run-z --save-dev
+      ```
 
-    -   Using pnpm:
+    - Using pnpm:
 
-        ```shell script
-        pnpm add run-z -D
-        ```
+      ```shell script
+      pnpm add run-z -D
+      ```
 
-    -   Using Yarn:
-        ```shell script
-        yarn add run-z --dev
-        ```
+    - Using Yarn:
+      ```shell script
+      yarn add run-z --dev
+      ```
 
 2.  Add script(s) to `package.json` executing `run-z`:
 
     ```json
     {
-        "scripts": {
-            "all": "run-z build lint,test",
-            "build": "run-z --then tsc -p .",
-            "clean": "run-z --then shx rm -rf ./dist",
-            "lint": "run-z --then eslint .",
-            "test": "run-z --then jest",
-            "z": "run-z"
-        }
+      "scripts": {
+        "all": "run-z build lint,test",
+        "build": "run-z --then tsc -p .",
+        "clean": "run-z --then shx rm -rf ./dist",
+        "lint": "run-z --then eslint .",
+        "test": "run-z --then jest",
+        "z": "run-z"
+      }
     }
     ```
 
 3.  Execute tasks:
 
-    -   Using npm:
+    - Using npm:
 
-        ```shell script
-        # Run single task
-        npm run all
+      ```shell script
+      # Run single task
+      npm run all
 
-        # Run multiple tasks
-        npm run clean -- build
+      # Run multiple tasks
+      npm run clean -- build
 
-        # Use a no-op `z` task for convenience
-        npm run z -- clean build
-        ```
+      # Use a no-op `z` task for convenience
+      npm run z -- clean build
+      ```
 
-    -   Using pnpm:
+    - Using pnpm:
 
-        ```shell script
-        # Run single task
-        pnpm all
+      ```shell script
+      # Run single task
+      pnpm all
 
-        # Run multiple tasks
-        pnpm clean build
-        ```
+      # Run multiple tasks
+      pnpm clean build
+      ```
 
-    -   Using Yarn:
+    - Using Yarn:
 
-        ```shell script
-        # Run single task
-        yarn all
+      ```shell script
+      # Run single task
+      yarn all
 
-        # Run multiple tasks
-        yarn clean build
-        ```
+      # Run multiple tasks
+      yarn clean build
+      ```
 
 Or just use `npx` for your existing project. No need to install `run-z` or modify `package.json`:
 
@@ -138,22 +138,22 @@ This task would execute `prerequsite1`, then `prerequisite2`, and finally the `n
 
 The following types of tasks supported:
 
--   **Command**.
+- **Command**.
 
-    `--then` option treats the rest of the command line as command to execute after prerequisites.
+  `--then` option treats the rest of the command line as command to execute after prerequisites.
 
--   **NPM script**.
+- **NPM script**.
 
-    A `package.json` script not containing a `run-z` command. It still can be used as prerequisite of another task.
+  A `package.json` script not containing a `run-z` command. It still can be used as prerequisite of another task.
 
--   **Group**.
+- **Group**.
 
-    A `run-z` command containing zero or more prerequisites and not containing a command to execute.
+  A `run-z` command containing zero or more prerequisites and not containing a command to execute.
 
--   **Unknown**.
+- **Unknown**.
 
-    A task prerequisite not matching any of the `package.json` scripts. Attempting to execute such a task would cause an
-    error. However, it is possible to skip such task execution without causing an error.
+  A task prerequisite not matching any of the `package.json` scripts. Attempting to execute such a task would cause an
+  error. However, it is possible to skip such task execution without causing an error.
 
 [scripts]: https://docs.npmjs.com/configuring-npm/package-json.html#scripts
 [package.json]: https://docs.npmjs.com/configuring-npm/package-json.html
@@ -196,25 +196,25 @@ precedence.
 
 The following attributes supported:
 
--   `env:NAME` - Sets environment variable `NAME`.
+- `env:NAME` - Sets environment variable `NAME`.
 
-    Multiple values for the same environment variable are joined: \
-    `env:NODE_OPTIONS=--experimental-vm-modules env:NODE_OPTIONS=--no-warnings` sets `NODE_OPTIONS='--experimental-vm-modules --no-warnings'`
+  Multiple values for the same environment variable are joined: \
+  `env:NODE_OPTIONS=--experimental-vm-modules env:NODE_OPTIONS=--no-warnings` sets `NODE_OPTIONS='--experimental-vm-modules --no-warnings'`
 
-    To override the value a `:=` sign can be used instead of `=`: \
-    `env:NODE_OPTIONS=--no-warnings env:NODE_OPTIONS:=--no-deprecation` sets `NODE_OPTIONS='--no-deprecation'`
+  To override the value a `:=` sign can be used instead of `=`: \
+  `env:NODE_OPTIONS=--no-warnings env:NODE_OPTIONS:=--no-deprecation` sets `NODE_OPTIONS='--no-deprecation'`
 
--   `if-present` - A flag indicating that the task should be executed only if corresponding script defined.
+- `if-present` - A flag indicating that the task should be executed only if corresponding script defined.
 
-    This can be useful for batched tasks.
+  This can be useful for batched tasks.
 
--   `skip` - When this flag set the task won't be executed.
+- `skip` - When this flag set the task won't be executed.
 
 Other attributes aren't currently used, but still can be set.
 
 > See also:
 >
-> -   [Task annexes](https://github.com/run-z/run-z/wiki/Task-annexes)
+> - [Task annexes](https://github.com/run-z/run-z/wiki/Task-annexes)
 
 ## Parallel And Sequential Execution
 
@@ -302,7 +302,7 @@ run-z --batch-parallel ./packages// lint # Executes `lint` in each package
 
 > See also:
 >
-> -   [Reusing package selectors](https://github.com/run-z/run-z/wiki/Reusing-package-selectors)
+> - [Reusing package selectors](https://github.com/run-z/run-z/wiki/Reusing-package-selectors)
 
 ### Sub-Tasks
 
@@ -314,30 +314,30 @@ So, with the following `package.json`:
 
 ```json
 {
-    "scripts": {
-        "each": "run-z ./3rd-party// ./packages//"
-    }
+  "scripts": {
+    "each": "run-z ./3rd-party// ./packages//"
+  }
 }
 ```
 
 it is possible to batch tasks across packages in `./3rd-party` and `./packages` directories:
 
--   Using npm:
+- Using npm:
 
-    ```shell script
-    npm run each -- /build each /test  # Batch `build`, then `test` across all packages.
-    ```
+  ```shell script
+  npm run each -- /build each /test  # Batch `build`, then `test` across all packages.
+  ```
 
--   Using pnpm:
+- Using pnpm:
 
-    ```shell script
-    pnpm each /build each /test        # Batch `build`, then `test` across all packages.
-    ```
+  ```shell script
+  pnpm each /build each /test        # Batch `build`, then `test` across all packages.
+  ```
 
--   Using Yarn:
-    ```shell script
-    yarn each /build each /test        # Batch `build`, then `test` across all packages.
-    ```
+- Using Yarn:
+  ```shell script
+  yarn each /build each /test        # Batch `build`, then `test` across all packages.
+  ```
 
 ## Named Batches
 
@@ -350,10 +350,10 @@ Let's place the following scripts to the root `package.json`:
 
 ```json
 {
-    "scripts": {
-        "all/*": "run-z ./packages//",
-        "z": "run-z"
-    }
+  "scripts": {
+    "all/*": "run-z ./packages//",
+    "z": "run-z"
+  }
 }
 ```
 
@@ -362,22 +362,22 @@ The `all/*` script is a named batch specifier. The `z` task is a handy NPM scrip
 With these present it becomes possible to batch tasks by executing `run-z` in either root package directory, or in any
 of the nested packages:
 
--   Using npm:
+- Using npm:
 
-    ```shell script
-    npm run z -- build --all  # Batch `build` task across all packages.
-    ```
+  ```shell script
+  npm run z -- build --all  # Batch `build` task across all packages.
+  ```
 
--   Using pnpm:
+- Using pnpm:
 
-    ```shell script
-    pnpm z build -- --all     # Batch `build` task across all packages.
-    ```
+  ```shell script
+  pnpm z build -- --all     # Batch `build` task across all packages.
+  ```
 
--   Using Yarn:
-    ```shell script
-    yarn z build --all        # Batch `build` task across all packages.
-    ```
+- Using Yarn:
+  ```shell script
+  yarn z build --all        # Batch `build` task across all packages.
+  ```
 
 With `--all` option specified the `run-z` searches for topmost package containing named batch(-es) specifier, and
 batches the task across selected packages.
@@ -385,22 +385,22 @@ batches the task across selected packages.
 The `z` task used for convenience here. It is expected to present in all packages. Any task can be executed instead. For
 example, when running inside one of the nested packages, the following command can do the same as above:
 
--   Using npm:
+- Using npm:
 
-    ```shell script
-    npm run build -- --all
-    ```
+  ```shell script
+  npm run build -- --all
+  ```
 
--   Using pnpm:
+- Using pnpm:
 
-    ```shell script
-    pnpm build -- --all
-    ```
+  ```shell script
+  pnpm build -- --all
+  ```
 
--   Using Yarn:
-    ```shell script
-    yarn build --all
-    ```
+- Using Yarn:
+  ```shell script
+  yarn build --all
+  ```
 
 The named batch can have a syntax like `all/test`. When present, such named batch will be used instead of the `all/*`
 one when batching a `test` task. This can be useful, e.g. when it is necessary to pass additional parameters to specific
@@ -408,93 +408,93 @@ tasks:
 
 ```json
 {
-    "scripts": {
-        "all/*": "run-z ./packages//",
-        "all/test": "run-z ./packages// +test/--runInBand",
-        "z": "run-z"
-    }
+  "scripts": {
+    "all/*": "run-z ./packages//",
+    "all/test": "run-z ./packages// +test/--runInBand",
+    "z": "run-z"
+  }
 }
 ```
 
--   Using npm:
+- Using npm:
 
-    ```shell script
+  ```shell script
 
-    npm run z -- build --all  # Batch `build` in generic way.
-    npm run z -- test --all   # Batch `test` with `--runInBand` option.
-    ```
+  npm run z -- build --all  # Batch `build` in generic way.
+  npm run z -- test --all   # Batch `test` with `--runInBand` option.
+  ```
 
--   Using pnpm:
+- Using pnpm:
 
-    ```shell script
-    pnpm z build -- --all     # Batch `build` in generic way.
-    pnpm z test -- --all      # Batch `test` with `--runInBand` option.
-    ```
+  ```shell script
+  pnpm z build -- --all     # Batch `build` in generic way.
+  pnpm z test -- --all      # Batch `test` with `--runInBand` option.
+  ```
 
--   Using Yarn:
-    ```shell script
-    yarn z build --all        # Batch `build` in generic way.
-    yarn z test --all         # Batch `test` with `--runInBand` option.
-    ```
+- Using Yarn:
+  ```shell script
+  yarn z build --all        # Batch `build` in generic way.
+  yarn z test --all         # Batch `test` with `--runInBand` option.
+  ```
 
 > See also:
 >
-> -   [Partial builds](https://github.com/run-z/run-z/wiki/Partial-builds)
+> - [Partial builds](https://github.com/run-z/run-z/wiki/Partial-builds)
 
 ### Dependency Graph
 
 With named batches it is possible to batch tasks across part of package dependency graph.
 
--   Using npm:
+- Using npm:
 
-    ```shell script
-    # Batch the `build` task across package dependencies and the package itself.
-    npm run build -- --with-deps
+  ```shell script
+  # Batch the `build` task across package dependencies and the package itself.
+  npm run build -- --with-deps
 
-    # Batch the `build` task across package dependencies.
-    # Do not run for the package itself.
-    npm run build -- --only-deps
+  # Batch the `build` task across package dependencies.
+  # Do not run for the package itself.
+  npm run build -- --only-deps
 
-    # Batch the `build` task for the package and all the packages depending on it.
-    npm run build -- --with-dependants
+  # Batch the `build` task for the package and all the packages depending on it.
+  npm run build -- --with-dependants
 
-    # Batch the `build` task across packages depending on current one.
-    # Do not run for the package itself.
-    npm run build -- --only-dependants
-    ```
+  # Batch the `build` task across packages depending on current one.
+  # Do not run for the package itself.
+  npm run build -- --only-dependants
+  ```
 
--   Using pnpm:
+- Using pnpm:
 
-    ```shell script
-    # Batch the `build` task across package dependencies and the package itself.
-    pnpm build -- --with-deps
+  ```shell script
+  # Batch the `build` task across package dependencies and the package itself.
+  pnpm build -- --with-deps
 
-    # Batch the `build` task across package dependencies.
-    # Do not run for the package itself.
-    pnpm build -- --only-deps
+  # Batch the `build` task across package dependencies.
+  # Do not run for the package itself.
+  pnpm build -- --only-deps
 
-    # Batch the `build` task for the package and all the packages depending on it.
-    pnpm build -- --with-dependants
+  # Batch the `build` task for the package and all the packages depending on it.
+  pnpm build -- --with-dependants
 
-    # Batch the `build` task across packages depending on current one.
-    # Do not run for the package itself.
-    pnpm build -- --only-dependants
-    ```
+  # Batch the `build` task across packages depending on current one.
+  # Do not run for the package itself.
+  pnpm build -- --only-dependants
+  ```
 
--   Using Yarn:
+- Using Yarn:
 
-    ```shell script
-    # Batch the `build` task across package dependencies and the package itself.
-    yarn build --with-deps
+  ```shell script
+  # Batch the `build` task across package dependencies and the package itself.
+  yarn build --with-deps
 
-    # Batch the `build` task across package dependencies.
-    # Do not run for the package itself.
-    yarn build --only-deps
+  # Batch the `build` task across package dependencies.
+  # Do not run for the package itself.
+  yarn build --only-deps
 
-    # Batch the `build` task for the package and all the packages depending on it.
-    yarn build --with-dependants
+  # Batch the `build` task for the package and all the packages depending on it.
+  yarn build --with-dependants
 
-    # Batch the `build` task across packages depending on current one.
-    # Do not run for the package itself.
-    yarn build --only-dependants
-    ```
+  # Batch the `build` task across packages depending on current one.
+  # Do not run for the package itself.
+  yarn build --only-dependants
+  ```

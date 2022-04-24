@@ -6,32 +6,32 @@ These are the sources of `run-z`.
 
 The file structure of the source follows this convention:
 
--   `#`
+- `#`
 
-    Comment until the end of line.
+  Comment until the end of line.
 
-    The paragraph immediately following a line-starting comment
-    is what the comment is about.
+  The paragraph immediately following a line-starting comment
+  is what the comment is about.
 
-    If a comment immediately follows a paragraph,
-    that comment is expanded explanations about the paragraph,
-    usually the content of a file.
+  If a comment immediately follows a paragraph,
+  that comment is expanded explanations about the paragraph,
+  usually the content of a file.
 
--   `+--`
+- `+--`
 
-    Folder that is expanded in this presentation.
+  Folder that is expanded in this presentation.
 
--   `---`
+- `---`
 
-    Folder that is collapsed in this presentation.
+  Folder that is collapsed in this presentation.
 
--   `=--`
+- `=--`
 
-    File.
+  File.
 
--   `<name>`
+- `<name>`
 
-    Is to be replaced by an actual functionality/module/... name without `<` or `>`.
+  Is to be replaced by an actual functionality/module/... name without `<` or `>`.
 
 ````text
 +-- src
