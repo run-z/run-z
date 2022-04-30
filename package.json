@@ -103,6 +103,6 @@
     "test:script": "node --no-warnings ./src/spec/bin/ok.js --script1",
     "test:silent": "run-z --then node --no-warnings ./src/spec/bin/silent.js --silent",
     "test:stale": "node --no-warnings ./src/spec/bin/stale.js",
-    "z": "run-z +cmd:rollup,+cmd:typedoc,+cmd:eslint,+cmd:remark,+cmd:jest"
+    "z": "run-z +cmd:rollup,+cmd:typedoc,+cmd:eslint,+cmd:jest"
   }
 }
