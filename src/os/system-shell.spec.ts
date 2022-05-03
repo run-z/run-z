@@ -194,7 +194,7 @@ describe('SystemZShell', () => {
           },
       )).toEqual({
         command: process.execPath,
-        args: [pnpmPath, 'run', '--', 'test:script', ...job.params.args],
+        args: [pnpmPath, 'run', 'test:script', ...job.params.args],
         cwd,
         env: {
           ...env,

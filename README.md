@@ -371,7 +371,7 @@ of the nested packages:
 - Using pnpm:
 
   ```shell script
-  pnpm z build -- --all     # Batch `build` task across all packages.
+  pnpm z build --all     # Batch `build` task across all packages.
   ```
 
 - Using Yarn:
@@ -394,7 +394,7 @@ example, when running inside one of the nested packages, the following command c
 - Using pnpm:
 
   ```shell script
-  pnpm build -- --all
+  pnpm build --all
   ```
 
 - Using Yarn:
@@ -427,8 +427,8 @@ tasks:
 - Using pnpm:
 
   ```shell script
-  pnpm z build -- --all     # Batch `build` in generic way.
-  pnpm z test -- --all      # Batch `test` with `--runInBand` option.
+  pnpm z build --all     # Batch `build` in generic way.
+  pnpm z test --all      # Batch `test` with `--runInBand` option.
   ```
 
 - Using Yarn:
@@ -467,18 +467,18 @@ With named batches it is possible to batch tasks across part of package dependen
 
   ```shell script
   # Batch the `build` task across package dependencies and the package itself.
-  pnpm build -- --with-deps
+  pnpm build --with-deps
 
   # Batch the `build` task across package dependencies.
   # Do not run for the package itself.
-  pnpm build -- --only-deps
+  pnpm build --only-deps
 
   # Batch the `build` task for the package and all the packages depending on it.
-  pnpm build -- --with-dependants
+  pnpm build --with-dependants
 
   # Batch the `build` task across packages depending on current one.
   # Do not run for the package itself.
-  pnpm build -- --only-dependants
+  pnpm build --only-dependants
   ```
 
 - Using Yarn:

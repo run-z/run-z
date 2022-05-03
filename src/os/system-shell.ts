@@ -259,10 +259,10 @@ By default ${clz.usage('text')} format is used.
       args = ['run'];
     }
 
-    if (npmBase !== 'yarn') {
+    if (npmBase !== 'yarn' && npmBase !== 'pnpm') {
       // Yarn discourages the usage of `--` after the command name.
       // NPM requires it.
-      // PNPM prefers it, as it tries to interpret subsequent options otherwise.
+      // PNPM v7 forbids it, as it tries to interpret subsequent options otherwise.
       args.push('--');
     }
 
