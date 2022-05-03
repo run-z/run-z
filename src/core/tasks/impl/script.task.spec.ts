@@ -39,7 +39,7 @@ describe('ScriptZTask', () => {
     it('executes NPM script', async () => {
 
       const shell = {
-        execScript: jest.fn<ReturnType<ZShell['execScript']>, Parameters<ZShell['execScript']>>(execZNoOp),
+        execScript: jest.fn<ZShell['execScript']>(execZNoOp),
       };
 
       testPlan.addPackage(
@@ -71,7 +71,7 @@ describe('ScriptZTask', () => {
     it('applies `+cmd:command` annex parameters', async () => {
 
       const shell = {
-        execScript: jest.fn<ReturnType<ZShell['execScript']>, Parameters<ZShell['execScript']>>(execZNoOp),
+        execScript: jest.fn<ZShell['execScript']>(execZNoOp),
       };
 
       testPlan.addPackage(
@@ -106,7 +106,7 @@ describe('ScriptZTask', () => {
     it('does not apply `+cmd:command` annex parameters to non-parsable command', async () => {
 
       const shell = {
-        execScript: jest.fn<ReturnType<ZShell['execScript']>, Parameters<ZShell['execScript']>>(execZNoOp),
+        execScript: jest.fn<ZShell['execScript']>(execZNoOp),
       };
 
       testPlan.addPackage(

@@ -31,7 +31,7 @@ describe('ZCallDetails', () => {
     it('respects plan', async () => {
 
       const planner = { name: 'planner' } as unknown as ZCallPlanner;
-      const plan = jest.fn<void, []>();
+      const plan = jest.fn<() => void>();
 
       await ZCallDetails.by({ plan }).plan(planner);
 

@@ -6,6 +6,8 @@ import chalk from 'chalk';
 import type { SpyInstance } from 'jest-mock';
 import logSymbols from 'log-symbols';
 import * as os from 'node:os';
+import process from 'node:process';
+import { WriteStream } from 'node:tty';
 import { pathToFileURL } from 'node:url';
 import { npmRunPath } from 'npm-run-path';
 import pathKey from 'path-key';
@@ -297,11 +299,11 @@ describe('SystemZShell', () => {
 
   describe('options', () => {
 
-    let writeSpy: SpyInstance<boolean, Parameters<(typeof process['stdout'])['write']>>;
+    let writeSpy: SpyInstance<(chunk: Uint8Array | string, cb?: any) => boolean>;
 
     beforeEach(() => {
-      writeSpy = jest.spyOn(process.stdout, 'write');
-      writeSpy.mockImplementation((_chunk: any, cb: any) => {
+      writeSpy = jest.spyOn(process.stdout as WriteStream, 'write');
+      writeSpy.mockImplementation((_chunk, cb) => {
         cb();
 
         return true;
@@ -313,7 +315,7 @@ describe('SystemZShell', () => {
 
     describe('--help', () => {
 
-      let logSpy: SpyInstance<void, any[]>;
+      let logSpy: SpyInstance<(...args: unknown[]) => void>;
 
       beforeEach(() => {
         logSpy = jest.spyOn(console, 'log');
@@ -597,7 +599,7 @@ describe('SystemZShell', () => {
 
     describe('--max-jobs', () => {
 
-      let setMaxJobs: SpyInstance<ReturnType<SystemZShell['setMaxJobs']>, Parameters<SystemZShell['setMaxJobs']>>;
+      let setMaxJobs: SpyInstance<SystemZShell['setMaxJobs']>;
 
       beforeEach(() => {
         setMaxJobs = jest.spyOn(shell, 'setMaxJobs');

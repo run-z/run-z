@@ -158,7 +158,7 @@ describe('CommandZTask', () => {
     it('executes command', async () => {
 
       const shell = {
-        execCommand: jest.fn<ReturnType<ZShell['execCommand']>, Parameters<ZShell['execCommand']>>(execZNoOp),
+        execCommand: jest.fn<ZShell['execCommand']>(execZNoOp),
       };
 
       testPlan.addPackage(
@@ -190,7 +190,7 @@ describe('CommandZTask', () => {
     it('applies `+cmd:command` annex parameters', async () => {
 
       const shell = {
-        execCommand: jest.fn<ReturnType<ZShell['execCommand']>, Parameters<ZShell['execCommand']>>(execZNoOp),
+        execCommand: jest.fn<ZShell['execCommand']>(execZNoOp),
       };
 
       testPlan.addPackage(
@@ -228,7 +228,7 @@ describe('CommandZTask', () => {
     it('does not execute command when `skip` flag is set', async () => {
 
       const shell = {
-        execCommand: jest.fn<ReturnType<ZShell['execCommand']>, Parameters<ZShell['execCommand']>>(execZNoOp),
+        execCommand: jest.fn<ZShell['execCommand']>(execZNoOp),
       };
 
       testPlan.addPackage(
@@ -270,7 +270,7 @@ describe('CommandZTask', () => {
       );
 
       const shell = {
-        execCommand: jest.fn<ReturnType<ZShell['execCommand']>, Parameters<ZShell['execCommand']>>(execZNoOp),
+        execCommand: jest.fn<ZShell['execCommand']>(execZNoOp),
       };
 
       testPlan.addPackage(
