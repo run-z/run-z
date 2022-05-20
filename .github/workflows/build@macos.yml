@@ -41,4 +41,4 @@ jobs:
       run: pnpm install
 
     - name: Build the project
-      run: pnpm ci:all -- +cmd:jest/--test-timeout=10000
+      run: pnpm ci:all +cmd:jest/--test-timeout=10000
