@@ -329,7 +329,7 @@ By default ${clz.usage('text')} format is used.
           },
           {
             kill(proc) {
-              kill(proc.pid, 'SIGKILL');
+              kill(proc.pid!, 'SIGKILL');
             },
           },
       );

@@ -60,29 +60,36 @@
     "@run-z/prettier-config": "^2.0.0",
     "@run-z/rollup-helpers": "^2.0.0",
     "@types/cross-spawn": "^6.0.2",
-    "@types/node": "^14.18.18",
+    "@types/node": "^16.11.36",
     "@types/semver": "^7.3.9",
     "@types/shell-quote": "^1.7.1",
     "@types/wrap-ansi": "^8.0.1",
-    "@typescript-eslint/eslint-plugin": "^5.25.0",
-    "@typescript-eslint/parser": "^5.25.0",
-    "eslint": "^8.15.0",
+    "@typescript-eslint/eslint-plugin": "^5.26.0",
+    "@typescript-eslint/parser": "^5.26.0",
+    "eslint": "^8.16.0",
     "eslint-plugin-jest": "^26.2.2",
     "gh-pages": "^4.0.0",
     "jest": "^28.1.0",
     "jest-junit": "^13.2.0",
     "jest-mock": "^28.1.0",
     "prettier": "^2.6.2",
-    "rollup": "^2.74.1",
-    "rollup-plugin-flat-dts": "^1.4.0",
+    "rollup": "^2.75.0",
+    "rollup-plugin-flat-dts": "^1.6.0",
     "rollup-plugin-sourcemaps": "^0.6.3",
     "rollup-plugin-typescript2": "^0.31.2",
     "run-z": "=1.10.0-bootstrap",
     "shx": "^0.3.4",
-    "ts-jest": "^28.0.2",
+    "ts-jest": "^28.0.3",
     "tslib": "^2.4.0",
     "typedoc": "^0.22.15",
-    "typescript": "^4.6.4"
+    "typescript": "^4.7.2"
+  },
+  "pnpm": {
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "typescript": "4.7"
+      }
+    }
   },
   "scripts": {
     "all": "run-z build,lint,test",
