@@ -15,6 +15,7 @@ node_modules
 .pnp.*
 
 # Ignore lock files as this project developed within (private) pnpm worktree
+# See issue #57 https://github.com/run-z/run-z/issues/57
 yarn.lock
 package-lock.json
 pnpm-lock.yaml
