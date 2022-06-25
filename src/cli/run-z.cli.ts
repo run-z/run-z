@@ -102,7 +102,7 @@ async function doRunZ(
 /**
  * @internal
  */
-function logZError(error: any): Promise<void> {
+function logZError(error: unknown): Promise<void> {
   if (error instanceof ZOptionError) {
 
     let offset = '';

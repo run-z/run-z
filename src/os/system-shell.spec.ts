@@ -2,12 +2,11 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { asis, noop } from '@proc7ts/primitives';
 import { AbortedZExecutionError, FailedZExecutionError } from '@run-z/exec-z';
-import chalk from 'chalk';
+import chalk, { ColorSupportLevel } from 'chalk';
 import type { SpyInstance } from 'jest-mock';
 import logSymbols from 'log-symbols';
 import * as os from 'node:os';
 import process from 'node:process';
-import { WriteStream } from 'node:tty';
 import { pathToFileURL } from 'node:url';
 import { npmRunPath } from 'npm-run-path';
 import pathKey from 'path-key';
@@ -45,7 +44,7 @@ describe('SystemZShell', () => {
     }
   });
 
-  let prevColorLevel: any;
+  let prevColorLevel: ColorSupportLevel;
 
   beforeEach(() => {
     prevColorLevel = chalk.level;
@@ -302,7 +301,7 @@ describe('SystemZShell', () => {
     let writeSpy: SpyInstance<(chunk: Uint8Array | string, cb?: any) => boolean>;
 
     beforeEach(() => {
-      writeSpy = jest.spyOn(process.stdout as WriteStream, 'write');
+      writeSpy = jest.spyOn(process.stdout, 'write');
       writeSpy.mockImplementation((_chunk, cb) => {
         cb();
 

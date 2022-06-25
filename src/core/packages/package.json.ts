@@ -17,6 +17,6 @@ export interface ZPackageJson {
   readonly scripts?: {
     readonly [name: string]: string;
   } | undefined;
-  readonly [key: string]: any | undefined;
+  readonly [key: string]: unknown | undefined;
 
 }
