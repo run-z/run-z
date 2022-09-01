@@ -8,5 +8,3 @@ indent_style = space
 indent_size = 2
 insert_final_newline = true
 trim_trailing_whitespace = true
-ij_continuation_indent_size = 4
-ij_any_indent_case_from_switch = false
