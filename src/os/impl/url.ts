@@ -16,7 +16,6 @@ export function fsRoot(): URL {
  * @internal
  */
 export function urlOfFile(url: URL): URL {
-
   const { pathname } = url;
 
   if (pathname.endsWith('/') && pathname.length > fsRoot().pathname.length) {
@@ -30,7 +29,6 @@ export function urlOfFile(url: URL): URL {
  * @internal
  */
 export function urlBaseName(url: URL): string {
-
   const { pathname } = urlOfFile(url);
   const slashIdx = pathname.lastIndexOf('/');
 
@@ -48,7 +46,6 @@ export function isRootURL(rootURL: URL, url: URL): boolean {
  * @internal
  */
 function urlPathOfDir(url: URL): string {
-
   const { pathname } = url;
 
   return pathname.endsWith('/') ? pathname : pathname + '/';

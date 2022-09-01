@@ -7,13 +7,11 @@ describe('urlOfFile', () => {
     expect(urlOfFile(new URL('file:///path/to/dir/')).href).toBe('file:///path/to/dir');
   });
   it('does not alter root URL', () => {
-
     const rootURL = new URL('file:///');
 
     expect(urlOfFile(rootURL)).toBe(rootURL);
   });
   it('does not alter file URL', () => {
-
     const fileURL = new URL('file:///path/to/file');
 
     expect(urlOfFile(fileURL)).toBe(fileURL);

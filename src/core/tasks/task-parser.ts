@@ -70,11 +70,15 @@ export class ZTaskParser {
    * not contain attribute specifier or it is ignored.
    */
   parseAttr(
+    value: string,
+    onAttr: (
+      this: void,
+      name: string,
       value: string,
-      onAttr: (this: void, name: string, value: string, replacement: boolean) => boolean | void = noop,
+      replacement: boolean,
+    ) => boolean | void = noop,
   ): readonly [name: string, value: string, replacement: boolean] | undefined {
     if (ZOptionInput.isOptionValue(value)) {
-
       const eqIdx = value.indexOf('=');
 
       if (eqIdx >= 0) {
@@ -98,10 +102,9 @@ export class ZTaskParser {
    * @returns Either parsed command line arguments, or `undefined` if target script can not be parsed.
    */
   parseCommandLine(
-      commandLine: string,
-      { script }: { script?: boolean } = {},
+    commandLine: string,
+    { script }: { script?: boolean } = {},
   ): readonly string[] | undefined {
-
     let withEnv = false;
     const detectEnv = (): undefined => {
       withEnv = true;
@@ -133,9 +136,9 @@ export class ZTaskParser {
    * @returns A promise resolved to task builder when command line options applied.
    */
   applyOptions(
-      builder: ZTaskBuilder,
-      args: readonly string[],
-      opts?: ZOptionsParser.Opts<ZTaskOption>,
+    builder: ZTaskBuilder,
+    args: readonly string[],
+    opts?: ZOptionsParser.Opts<ZTaskOption>,
   ): Promise<ZTaskBuilder> {
     if (!this._specParser) {
       this._specParser = zTaskSpecParser(builder.taskTarget.setup, this._config);
@@ -147,7 +150,6 @@ export class ZTaskParser {
 }
 
 export namespace ZTaskParser {
-
   /**
    * A set of supported task options.
    */
@@ -157,22 +159,18 @@ export namespace ZTaskParser {
    * {@link ZTaskParser Task parser} configuration.
    */
   export interface Config {
-
     /**
      * Additional task options to support.
      */
     readonly options?: SupportedOptions | undefined;
-
   }
-
 }
 
 function extractZTaskAttr(
-    arg: string,
-    eqIdx: number,
-    onAttr: (this: void, name: string, value: string, replacement: boolean) => boolean | void,
+  arg: string,
+  eqIdx: number,
+  onAttr: (this: void, name: string, value: string, replacement: boolean) => boolean | void,
 ): readonly [name: string, value: string, replacement: boolean] | undefined {
-
   const replacement = arg[eqIdx - 1] === ':';
   const nameEnd = replacement ? eqIdx - 1 : eqIdx;
   let name: string;

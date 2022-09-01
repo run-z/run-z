@@ -5,7 +5,6 @@ import type { ZPlan } from './plan';
 import { ZTaskParams } from './task-params';
 
 describe('ZPlan', () => {
-
   let testPlan: TestPlan;
   let call: ZCall;
   let plan: ZPlan;
@@ -24,26 +23,24 @@ describe('ZPlan', () => {
 
   describe('callOf', () => {
     it('throws when non-called task requested', async () => {
-
       const otherTask = await call.task.target.task('other');
 
-      expect(() => plan.callOf(otherTask)).toThrow(new TypeError('Task "other" from <root> is never called'));
+      expect(() => plan.callOf(otherTask)).toThrow(
+        new TypeError('Task "other" from <root> is never called'),
+      );
     });
   });
 
   it('extends task call parameters', async () => {
-    testPlan.addPackage(
-        'test',
-        {
-          packageJson: {
-            scripts: {
-              test: 'run-z attr=0 dep2/attr=1/--arg1 dep1',
-              dep1: 'run-z dep2/attr=2/--arg2',
-              dep2: 'run-z --then exec',
-            },
-          },
+    testPlan.addPackage('test', {
+      packageJson: {
+        scripts: {
+          test: 'run-z attr=0 dep2/attr=1/--arg1 dep1',
+          dep1: 'run-z dep2/attr=2/--arg2',
+          dep2: 'run-z --then exec',
         },
-    );
+      },
+    });
 
     const call = await testPlan.call('test');
     const target = call.task.target;
@@ -59,31 +56,24 @@ describe('ZPlan', () => {
     expect(dep2.params(ZTaskParams.newEvaluator()).attr('attr')).toBe('1');
   });
   it('ignores never called prerequisites', async () => {
-    testPlan.addPackage(
-        'test',
-        {
-          packageJson: {
-            scripts: {
-              test: 'run-z dep2',
-              dep1: 'run-z dep2',
-              dep2: 'run-z --then exec',
-            },
-          },
+    testPlan.addPackage('test', {
+      packageJson: {
+        scripts: {
+          test: 'run-z dep2',
+          dep1: 'run-z dep2',
+          dep2: 'run-z --then exec',
         },
-    );
+      },
+    });
 
-    const call = await testPlan.call(
-        'test',
-        {
-          async plan(planner) {
+    const call = await testPlan.call('test', {
+      async plan(planner) {
+        const { task } = planner.plannedCall;
+        const dep1 = await task.target.task('dep1');
 
-            const { task } = planner.plannedCall;
-            const dep1 = await task.target.task('dep1');
-
-            planner.order(dep1, task);
-          },
-        },
-    );
+        planner.order(dep1, task);
+      },
+    });
     const target = call.task.target;
 
     plan = call.plan;
@@ -93,32 +83,25 @@ describe('ZPlan', () => {
     expect(prerequisitesOf(call)).toEqual(taskIds(dep2));
   });
   it('allows explicit parallel execution', async () => {
-    testPlan.addPackage(
-        'test',
-        {
-          packageJson: {
-            scripts: {
-              test: 'run-z dep1,dep2',
-              dep1: 'exec1',
-              dep2: 'exec2',
-            },
-          },
+    testPlan.addPackage('test', {
+      packageJson: {
+        scripts: {
+          test: 'run-z dep1,dep2',
+          dep1: 'exec1',
+          dep2: 'exec2',
         },
-    );
+      },
+    });
 
-    const call = await testPlan.call(
-        'test',
-        {
-          async plan(planner) {
+    const call = await testPlan.call('test', {
+      async plan(planner) {
+        const { task } = planner.plannedCall;
+        const dep1 = await task.target.task('dep1');
+        const dep2 = await task.target.task('dep2');
 
-            const { task } = planner.plannedCall;
-            const dep1 = await task.target.task('dep1');
-            const dep2 = await task.target.task('dep2');
-
-            planner.makeParallel([task, dep1, dep2]);
-          },
-        },
-    );
+        planner.makeParallel([task, dep1, dep2]);
+      },
+    });
     const target = call.task.target;
 
     plan = call.plan;
@@ -131,19 +114,16 @@ describe('ZPlan', () => {
     expect(plan.callOf(dep1).isParallelTo(dep2)).toBe(true);
   });
   it('orders task execution', async () => {
-    testPlan.addPackage(
-        'test',
-        {
-          packageJson: {
-            scripts: {
-              test: 'run-z dep3 dep1',
-              dep1: 'run-z dep2',
-              dep2: 'exec2',
-              dep3: 'exec3',
-            },
-          },
+    testPlan.addPackage('test', {
+      packageJson: {
+        scripts: {
+          test: 'run-z dep3 dep1',
+          dep1: 'run-z dep2',
+          dep2: 'exec2',
+          dep3: 'exec3',
         },
-    );
+      },
+    });
 
     const call = await testPlan.call('test');
     const target = call.task.target;
@@ -172,18 +152,15 @@ describe('ZPlan', () => {
     expect(prerequisitesOf(dep3)).toHaveLength(0);
   });
   it('orders recurrent task execution', async () => {
-    testPlan.addPackage(
-        'test',
-        {
-          packageJson: {
-            scripts: {
-              test: 'run-z dep1 dep2',
-              dep1: 'run-z dep2',
-              dep2: 'exec',
-            },
-          },
+    testPlan.addPackage('test', {
+      packageJson: {
+        scripts: {
+          test: 'run-z dep1 dep2',
+          dep1: 'run-z dep2',
+          dep2: 'exec',
         },
-    );
+      },
+    });
 
     const call = await testPlan.call('test');
     const target = call.task.target;

@@ -12,7 +12,6 @@ import { zjobStatusIndicatorZLogField } from './job-status-indicator';
  * @internal
  */
 export function richProgressZLogFormatter(prefix: ProgressZLogPrefix): ZLogFormatter {
-
   const rich = textZLogFormatter({
     fields: [
       richStartZLogField,
@@ -27,7 +26,6 @@ export function richProgressZLogFormatter(prefix: ProgressZLogPrefix): ZLogForma
   const text = textProgressZLogFormatter(prefix);
 
   return message => {
-
     const row = message.details.row as ZJobRow | undefined;
 
     if (row == null) {
@@ -46,7 +44,6 @@ export function richProgressZLogFormatter(prefix: ProgressZLogPrefix): ZLogForma
  * @internal
  */
 function richStartZLogField(writer: ZLogWriter): void {
-
   const up = zjobRowOf(writer.message).up();
   let out = '';
 
@@ -63,7 +60,6 @@ function richStartZLogField(writer: ZLogWriter): void {
  * @internal
  */
 function richEndZLogField(writer: ZLogWriter): void {
-
   const row = zjobRowOf(writer.message);
   const down = row.up() - 1;
 
@@ -81,16 +77,13 @@ function richEndZLogField(writer: ZLogWriter): void {
  */
 function zjobStatusZLogField(prefix: ProgressZLogPrefix): ZLogField {
   return writer => {
-
     const { line } = writer.message;
     const prefixCols = prefix.targetCols + prefix.taskCols + 6;
 
-    writer.write(cliTruncate(
-        stripControlChars(line.join(' ')) || 'Running...',
-        ttyColumns() - prefixCols,
-        {
-          preferTruncationOnSpace: true,
-        },
-    ));
+    writer.write(
+      cliTruncate(stripControlChars(line.join(' ')) || 'Running...', ttyColumns() - prefixCols, {
+        preferTruncationOnSpace: true,
+      }),
+    );
   };
 }

@@ -7,7 +7,6 @@ import type { ZCall } from './call';
 import { ZTaskParams } from './task-params';
 
 describe('ZCall', () => {
-
   let setup: ZSetup;
   let initParams: ZTaskParams.Values;
   let task: ZTask;
@@ -23,21 +22,20 @@ describe('ZCall', () => {
     };
 
     task = setup.taskFactory
-        .newTask(await setup.packageResolver.get(tree), 'test')
-        .addAttrs(initParams.attrs)
-        .addArg(...initParams.args)
-        .setAction({
-          type: 'command',
-          command: 'test-command',
-          parallel: false,
-          args: ['cmd-arg1'],
-        })
-        .task();
+      .newTask(await setup.packageResolver.get(tree), 'test')
+      .addAttrs(initParams.attrs)
+      .addArg(...initParams.args)
+      .setAction({
+        type: 'command',
+        command: 'test-command',
+        parallel: false,
+        args: ['cmd-arg1'],
+      })
+      .task();
   });
 
   describe('call', () => {
     it('appends attribute values', async () => {
-
       const call = await plan({ attrs: { attr1: ['attr1-val2'] } });
 
       expect(call.params(ZTaskParams.newEvaluator())).toEqual({
@@ -46,7 +44,6 @@ describe('ZCall', () => {
       });
     });
     it('adds attribute', async () => {
-
       const call = await plan({ attrs: { attr2: ['attr2-val'] } });
 
       expect(call.params(ZTaskParams.newEvaluator())).toEqual({
@@ -55,7 +52,6 @@ describe('ZCall', () => {
       });
     });
     it('appends args', async () => {
-
       const call = await plan({ args: ['arg2'] });
 
       expect(call.params(ZTaskParams.newEvaluator())).toEqual({
@@ -67,7 +63,6 @@ describe('ZCall', () => {
 
   describe('params', () => {
     it('cached', async () => {
-
       const call = await plan({ attrs: { attr1: ['attr1-val2'] } });
       const evaluator = ZTaskParams.newEvaluator();
 

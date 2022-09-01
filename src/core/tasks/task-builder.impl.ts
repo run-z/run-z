@@ -12,7 +12,8 @@ import { addZTaskAttr, addZTaskAttrs, removeZTaskAttr } from './task-spec.impl';
 /**
  * @internal
  */
-export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> implements ZTaskBuilder<TAction> {
+export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
+  implements ZTaskBuilder<TAction> {
 
   batching: ZBatching = ZBatching.newBatching();
   private _executor?: ZTaskExecutor | undefined;
@@ -22,8 +23,7 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
   private readonly _args: string[] = [];
   private _action?: ZTaskSpec.Action | undefined;
 
-  constructor(readonly taskTarget: ZPackage, readonly taskName: string) {
-  }
+  constructor(readonly taskTarget: ZPackage, readonly taskName: string) {}
 
   get action(): TAction | undefined {
     return this._action as TAction;
@@ -82,17 +82,12 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
   }
 
   async parse(
-      commandLine: string,
-      {
-        fromIndex = 1,
-        ...opts
-      }: ZOptionsParser.Opts<ZTaskOption> = {},
+    commandLine: string,
+    { fromIndex = 1, ...opts }: ZOptionsParser.Opts<ZTaskOption> = {},
   ): Promise<this> {
-
     const args = this.taskTarget.setup.taskParser.parseCommandLine(commandLine, { script: true });
 
     if (!args || args[0] !== 'run-z') {
-
       const [command, ...rest] = args || [];
 
       this.setAction({
@@ -108,36 +103,25 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
   }
 
   async applyOptions(
-      args: readonly string[],
-      {
-        fromIndex = 0,
-        ...opts
-      }: ZOptionsParser.Opts<ZTaskOption> = {},
+    args: readonly string[],
+    { fromIndex = 0, ...opts }: ZOptionsParser.Opts<ZTaskOption> = {},
   ): Promise<this> {
-
     const prevLength = this._commandLine.length;
 
     this._commandLine.push(...args);
 
-    await this.taskTarget.setup.taskParser.applyOptions(
-        this,
-        this._commandLine,
-        {
-          ...opts,
-          fromIndex: prevLength + fromIndex,
-        },
-    );
+    await this.taskTarget.setup.taskParser.applyOptions(this, this._commandLine, {
+      ...opts,
+      fromIndex: prevLength + fromIndex,
+    });
 
     return this;
   }
 
   async applyArgv(
-      taskName: string | undefined,
-      argv: readonly string[],
-      {
-        fromIndex = 2,
-        ...opts
-      }: ZOptionsParser.Opts<ZTaskOption> = {},
+    taskName: string | undefined,
+    argv: readonly string[],
+    { fromIndex = 2, ...opts }: ZOptionsParser.Opts<ZTaskOption> = {},
   ): Promise<this> {
     if (!taskName) {
       // Task name is unknown
@@ -167,10 +151,10 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
     }
 
     // Replace matching args prefix with corresponding task
-    return this.applyOptions(
-        [taskName, ...argv.slice(args.length - 1 + fromIndex)],
-        { ...opts, fromIndex: 0 },
-    );
+    return this.applyOptions([taskName, ...argv.slice(args.length - 1 + fromIndex)], {
+      ...opts,
+      fromIndex: 0,
+    });
   }
 
   spec(): ZTaskSpec<TAction> {
@@ -183,19 +167,18 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
   }
 
   task(): AbstractZTask<TAction> {
-
     const spec: ZTaskSpec = this.spec();
 
     switch (spec.action.type) {
-    case 'command':
-      return new CommandZTask(this, spec as ZTaskSpec<ZTaskSpec.Command>) as AbstractZTask<any>;
-    case 'group':
-      return new GroupZTask(this, spec as ZTaskSpec<ZTaskSpec.Group>) as AbstractZTask<any>;
-    case 'script':
-      return new ScriptZTask(this, spec as ZTaskSpec<ZTaskSpec.Script>) as AbstractZTask<any>;
-    case 'unknown':
-    default:
-      return new UnknownZTask(this, spec) as AbstractZTask<any>;
+      case 'command':
+        return new CommandZTask(this, spec as ZTaskSpec<ZTaskSpec.Command>) as AbstractZTask<any>;
+      case 'group':
+        return new GroupZTask(this, spec as ZTaskSpec<ZTaskSpec.Group>) as AbstractZTask<any>;
+      case 'script':
+        return new ScriptZTask(this, spec as ZTaskSpec<ZTaskSpec.Script>) as AbstractZTask<any>;
+      case 'unknown':
+      default:
+        return new UnknownZTask(this, spec) as AbstractZTask<any>;
     }
   }
 

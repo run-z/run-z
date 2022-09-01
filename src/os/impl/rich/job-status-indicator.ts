@@ -11,9 +11,7 @@ export const zjobSpinner = cliSpinners.dots;
  * @internal
  */
 export const zjobStatusIndicator = {
-
   progress(): string {
-
     const { interval, frames } = zjobSpinner;
     const now = Date.now();
     const period = interval * frames.length;
@@ -30,16 +28,16 @@ export const zjobStatusIndicator = {
   error(): string {
     return logSymbols.error;
   },
-
 };
 
 /**
  * @internal
  */
 export function zjobStatusIndicatorZLogField(writer: ZLogWriter): void {
-
   let status: keyof typeof zjobStatusIndicator = 'progress';
-  const { details: { error, success } } = writer.message;
+  const {
+    details: { error, success },
+  } = writer.message;
 
   if (error != null) {
     status = 'error';

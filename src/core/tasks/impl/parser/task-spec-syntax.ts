@@ -22,10 +22,9 @@ export function zTaskSpecSyntax(setup: ZSetup): readonly ZOptionSyntax[] {
  * @internal
  */
 function zPackageSelectorSyntax(
-    { taskParser }: ZSetup,
-    args: readonly [string, ...string[]],
+  { taskParser }: ZSetup,
+  args: readonly [string, ...string[]],
 ): readonly ZOptionInput[] {
-
   const [name] = args;
 
   if (!taskParser.parseTarget(name)) {
@@ -43,8 +42,10 @@ function zPackageSelectorSyntax(
 /**
  * @internal
  */
-function zTaskAttrSyntax({ taskParser }: ZSetup, args: readonly [string, ...string[]]): readonly ZOptionInput[] {
-
+function zTaskAttrSyntax(
+  { taskParser }: ZSetup,
+  args: readonly [string, ...string[]],
+): readonly ZOptionInput[] {
   const [first] = args;
   const attr = taskParser.parseAttr(first);
 
@@ -80,7 +81,6 @@ function zTaskAttrSyntax({ taskParser }: ZSetup, args: readonly [string, ...stri
  * @internal
  */
 function zTaskPreArgsSyntax(args: readonly [string, ...string[]]): readonly ZOptionInput[] {
-
   const [first] = args;
   const openingIdx = first.indexOf('//');
 
@@ -129,7 +129,6 @@ function zTaskPreArgsSyntax(args: readonly [string, ...string[]]): readonly ZOpt
 
   // Search for closing delimiter
   for (let i = 1; i < args.length; ++i) {
-
     const arg = args[i];
     const closingIdx = arg.indexOf(delimiter);
 
@@ -138,14 +137,14 @@ function zTaskPreArgsSyntax(args: readonly [string, ...string[]]): readonly ZOpt
 
       const restValues = args.slice(1, i);
       const lastValues = closingIdx ? [arg.substr(0, closingIdx)] : [];
-      const values = contentIdx < first.length
+      const values
+        = contentIdx < first.length
           ? [first.substr(contentIdx), ...restValues, ...lastValues, '//']
           : [...restValues, ...lastValues, '//'];
       const afterPreArgsIdx = closingIdx + delimiter.length;
       const restArgs = args.slice(i + 1);
-      const tail = afterPreArgsIdx < arg.length
-          ? [arg.substr(afterPreArgsIdx), ...restArgs]
-          : [...restArgs];
+      const tail
+        = afterPreArgsIdx < arg.length ? [arg.substr(afterPreArgsIdx), ...restArgs] : [...restArgs];
 
       return [
         {
@@ -178,7 +177,6 @@ const parallelZTaskSep = /(,)/;
  * @internal
  */
 function parallelZTasksSyntax(args: readonly [string, ...string[]]): readonly ZOptionInput[] {
-
   const [entry] = args;
   const [name, ...values] = entry.split(parallelZTaskSep).filter(name => !!name);
 
@@ -189,7 +187,6 @@ function parallelZTasksSyntax(args: readonly [string, ...string[]]): readonly ZO
  * @internal
  */
 function zTaskPreSyntax(args: readonly [string, ...string[]]): readonly ZOptionInput[] {
-
   const [entry] = args;
   const [name, ...preArgs] = entry.split('/');
 
@@ -211,7 +208,6 @@ function zTaskPreSyntax(args: readonly [string, ...string[]]): readonly ZOptionI
  * @internal
  */
 function zTaskShorthandPreArgSyntax(args: readonly [string, ...string[]]): readonly ZOptionInput[] {
-
   const [name] = args;
 
   if (!name.startsWith('/') || name.startsWith('//')) {

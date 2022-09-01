@@ -9,7 +9,6 @@ import type { ZPackageJson } from './package.json';
  * NPM package containing tasks and rules.
  */
 export interface ZPackage extends ZPackageSet {
-
   /**
    * Task execution setup.
    */
@@ -103,5 +102,4 @@ export interface ZPackage extends ZPackageSet {
    * @returns An iterable of {@link packageJson script names} containing tasks.
    */
   taskNames(): Iterable<string>;
-
 }

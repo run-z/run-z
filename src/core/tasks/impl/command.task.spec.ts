@@ -8,7 +8,6 @@ import { ZTaskParams } from '../../plan';
 import { CommandZTask } from './command.task';
 
 describe('CommandZTask', () => {
-
   let testPlan: TestPlan;
 
   beforeEach(() => {
@@ -16,16 +15,13 @@ describe('CommandZTask', () => {
   });
 
   it('accepts command args', async () => {
-    testPlan.addPackage(
-        'test',
-        {
-          packageJson: {
-            scripts: {
-              test: 'run-z attr=b --then exec --cmd',
-            },
-          },
+    testPlan.addPackage('test', {
+      packageJson: {
+        scripts: {
+          test: 'run-z attr=b --then exec --cmd',
         },
-    );
+      },
+    });
 
     const call = await testPlan.call('test');
     const params = call.params(ZTaskParams.newEvaluator());
@@ -36,17 +32,14 @@ describe('CommandZTask', () => {
   });
 
   it('calls prerequisites', async () => {
-    testPlan.addPackage(
-        'test',
-        {
-          packageJson: {
-            scripts: {
-              test: 'run-z =attr dep --then exec --cmd',
-              dep: 'exec',
-            },
-          },
+    testPlan.addPackage('test', {
+      packageJson: {
+        scripts: {
+          test: 'run-z =attr dep --then exec --cmd',
+          dep: 'exec',
         },
-    );
+      },
+    });
 
     const call = await testPlan.call('test');
     const dep = call.plan.callOf(await call.task.target.task('dep'));
@@ -55,18 +48,15 @@ describe('CommandZTask', () => {
     expect(dep.params(ZTaskParams.newEvaluator()).attrs).toEqual({ attr: ['on'] });
   });
   it('calls parallel prerequisites', async () => {
-    testPlan.addPackage(
-        'test',
-        {
-          packageJson: {
-            scripts: {
-              test: 'run-z dep1,dep2 --then exec --cmd',
-              dep1: 'exec1',
-              dep2: 'exec2',
-            },
-          },
+    testPlan.addPackage('test', {
+      packageJson: {
+        scripts: {
+          test: 'run-z dep1,dep2 --then exec --cmd',
+          dep1: 'exec1',
+          dep2: 'exec2',
         },
-    );
+      },
+    });
 
     const call = await testPlan.call('test');
     const target = call.task.target;
@@ -85,18 +75,15 @@ describe('CommandZTask', () => {
   });
 
   it('calls parallel prerequisites specified by `+cmd:COMMAND` annex', async () => {
-    testPlan.addPackage(
-        'test',
-        {
-          packageJson: {
-            scripts: {
-              test: 'run-z dep1 dep2 +cmd:exec1,+cmd:exec2 --then exec --cmd',
-              dep1: 'run-z --then exec1',
-              dep2: 'exec2',
-            },
-          },
+    testPlan.addPackage('test', {
+      packageJson: {
+        scripts: {
+          test: 'run-z dep1 dep2 +cmd:exec1,+cmd:exec2 --then exec --cmd',
+          dep1: 'run-z --then exec1',
+          dep2: 'exec2',
         },
-    );
+      },
+    });
 
     const call = await testPlan.call('test');
     const target = call.task.target;
@@ -115,19 +102,16 @@ describe('CommandZTask', () => {
   });
 
   it('executed in parallel with prerequisites', async () => {
-    testPlan.addPackage(
-        'test',
-        {
-          packageJson: {
-            scripts: {
-              test: 'run-z dep1 dep2,dep3 --and exec --cmd',
-              dep1: 'exec1',
-              dep2: 'exec2',
-              dep3: 'exec3',
-            },
-          },
+    testPlan.addPackage('test', {
+      packageJson: {
+        scripts: {
+          test: 'run-z dep1 dep2,dep3 --and exec --cmd',
+          dep1: 'exec1',
+          dep2: 'exec2',
+          dep3: 'exec3',
         },
-    );
+      },
+    });
 
     const call = await testPlan.call('test');
     const target = call.task.target;
@@ -156,30 +140,26 @@ describe('CommandZTask', () => {
 
   describe('exec', () => {
     it('executes command', async () => {
-
       const shell = {
         execCommand: jest.fn<ZShell['execCommand']>(execZNoOp),
       };
 
-      testPlan.addPackage(
-          'test',
-          {
-            packageJson: {
-              scripts: {
-                test: 'run-z exec/--arg1 --arg2',
-                exec: 'run-z --then start --arg3',
-              },
-            },
+      testPlan.addPackage('test', {
+        packageJson: {
+          scripts: {
+            test: 'run-z exec/--arg1 --arg2',
+            exec: 'run-z --then start --arg3',
           },
-      );
+        },
+      });
 
       const call = await testPlan.call('test');
 
       await call.exec(shell as Partial<ZShell> as ZShell).whenDone();
 
       expect(shell.execCommand).toHaveBeenCalledWith(
-          expect.objectContaining({ call: await testPlan.callOf(call.task.target, 'exec') }),
-          'start',
+        expect.objectContaining({ call: await testPlan.callOf(call.task.target, 'exec') }),
+        'start',
       );
 
       const { params } = shell.execCommand.mock.calls[0][0];
@@ -188,30 +168,26 @@ describe('CommandZTask', () => {
     });
 
     it('applies `+cmd:command` annex parameters', async () => {
-
       const shell = {
         execCommand: jest.fn<ZShell['execCommand']>(execZNoOp),
       };
 
-      testPlan.addPackage(
-          'test',
-          {
-            packageJson: {
-              scripts: {
-                test: 'run-z exec/--arg1 --arg2',
-                exec: 'run-z --then start --arg3',
-              },
-            },
+      testPlan.addPackage('test', {
+        packageJson: {
+          scripts: {
+            test: 'run-z exec/--arg1 --arg2',
+            exec: 'run-z --then start --arg3',
           },
-      );
+        },
+      });
 
       const call = await testPlan.parse('run-z test +cmd:start/--cmd-arg/cmd=applied');
 
       await call.exec(shell as Partial<ZShell> as ZShell).whenDone();
 
       expect(shell.execCommand).toHaveBeenCalledWith(
-          expect.objectContaining({ call: await testPlan.callOf(call.task.target, 'exec') }),
-          'start',
+        expect.objectContaining({ call: await testPlan.callOf(call.task.target, 'exec') }),
+        'start',
       );
 
       const { params } = shell.execCommand.mock.calls[0][0];
@@ -220,29 +196,25 @@ describe('CommandZTask', () => {
       expect(params.attrs).toEqual({
         cmd: ['applied'],
       });
-      expect([...params.allAttrs('cmd')]).toEqual([
-        ['cmd', 'applied'],
-      ]);
+      expect([...params.allAttrs('cmd')]).toEqual([['cmd', 'applied']]);
     });
 
     it('does not execute command when `skip` flag is set', async () => {
-
       const shell = {
         execCommand: jest.fn<ZShell['execCommand']>(execZNoOp),
       };
 
-      testPlan.addPackage(
-          'test',
-          {
-            packageJson: {
-              scripts: {
-                exec: 'run-z --then start --arg3',
-              },
-            },
+      testPlan.addPackage('test', {
+        packageJson: {
+          scripts: {
+            exec: 'run-z --then start --arg3',
           },
-      );
+        },
+      });
 
-      const call = await testPlan.call('exec', { params: valueProvider({ attrs: { skip: ['on'] } }) });
+      const call = await testPlan.call('exec', {
+        params: valueProvider({ attrs: { skip: ['on'] } }),
+      });
 
       await call.exec(shell as Partial<ZShell> as ZShell).whenDone();
 
@@ -250,39 +222,32 @@ describe('CommandZTask', () => {
     });
 
     it('executes by overridden executor', async () => {
-
       const executor = jest.fn(execZNoOp);
 
-      testPlan = new TestPlan(
-          'root',
-          {
-            setup: new StandardZSetup({
-              extensions: {
-                options: {
-                  '--test'(option) {
-                    option.executeBy(executor);
-                    option.recognize();
-                  },
-                },
+      testPlan = new TestPlan('root', {
+        setup: new StandardZSetup({
+          extensions: {
+            options: {
+              '--test'(option) {
+                option.executeBy(executor);
+                option.recognize();
               },
-            }),
+            },
           },
-      );
+        }),
+      });
 
       const shell = {
         execCommand: jest.fn<ZShell['execCommand']>(execZNoOp),
       };
 
-      testPlan.addPackage(
-          'test',
-          {
-            packageJson: {
-              scripts: {
-                exec: 'run-z --test --then start --arg3',
-              },
-            },
+      testPlan.addPackage('test', {
+        packageJson: {
+          scripts: {
+            exec: 'run-z --test --then start --arg3',
           },
-      );
+        },
+      });
 
       const call = await testPlan.call('exec');
 

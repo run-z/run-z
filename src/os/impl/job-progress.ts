@@ -9,8 +9,7 @@ export abstract class ZJobProgress {
 
   private _log: ZLogger | null = null;
 
-  constructor(protected readonly _format: ZProgressFormat, readonly job: ZJob) {
-  }
+  constructor(protected readonly _format: ZProgressFormat, readonly job: ZJob) {}
 
   get log(): ZLogger {
     return this._log || (this._log = logZBy(this._createLog()));
@@ -26,11 +25,11 @@ export abstract class ZJobProgress {
 
   protected _createLog(): ZLogRecorder {
     return logZWithDetails(
-        {
-          target: this.job.call.task.target.name,
-          task: this.job.call.task.name,
-        },
-        logZAtopOf(this._format.log),
+      {
+        target: this.job.call.task.target.name,
+        task: this.job.call.task.name,
+      },
+      logZAtopOf(this._format.log),
     );
   }
 

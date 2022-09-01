@@ -18,15 +18,13 @@ export class ZPackageDirectory extends ZPackageLocation {
    *
    * @returns New NPM package directory instance.
    */
-  static open(
-      {
-        url = pathToFileURL(process.cwd()),
-        rootURL = fsRoot(),
-      }: {
-        url?: URL | undefined;
-        rootURL?: URL | undefined;
-      } = {},
-  ): ZPackageDirectory {
+  static open({
+    url = pathToFileURL(process.cwd()),
+    rootURL = fsRoot(),
+  }: {
+    url?: URL | undefined;
+    rootURL?: URL | undefined;
+  } = {}): ZPackageDirectory {
     url = urlOfFile(url);
     rootURL = urlOfFile(rootURL);
     if (!isRootURL(rootURL, url)) {
@@ -76,10 +74,10 @@ export class ZPackageDirectory extends ZPackageLocation {
     const parentURL = new URL('..', this.dirURL);
 
     if (parentURL.pathname === this.url.pathname || !isRootURL(this.rootURL, parentURL)) {
-      return this._parent = undefined;
+      return (this._parent = undefined);
     }
 
-    return this._parent = new ZPackageDirectory(parentURL, this.rootURL);
+    return (this._parent = new ZPackageDirectory(parentURL, this.rootURL));
   }
 
   get baseName(): string {
@@ -87,7 +85,6 @@ export class ZPackageDirectory extends ZPackageLocation {
   }
 
   relative(path: string): ZPackageDirectory | undefined {
-
     const url = new URL(path, this.dirURL);
 
     return isRootURL(this.rootURL, url) ? new ZPackageDirectory(url, this.rootURL) : undefined;
@@ -98,24 +95,22 @@ export class ZPackageDirectory extends ZPackageLocation {
   }
 
   async deeplyNested(): Promise<readonly ZPackageDirectory[]> {
+    const result: Promise<readonly ZPackageDirectory[]>[] = (await nestedZPackageDirs(this)).map(
+      async nested => {
+        const deeper = await nested.deeplyNested();
 
-    const result: Promise<readonly ZPackageDirectory[]>[] = (await nestedZPackageDirs(this))
-        .map(async nested => {
+        if (await zPackageJsonPath(nested)) {
+          return [[nested], deeper].flat();
+        }
 
-          const deeper = await nested.deeplyNested();
-
-          if (await zPackageJsonPath(nested)) {
-            return [[nested], deeper].flat();
-          }
-
-          return deeper;
-        });
+        return deeper;
+      },
+    );
 
     return (await Promise.all(result)).flat();
   }
 
   async load(): Promise<ZPackageJson | undefined> {
-
     const packageJsonPath = await zPackageJsonPath(this);
 
     return packageJsonPath && JSON.parse((await fs.promises.readFile(packageJsonPath)).toString());
@@ -131,13 +126,11 @@ export class ZPackageDirectory extends ZPackageLocation {
  * @internal
  */
 async function nestedZPackageDirs(
-    dir: ZPackageDirectory,
-    test: (dir: ZPackageDirectory) => PromiseLike<boolean> | boolean = valueProvider(true),
+  dir: ZPackageDirectory,
+  test: (dir: ZPackageDirectory) => PromiseLike<boolean> | boolean = valueProvider(true),
 ): Promise<readonly ZPackageDirectory[]> {
-
   const entries = await fs.promises.readdir(fileURLToPath(dir.url), { withFileTypes: true });
   const dirs: Promise<ZPackageDirectory | null>[] = entries.map(async entry => {
-
     const { name } = entry;
 
     if (!entry.isDirectory() || name === 'node_modules' || name.startsWith('.')) {
@@ -147,7 +140,7 @@ async function nestedZPackageDirs(
 
     const nested = dir.relative(encodeURIComponent(name))!;
 
-    return await test(nested) ? nested : null;
+    return (await test(nested)) ? nested : null;
   });
 
   return (await Promise.all(dirs)).filter<ZPackageDirectory>(isPresent);
@@ -157,15 +150,10 @@ async function nestedZPackageDirs(
  * @internal
  */
 async function zPackageJsonPath(dir: ZPackageDirectory): Promise<string | undefined> {
-
   const packageJsonPath = path.join(fileURLToPath(dir.url), 'package.json');
-  const packageJsonExists = await fs.promises.access(
-      packageJsonPath,
-      fs.constants.R_OK,
-  ).then(
-      valueProvider(true),
-      valueProvider(false),
-  );
+  const packageJsonExists = await fs.promises
+    .access(packageJsonPath, fs.constants.R_OK)
+    .then(valueProvider(true), valueProvider(false));
 
   return packageJsonExists ? packageJsonPath : undefined;
 }

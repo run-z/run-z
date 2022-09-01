@@ -7,15 +7,14 @@ import { ZBatching } from './batching';
  *
  * @typeparam TAction  Task action type.
  */
-export interface ZBatchDetails<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> extends ZCallDetails<TAction> {
-
+export interface ZBatchDetails<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
+  extends ZCallDetails<TAction> {
   /**
    * A policy to apply when batching transient calls.
    *
    * @default Current batching policy.
    */
   readonly batching?: ZBatching | undefined;
-
 }
 
 /**
@@ -24,20 +23,16 @@ export interface ZBatchDetails<TAction extends ZTaskSpec.Action = ZTaskSpec.Acti
  * @typeparam TAction  Task action type.
  */
 export namespace ZBatchDetails {
-
-  export interface Full<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> extends ZCallDetails.Full<TAction> {
-
+  export interface Full<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
+    extends ZCallDetails.Full<TAction> {
     /**
      * A policy to apply when batching transient calls.
      */
     readonly batching: ZBatching;
-
   }
-
 }
 
 export const ZBatchDetails = {
-
   /**
    * Reconstructs full details of the task batching by partial ones.
    *
@@ -47,9 +42,8 @@ export const ZBatchDetails = {
    * @returns Full task batching details.
    */
   by<TAction extends ZTaskSpec.Action>(
-      details: ZBatchDetails<TAction> = {},
+    details: ZBatchDetails<TAction> = {},
   ): ZBatchDetails.Full<TAction> {
-
     const { batching = ZBatching.unprocessedBatching() } = details;
 
     return {
@@ -57,5 +51,4 @@ export const ZBatchDetails = {
       batching,
     };
   },
-
 };

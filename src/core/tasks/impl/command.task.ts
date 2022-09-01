@@ -10,15 +10,23 @@ import { AbstractZTask } from './abstract.task';
 export class CommandZTask extends AbstractZTask<ZTaskSpec.Command> {
 
   get alike(): Iterable<string> {
-
-    const { spec: { action: { command } } } = this;
+    const {
+      spec: {
+        action: { command },
+      },
+    } = this;
 
     return [`cmd:${command}`];
   }
 
   protected _callParams(): ZTaskParams.Partial {
-
-    const { spec: { attrs, args, action: { args: commandArgs } } } = this;
+    const {
+      spec: {
+        attrs,
+        args,
+        action: { args: commandArgs },
+      },
+    } = this;
 
     return { attrs, args: [...commandArgs, ...args] };
   }

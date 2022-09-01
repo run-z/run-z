@@ -37,10 +37,10 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
   private readonly _tasks = new Map<string, Promise<ZTask>>();
 
   constructor(
-      readonly _resolver: ZPackageResolver$,
-      readonly location: ZPackageLocation,
-      readonly packageJson: ZPackageJson,
-      readonly parent?: ZPackage,
+    readonly _resolver: ZPackageResolver$,
+    readonly location: ZPackageLocation,
+    readonly packageJson: ZPackageJson,
+    readonly parent?: ZPackage,
   ) {
     super();
 
@@ -50,7 +50,6 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
       this.name = packageName;
       this.isAnonymous = false;
     } else if (parent) {
-
       const dirName = location.urlPath.substr(parent.location.urlPath.length);
 
       this.name = `${parent.name}${dirName}`;
@@ -75,15 +74,14 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
     const { name } = this;
 
     if (name.startsWith('@')) {
-
       const slashIdx = name.indexOf('/');
 
       if (slashIdx >= 0) {
-        return this._scopeName = name.substr(0, slashIdx);
+        return (this._scopeName = name.substr(0, slashIdx));
       }
     }
 
-    return this._scopeName = undefined;
+    return (this._scopeName = undefined);
   }
 
   get unscopedName(): string {
@@ -93,9 +91,7 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
 
     const { scopeName, name } = this;
 
-    return this._unscopedName = scopeName == null
-        ? name
-        : name.substr(scopeName.length + 1);
+    return (this._unscopedName = scopeName == null ? name : name.substr(scopeName.length + 1));
   }
 
   get hostPackage(): ZPackage {
@@ -103,9 +99,7 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
       return this._hostPackage;
     }
 
-    return this._hostPackage = this.subPackageName == null
-        ? this
-        : this.parent!.hostPackage;
+    return (this._hostPackage = this.subPackageName == null ? this : this.parent!.hostPackage);
   }
 
   get subPackageName(): string | undefined {
@@ -116,9 +110,7 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
     const { unscopedName } = this;
     const slashIdx = unscopedName.indexOf('/');
 
-    return this._subPackageName = slashIdx < 0
-        ? undefined
-        : unscopedName.substr(slashIdx + 1);
+    return (this._subPackageName = slashIdx < 0 ? undefined : unscopedName.substr(slashIdx + 1));
   }
 
   packages(): readonly [this] {
@@ -126,7 +118,6 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
   }
 
   depGraph(): ZDepGraph$ {
-
     const [rev, deps] = this._depGraph;
     const newRev = this._resolver.rev;
 
@@ -146,7 +137,6 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
   }
 
   task(name: string): Promise<ZTask> {
-
     const existing = this._tasks.get(name);
 
     if (existing) {
@@ -156,19 +146,19 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
     const script = this.packageJson.scripts?.[name];
 
     if (script) {
-
-      const parsed = this.setup.taskFactory.newTask(this, name)
-          .parse(script)
-          .then(builder => builder.task());
+      const parsed = this.setup.taskFactory
+        .newTask(this, name)
+        .parse(script)
+        .then(builder => builder.task());
 
       this._tasks.set(name, parsed);
 
       return parsed;
     }
 
-    const absent = Promise.resolve(this.setup.taskFactory.newTask(this, name)
-        .setAction(ZTaskSpec.unknownAction)
-        .task());
+    const absent = Promise.resolve(
+      this.setup.taskFactory.newTask(this, name).setAction(ZTaskSpec.unknownAction).task(),
+    );
 
     this._tasks.set(name, absent);
 
@@ -176,7 +166,6 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
   }
 
   taskNames(): Iterable<string> {
-
     const { scripts = {} } = this.packageJson;
 
     return Object.keys(scripts);
@@ -202,11 +191,10 @@ class SelectedZPackages extends ZPackageSet {
   }
 
   async packages(): Promise<readonly ZPackage[]> {
-
     const locations = await this.pkg.location.select(this.selector);
-    const found: (ZPackage | undefined)[] = await Promise.all(locations.map(
-        (location: ZPackageLocation) => this.pkg.setup.packageResolver.find(location),
-    ));
+    const found: (ZPackage | undefined)[] = await Promise.all(
+      locations.map((location: ZPackageLocation) => this.pkg.setup.packageResolver.find(location)),
+    );
 
     return found.filter(isPresent);
   }

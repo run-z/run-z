@@ -30,13 +30,10 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
 
   callDetails(call: ZCall<TAction>): ZCallDetails.Full<TAction> {
     return {
-
       params: evaluator => {
-
         const params = ZTaskParams.newMutable();
 
         for (const alike of this.alike) {
-
           const alikeCall = call.plan.findCallOf(this.target, alike);
 
           if (alikeCall) {
@@ -50,31 +47,27 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
       },
 
       plan: this._planCall.bind(this),
-
     };
   }
 
   async callAsPre(
-      planner: ZPrePlanner,
-      { attrs, args }: ZTaskSpec.Pre,
-      details: ZCallDetails.Full,
+    planner: ZPrePlanner,
+    { attrs, args }: ZTaskSpec.Pre,
+    details: ZCallDetails.Full,
   ): Promise<ZCall> {
-    return planner.callPre(
-        this,
-        {
-          ...details,
-          params: evaluator => ZTaskParams.update(
-              ZTaskParams.update(
-                  ZTaskParams.update(
-                    ZTaskParams.newMutable(),
-                    { attrs: planner.dependent.plannedCall.task.spec.attrs }, // Dependent task attrs
-                  ),
-                  { attrs, args }, // Extend with explicit prerequisite parameters
-              ),
-              details.params(evaluator), // Extend with additional parameters
+    return planner.callPre(this, {
+      ...details,
+      params: evaluator => ZTaskParams.update(
+          ZTaskParams.update(
+            ZTaskParams.update(
+              ZTaskParams.newMutable(),
+              { attrs: planner.dependent.plannedCall.task.spec.attrs }, // Dependent task attrs
+            ),
+            { attrs, args }, // Extend with explicit prerequisite parameters
           ),
-        },
-    );
+          details.params(evaluator), // Extend with additional parameters
+        ),
+    });
   }
 
   call(details?: ZCallDetails<TAction>): Promise<ZCall> {
@@ -82,7 +75,6 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   }
 
   exec(job: ZJob<TAction>): ZExecution {
-
     const executor = this._builder.executor;
 
     if (executor) {
@@ -100,8 +92,9 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
    * @returns Partial task execution parameters.
    */
   protected _callParams(): ZTaskParams.Partial {
-
-    const { spec: { attrs, args } } = this;
+    const {
+      spec: { attrs, args },
+    } = this;
 
     return { attrs, args };
   }
@@ -117,7 +110,6 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
    * instructions recorded asynchronously.
    */
   protected async _planCall(planner: ZCallPlanner<TAction>): Promise<void> {
-
     const batching = this._builder.batching;
     let parallel: ZTaskQualifier[] = [];
     let prevTasks: ZTask[] = [];
@@ -133,8 +125,8 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
         batching,
         applyTargets: noop,
         callPre<TAction extends ZTaskSpec.Action>(
-            task: ZTask<TAction>,
-            details?: ZCallDetails<TAction>,
+          task: ZTask<TAction>,
+          details?: ZCallDetails<TAction>,
         ): Promise<ZCall> {
           return planner.call(task, details);
         },
@@ -147,10 +139,9 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
       const preTasks: ZTask[] = [];
 
       prePlanner.callPre = async <TAction extends ZTaskSpec.Action>(
-          task: ZTask<TAction>,
-          details?: ZCallDetails<TAction>,
+        task: ZTask<TAction>,
+        details?: ZCallDetails<TAction>,
       ): Promise<ZCall> => {
-
         const preCall = await planner.call(task, details);
         const preTask = preCall.task;
 
@@ -176,21 +167,15 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
         taskName: pre.task,
         isAnnex: pre.annex,
         batch(preTask, preDetails) {
-
           const batchDetails = ZBatchDetails.by(preDetails);
 
-          return preTask.callAsPre(
-              prePlanner.transient(batchDetails.batching),
-              pre,
-              batchDetails,
-          );
+          return preTask.callAsPre(prePlanner.transient(batchDetails.batching), pre, batchDetails);
         },
       });
 
       if (preTasks.length === 1) {
         parallel.push(preTasks[0]);
       } else {
-
         const qualifier: ZTaskQualifier = {
           taskQN: `${String(targets)} */${pre.task}`,
         };
@@ -225,11 +210,10 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   }
 
   protected async _planTargets(
-      targetSpecs: readonly ZTaskSpec.Target[],
-      forTask: string,
-      prePlanner: ZPrePlanner,
+    targetSpecs: readonly ZTaskSpec.Target[],
+    forTask: string,
+    prePlanner: ZPrePlanner,
   ): Promise<ZPackageSet> {
-
     let result: ZPackageSet | undefined;
     const addTargets = (targets: ZPackageSet): void => {
       prePlanner.applyTargets(targets);
@@ -237,7 +221,6 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
     };
 
     for (const { selector, task } of targetSpecs) {
-
       const selected = this.target.select(selector);
 
       if (!task) {
@@ -246,7 +229,6 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
         continue;
       }
       for (const preTarget of await selected.packages()) {
-
         let reusedTask!: ZTask;
 
         for (const reusedTaskName of reusedZBatchNames(task, forTask)) {
@@ -259,29 +241,29 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
         let hasTargets = false;
 
         await reusedTask.callAsPre(
-            {
-              ...prePlanner,
-              applyTargets(targets) {
-                addTargets(targets);
-                hasTargets = true;
-              },
+          {
+            ...prePlanner,
+            applyTargets(targets) {
+              addTargets(targets);
+              hasTargets = true;
             },
-            {
-              targets: [],
-              task: reusedTask.name,
-              annex: true,
-              parallel: false,
-              attrs: {},
-              args: [],
-            },
-            ZCallDetails.by(),
+          },
+          {
+            targets: [],
+            task: reusedTask.name,
+            annex: true,
+            parallel: false,
+            attrs: {},
+            args: [],
+          },
+          ZCallDetails.by(),
         );
 
         if (!hasTargets) {
           throw new UnknownZTaskError(
-              preTarget.name,
-              task,
-              `Can not reuse package selectors of task "${reusedTask.name}" in <${preTarget.name}>`,
+            preTarget.name,
+            task,
+            `Can not reuse package selectors of task "${reusedTask.name}" in <${preTarget.name}>`,
           );
         }
       }
@@ -304,11 +286,5 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
  * @internal
  */
 function reusedZBatchNames(name: string, forTask: string): readonly string[] {
-  return [
-    `${name}/${forTask}`,
-    `+${name}/${forTask}`,
-    `${name}/*`,
-    `+${name}/*`,
-    name,
-  ];
+  return [`${name}/${forTask}`, `+${name}/${forTask}`, `${name}/*`, `+${name}/*`, name];
 }

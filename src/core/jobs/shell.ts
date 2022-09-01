@@ -28,8 +28,7 @@ export abstract class ZShell {
    *
    * @param setup - Task execution setup.
    */
-  constructor(readonly setup: ZSetup) {
-  }
+  constructor(readonly setup: ZSetup) {}
 
   /**
    * Executes a {@link ZTaskSpec.Command command}.

@@ -4,7 +4,6 @@ import type { ZBatching, ZBatchRule } from '../../core';
  * Parallel batched tasks execution control.
  */
 export interface ZParallelBatches {
-
   /**
    * Whether batched tasks will be executed parallel to each other.
    */
@@ -19,7 +18,6 @@ export interface ZParallelBatches {
    * @returns Updated batching policy.
    */
   makeParallel(parallel?: boolean): ZBatching;
-
 }
 
 /**
@@ -28,10 +26,9 @@ export interface ZParallelBatches {
 class ZParallelBatches$ implements ZParallelBatches {
 
   static newBatchRule(
-      context: ZBatchRule.Context<ZParallelBatches>,
-      parallel = false,
+    context: ZBatchRule.Context<ZParallelBatches>,
+    parallel = false,
   ): ZBatchRule.Instance<ZParallelBatches> {
-
     const control = new ZParallelBatches$(context, parallel);
 
     return {
@@ -46,10 +43,9 @@ class ZParallelBatches$ implements ZParallelBatches {
   }
 
   private constructor(
-      private readonly _context: ZBatchRule.Context<ZParallelBatches>,
-      private readonly _parallel: boolean,
-  ) {
-  }
+    private readonly _context: ZBatchRule.Context<ZParallelBatches>,
+    private readonly _parallel: boolean,
+  ) {}
 
   get isParallel(): boolean {
     return this._parallel;
@@ -57,7 +53,15 @@ class ZParallelBatches$ implements ZParallelBatches {
 
   makeParallel(parallel = true): ZBatching {
     return this._context.updateInstance(
-        context => parallel ? ZParallelBatches$.newBatchRule(context, parallel) : undefined,
+      (
+        context: ZBatchRule.Context<ZParallelBatches>,
+      ): ZBatchRule.Instance<ZParallelBatches> | undefined => {
+        if (parallel) {
+          return ZParallelBatches$.newBatchRule(context, parallel);
+        }
+
+        return;
+      },
     );
   }
 

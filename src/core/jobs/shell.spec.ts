@@ -5,7 +5,6 @@ import { ZShell } from './shell';
 
 describe('ZShell', () => {
   describe('noop', () => {
-
     let shell: ZShell;
 
     beforeEach(() => {

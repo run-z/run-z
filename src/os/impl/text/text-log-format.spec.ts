@@ -8,7 +8,6 @@ import { ProgressZLogPrefix } from '../progress-log';
 import { textProgressZLogFormatter } from './text-log-format';
 
 describe('textProgressZLogFormatter', () => {
-
   let logger: ZLogger;
   let output: string[];
 
@@ -23,33 +22,43 @@ describe('textProgressZLogFormatter', () => {
       },
     });
 
-    logger = logZBy(logZToStream(
-        writer,
-        {
-          format: textProgressZLogFormatter(prefix),
-          eol: '',
-        },
-    ));
-
+    logger = logZBy(
+      logZToStream(writer, {
+        format: textProgressZLogFormatter(prefix),
+        eol: '',
+      }),
+    );
   });
 
   it('prefixes each line', async () => {
     logger.info('1\n2\n3\n', zlogDetails({ target: 'package', task: 'build' }));
     await logger.whenLogged();
     expect(output[0].split('\n')).toEqual([
-        '[package build] 1',
-        '[package build] 2',
-        '[package build] 3',
-        '',
+      '[package build] 1',
+      '[package build] 2',
+      '[package build] 3',
+      '',
     ]);
   });
   it('does not log abort error stack trace', async () => {
-    logger.error(zlogDetails({ error: new AbortedZExecutionError('Aborted!'), target: 'package', task: 'build' }));
+    logger.error(
+      zlogDetails({
+        error: new AbortedZExecutionError('Aborted!'),
+        target: 'package',
+        task: 'build',
+      }),
+    );
     await logger.whenLogged();
     expect(output).toEqual(['[package build] Execution aborted. Aborted!\n']);
   });
   it('does not log failure error stack trace', async () => {
-    logger.error(zlogDetails({ error: new FailedZExecutionError('Failed!'), target: 'package', task: 'build' }));
+    logger.error(
+      zlogDetails({
+        error: new FailedZExecutionError('Failed!'),
+        target: 'package',
+        task: 'build',
+      }),
+    );
     await logger.whenLogged();
     expect(output).toEqual(['[package build] Execution failed. Failed!\n']);
   });

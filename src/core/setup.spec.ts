@@ -8,14 +8,12 @@ import { ZTaskFactory, ZTaskParser } from './tasks';
 describe('ZSetup', () => {
   describe('taskParser', () => {
     it('is constructed by default', () => {
-
       const setup = new ZSetup({});
 
       expect(setup.taskParser).toBeInstanceOf(ZTaskParser);
       expect(setup.taskParser).toBe(setup.taskParser);
     });
     it('is taken from config', () => {
-
       const taskParser = new ZTaskParser();
       const setup = new ZSetup({ taskParser });
 
@@ -23,10 +21,9 @@ describe('ZSetup', () => {
       expect(setup.taskParser).toBe(taskParser);
     });
     it('is built by config', () => {
-
       let taskParser!: ZTaskParser;
       const setup = new ZSetup({
-        taskParser: taskParser = new ZTaskParser(),
+        taskParser: (taskParser = new ZTaskParser()),
       });
 
       expect(setup.taskParser).toBe(taskParser);
@@ -36,14 +33,12 @@ describe('ZSetup', () => {
 
   describe('taskFactory', () => {
     it('is constructed by default', () => {
-
       const setup = new ZSetup();
 
       expect(setup.taskFactory).toBeInstanceOf(ZTaskFactory);
       expect(setup.taskFactory).toBe(setup.taskFactory);
     });
     it('is taken from config', () => {
-
       const taskFactory = new ZTaskFactory();
       const setup = new ZSetup({ taskFactory });
 
@@ -51,7 +46,6 @@ describe('ZSetup', () => {
       expect(setup.taskFactory).toBe(taskFactory);
     });
     it('is built by config', () => {
-
       const taskFactory = new ZTaskFactory();
       const setup = new ZSetup({ taskFactory: valueProvider(taskFactory) });
 
@@ -62,16 +56,16 @@ describe('ZSetup', () => {
 
   describe('packageResolver', () => {
     it('is constructed by default', () => {
-
       const setup = new ZSetup();
 
       expect(setup.packageResolver).toBeInstanceOf(ZPackageResolver);
       expect(setup.packageResolver).toBe(setup.packageResolver);
     });
     it('is built by config', () => {
-
       let packageResolver!: ZPackageResolver;
-      const setup = new ZSetup({ packageResolver: s => packageResolver = new ZPackageResolver(s) });
+      const setup = new ZSetup({
+        packageResolver: s => (packageResolver = new ZPackageResolver(s)),
+      });
 
       expect(setup.packageResolver).toBe(packageResolver);
       expect(packageResolver).toBeDefined();
@@ -81,16 +75,14 @@ describe('ZSetup', () => {
 
   describe('planner', () => {
     it('is constructed by default', () => {
-
       const setup = new ZSetup();
 
       expect(setup.planner).toBeInstanceOf(ZPlanner);
       expect(setup.planner).toBe(setup.planner);
     });
     it('is built by config', () => {
-
       let planner!: ZPlanner;
-      const setup = new ZSetup({ planner: s => planner = new ZPlanner(s) });
+      const setup = new ZSetup({ planner: s => (planner = new ZPlanner(s)) });
 
       expect(setup.planner).toBe(planner);
       expect(planner).toBeDefined();

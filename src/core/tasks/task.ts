@@ -10,7 +10,6 @@ import type { ZTaskSpec } from './task-spec';
  * @typeparam TAction  Task action type.
  */
 export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> extends ZTaskQualifier {
-
   /**
    * Target package the task is applied to.
    */
@@ -43,8 +42,8 @@ export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> exte
    */
   callDetails(call: ZCall<TAction>): ZCallDetails.Full<TAction>;
 
-    /**
-     * Plans a call to this task as a prerequisite of another one.
+  /**
+   * Plans a call to this task as a prerequisite of another one.
    *
    * By default a {@link ZTaskSpec.Group grouping task} treats the first argument as a sub-task name and the rest of
    * arguments as arguments to this sub-task. A task of any other type calls to itself.
@@ -57,9 +56,9 @@ export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> exte
    * @returns A promise resolved to recorded prerequisite call.
    */
   callAsPre<TAction extends ZTaskSpec.Action>(
-      planner: ZPrePlanner,
-      pre: ZTaskSpec.Pre,
-      details: ZCallDetails.Full<TAction>,
+    planner: ZPrePlanner,
+    pre: ZTaskSpec.Pre,
+    details: ZCallDetails.Full<TAction>,
   ): Promise<ZCall>;
 
   /**
@@ -84,7 +83,6 @@ export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> exte
    * @returns Task execution instance.
    */
   exec(job: ZJob<TAction>): ZExecution;
-
 }
 
 /**
@@ -95,10 +93,8 @@ export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> exte
  * Qualifiers are distinguished by their identity.
  */
 export interface ZTaskQualifier {
-
   /**
    * Human- readable task qualifier.
    */
   readonly taskQN: string;
-
 }

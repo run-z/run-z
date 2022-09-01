@@ -11,7 +11,6 @@ import type { ZCallPlanner } from './call-planner';
  * Passed to {@link ZTask.callAsPre} to record prerequisite calls.
  */
 export interface ZPrePlanner {
-
   /**
    * A planner of the call to the task depending on this prerequisite.
    */
@@ -43,9 +42,9 @@ export interface ZPrePlanner {
    * @returns A promise resolved to the task call when it is recorded.
    */
   callPre<TAction extends ZTaskSpec.Action>(
-      this: void,
-      task: ZTask<TAction>,
-      details?: ZCallDetails<TAction>,
+    this: void,
+    task: ZTask<TAction>,
+    details?: ZCallDetails<TAction>,
   ): Promise<ZCall>;
 
   /**
@@ -56,5 +55,4 @@ export interface ZPrePlanner {
    * @returns New prerequisites planner.
    */
   transient(batching: ZBatching): ZPrePlanner;
-
 }

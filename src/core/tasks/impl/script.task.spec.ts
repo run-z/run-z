@@ -6,7 +6,6 @@ import { ZTaskParams } from '../../plan';
 import { ScriptZTask } from './script.task';
 
 describe('ScriptZTask', () => {
-
   let testPlan: TestPlan;
 
   beforeEach(() => {
@@ -14,16 +13,13 @@ describe('ScriptZTask', () => {
   });
 
   it('does not contain any parameters', async () => {
-    testPlan.addPackage(
-        'test',
-        {
-          packageJson: {
-            scripts: {
-              test: 'exec --arg',
-            },
-          },
+    testPlan.addPackage('test', {
+      packageJson: {
+        scripts: {
+          test: 'exec --arg',
         },
-    );
+      },
+    });
 
     const call = await testPlan.call('test');
 
@@ -37,30 +33,26 @@ describe('ScriptZTask', () => {
 
   describe('exec', () => {
     it('executes NPM script', async () => {
-
       const shell = {
         execScript: jest.fn<ZShell['execScript']>(execZNoOp),
       };
 
-      testPlan.addPackage(
-          'test',
-          {
-            packageJson: {
-              scripts: {
-                test: 'run-z exec/--arg1 --arg2',
-                exec: 'start --arg3',
-              },
-            },
+      testPlan.addPackage('test', {
+        packageJson: {
+          scripts: {
+            test: 'run-z exec/--arg1 --arg2',
+            exec: 'start --arg3',
           },
-      );
+        },
+      });
 
       const call = await testPlan.call('test');
 
       await call.exec(shell as Partial<ZShell> as ZShell).whenDone();
 
       expect(shell.execScript).toHaveBeenCalledWith(
-          expect.objectContaining({ call: await testPlan.callOf(call.task.target, 'exec') }),
-          'exec',
+        expect.objectContaining({ call: await testPlan.callOf(call.task.target, 'exec') }),
+        'exec',
       );
 
       const { params } = shell.execScript.mock.calls[0][0];
@@ -69,30 +61,26 @@ describe('ScriptZTask', () => {
     });
 
     it('applies `+cmd:command` annex parameters', async () => {
-
       const shell = {
         execScript: jest.fn<ZShell['execScript']>(execZNoOp),
       };
 
-      testPlan.addPackage(
-          'test',
-          {
-            packageJson: {
-              scripts: {
-                test: 'run-z exec/--arg1 --arg2',
-                exec: 'start --arg3',
-              },
-            },
+      testPlan.addPackage('test', {
+        packageJson: {
+          scripts: {
+            test: 'run-z exec/--arg1 --arg2',
+            exec: 'start --arg3',
           },
-      );
+        },
+      });
 
       const call = await testPlan.parse('run-z test +cmd:start/--cmd-arg/cmd=applied');
 
       await call.exec(shell as Partial<ZShell> as ZShell).whenDone();
 
       expect(shell.execScript).toHaveBeenCalledWith(
-          expect.objectContaining({ call: await testPlan.callOf(call.task.target, 'exec') }),
-          'exec',
+        expect.objectContaining({ call: await testPlan.callOf(call.task.target, 'exec') }),
+        'exec',
       );
 
       const { params } = shell.execScript.mock.calls[0][0];
@@ -104,30 +92,26 @@ describe('ScriptZTask', () => {
     });
 
     it('does not apply `+cmd:command` annex parameters to non-parsable command', async () => {
-
       const shell = {
         execScript: jest.fn<ZShell['execScript']>(execZNoOp),
       };
 
-      testPlan.addPackage(
-          'test',
-          {
-            packageJson: {
-              scripts: {
-                test: 'run-z exec/--arg1 --arg2',
-                exec: 'start --arg3 > out',
-              },
-            },
+      testPlan.addPackage('test', {
+        packageJson: {
+          scripts: {
+            test: 'run-z exec/--arg1 --arg2',
+            exec: 'start --arg3 > out',
           },
-      );
+        },
+      });
 
       const call = await testPlan.parse('run-z test +cmd:start/--cmd-arg/cmd=applied');
 
       await call.exec(shell as Partial<ZShell> as ZShell).whenDone();
 
       expect(shell.execScript).toHaveBeenCalledWith(
-          expect.objectContaining({ call: await testPlan.callOf(call.task.target, 'exec') }),
-          'exec',
+        expect.objectContaining({ call: await testPlan.callOf(call.task.target, 'exec') }),
+        'exec',
       );
 
       const { params } = shell.execScript.mock.calls[0][0];

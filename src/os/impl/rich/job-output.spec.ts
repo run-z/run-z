@@ -2,7 +2,6 @@ import { beforeEach, describe, expect, it } from '@jest/globals';
 import { ZJobOutput } from './job-output';
 
 describe('ZJobOutput', () => {
-
   let output: ZJobOutput;
 
   beforeEach(() => {
@@ -49,9 +48,7 @@ describe('ZJobOutput', () => {
       output.add('line');
       output.clear();
       output.add('line2');
-      expect([...output.lines()]).toEqual([
-        ['line2', 0],
-      ]);
+      expect([...output.lines()]).toEqual([['line2', 0]]);
     });
   });
 });

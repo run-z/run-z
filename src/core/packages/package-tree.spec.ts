@@ -2,7 +2,6 @@ import { beforeEach, describe, expect, it } from '@jest/globals';
 import { ZPackageTree } from './package-tree';
 
 describe('ZPackageTree', () => {
-
   let root: ZPackageTree;
   let nested1: ZPackageTree;
   let nested11: ZPackageTree;
@@ -54,7 +53,6 @@ describe('ZPackageTree', () => {
 
   describe('put', () => {
     it('replaces existing tree', () => {
-
       const otherNested = root.put('nested1/nested1.1', { packageJson: { name: 'nested1.1' } });
 
       expect(otherNested).not.toBe(nested11);
@@ -68,10 +66,7 @@ describe('ZPackageTree', () => {
 
   describe('nested', () => {
     it('lists nested packages', () => {
-      expect(root.nested().map(n => n.path)).toEqual([
-        'root/nested1',
-        'root/nested2',
-      ]);
+      expect(root.nested().map(n => n.path)).toEqual(['root/nested1', 'root/nested2']);
     });
   });
 
@@ -89,10 +84,7 @@ describe('ZPackageTree', () => {
   describe('select', () => {
     describe('.//', () => {
       it('lists nested packages', async () => {
-        expect(await select('.//')).toEqual([
-          'root/nested1',
-          'root/nested2',
-        ]);
+        expect(await select('.//')).toEqual(['root/nested1', 'root/nested2']);
       });
     });
 
@@ -138,7 +130,5 @@ describe('ZPackageTree', () => {
     async function select(pattern: string): Promise<string[]> {
       return (await root.select(pattern)).map(({ path }) => path);
     }
-
   });
-
 });

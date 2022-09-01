@@ -8,7 +8,6 @@ import type { ZExtension, ZTaskOption } from '../core';
  * @internal
  */
 function readZHelp(mode?: 'brief' | 'detailed'): ZOptionReader.Fn<ZTaskOption> {
-
   const formatter = new ZHelpFormatter();
   const printHelp = async (options: ZOptionMeta.List): Promise<void> => {
     console.log(await formatter.help(options));
@@ -18,16 +17,15 @@ function readZHelp(mode?: 'brief' | 'detailed'): ZOptionReader.Fn<ZTaskOption> {
     mode,
     display(options, option) {
       option.executeBy(() => execZ(() => {
+          const whenDone = printHelp(options);
 
-        const whenDone = printHelp(options);
-
-        return {
-          whenDone() {
-            return whenDone;
-          },
-          abort: noop,
-        };
-      }));
+          return {
+            whenDone() {
+              return whenDone;
+            },
+            abort: noop,
+          };
+        }));
     },
   });
 }

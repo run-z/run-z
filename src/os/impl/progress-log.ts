@@ -21,7 +21,6 @@ export class ProgressZLogPrefix {
   taskCols = 0;
 
   update(target: string, task: string): boolean {
-
     const targetCols = stringWidth(target);
     const taskCols = stringWidth(task);
     let updated = false;
@@ -39,8 +38,9 @@ export class ProgressZLogPrefix {
   }
 
   text(message: ZLogMessage): string {
-
-    const { details: { target, task } } = message;
+    const {
+      details: { target, task },
+    } = message;
     const targetName = chalk.green(target);
     const gaps1 = ' '.repeat(Math.max(this.targetCols - stringWidth(targetName), 0));
     const taskName = chalk.greenBright(task);
@@ -60,24 +60,21 @@ export class ProgressZLogPrefix {
  */
 export class ProgressZLogRecorder implements ZLogRecorder {
 
-  static create(
-      {
-        prefix,
-        format,
-        eol,
-        onPrefixUpdate,
-      }: {
-        prefix: ProgressZLogPrefix;
-        format: TextZLogFormat | ZLogFormatter;
-        eol?: string | undefined;
-        onPrefixUpdate?: ((this: void) => void) | undefined;
-      },
-  ): ZLogRecorder {
-
+  static create({
+    prefix,
+    format,
+    eol,
+    onPrefixUpdate,
+  }: {
+    prefix: ProgressZLogPrefix;
+    format: TextZLogFormat | ZLogFormatter;
+    eol?: string | undefined;
+    onPrefixUpdate?: ((this: void) => void) | undefined;
+  }): ZLogRecorder {
     const by = logZWhenLevel(
-        ZLogLevel.Error,
-        logZToStream(process.stderr, { format, eol }),
-        logZToStream(process.stdout, { format, eol }),
+      ZLogLevel.Error,
+      logZToStream(process.stderr, { format, eol }),
+      logZToStream(process.stdout, { format, eol }),
     );
 
     return new ProgressZLogRecorder(prefix, by, { onPrefixUpdate });
@@ -86,20 +83,21 @@ export class ProgressZLogRecorder implements ZLogRecorder {
   private readonly _onPrefixUpdate: () => void;
 
   constructor(
-      private readonly _prefix: ProgressZLogPrefix,
-      private readonly _by: ZLogRecorder,
-      {
-        onPrefixUpdate = noop,
-      }: {
-        onPrefixUpdate?: ((this: void) => void) | undefined;
-      },
+    private readonly _prefix: ProgressZLogPrefix,
+    private readonly _by: ZLogRecorder,
+    {
+      onPrefixUpdate = noop,
+    }: {
+      onPrefixUpdate?: ((this: void) => void) | undefined;
+    },
   ) {
     this._onPrefixUpdate = onPrefixUpdate;
   }
 
   record(message: ZLogMessage): void {
-
-    const { details: { target, task } } = message;
+    const {
+      details: { target, task },
+    } = message;
     const prefixUpdated = this._prefix.update(target as string, task as string);
 
     this._by.record(message);

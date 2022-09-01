@@ -6,7 +6,6 @@ import type { ZPackage } from '../core';
 import { TestPlan } from '../spec';
 
 describe('NamedZBatchesBuiltin', () => {
-
   let testPlan: TestPlan;
 
   beforeEach(() => {
@@ -42,13 +41,13 @@ describe('NamedZBatchesBuiltin', () => {
     describe('on nested inclusions', () => {
       it('is ignored when no matches found', async () => {
         await init(
-            {
-              'all/*': 'run-z ./first',
-            },
-            {
-              build: 'exec first',
-              'third/*': 'run-z ../third',
-            },
+          {
+            'all/*': 'run-z ./first',
+          },
+          {
+            build: 'exec first',
+            'third/*': 'run-z ../third',
+          },
         );
 
         await testPlan.parse(`run-z ${option}all build`);
@@ -59,13 +58,13 @@ describe('NamedZBatchesBuiltin', () => {
       });
       it('is applied when match found', async () => {
         await init(
-            {
-              'all/*': 'run-z ./first',
-            },
-            {
-              'third/*': 'run-z ../third',
-              'all/*': 'run-z ../second',
-            },
+          {
+            'all/*': 'run-z ./first',
+          },
+          {
+            'third/*': 'run-z ../third',
+            'all/*': 'run-z ../second',
+          },
         );
 
         await testPlan.parse(`run-z ${option}all build`);
@@ -144,60 +143,48 @@ describe('NamedZBatchesBuiltin', () => {
   });
 
   async function init(
-      scripts: ZPackageJson['scripts'] = {
-        'first/*': 'run-z ./first',
-        'second/*': 'run-z ./second',
-        'third/*': 'run-z ./third',
-      },
-      scripts1: ZPackageJson['scripts'] = {
-        build: 'exec first',
-      },
+    scripts: ZPackageJson['scripts'] = {
+      'first/*': 'run-z ./first',
+      'second/*': 'run-z ./second',
+      'third/*': 'run-z ./third',
+    },
+    scripts1: ZPackageJson['scripts'] = {
+      build: 'exec first',
+    },
   ): Promise<void> {
-    testPlan.addPackage(
-        'main',
-        {
-          packageJson: {
-            name: 'main',
-            scripts,
-          },
-        },
-    );
+    testPlan.addPackage('main', {
+      packageJson: {
+        name: 'main',
+        scripts,
+      },
+    });
 
-    testPlan.addPackage(
-        'main/first',
-        {
-          packageJson: {
-            name: 'first',
-            scripts: scripts1,
-          },
-        },
-    );
+    testPlan.addPackage('main/first', {
+      packageJson: {
+        name: 'first',
+        scripts: scripts1,
+      },
+    });
     first = await testPlan.target();
 
-    testPlan.addPackage(
-        'main/second',
-        {
-          packageJson: {
-            name: 'second',
-            scripts: {
-              build: 'exec second',
-            },
-          },
+    testPlan.addPackage('main/second', {
+      packageJson: {
+        name: 'second',
+        scripts: {
+          build: 'exec second',
         },
-    );
+      },
+    });
     second = await testPlan.target();
 
-    testPlan.addPackage(
-        'main/third',
-        {
-          packageJson: {
-            name: 'third',
-            scripts: {
-              build: 'exec third',
-            },
-          },
+    testPlan.addPackage('main/third', {
+      packageJson: {
+        name: 'third',
+        scripts: {
+          build: 'exec third',
         },
-    );
+      },
+    });
     third = await testPlan.target();
   }
 });

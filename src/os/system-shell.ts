@@ -99,8 +99,9 @@ ${clz.param('FORMAT')} can be one of:
 
 ${clz.bullet()} ${clz.usage('rich')} - rich progress format,
 ${clz.bullet()} ${clz.usage('text')} - report progress by logging task output,
-${clz.bullet()} ${clz.usage('auto')} or none - use ${clz.usage('rich')} format for color terminals, or ${
-                  clz.usage('text')} otherwise.
+${clz.bullet()} ${clz.usage('auto')} or none - use ${clz.usage(
+                'rich',
+              )} format for color terminals, or ${clz.usage('text')} otherwise.
 
 By default ${clz.usage('text')} format is used.
             `;
@@ -109,7 +110,6 @@ By default ${clz.usage('text')} format is used.
         },
         '--progress=*': {
           read: (option: ZOption) => {
-
             const [name] = option.values();
 
             this.setProgressFormat(name as 'rich' | 'text' | 'auto');
@@ -132,7 +132,6 @@ By default ${clz.usage('text')} format is used.
         },
         '-g*': {
           read: (option: ZOption) => {
-
             const [name] = option.values();
 
             this.setProgressFormat(name as 'rich' | 'text' | 'auto');
@@ -178,11 +177,12 @@ By default ${clz.usage('text')} format is used.
    * @returns `this` instance.
    */
   setProgressFormat(name: 'rich' | 'text' | 'auto'): this {
-    this._format = name === 'rich'
+    this._format
+      = name === 'rich'
         ? lazyValue(zProgressFormats.rich)
         : name === 'auto'
-            ? lazyValue(zProgressFormats.auto)
-            : lazyValue(zProgressFormats.text);
+        ? lazyValue(zProgressFormats.auto)
+        : lazyValue(zProgressFormats.text);
 
     return this;
   }
@@ -203,22 +203,19 @@ By default ${clz.usage('text')} format is used.
    * @returns New executable.
    */
   commandExecutable(
-      job: ZJob,
-      command: string,
-      {
-        env = process.env,
-      }: {
-        env?: ProcessEnv | undefined;
-      } = {},
+    job: ZJob,
+    command: string,
+    {
+      env = process.env,
+    }: {
+      env?: ProcessEnv | undefined;
+    } = {},
   ): SystemZExecutable {
-    return this._buildExecutable(
-        job,
-        {
-          command,
-          args: job.params.args,
-          env,
-        },
-    );
+    return this._buildExecutable(job, {
+      command,
+      args: job.params.args,
+      env,
+    });
   }
 
   execScript(job: ZJob, name: string): ZExecution {
@@ -235,15 +232,14 @@ By default ${clz.usage('text')} format is used.
    * @returns New executable.
    */
   scriptExecutable(
-      job: ZJob,
-      name: string,
-      {
-        env = process.env,
-      }: {
-        env?: ProcessEnv | undefined;
-      } = {},
+    job: ZJob,
+    name: string,
+    {
+      env = process.env,
+    }: {
+      env?: ProcessEnv | undefined;
+    } = {},
   ): SystemZExecutable {
-
     const { npm_execpath: npmPath = 'npm' } = env;
     const npmExt = path.extname(npmPath);
     const npmBase = path.basename(npmPath, npmExt);
@@ -272,18 +268,17 @@ By default ${clz.usage('text')} format is used.
   }
 
   private _buildExecutable(
-      job: ZJob,
-      {
-        command,
-        args,
-        env,
-      }: {
-        command: string;
-        args: readonly string[];
-        env: ProcessEnv;
-      },
+    job: ZJob,
+    {
+      command,
+      args,
+      env,
+    }: {
+      command: string;
+      args: readonly string[];
+      env: ProcessEnv;
+    },
   ): SystemZExecutable {
-
     const cwd = job.call.task.target.location.path;
 
     return {
@@ -301,56 +296,47 @@ By default ${clz.usage('text')} format is used.
   }
 
   private _run(job: ZJob, { command, args, cwd, env }: SystemZExecutable): ZExecution {
-
     const progress = this._format().jobProgress(job);
 
     return this._exec(() => {
-
       const spawned = spawnZ(
-          () => {
+        () => {
+          const childProcess = spawn(command, args, {
+            cwd,
+            env,
+            stdio: ['ignore', 'pipe', 'pipe'],
+            windowsHide: true,
+          }) as ChildProcessByStdio<null, Readable, Readable>;
 
-            const childProcess = spawn(
-                command,
-                args,
-                {
-                  cwd,
-                  env,
-                  stdio: ['ignore', 'pipe', 'pipe'],
-                  windowsHide: true,
-                },
-            ) as ChildProcessByStdio<null, Readable, Readable>;
+          childProcess.stdout.on('data', (chunk: string | Buffer) => progress.log.info(chunk.toString()));
+          childProcess.stderr.on('data', (chunk: string | Buffer) => progress.log.error(chunk.toString()));
 
-            childProcess.stdout.on('data', (chunk: string | Buffer) => progress.log.info(chunk.toString()));
-            childProcess.stderr.on('data', (chunk: string | Buffer) => progress.log.error(chunk.toString()));
+          progress.start();
 
-            progress.start();
-
-            return childProcess;
+          return childProcess;
+        },
+        {
+          kill(proc) {
+            kill(proc.pid!, 'SIGKILL');
           },
-          {
-            kill(proc) {
-              kill(proc.pid!, 'SIGKILL');
-            },
-          },
+        },
       );
 
       return {
         whenStarted: spawned.whenStarted.bind(spawned),
         whenDone() {
-          return spawned.whenDone()
-              .then(
-                  () => {
-                    progress.stop();
-                    progress.log.info(zlogDetails({ success: true }));
-                  },
-              ).catch(
-                  error => {
-                    progress.stop();
-                    progress.log.error(zlogDetails({ error }));
+          return spawned
+            .whenDone()
+            .then(() => {
+              progress.stop();
+              progress.log.info(zlogDetails({ success: true }));
+            })
+            .catch(error => {
+              progress.stop();
+              progress.log.error(zlogDetails({ error }));
 
-                    return Promise.reject(error);
-                  },
-              );
+              return Promise.reject(error);
+            });
         },
         abort: spawned.abort.bind(spawned),
       };
@@ -363,7 +349,6 @@ By default ${clz.usage('text')} format is used.
  * A command executable by system shell.
  */
 export interface SystemZExecutable {
-
   /**
    * A command to execute.
    */
@@ -383,11 +368,9 @@ export interface SystemZExecutable {
    * Environment variables to apply.
    */
   readonly env: ProcessEnv;
-
 }
 
 function SystemZShell$readMaxJobs(this: SystemZShell, option: ZOption): void {
-
   const [value] = option.values();
   let limit: number | undefined = parseInt(value, 10);
 
@@ -401,15 +384,12 @@ function SystemZShell$readMaxJobs(this: SystemZShell, option: ZOption): void {
 }
 
 function SystemZShell$attrEnv(job: ZJob): Record<string, string> {
-
   const env = new Map<string, Set<string>>();
 
   for (const [attr, value] of job.params.allAttrs('env')) {
-
     const envName = attr.substr(4); // Remove `env:` prefix
 
     if (envName) {
-
       const prevValues = env.get(envName);
 
       if (prevValues) {

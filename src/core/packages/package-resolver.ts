@@ -18,7 +18,6 @@ export class ZPackageResolver {
    * @param setup - Task execution setup.
    */
   constructor(readonly setup: ZSetup) {
-
     const byName = new Map<string, Set<ZPackage$>>();
     let depGraphRev = 0;
 
@@ -27,19 +26,17 @@ export class ZPackageResolver {
       rev: 0,
       addPackage(pkg: ZPackage$): void {
         if (!pkg.isAnonymous) {
-
           const { name } = pkg;
           let named = byName.get(name);
 
           if (!named) {
-            byName.set(name, named = new Set<ZPackage$>());
+            byName.set(name, (named = new Set<ZPackage$>()));
           }
 
           named.add(pkg);
         }
       },
       byName: name => {
-
         const packages = byName.get(name);
 
         return packages ? [...packages] : [];
@@ -65,7 +62,6 @@ export class ZPackageResolver {
    * @returns A promise resolved to package.
    */
   async get(location: ZPackageLocation): Promise<ZPackage> {
-
     const found = await this.find(location);
 
     return found || Promise.reject(new UnknownZPackageError(location.path));
@@ -79,14 +75,15 @@ export class ZPackageResolver {
    * @returns A promise resolved to package or `undefined` if there is no such package.
    */
   find(location: ZPackageLocation): Promise<ZPackage | undefined> {
-
     const existing = this._byPath.get(location.path);
 
     if (existing) {
       return existing;
     }
 
-    const findParent = async (location: ZPackageLocation | undefined): Promise<ZPackage | undefined> => {
+    const findParent = async (
+      location: ZPackageLocation | undefined,
+    ): Promise<ZPackage | undefined> => {
       if (!location) {
         return;
       }
@@ -94,7 +91,6 @@ export class ZPackageResolver {
       return (await this.find(location)) || findParent(location.parent);
     };
     const discoverPackage = async (): Promise<ZPackage$ | undefined> => {
-
       const parent = await findParent(location.parent);
       const packageJson = await location.load();
 

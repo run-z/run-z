@@ -51,9 +51,9 @@ class RichZJobProgress extends ZJobProgress {
 
   protected _createLog(): ZLogRecorder {
     return new RichJobZLogRecorder(
-        (this._format as RichZProgressFormat).rows,
-        this._output,
-        super._createLog(),
+      (this._format as RichZProgressFormat).rows,
+      this._output,
+      super._createLog(),
     );
   }
 

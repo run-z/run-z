@@ -11,7 +11,6 @@ import type { DraftZTask } from './draft-task';
  */
 function fallbackZTaskSpecOptions({ taskParser }: ZSetup): SupportedZOptions.Map<ZTaskOption> {
   return {
-
     '--*=*': {
       read: readNameValueZTaskOption,
       meta: {
@@ -53,8 +52,12 @@ function fallbackZTaskSpecOptions({ taskParser }: ZSetup): SupportedZOptions.Map
           return `
 where ${clz.param('PKG-SELECTOR')}:
 ${clz.bullet()} is an URL path to package directory;
-${clz.bullet()} may contain ${clz.usage('//')} separator to select immediately nested package directories;
-${clz.bullet()} may contain ${clz.usage('///')} separator to select deeply nested package directories.
+${clz.bullet()} may contain ${clz.usage(
+            '//',
+          )} separator to select immediately nested package directories;
+${clz.bullet()} may contain ${clz.usage(
+            '///',
+          )} separator to select deeply nested package directories.
 
 Hidden directories ignored.
       `;
@@ -64,8 +67,12 @@ Hidden directories ignored.
 
     '*=*': {
       read(option) {
-
-        const { name, taskTarget: { setup: { taskParser } } } = option;
+        const {
+          name,
+          taskTarget: {
+            setup: { taskParser },
+          },
+        } = option;
 
         const onAttr = (name: string, value: string, replacement: boolean): boolean => {
           if (name.includes('/')) {
@@ -87,10 +94,7 @@ Hidden directories ignored.
       meta: {
         group: '!:run',
         get usage() {
-          return [
-            `${clz.param('ATTR')}=${clz.param('VALUE')}`,
-            `=${clz.param('ATTR')}`,
-          ];
+          return [`${clz.param('ATTR')}=${clz.param('VALUE')}`, `=${clz.param('ATTR')}`];
         },
         help: 'Set global attribute',
         get description() {
@@ -104,7 +108,6 @@ The ${clz.usage('=' + clz.param('ATTR'))} means the same as ${clz.usage(clz.para
 
     '/*': {
       read(option) {
-
         const { name } = option;
         const preOption = name.substr(1);
 
@@ -124,7 +127,10 @@ The ${clz.usage('=' + clz.param('ATTR'))} means the same as ${clz.usage(clz.para
 
     '//*': {
       read(option) {
-        option.values().slice(0, -1).forEach(preOption => option.pre.addOption(preOption));
+        option
+          .values()
+          .slice(0, -1)
+          .forEach(preOption => option.pre.addOption(preOption));
       },
       meta: {
         group: '!:pre:args',
@@ -151,7 +157,6 @@ The ${clz.usage('=' + clz.param('ATTR'))} means the same as ${clz.usage(clz.para
 
     '*': {
       read(option) {
-
         let { name } = option;
         let annex = false;
 
@@ -167,10 +172,7 @@ The ${clz.usage('=' + clz.param('ATTR'))} means the same as ${clz.usage(clz.para
       meta: {
         group: '!:pre',
         get usage() {
-          return [
-            clz.param('TASK'),
-            `+${clz.param('TASK')}`,
-          ];
+          return [clz.param('TASK'), `+${clz.param('TASK')}`];
         },
         help: 'Add task prerequisite',
         get description() {
@@ -180,13 +182,14 @@ Prerequisites are tasks executed in order before the task itself.
 Each task is executed once even though it can be called multiple times. Call parameters (i.e. command line arguments
 and attributes) from multiple calls are merged.
 
-The ${clz.usage('+' + clz.param('TASK'))} form is a task annex. Such form does not cause the task to be executed,
+The ${clz.usage(
+            '+' + clz.param('TASK'),
+          )} form is a task annex. Such form does not cause the task to be executed,
 but can provide additional parameters for actual task call, or allow parallel execution with another task.
 `;
         },
       },
     },
-
   };
 }
 
@@ -194,12 +197,14 @@ but can provide additional parameters for actual task call, or allow parallel ex
  * @internal
  */
 export function zTaskSpecOptions(
-    setup: ZSetup,
-    options?: ZTaskParser.SupportedOptions,
+  setup: ZSetup,
+  options?: ZTaskParser.SupportedOptions,
 ): SupportedZOptions<ZTaskOption, DraftZTask> {
-
-  const providers: SupportedZOptions.Provider<ZTaskOption, DraftZTask>[] = arrayOfElements(options)
-      .map(o => ({ builder }) => valueByRecipe(o, builder));
+  const providers: SupportedZOptions.Provider<ZTaskOption, DraftZTask>[] = arrayOfElements(
+    options,
+  ).map(
+    o => ({ builder }) => valueByRecipe(o, builder),
+  );
 
   return [fallbackZTaskSpecOptions(setup), ...providers];
 }
@@ -220,7 +225,6 @@ function readNamedZTaskOption(option: ZTaskOption): void {
  * @internal
  */
 function readNameValueZTaskOption(option: ZTaskOption): void {
-
   const [value] = option.values(1);
   const arg = `${option.name}=${value}`;
 

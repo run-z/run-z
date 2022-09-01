@@ -50,12 +50,13 @@ export class ZSetup {
    * Task specifier parser.
    */
   get taskParser(): ZTaskParser {
-    return this._taskParser || (
-        this._taskParser = this._config.taskParser
-            ? valueByRecipe(this._config.taskParser, this)
-            : new ZTaskParser({
-              options: this.extensions.flatMap(extension => arrayOfElements(extension.options)),
-            })
+    return (
+      this._taskParser
+      || (this._taskParser = this._config.taskParser
+        ? valueByRecipe(this._config.taskParser, this)
+        : new ZTaskParser({
+            options: this.extensions.flatMap(extension => arrayOfElements(extension.options)),
+          }))
     );
   }
 
@@ -63,10 +64,11 @@ export class ZSetup {
    * Task factory.
    */
   get taskFactory(): ZTaskFactory {
-    return this._taskFactory || (
-        this._taskFactory = this._config.taskFactory
-            ? valueByRecipe(this._config.taskFactory, this)
-            : new ZTaskFactory()
+    return (
+      this._taskFactory
+      || (this._taskFactory = this._config.taskFactory
+        ? valueByRecipe(this._config.taskFactory, this)
+        : new ZTaskFactory())
     );
   }
 
@@ -74,10 +76,11 @@ export class ZSetup {
    * A resolver of all discovered {@link ZPackage NPM packages}.
    */
   get packageResolver(): ZPackageResolver {
-    return this._packageResolver || (
-        this._packageResolver = this._config.packageResolver
-            ? valueByRecipe(this._config.packageResolver, this)
-            : new ZPackageResolver(this)
+    return (
+      this._packageResolver
+      || (this._packageResolver = this._config.packageResolver
+        ? valueByRecipe(this._config.packageResolver, this)
+        : new ZPackageResolver(this))
     );
   }
 
@@ -85,10 +88,11 @@ export class ZSetup {
    * Task execution planner.
    */
   get planner(): ZPlanner {
-    return this._planner || (
-        this._planner = this._config.planner
-            ? valueByRecipe(this._config.planner, this)
-            : new ZPlanner(this)
+    return (
+      this._planner
+      || (this._planner = this._config.planner
+        ? valueByRecipe(this._config.planner, this)
+        : new ZPlanner(this))
     );
   }
 

@@ -6,7 +6,6 @@ import type { ZCall } from './call';
  * Task execution plan.
  */
 export interface ZPlan {
-
   /**
    * Task execution calls of this plan.
    *
@@ -35,5 +34,4 @@ export interface ZPlan {
    * @returns Either a call to the target task, or `undefined` if the call did not happen.
    */
   findCallOf(target: ZPackage, taskName: string): ZCall | undefined;
-
 }

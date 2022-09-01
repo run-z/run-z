@@ -9,7 +9,6 @@ import { TestPlan } from '../spec';
 import { ZHelpBuiltin } from './help.builtin';
 
 describe('ZHelpBuiltin', () => {
-
   let testPlan: TestPlan;
   let shell: ZShell;
 
@@ -30,7 +29,6 @@ describe('ZHelpBuiltin', () => {
 
   describe('-h', () => {
     it('displays brief help', async () => {
-
       const call = await testPlan.parse('run-z -h', { options: shell.options() });
 
       await call.exec(ZShell.noop(testPlan.setup)).whenDone();
@@ -38,21 +36,18 @@ describe('ZHelpBuiltin', () => {
       expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('-h'));
     });
     it('ignores tasks without `meta.help`', async () => {
-      testPlan = new TestPlan(
-          'root',
-          {
-            setup: new ZSetup({
-              extensions: [
-                ZHelpBuiltin,
-                {
-                  options: {
-                    '--test-option': noop,
-                  },
-                },
-              ],
-            }),
-          },
-      );
+      testPlan = new TestPlan('root', {
+        setup: new ZSetup({
+          extensions: [
+            ZHelpBuiltin,
+            {
+              options: {
+                '--test-option': noop,
+              },
+            },
+          ],
+        }),
+      });
 
       const call = await testPlan.parse('run-z -h', { options: shell.options() });
 
@@ -65,7 +60,6 @@ describe('ZHelpBuiltin', () => {
 
   describe('--help', () => {
     it('displays full help', async () => {
-
       const call = await testPlan.parse('run-z --help', { options: shell.options() });
 
       await call.exec(ZShell.noop(testPlan.setup)).whenDone();
@@ -73,21 +67,18 @@ describe('ZHelpBuiltin', () => {
       expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('--help'));
     });
     it('handles tasks without `meta.help`', async () => {
-      testPlan = new TestPlan(
-          'root',
-          {
-            setup: new ZSetup({
-              extensions: [
-                ZHelpBuiltin,
-                {
-                  options: {
-                    '--test-option': noop,
-                  },
-                },
-              ],
-            }),
-          },
-      );
+      testPlan = new TestPlan('root', {
+        setup: new ZSetup({
+          extensions: [
+            ZHelpBuiltin,
+            {
+              options: {
+                '--test-option': noop,
+              },
+            },
+          ],
+        }),
+      });
 
       const call = await testPlan.parse('run-z --help', { options: shell.options() });
 
@@ -96,24 +87,21 @@ describe('ZHelpBuiltin', () => {
       expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('--test-option'));
     });
     it('is prohibited after executor', async () => {
-      testPlan = new TestPlan(
-          'root',
-          {
-            setup: new ZSetup({
-              extensions: [
-                ZHelpBuiltin,
-                {
-                  options: {
-                    '--test-exec'(option) {
-                      option.recognize();
-                      option.executeBy(execZNoOp);
-                    },
-                  },
+      testPlan = new TestPlan('root', {
+        setup: new ZSetup({
+          extensions: [
+            ZHelpBuiltin,
+            {
+              options: {
+                '--test-exec'(option) {
+                  option.recognize();
+                  option.executeBy(execZNoOp);
                 },
-              ],
-            }),
-          },
-      );
+              },
+            },
+          ],
+        }),
+      });
 
       const error = await testPlan.parse('run-z --test-exec --help').catch(asis);
 

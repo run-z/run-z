@@ -15,13 +15,11 @@ export class TextZProgressFormat extends ZProgressFormat {
   }
 
   protected _createLog(): ZLogRecorder {
-    return ProgressZLogRecorder.create(
-        {
-          prefix: this.prefix,
-          format: textProgressZLogFormatter(this.prefix),
-          eol: '',
-        },
-    );
+    return ProgressZLogRecorder.create({
+      prefix: this.prefix,
+      format: textProgressZLogFormatter(this.prefix),
+      eol: '',
+    });
   }
 
 }
@@ -29,5 +27,4 @@ export class TextZProgressFormat extends ZProgressFormat {
 /**
  * @internal
  */
-class TextZJobProgress extends ZJobProgress {
-}
+class TextZJobProgress extends ZJobProgress {}

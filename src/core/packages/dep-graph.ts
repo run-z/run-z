@@ -4,7 +4,6 @@ import type { ZPackage } from './package';
  * Package dependency graph.
  */
 export interface ZDepGraph {
-
   /**
    * Iterates over package dependencies in dependencies-first order.
    *
@@ -18,5 +17,4 @@ export interface ZDepGraph {
    * @returns A read-only set of dependent packages.
    */
   dependants(): ReadonlySet<ZPackage>;
-
 }

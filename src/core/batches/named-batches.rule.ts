@@ -6,7 +6,6 @@ import type { ZBatching } from './batching';
  * Named batches selection control.
  */
 export interface NamedZBatches {
-
   /**
    * A set of batch names to limit the package selection by.
    *
@@ -68,20 +67,17 @@ export interface NamedZBatches {
    * @returns Updated batching policy.
    */
   reset(): ZBatching;
-
 }
 
 /**
  * @internal
  */
 interface NamedZBatchesConfig {
-
   readonly only?: ReadonlySet<string> | undefined;
 
   readonly with: ReadonlySet<string>;
 
   readonly except: ReadonlySet<string>;
-
 }
 
 /**
@@ -90,10 +86,9 @@ interface NamedZBatchesConfig {
 class NamedZBatches$ implements NamedZBatches {
 
   static newBatchRule(
-      context: ZBatchRule.Context<NamedZBatches>,
-      config?: NamedZBatchesConfig,
+    context: ZBatchRule.Context<NamedZBatches>,
+    config?: NamedZBatchesConfig,
   ): ZBatchRule.Instance<NamedZBatches$> {
-
     const control = new NamedZBatches$(context, config);
 
     return {
@@ -110,8 +105,8 @@ class NamedZBatches$ implements NamedZBatches {
   readonly except: ReadonlySet<string>;
 
   constructor(
-      private readonly _context: ZBatchRule.Context<NamedZBatches>,
-      { only, with: w = new Set(), except = new Set() }: Partial<NamedZBatchesConfig> = {},
+    private readonly _context: ZBatchRule.Context<NamedZBatches>,
+    { only, with: w = new Set(), except = new Set() }: Partial<NamedZBatchesConfig> = {},
   ) {
     this.only = only;
     this.with = w;
@@ -119,53 +114,42 @@ class NamedZBatches$ implements NamedZBatches {
   }
 
   setOnly(batchNames?: Iterable<string>): ZBatching {
-    return this._context.updateInstance(context => NamedZBatches$.newBatchRule(
-          context,
-          {
-            only: batchNames && new Set(batchNames),
-            with: this.with,
-            except: this.except,
-          },
-      ));
+    return this._context.updateInstance(context => NamedZBatches$.newBatchRule(context, {
+        only: batchNames && new Set(batchNames),
+        with: this.with,
+        except: this.except,
+      }));
   }
 
   addWith(batchNames: Iterable<string>): ZBatching {
     return this._context.updateInstance(context => {
-
       const withBatches = new Set(this.with);
 
       for (const batchName of batchNames) {
         withBatches.add(batchName);
       }
 
-      return NamedZBatches$.newBatchRule(
-          context,
-          {
-            only: this.only,
-            with: withBatches,
-            except: this.except,
-          },
-      );
+      return NamedZBatches$.newBatchRule(context, {
+        only: this.only,
+        with: withBatches,
+        except: this.except,
+      });
     });
   }
 
   addExcept(batchNames: Iterable<string>): ZBatching {
     return this._context.updateInstance(context => {
-
       const except = new Set(this.except);
 
       for (const batchName of batchNames) {
         except.add(batchName);
       }
 
-      return NamedZBatches$.newBatchRule(
-          context,
-          {
-            only: this.only,
-            with: this.with,
-            except,
-          },
-      );
+      return NamedZBatches$.newBatchRule(context, {
+        only: this.only,
+        with: this.with,
+        except,
+      });
     });
   }
 

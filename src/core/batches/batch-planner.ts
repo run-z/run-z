@@ -9,7 +9,6 @@ import type { ZBatchDetails } from './batch-details';
  * Passed to {@link ZBatcher batcher} in order the latter to record batched task calls.
  */
 export interface ZBatchPlanner {
-
   /**
    * A planner of the call to the task depending on the batched ones.
    */
@@ -40,9 +39,8 @@ export interface ZBatchPlanner {
    * @returns A promise resolved when task call recorded.
    */
   batch<TAction extends ZTaskSpec.Action>(
-      this: void,
-      task: ZTask<TAction>,
-      details?: ZBatchDetails<TAction>,
+    this: void,
+    task: ZTask<TAction>,
+    details?: ZBatchDetails<TAction>,
   ): Promise<ZCall>;
-
 }

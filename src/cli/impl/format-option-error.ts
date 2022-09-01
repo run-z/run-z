@@ -4,24 +4,13 @@ import type { ZOptionError } from '@run-z/optionz';
  * @internal
  */
 export function formatZOptionError(
-    {
-      message,
-      optionLocation: {
-        args,
-        index,
-        endIndex,
-        offset,
-        endOffset,
-      },
-    }: ZOptionError,
-    fromIndex = 2,
+  { message, optionLocation: { args, index, endIndex, offset, endOffset } }: ZOptionError,
+  fromIndex = 2,
 ): readonly string[] {
-
   let commandLine = '';
   let underline = '';
 
   for (let i = fromIndex; i < args.length; ++i) {
-
     const arg = args[i];
 
     if (commandLine) {

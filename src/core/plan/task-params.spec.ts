@@ -2,7 +2,6 @@ import { beforeEach, describe, expect, it } from '@jest/globals';
 import { ZTaskParams } from './task-params';
 
 describe('ZTaskParams', () => {
-
   let initial: ZTaskParams.Values;
   let mutable: ZTaskParams.Mutable;
 
@@ -41,26 +40,24 @@ describe('ZTaskParams', () => {
 
   describe('attr', () => {
     it('returns `undefined` for absent attribute', () => {
-
       const params = new ZTaskParams(initial);
 
       expect(params.attr('absent')).toBeUndefined();
     });
     it('returns `undefined` for removed attribute', () => {
-
       const params = new ZTaskParams({ ...initial, attrs: { removed: null } });
 
       expect(params.attr('removed')).toBeUndefined();
     });
     it('returns the only attribute value', () => {
-
       const params = new ZTaskParams(initial);
 
       expect(params.attr('attr')).toBe('val');
     });
     it('returns the the last attribute value', () => {
-
-      const params = new ZTaskParams(ZTaskParams.update(mutable, { attrs: { attr: ['val2', 'val3'] } }));
+      const params = new ZTaskParams(
+        ZTaskParams.update(mutable, { attrs: { attr: ['val2', 'val3'] } }),
+      );
 
       expect(params.attr('attr')).toBe('val3');
     });
@@ -68,50 +65,50 @@ describe('ZTaskParams', () => {
 
   describe('flag', () => {
     it('returns `false` for absent flag', () => {
-
       const params = new ZTaskParams(initial);
 
       expect(params.flag('absent')).toBe(false);
     });
     it('returns `true` for present flag', () => {
-
       const params = new ZTaskParams(initial);
 
       expect(params.flag('attr')).toBe(true);
     });
     it('returns `true` for flag with empty value', () => {
-
       const params = new ZTaskParams(ZTaskParams.update(mutable, { attrs: { attr2: [''] } }));
 
       expect(params.flag('attr2')).toBe(true);
     });
     it('returns `false` for flag with `0` value', () => {
-
       const params = new ZTaskParams(ZTaskParams.update(mutable, { attrs: { flag: ['1', '0'] } }));
 
       expect(params.flag('flag')).toBe(false);
     });
     it('returns `false` for flag with `false` value', () => {
-
-      const params = new ZTaskParams(ZTaskParams.update(mutable, { attrs: { flag: ['true', 'false'] } }));
+      const params = new ZTaskParams(
+        ZTaskParams.update(mutable, { attrs: { flag: ['true', 'false'] } }),
+      );
 
       expect(params.flag('flag')).toBe(false);
     });
     it('returns `false` for flag with `False` value', () => {
-
-      const params = new ZTaskParams(ZTaskParams.update(mutable, { attrs: { flag: ['true', 'False'] } }));
+      const params = new ZTaskParams(
+        ZTaskParams.update(mutable, { attrs: { flag: ['true', 'False'] } }),
+      );
 
       expect(params.flag('flag')).toBe(false);
     });
     it('returns `false` for flag with `off` value', () => {
-
-      const params = new ZTaskParams(ZTaskParams.update(mutable, { attrs: { flag: ['on', 'off'] } }));
+      const params = new ZTaskParams(
+        ZTaskParams.update(mutable, { attrs: { flag: ['on', 'off'] } }),
+      );
 
       expect(params.flag('flag')).toBe(false);
     });
     it('returns `false` for flag with `OFF` value', () => {
-
-      const params = new ZTaskParams(ZTaskParams.update(mutable, { attrs: { flag: ['on', 'OFF'] } }));
+      const params = new ZTaskParams(
+        ZTaskParams.update(mutable, { attrs: { flag: ['on', 'OFF'] } }),
+      );
 
       expect(params.flag('flag')).toBe(false);
     });

@@ -11,14 +11,14 @@ export class TestPlan {
   private _target: ZPackageLocation;
 
   constructor(
-      name = 'root',
-      {
-        setup = new StandardZSetup(),
-        packageJson = {},
-      }: {
-        setup?: ZSetup | undefined;
-        packageJson?: ZPackageJson | undefined;
-      } = {},
+    name = 'root',
+    {
+      setup = new StandardZSetup(),
+      packageJson = {},
+    }: {
+      setup?: ZSetup | undefined;
+      packageJson?: ZPackageJson | undefined;
+    } = {},
   ) {
     this.setup = setup;
     this._target = this.root = new ZPackageTree(name, { packageJson });
@@ -29,7 +29,6 @@ export class TestPlan {
   }
 
   target(location: ZPackageLocation = this._target): Promise<ZPackage> {
-
     const target = this.setup.packageResolver.get(location);
 
     this._target = location;
@@ -38,32 +37,30 @@ export class TestPlan {
   }
 
   addPackage(
-      name: string,
-      {
-        packageJson,
-      }: {
-        packageJson?: ZPackageJson | undefined;
-      } = {},
+    name: string,
+    {
+      packageJson,
+    }: {
+      packageJson?: ZPackageJson | undefined;
+    } = {},
   ): ZPackageTree {
-    return this._target = this.root.put(name, { packageJson });
+    return (this._target = this.root.put(name, { packageJson }));
   }
 
   async parse(commandLine: string, opts?: ZOptionsParser.Opts<ZTaskOption>): Promise<ZCall> {
-
     const target = await this.target();
     const builder = this.setup.taskFactory.newTask(target, '');
 
     await builder.parse(commandLine, opts);
 
-    return this.lastCall = await builder.task().call();
+    return (this.lastCall = await builder.task().call());
   }
 
   async call(taskName: string, details?: ZCallDetails): Promise<ZCall> {
-
     const target = await this.target();
     const task = await target.task(taskName);
 
-    return this.lastCall = await task.call(details);
+    return (this.lastCall = await task.call(details));
   }
 
   async callOf(target: ZPackage, taskName: string): Promise<ZCall> {

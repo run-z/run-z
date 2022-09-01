@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
 import { ttyColumns } from './tty-columns';
 
 describe('ttyColumns', () => {
-
   let prevColumns: number;
   let prevEnv: string | undefined;
 

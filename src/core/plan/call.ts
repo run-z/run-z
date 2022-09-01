@@ -12,7 +12,6 @@ import type { ZTaskParams } from './task-params';
  * @typeparam TAction  Task action type.
  */
 export interface ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
-
   /**
    * Execution plan.
    */
@@ -83,5 +82,4 @@ export interface ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
    * @returns Either new task execution job, or the one already started.
    */
   exec(shell: ZShell): ZJob<TAction>;
-
 }

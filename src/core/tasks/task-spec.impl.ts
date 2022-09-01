@@ -1,7 +1,10 @@
 import type { ZTaskSpec } from './task-spec';
 
-export function addZTaskAttr(target: Record<string, string[] | null>, name: string, value: string): void {
-
+export function addZTaskAttr(
+  target: Record<string, string[] | null>,
+  name: string,
+  value: string,
+): void {
   const subIdx = name.lastIndexOf(':');
 
   if (subIdx >= 0) {
@@ -21,10 +24,9 @@ export function removeZTaskAttr(target: Record<string, string[] | null>, name: s
   target[name] = null;
 }
 
-export function addZTaskAttrs(target: Record<string, string[] | null>, attrs: ZTaskSpec.Attrs): void {
-  Object.entries(attrs).forEach(
-      ([name, values]) => values?.forEach(
-          value => addZTaskAttr(target, name, value),
-      ),
-  );
+export function addZTaskAttrs(
+  target: Record<string, string[] | null>,
+  attrs: ZTaskSpec.Attrs,
+): void {
+  Object.entries(attrs).forEach(([name, values]) => values?.forEach(value => addZTaskAttr(target, name, value)));
 }

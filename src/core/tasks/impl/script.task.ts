@@ -9,8 +9,11 @@ import { AbstractZTask } from './abstract.task';
 export class ScriptZTask extends AbstractZTask<ZTaskSpec.Script> {
 
   get alike(): Iterable<string> {
-
-    const { spec: { action: { command } } } = this;
+    const {
+      spec: {
+        action: { command },
+      },
+    } = this;
 
     return command ? [`cmd:${command}`] : [];
   }

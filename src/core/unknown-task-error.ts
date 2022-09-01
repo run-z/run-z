@@ -11,9 +11,9 @@ export class UnknownZTaskError extends Error {
    * @param message - Error message.
    */
   constructor(
-      readonly packageName: string,
-      readonly taskName: string,
-      message = `Task "${taskName}" is not known in <${packageName}>`,
+    readonly packageName: string,
+    readonly taskName: string,
+    message = `Task "${taskName}" is not known in <${packageName}>`,
   ) {
     super(message);
   }

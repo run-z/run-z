@@ -14,12 +14,12 @@ import { ZTaskParams } from './task-params';
  * @internal
  */
 export type ZCallParams =
-/**
- * @param evaluator - Task parameters evaluation context.
- *
- * @returns Partial task execution parameters.
- */
-    (this: void, evaluator: ZTaskParams.Evaluator) => ZTaskParams.Partial;
+  /**
+   * @param evaluator - Task parameters evaluation context.
+   *
+   * @returns Partial task execution parameters.
+   */
+  (this: void, evaluator: ZTaskParams.Evaluator) => ZTaskParams.Partial;
 
 /**
  * Task execution call depth evaluator signature.
@@ -30,10 +30,10 @@ export type ZCallParams =
  * @internal
  */
 export type ZCallDepth =
-/**
- * @returns The depth of the call.
- */
-    (this: void, evaluator: ZTaskParams.Evaluator) => number;
+  /**
+   * @returns The depth of the call.
+   */
+  (this: void, evaluator: ZTaskParams.Evaluator) => number;
 
 /**
  * @internal
@@ -45,7 +45,8 @@ const ZCallDepth__key: ZTaskParams.ValueKey<number> = {
 /**
  * @internal
  */
-export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> implements ZCall<TAction> {
+export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
+  implements ZCall<TAction> {
 
   // Duplicated here to avoid circular dependency
   static newEvaluator(): ZTaskParams.Evaluator {
@@ -57,10 +58,10 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
   private readonly _entries = new Set<ZTask>();
 
   constructor(
-      private readonly _records: ZInstructionRecords,
-      private readonly _parent: ZCallRecord | undefined,
-      readonly task: ZTask<TAction>,
-      details: ZCallDetails<TAction>,
+    private readonly _records: ZInstructionRecords,
+    private readonly _parent: ZCallRecord | undefined,
+    readonly task: ZTask<TAction>,
+    details: ZCallDetails<TAction>,
   ) {
     this._currDepth = _parent ? evaluator => _parent._depth(evaluator) + 1 : valueProvider(0);
     this._addParams(details, this._depth.bind(this));
@@ -71,7 +72,6 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
   }
 
   entries(): readonly ZTask[] {
-
     const entries = this._entries.size ? this._entries : [this.task];
     const result: ZTask[] = [];
 
@@ -94,11 +94,9 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
   }
 
   _call(details: ZCallDetails<TAction>, by: ZCallRecord): this {
-
     const paramDepth: ZCallDepth = evaluator => by._depth(evaluator) + 1;
 
     if (!by.by(this.task)) {
-
       const prevDepth = this._currDepth;
 
       this._currDepth = evaluator => Math.min(prevDepth(evaluator), paramDepth(evaluator));
@@ -110,7 +108,6 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
   }
 
   private _addParams(details: ZCallDetails<TAction>, depth: ZCallDepth): void {
-
     const params = details.params ? details.params.bind(details) : valueProvider({});
 
     this._params.push([params, depth]);
@@ -134,28 +131,22 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> im
   }
 
   params(evaluator: ZTaskParams.Evaluator): ZTaskParams {
-    return evaluator.paramsOf(
-        this,
-        () => {
+    return evaluator.paramsOf(this, () => {
+      // Sort the calls from deepest to closest.
+      const allParams = this._params
+        .map(([params, depth]): readonly [number, ZCallParams] => [depth(evaluator), params])
+        .sort(([firstDepth], [secondDepth]) => secondDepth - firstDepth);
 
-          // Sort the calls from deepest to closest.
-          const allParams = this._params.map(
-              ([params, depth]): readonly [number, ZCallParams] => [depth(evaluator), params],
-          ).sort(
-              ([firstDepth], [secondDepth]) => secondDepth - firstDepth,
-          );
+      // Evaluate parameters.
+      const result = ZTaskParams.newMutable();
 
-          // Evaluate parameters.
-          const result = ZTaskParams.newMutable();
+      ZTaskParams.update(result, this.task.callDetails(this).params(evaluator));
+      for (const [, params] of allParams) {
+        ZTaskParams.update(result, params(evaluator));
+      }
 
-          ZTaskParams.update(result, this.task.callDetails(this).params(evaluator));
-          for (const [, params] of allParams) {
-            ZTaskParams.update(result, params(evaluator));
-          }
-
-          return new ZTaskParams(result);
-        },
-    );
+      return new ZTaskParams(result);
+    });
   }
 
   prerequisites(): readonly ZCall[] {

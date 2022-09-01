@@ -8,9 +8,9 @@ import type { ZJob } from './job';
  * @typeparam TAction  Task action type.
  */
 export type ZTaskExecutor<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> =
-/**
- * @param job - Task execution job.
- *
- * @returns Task execution instance.
- */
-    (this: void, job: ZJob<TAction>) => ZExecution;
+  /**
+   * @param job - Task execution job.
+   *
+   * @returns Task execution instance.
+   */
+  (this: void, job: ZJob<TAction>) => ZExecution;

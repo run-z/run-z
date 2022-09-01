@@ -10,26 +10,26 @@ export abstract class ZPackageLocation {
   /**
    * Parent package location or `undefined` if there is no parent location.
    */
-  readonly abstract parent: ZPackageLocation | undefined;
+  abstract readonly parent: ZPackageLocation | undefined;
 
   /**
    * A path specific to this location.
    *
    * Two locations with the same paths considered equal.
    */
-  readonly abstract path: string;
+  abstract readonly path: string;
 
   /**
    * A path specific to this location in URL format.
    */
-  readonly abstract urlPath: string;
+  abstract readonly urlPath: string;
 
   /**
    * Base name of the package path.
    *
    * I.e. the last segment of the {@link path}.
    */
-  readonly abstract baseName: string;
+  abstract readonly baseName: string;
 
   /**
    * Constructs location relatively to this one.
@@ -76,11 +76,9 @@ export abstract class ZPackageLocation {
    * @returns A promise resolving to iterable of matching package locations.
    */
   async select(selector: string): Promise<readonly ZPackageLocation[]> {
-
     const index = selector.indexOf('//');
 
     if (index < 0) {
-
       const relative = this.relative(selector);
 
       return relative ? [relative] : [];
@@ -95,12 +93,12 @@ export abstract class ZPackageLocation {
       return [];
     }
 
-    const allNested: readonly ZPackageLocation[] = deep ? await root.deeplyNested() : await root.nested();
+    const allNested: readonly ZPackageLocation[] = deep
+      ? await root.deeplyNested()
+      : await root.nested();
 
     if (suffix) {
-      return (await Promise.all(
-          allNested.map(nested => nested.select(suffix)),
-      )).flat();
+      return (await Promise.all(allNested.map(nested => nested.select(suffix)))).flat();
     }
 
     return deep ? [[root], allNested].flat() : allNested;

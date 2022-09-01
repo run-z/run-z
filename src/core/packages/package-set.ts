@@ -35,9 +35,7 @@ class CombinedZPackageSet extends ZPackageSet {
   }
 
   async packages(): Promise<readonly ZPackage[]> {
-    return (await Promise.all(
-        this.sets.map(set => set.packages()),
-    )).flat();
+    return (await Promise.all(this.sets.map(set => set.packages()))).flat();
   }
 
   andPackages(other: ZPackageSet): ZPackageSet {

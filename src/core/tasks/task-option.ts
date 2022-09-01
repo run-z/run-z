@@ -8,7 +8,6 @@ import type { ZTaskSpec } from './task-spec';
  * This is passed to {@link ZTaskOption.Reader option reader}.
  */
 export interface ZTaskOption extends ZOption, ZTaskModifier {
-
   /**
    * Prerequisite specification instance.
    *
@@ -32,11 +31,9 @@ export interface ZTaskOption extends ZOption, ZTaskModifier {
    * @returns `this` instance.
    */
   setAction(action: ZTaskSpec.Action): this;
-
 }
 
 export namespace ZTaskOption {
-
   /**
    * A signature of the reader of the command line containing a task specifier.
    */
@@ -55,7 +52,6 @@ export namespace ZTaskOption {
    * Available via {@link ZTaskOption.pre} property.
    */
   export interface Pre {
-
     /**
      * Whether the prerequisite specification {@link start started} and not {@link conclude concluded} yet.
      *
@@ -164,7 +160,5 @@ export namespace ZTaskOption {
      * @returns Concluded prerequisite specifier, or `undefined` if prerequisite specification is not started.
      */
     conclude(): ZTaskSpec.Pre | undefined;
-
   }
-
 }

@@ -33,16 +33,13 @@ export class ZJobRows {
 
 }
 
-
 /**
  * @internal
  */
 export interface ZJobRow {
-
   up(): number;
 
   done(): void;
-
 }
 
 /**

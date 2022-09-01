@@ -17,7 +17,6 @@ import { ZPackageDirectory } from './package-directory';
 import { SystemZShell } from './system-shell';
 
 describe('SystemZShell', () => {
-
   let setup: ZSetup;
   let shell: SystemZShell;
   let pkg: ZPackage;
@@ -55,7 +54,6 @@ describe('SystemZShell', () => {
 
   describe('scriptExecutable', () => {
     it('executes NPM script', async () => {
-
       const task = await pkg.task('test:script');
       const call = await task.call();
       const job = call.exec(shell);
@@ -65,13 +63,11 @@ describe('SystemZShell', () => {
         npm_execpath: 'some-package-manager',
       };
 
-      expect(shell.scriptExecutable(
-          job,
-          'test:script',
-          {
-            env,
-          },
-      )).toEqual({
+      expect(
+        shell.scriptExecutable(job, 'test:script', {
+          env,
+        }),
+      ).toEqual({
         command: 'some-package-manager',
         args: ['run', '--', 'test:script', ...job.params.args],
         cwd,
@@ -84,7 +80,6 @@ describe('SystemZShell', () => {
       });
     });
     it('executes NPM script with npm by default', async () => {
-
       const task = await pkg.task('test:script');
       const call = await task.call();
       const job = call.exec(shell);
@@ -94,13 +89,11 @@ describe('SystemZShell', () => {
         npm_execpath: undefined,
       };
 
-      expect(shell.scriptExecutable(
-          job,
-          'test:script',
-          {
-            env,
-          },
-      )).toEqual({
+      expect(
+        shell.scriptExecutable(job, 'test:script', {
+          env,
+        }),
+      ).toEqual({
         command: 'npm',
         args: ['run', '--', 'test:script', ...job.params.args],
         cwd,
@@ -115,7 +108,6 @@ describe('SystemZShell', () => {
       expect(await call.exec(shell).whenDone()).toBeUndefined();
     });
     it('executes NPM script with Yarn when possible', async () => {
-
       const task = await pkg.task('test:script');
       const call = await task.call();
       const job = call.exec(shell);
@@ -125,13 +117,11 @@ describe('SystemZShell', () => {
         npm_execpath: 'yarn',
       };
 
-      expect(shell.scriptExecutable(
-          job,
-          'test:script',
-          {
-            env,
-          },
-      )).toEqual({
+      expect(
+        shell.scriptExecutable(job, 'test:script', {
+          env,
+        }),
+      ).toEqual({
         command: 'yarn',
         args: ['run', 'test:script', ...job.params.args],
         cwd,
@@ -144,7 +134,6 @@ describe('SystemZShell', () => {
       });
     });
     it('executes NPM script with node when npm_execpath points to `.js` file', async () => {
-
       const yarnPath = './src/spec/bin/yarn.js';
       const task = await pkg.task('test:script');
       const call = await task.call();
@@ -155,13 +144,11 @@ describe('SystemZShell', () => {
         npm_execpath: yarnPath,
       };
 
-      expect(shell.scriptExecutable(
-          job,
-          'test:script',
-          {
-            env,
-          },
-      )).toEqual({
+      expect(
+        shell.scriptExecutable(job, 'test:script', {
+          env,
+        }),
+      ).toEqual({
         command: process.execPath,
         args: [yarnPath, 'run', 'test:script', ...job.params.args],
         cwd,
@@ -174,7 +161,6 @@ describe('SystemZShell', () => {
       });
     });
     it('executes NPM script with node when npm_execpath points to `.cjs` file', async () => {
-
       const pnpmPath = './src/spec/bin/pnpm.cjs';
       const task = await pkg.task('test:script');
       const call = await task.call();
@@ -185,13 +171,11 @@ describe('SystemZShell', () => {
         npm_execpath: pnpmPath,
       };
 
-      expect(shell.scriptExecutable(
-          job,
-          'test:script',
-          {
-            env,
-          },
-      )).toEqual({
+      expect(
+        shell.scriptExecutable(job, 'test:script', {
+          env,
+        }),
+      ).toEqual({
         command: process.execPath,
         args: [pnpmPath, 'run', 'test:script', ...job.params.args],
         cwd,
@@ -207,7 +191,6 @@ describe('SystemZShell', () => {
 
   describe('commandExecutable', () => {
     it('executes command', async () => {
-
       const task = await pkg.task('test:command');
       const call = await task.call();
       const job = call.exec(shell);
@@ -238,7 +221,6 @@ describe('SystemZShell', () => {
     expect(await call.exec(shell).whenDone()).toBeUndefined();
   });
   it('executes all tasks', async () => {
-
     const task = await pkg.task('test:all');
     const call = await task.call();
 
@@ -269,7 +251,6 @@ describe('SystemZShell', () => {
     }
   });
   it('fails on command kill with exit code', async () => {
-
     const task = await pkg.task('test:kill-with-code');
     const call = await task.call();
     const error = await call.exec(shell).whenDone().catch(asis);
@@ -297,7 +278,6 @@ describe('SystemZShell', () => {
   });
 
   describe('options', () => {
-
     let writeSpy: SpyInstance<(chunk: Uint8Array | string, cb?: any) => boolean>;
 
     beforeEach(() => {
@@ -313,7 +293,6 @@ describe('SystemZShell', () => {
     });
 
     describe('--help', () => {
-
       let logSpy: SpyInstance<(...args: unknown[]) => void>;
 
       beforeEach(() => {
@@ -325,7 +304,6 @@ describe('SystemZShell', () => {
       });
 
       it('prints shell options help', async () => {
-
         const builder = setup.taskFactory.newTask(pkg, '');
 
         await builder.parse('run-z --help', { options: shell.options() });
@@ -342,20 +320,23 @@ describe('SystemZShell', () => {
 
     describe('--progress=text', () => {
       it('enables text progress format', async () => {
-
         const builder = setup.taskFactory.newTask(pkg, 'no-progress-reporting-task');
 
-        await builder.parse('run-z --color --progress=text test:script', { options: shell.options() });
+        await builder.parse('run-z --color --progress=text test:script', {
+          options: shell.options(),
+        });
 
         const task = builder.task();
         const call = await task.call();
 
         await call.exec(shell).whenDone();
 
-        expect(writeSpy).not.toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
+        expect(writeSpy).not.toHaveBeenCalledWith(
+          expect.stringContaining(logSymbols.success),
+          expect.any(Function),
+        );
       });
       it('enables text progress format in shorter form', async () => {
-
         const builder = setup.taskFactory.newTask(pkg, 'no-progress-reporting-task');
 
         await builder.parse('run-z --color -gtext test:script', { options: shell.options() });
@@ -365,13 +346,15 @@ describe('SystemZShell', () => {
 
         await call.exec(shell).whenDone();
 
-        expect(writeSpy).not.toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
+        expect(writeSpy).not.toHaveBeenCalledWith(
+          expect.stringContaining(logSymbols.success),
+          expect.any(Function),
+        );
       });
     });
 
     describe('--color', () => {
       it('enables text progress format', async () => {
-
         const builder = setup.taskFactory.newTask(pkg, 'no-progress-reporting-task');
 
         await builder.parse('run-z --color test:script', { options: shell.options() });
@@ -381,13 +364,15 @@ describe('SystemZShell', () => {
 
         await call.exec(shell).whenDone();
 
-        expect(writeSpy).not.toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
+        expect(writeSpy).not.toHaveBeenCalledWith(
+          expect.stringContaining(logSymbols.success),
+          expect.any(Function),
+        );
       });
     });
 
     describe('--color --progress', () => {
       it('enables rich progress format', async () => {
-
         const builder = setup.taskFactory.newTask(pkg, 'progress-reporting-task');
 
         await builder.parse('run-z --color --progress test:script', { options: shell.options() });
@@ -398,13 +383,15 @@ describe('SystemZShell', () => {
 
         await job.whenDone();
 
-        expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
+        expect(writeSpy).toHaveBeenCalledWith(
+          expect.stringContaining(logSymbols.success),
+          expect.any(Function),
+        );
       });
     });
 
     describe('--color -g', () => {
       it('enables rich progress format', async () => {
-
         const builder = setup.taskFactory.newTask(pkg, 'progress-reporting-task');
 
         await builder.parse('run-z --color -g test:script', { options: shell.options() });
@@ -415,16 +402,20 @@ describe('SystemZShell', () => {
 
         await job.whenDone();
 
-        expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
+        expect(writeSpy).toHaveBeenCalledWith(
+          expect.stringContaining(logSymbols.success),
+          expect.any(Function),
+        );
       });
     });
 
     describe('--no-colors --progress', () => {
       it('enables text progress format', async () => {
-
         const builder = setup.taskFactory.newTask(pkg, 'no-progress-reporting-task');
 
-        await builder.parse('run-z --no-colors --progress test:script', { options: shell.options() });
+        await builder.parse('run-z --no-colors --progress test:script', {
+          options: shell.options(),
+        });
 
         const task = builder.task();
         const call = await task.call();
@@ -432,13 +423,15 @@ describe('SystemZShell', () => {
 
         await job.whenDone();
 
-        expect(writeSpy).not.toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
+        expect(writeSpy).not.toHaveBeenCalledWith(
+          expect.stringContaining(logSymbols.success),
+          expect.any(Function),
+        );
       });
     });
 
     describe('--no-colors -g', () => {
       it('enables text progress format', async () => {
-
         const builder = setup.taskFactory.newTask(pkg, 'no-progress-reporting-task');
 
         await builder.parse('run-z --no-colors -g test:script', { options: shell.options() });
@@ -449,16 +442,20 @@ describe('SystemZShell', () => {
 
         await job.whenDone();
 
-        expect(writeSpy).not.toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
+        expect(writeSpy).not.toHaveBeenCalledWith(
+          expect.stringContaining(logSymbols.success),
+          expect.any(Function),
+        );
       });
     });
 
     describe('--color --progress=auto', () => {
       it('enables rich progress format', async () => {
-
         const builder = setup.taskFactory.newTask(pkg, 'progress-reporting-task');
 
-        await builder.parse('run-z --color --progress=auto test:script', { options: shell.options() });
+        await builder.parse('run-z --color --progress=auto test:script', {
+          options: shell.options(),
+        });
 
         const task = builder.task();
         const call = await task.call();
@@ -466,13 +463,15 @@ describe('SystemZShell', () => {
 
         await job.whenDone();
 
-        expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
+        expect(writeSpy).toHaveBeenCalledWith(
+          expect.stringContaining(logSymbols.success),
+          expect.any(Function),
+        );
       });
     });
 
     describe('--color -gauto', () => {
       it('enables rich progress format', async () => {
-
         const builder = setup.taskFactory.newTask(pkg, 'progress-reporting-task');
 
         await builder.parse('run-z --color -gauto test:script', { options: shell.options() });
@@ -483,16 +482,20 @@ describe('SystemZShell', () => {
 
         await job.whenDone();
 
-        expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
+        expect(writeSpy).toHaveBeenCalledWith(
+          expect.stringContaining(logSymbols.success),
+          expect.any(Function),
+        );
       });
     });
 
     describe('--no-colors --progress=auto', () => {
       it('enables text progress format', async () => {
-
         const builder = setup.taskFactory.newTask(pkg, 'no-progress-reporting-task');
 
-        await builder.parse('run-z --no-colors --progress=auto test:script', { options: shell.options() });
+        await builder.parse('run-z --no-colors --progress=auto test:script', {
+          options: shell.options(),
+        });
 
         const task = builder.task();
         const call = await task.call();
@@ -500,13 +503,15 @@ describe('SystemZShell', () => {
 
         await job.whenDone();
 
-        expect(writeSpy).not.toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
+        expect(writeSpy).not.toHaveBeenCalledWith(
+          expect.stringContaining(logSymbols.success),
+          expect.any(Function),
+        );
       });
     });
 
     describe('--no-colors -gauto', () => {
       it('enables text progress format', async () => {
-
         const builder = setup.taskFactory.newTask(pkg, 'no-progress-reporting-task');
 
         await builder.parse('run-z --no-colors -gauto test:script', { options: shell.options() });
@@ -517,16 +522,20 @@ describe('SystemZShell', () => {
 
         await job.whenDone();
 
-        expect(writeSpy).not.toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
+        expect(writeSpy).not.toHaveBeenCalledWith(
+          expect.stringContaining(logSymbols.success),
+          expect.any(Function),
+        );
       });
     });
 
     describe('--progress=rich', () => {
       it('enables rich progress format', async () => {
-
         const builder = setup.taskFactory.newTask(pkg, 'progress-reporting-task');
 
-        await builder.parse('run-z --no-colors --progress=rich test:script', { options: shell.options() });
+        await builder.parse('run-z --no-colors --progress=rich test:script', {
+          options: shell.options(),
+        });
 
         const task = builder.task();
         const call = await task.call();
@@ -534,10 +543,12 @@ describe('SystemZShell', () => {
 
         await job.whenDone();
 
-        expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
+        expect(writeSpy).toHaveBeenCalledWith(
+          expect.stringContaining(logSymbols.success),
+          expect.any(Function),
+        );
       });
       it('enables rich progress format in shorter form', async () => {
-
         const builder = setup.taskFactory.newTask(pkg, 'progress-reporting-task');
 
         await builder.parse('run-z --no-colors -grich test:script', { options: shell.options() });
@@ -548,13 +559,17 @@ describe('SystemZShell', () => {
 
         await job.whenDone();
 
-        expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
+        expect(writeSpy).toHaveBeenCalledWith(
+          expect.stringContaining(logSymbols.success),
+          expect.any(Function),
+        );
       });
       it('enables rich progress format without colors', async () => {
-
         const builder = setup.taskFactory.newTask(pkg, 'progress-reporting-task');
 
-        await builder.parse('run-z --progress=rich --no-colors test:script', { options: shell.options() });
+        await builder.parse('run-z --progress=rich --no-colors test:script', {
+          options: shell.options(),
+        });
 
         const task = builder.task();
         const call = await task.call();
@@ -562,10 +577,12 @@ describe('SystemZShell', () => {
 
         await job.whenDone();
 
-        expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.success), expect.any(Function));
+        expect(writeSpy).toHaveBeenCalledWith(
+          expect.stringContaining(logSymbols.success),
+          expect.any(Function),
+        );
       });
       it('reports failure', async () => {
-
         const builder = setup.taskFactory.newTask(pkg, 'error-reporting-task');
 
         await builder.parse('run-z --progress=rich test:fail', { options: shell.options() });
@@ -578,10 +595,12 @@ describe('SystemZShell', () => {
         expect(error).toBeInstanceOf(FailedZExecutionError);
         expect(error.failure).toBe(13);
 
-        expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(logSymbols.error), expect.any(Function));
+        expect(writeSpy).toHaveBeenCalledWith(
+          expect.stringContaining(logSymbols.error),
+          expect.any(Function),
+        );
       });
       it('displays status when silent task succeeds', async () => {
-
         const builder = setup.taskFactory.newTask(pkg, 'silently-reporting-task');
 
         await builder.parse('run-z --progress=rich test:silent', { options: shell.options() });
@@ -597,7 +616,6 @@ describe('SystemZShell', () => {
     });
 
     describe('--max-jobs', () => {
-
       let setMaxJobs: SpyInstance<SystemZShell['setMaxJobs']>;
 
       beforeEach(() => {
@@ -608,7 +626,6 @@ describe('SystemZShell', () => {
       });
 
       it('sets automatic maximum of simultaneously running jobs', async () => {
-
         const builder = setup.taskFactory.newTask(pkg, '');
 
         await builder.parse('run-z --max-jobs test:script', { options: shell.options() });
@@ -622,7 +639,6 @@ describe('SystemZShell', () => {
         expect(setMaxJobs).toHaveBeenCalledWith(undefined);
       });
       it('sets specified maximum of simultaneously running jobs', async () => {
-
         const builder = setup.taskFactory.newTask(pkg, '');
 
         await builder.parse('run-z -j1 test:script', { options: shell.options() });
@@ -636,7 +652,6 @@ describe('SystemZShell', () => {
         expect(setMaxJobs).toHaveBeenCalledWith(1);
       });
       it('sets specified maximum of simultaneously running jobs with `-j LIMIT`', async () => {
-
         const builder = setup.taskFactory.newTask(pkg, '');
 
         await builder.parse('run-z -j 2 test:script', { options: shell.options() });

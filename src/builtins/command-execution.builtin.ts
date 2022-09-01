@@ -13,8 +13,10 @@ export const ZCommandExecutionBuiltin: ZExtension = {
       meta: {
         group: '!builtin:exec',
         get usage() {
-          return `${clz.usage('--then')} ${clz.param('COMMAND')} `
-              + clz.optional(clz.param('ARG') + clz.sign(' ...'));
+          return (
+            `${clz.usage('--then')} ${clz.param('COMMAND')} `
+            + clz.optional(clz.param('ARG') + clz.sign(' ...'))
+          );
         },
         get help() {
           return `Execute ${clz.param('COMMAND')} after prerequisites`;
@@ -31,8 +33,10 @@ ${clz.usage('--and')} executes the ${clz.param('COMMAND')} in parallel to the la
       meta: {
         aliasOf: '--then',
         get usage() {
-          return `${clz.usage('--and')} ${clz.param('COMMAND')} `
-              + clz.optional(clz.param('ARG') + clz.sign(' ...'));
+          return (
+            `${clz.usage('--and')} ${clz.param('COMMAND')} `
+            + clz.optional(clz.param('ARG') + clz.sign(' ...'))
+          );
         },
       },
     },
@@ -43,7 +47,6 @@ ${clz.usage('--and')} executes the ${clz.param('COMMAND')} in parallel to the la
  * @internal
  */
 function readZTaskCommand(parallel: boolean, option: ZTaskOption): void {
-
   const [command, ...args] = option.rest();
 
   if (command) {

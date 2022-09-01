@@ -23,8 +23,7 @@ export class ZBatching {
    * @returns New task batching policy.
    */
   static newBatching(batcher?: ZBatcher): ZBatching {
-    return ZBatching.unprocessedBatching(batcher)
-        .rule(ZDepsFirstBatches).depsFirst();
+    return ZBatching.unprocessedBatching(batcher).rule(ZDepsFirstBatches).depsFirst();
   }
 
   /**
@@ -53,7 +52,6 @@ export class ZBatching {
    * @returns New batching policy using the given batcher.
    */
   batchBy(batcher: ZBatcher): ZBatching {
-
     const newBatcher = new ZBatching(batcher);
 
     newBatcher._by(this);
@@ -81,12 +79,11 @@ export class ZBatching {
    * @returns A control instance for target batch processing rule.
    */
   rule<TControl>(rule: ZBatchRule<TControl>): TControl {
-
     const instance = this._rules.get(rule);
 
     return instance
-        ? instance.control as TControl
-        : rule.newBatchRule(this._ruleContext(rule)).control;
+      ? (instance.control as TControl)
+      : rule.newBatchRule(this._ruleContext(rule)).control;
   }
 
   /**
@@ -113,7 +110,6 @@ export class ZBatching {
   }
 
   private _mergeWith(other: ZBatching, transiently: boolean): ZBatching {
-
     const { _batcher: newBatcher = this._batcher } = other;
     const newBatching = new ZBatching(newBatcher);
 
@@ -126,7 +122,6 @@ export class ZBatching {
   private _ruleContext<TControl>(rule: ZBatchRule<TControl>): ZBatchRule.Context<TControl> {
     return {
       updateInstance: update => {
-
         const newBatching = new ZBatching(this._batcher);
 
         newBatching._by(this, rule);
@@ -145,7 +140,6 @@ export class ZBatching {
   private _by(proto: ZBatching, exceptRule?: ZBatchRule<unknown>, transiently = false): void {
     for (const [rule, ruleInstance] of proto._rules) {
       if (rule !== exceptRule && !this._rules.has(rule)) {
-
         const newInstance = ruleInstance.moveTo(this._ruleContext(rule), transiently);
 
         if (newInstance) {
@@ -165,15 +159,13 @@ export class ZBatching {
    * @returns A promise resolved when batch execution planned.
    */
   async batchAll(planner: ZBatchPlanner): Promise<void> {
-
     const batched: ZCall[] = [];
     const batchPlanner: ZBatchPlanner = {
       ...planner,
       async batch<TAction extends ZTaskSpec.Action>(
-          task: ZTask<TAction>,
-          details?: ZBatchDetails<TAction>,
+        task: ZTask<TAction>,
+        details?: ZBatchDetails<TAction>,
       ): Promise<ZCall> {
-
         const call = await planner.batch(task, details);
 
         batched.push(call);

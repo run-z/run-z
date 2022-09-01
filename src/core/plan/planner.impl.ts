@@ -21,13 +21,15 @@ export class ZInstructionRecords {
   private readonly _targetCalls = new Map<ZPackage, Map<string, ZCall>>();
   private readonly _prerequisites = new Map<ZTask, Set<ZTask>>();
   private readonly _parallel = new Map<ZTaskQualifier, Set<ZTaskQualifier>>();
-  private readonly _parallelWhen = new Map<ZTaskQualifier, Set<(this: void, other: ZTask, task: ZTask) => boolean>>();
+  private readonly _parallelWhen = new Map<
+    ZTaskQualifier,
+    Set<(this: void, other: ZTask, task: ZTask) => boolean>
+  >();
 
   constructor(readonly setup: ZSetup) {
     this.plan = {
       calls: () => this._calls.values(),
       callOf: <TAction extends ZTaskSpec.Action>(task: ZTask<TAction>): ZCall<TAction> => {
-
         const call = this._calls.get(task) as ZCallRecord<TAction> | undefined;
 
         if (!call) {
@@ -37,7 +39,6 @@ export class ZInstructionRecords {
         return call;
       },
       findCallOf: (target: ZPackage, taskName: string): ZCall | undefined => {
-
         const calls = this._targetCalls.get(target);
 
         return calls && calls.get(taskName);
@@ -46,7 +47,6 @@ export class ZInstructionRecords {
   }
 
   qualify(task: ZTask, qualifier: ZTaskQualifier): void {
-
     const qualifiers = this._qualifiers.get(task);
 
     if (qualifiers) {
@@ -57,12 +57,10 @@ export class ZInstructionRecords {
   }
 
   private _qualifiersOf(task: ZTask): readonly ZTaskQualifier[] {
-
     const foundQualifiers = this._qualifiers.get(task);
     const result = foundQualifiers ? [...foundQualifiers] : [task];
 
     for (const alike of task.alike) {
-
       const alikeCall = this.plan.findCallOf(task.target, alike);
 
       if (alikeCall) {
@@ -74,9 +72,9 @@ export class ZInstructionRecords {
   }
 
   async call<TAction extends ZTaskSpec.Action>(
-      task: ZTask<TAction>,
-      details: ZCallDetails<TAction> = {},
-      by?: ZCallRecord,
+    task: ZTask<TAction>,
+    details: ZCallDetails<TAction> = {},
+    by?: ZCallRecord,
   ): Promise<ZCall<TAction>> {
     ++this.rev;
 
@@ -104,7 +102,6 @@ export class ZInstructionRecords {
   }
 
   order(first: ZTask, second: ZTask): void {
-
     const prerequisites = this._prerequisites.get(second);
 
     if (prerequisites) {
@@ -115,7 +112,6 @@ export class ZInstructionRecords {
   }
 
   prerequisitesOf(dependent: ZTask): readonly ZCall[] {
-
     const prerequisites = this._prerequisites.get(dependent);
 
     if (!prerequisites) {
@@ -150,7 +146,6 @@ export class ZInstructionRecords {
 
   makeParallel(tasks: ZTaskQualifier[]): void {
     for (let i = tasks.length - 1; i > 0; --i) {
-
       const first = tasks[i];
       let parallels = this._parallel.get(first);
 
@@ -165,8 +160,10 @@ export class ZInstructionRecords {
     }
   }
 
-  makeParallelWhen(task: ZTaskQualifier, condition: (this: void, other: ZTask, task: ZTask) => boolean): void {
-
+  makeParallelWhen(
+    task: ZTaskQualifier,
+    condition: (this: void, other: ZTask, task: ZTask) => boolean,
+  ): void {
     const conditions = this._parallelWhen.get(task);
 
     if (conditions) {
@@ -183,7 +180,6 @@ export class ZInstructionRecords {
   private _areParallel(first: ZTask, second: ZTask, reverse?: boolean): boolean {
     for (const firstQ of this._qualifiersOf(first)) {
       if (!reverse) {
-
         const conditions = this._parallelWhen.get(firstQ);
 
         if (conditions) {

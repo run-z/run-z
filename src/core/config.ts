@@ -10,7 +10,6 @@ import type { ZTaskFactory, ZTaskParser } from './tasks';
  * Configures {@link ZSetup task execution setup} by providing services to use.
  */
 export interface ZConfig {
-
   /**
    * Task specifier parser to use.
    *
@@ -30,7 +29,10 @@ export interface ZConfig {
    *
    * @default New {@link ZPackageResolver} instance.
    */
-  readonly packageResolver?: ZPackageResolver | ((this: void, setup: ZSetup) => ZPackageResolver) | undefined;
+  readonly packageResolver?:
+    | ZPackageResolver
+    | ((this: void, setup: ZSetup) => ZPackageResolver)
+    | undefined;
 
   /**
    * Task execution planner to use.
@@ -43,5 +45,4 @@ export interface ZConfig {
    * Task execution functionality extensions.
    */
   readonly extensions?: ZExtension | readonly ZExtension[] | undefined;
-
 }

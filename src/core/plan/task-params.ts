@@ -33,28 +33,28 @@ export class ZTaskParams {
    * @returns New task parameters evaluation context instance.
    */
   static newEvaluator(): ZTaskParams.Evaluator {
-
     const evaluated = new Map<unknown, Map<ZCall, unknown>>();
 
     return {
-
       paramsOf(source: ZCall, params: (this: void) => ZTaskParams): ZTaskParams {
         return this.valueOf(ZTaskParams, source, params);
       },
 
-      valueOf<TValue>(key: ZTaskParams.ValueKey<TValue>, source: ZCall, evaluate: (this: void) => TValue): TValue {
-
+      valueOf<TValue>(
+        key: ZTaskParams.ValueKey<TValue>,
+        source: ZCall,
+        evaluate: (this: void) => TValue,
+      ): TValue {
         let cache = evaluated.get(key);
 
         if (cache) {
-
           const cached = cache.get(source) as TValue | undefined;
 
           if (cached !== undefined) {
             return cached;
           }
         } else {
-          evaluated.set(key, cache = new Map<ZCall, unknown>());
+          evaluated.set(key, (cache = new Map<ZCall, unknown>()));
         }
 
         // Prevent infinite recursion.
@@ -66,7 +66,6 @@ export class ZTaskParams {
 
         return newValue;
       },
-
     };
   }
 
@@ -86,10 +85,9 @@ export class ZTaskParams {
    * @returns Updated parameters (`params` argument).
    */
   static update(
-      params: ZTaskParams.Mutable,
-      update: ZTaskParams.Partial = {},
+    params: ZTaskParams.Mutable,
+    update: ZTaskParams.Partial = {},
   ): ZTaskParams.Mutable {
-
     const { attrs = {}, args = [] } = update;
 
     for (const [k, v] of Object.entries(attrs)) {
@@ -138,7 +136,6 @@ export class ZTaskParams {
    * @returns The most recent (last) attribute value, or `undefined` if attribute is not set.
    */
   attr(name: string): string | undefined {
-
     const values = this.attrs[name];
 
     if (!values) {
@@ -156,7 +153,6 @@ export class ZTaskParams {
    * @returns An iterable of name/value pairs.
    */
   *allAttrs(name: string): IterableIterator<readonly [string, string]> {
-
     const values = this.attrs[name];
 
     if (!values) {
@@ -164,7 +160,6 @@ export class ZTaskParams {
     }
 
     for (const value of values) {
-
       const subAttrName = `${name}:${value}`;
       const subAttrValues = this.attrs[subAttrName];
 
@@ -187,7 +182,6 @@ export class ZTaskParams {
    * `0`, `false`, or `off`. `false` otherwise.
    */
   flag(name: string): boolean {
-
     const attr = this.attr(name);
 
     return attr != null && !falseZTaskFlagValues[attr.toLowerCase()];
@@ -196,7 +190,6 @@ export class ZTaskParams {
 }
 
 export namespace ZTaskParams {
-
   /**
    * Task execution parameter values.
    */
@@ -206,7 +199,6 @@ export namespace ZTaskParams {
    * Partial task execution parameters.
    */
   export interface Partial {
-
     /**
      * Task attributes.
      */
@@ -216,14 +208,12 @@ export namespace ZTaskParams {
      * Command line arguments to pass to the task.
      */
     readonly args?: readonly string[] | undefined;
-
   }
 
   /**
    * Mutable task execution parameters.
    */
   export interface Mutable {
-
     /**
      * Task attributes.
      */
@@ -233,19 +223,18 @@ export namespace ZTaskParams {
      * Command line arguments to pass to the task.
      */
     args: string[];
-
   }
 
   /**
    * Task parameters builder signature.
    */
   export type Fn =
-  /**
-   * @param evaluator - Task parameters evaluation context.
-   *
-   * @returns Evaluated task parameters.
-   */
-      (this: void, evaluator: Evaluator) => ZTaskParams;
+    /**
+     * @param evaluator - Task parameters evaluation context.
+     *
+     * @returns Evaluated task parameters.
+     */
+    (this: void, evaluator: Evaluator) => ZTaskParams;
 
   /**
    * Task parameters evaluation context.
@@ -253,7 +242,6 @@ export namespace ZTaskParams {
    * It is passed to task parameter evaluators to prevent infinite recursion and to cache already evaluated results.
    */
   export interface Evaluator {
-
     /**
      * Evaluates parameters of the given task call.
      *
@@ -275,7 +263,6 @@ export namespace ZTaskParams {
      * @returns Evaluated value, or {@link ValueKey.empty empty one} if recursion detected.
      */
     valueOf<TValue>(key: ValueKey<TValue>, source: ZCall, evaluate: (this: void) => TValue): TValue;
-
   }
 
   /**
@@ -284,12 +271,9 @@ export namespace ZTaskParams {
    * @typeparam TValue  Value type.
    */
   export interface ValueKey<TValue> {
-
     /**
      * Empty value used when recursion detected.
      */
     readonly empty: TValue;
-
   }
-
 }

@@ -7,16 +7,10 @@ import type { ProgressZLogPrefix } from '../progress-log';
  */
 export function textProgressZLogFormatter(prefix: ProgressZLogPrefix): ZLogFormatter {
   return multilineZLogFormatter(
-      prefix,
-      textZLogFormatter({
-        fields: [
-          1,
-          ' ',
-          jobErrorZLogField,
-          0,
-          messageZLogField(),
-        ],
-      }),
+    prefix,
+    textZLogFormatter({
+      fields: [1, ' ', jobErrorZLogField, 0, messageZLogField()],
+    }),
   );
 }
 
@@ -24,7 +18,6 @@ export function textProgressZLogFormatter(prefix: ProgressZLogPrefix): ZLogForma
  * @internal
  */
 export function jobErrorZLogField(writer: ZLogWriter): void {
-
   const error = writer.extractDetail('error');
 
   if (error instanceof AbortedZExecutionError || error instanceof FailedZExecutionError) {
@@ -45,11 +38,10 @@ export function jobErrorZLogField(writer: ZLogWriter): void {
  * @internal
  */
 export function multilineZLogFormatter(
-    prefix: ProgressZLogPrefix,
-    formatter: ZLogFormatter,
+  prefix: ProgressZLogPrefix,
+  formatter: ZLogFormatter,
 ): ZLogFormatter {
   return message => {
-
     const pfx = prefix.text(message);
     const out = formatter(message)!;
     const lines = out.split('\n');

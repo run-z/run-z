@@ -21,9 +21,8 @@ const zTaskActionsWithArgs: { readonly [action in ZTaskSpec.Action['type']]: 0 |
  * @internal
  */
 export function zTaskSpecOptionClass<TArgs extends any[]>(
-    base: ZOption.BaseClass<TArgs>,
+  base: ZOption.BaseClass<TArgs>,
 ): ZOption.ImplClass<ZTaskOption, DraftZTask, TArgs> {
-
   class TaskOption extends base implements ZTaskOption {
 
     readonly taskTarget: ZPackage;
@@ -49,7 +48,6 @@ export function zTaskSpecOptionClass<TArgs extends any[]>(
     }
 
     get acceptsArgs(): boolean {
-
       const action = this.action;
 
       if (action) {
@@ -120,7 +118,7 @@ export function zTaskSpecOptionClass<TArgs extends any[]>(
       return this;
     }
 
-  }
+}
 
   return TaskOption;
 }

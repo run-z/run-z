@@ -14,46 +14,39 @@ import { NamedZBatches } from './named-batches.rule';
  * Records tasks to be executed in batch.
  */
 export type ZBatcher =
-/**
- * @param planner - Batch execution planner to record batched task calls to.
- * @param batching - Task batching policy.
- *
- * @returns Either nothing if batch execution planned synchronously, or a promise-like instance resolved when batch
- * execution planned asynchronously.
- */
-    (
-        this: void,
-        planner: ZBatchPlanner,
-        batching: ZBatching,
-    ) => void | PromiseLike<unknown>;
+  /**
+   * @param planner - Batch execution planner to record batched task calls to.
+   * @param batching - Task batching policy.
+   *
+   * @returns Either nothing if batch execution planned synchronously, or a promise-like instance resolved when batch
+   * execution planned asynchronously.
+   */
+  (this: void, planner: ZBatchPlanner, batching: ZBatching) => void | PromiseLike<unknown>;
 
 export namespace ZBatcher {
-
   /**
    * Task batcher provider signature.
    *
    * Tries to create a batcher for the given batch execution planner in the given package.
    */
   export type Provider =
-  /**
-   * @param target - Target package.
-   * @param planner - Target batch execution planner.
-   * @param batching - Task batching policy.
-   *
-   * @returns Either nothing if batch planning is impossible, a batcher instance to plan batch execution by, or
-   * a promise resolving to one of the above.
-   */
-      (
-          this: void,
-          target: ZPackage,
-          planner: ZBatchPlanner,
-          batching: ZBatching,
-      ) => undefined | ZBatcher | Promise<undefined | ZBatcher>;
-
+    /**
+     * @param target - Target package.
+     * @param planner - Target batch execution planner.
+     * @param batching - Task batching policy.
+     *
+     * @returns Either nothing if batch planning is impossible, a batcher instance to plan batch execution by, or
+     * a promise resolving to one of the above.
+     */
+    (
+      this: void,
+      target: ZPackage,
+      planner: ZBatchPlanner,
+      batching: ZBatching,
+    ) => undefined | ZBatcher | Promise<undefined | ZBatcher>;
 }
 
 export const ZBatcher = {
-
   /**
    * Batches the named tasks in target packages.
    *
@@ -107,12 +100,11 @@ export const ZBatcher = {
    *
    * @returns New task batcher.
    */
-  topmost(
-      this: void,
-      provider: ZBatcher.Provider = defaultZBatcherProvider,
-  ): ZBatcher {
+  topmost(this: void, provider: ZBatcher.Provider = defaultZBatcherProvider): ZBatcher {
     return async (planner, batching) => {
-      if (await batchInZTarget(provider, planner, batching, planner.dependent.plannedCall.task.target)) {
+      if (
+        await batchInZTarget(provider, planner, batching, planner.dependent.plannedCall.task.target)
+      ) {
         // Try to batch in topmost target.
         return;
       }
@@ -123,50 +115,47 @@ export const ZBatcher = {
       return batcher({
         ...planner,
         batch<TAction extends ZTaskSpec.Action>(
-            task: ZTask<TAction>,
-            details: ZBatchDetails<TAction>,
+          task: ZTask<TAction>,
+          details: ZBatchDetails<TAction>,
         ): Promise<ZCall> {
-
           const batchDetails = ZBatchDetails.by(details);
 
-          return planner.batch(
-              task,
-              {
-                ...batchDetails,
-                batching: ZBatching.unprocessedBatching(batcher).mergeWith(batchDetails.batching),
-              },
-          );
+          return planner.batch(task, {
+            ...batchDetails,
+            batching: ZBatching.unprocessedBatching(batcher).mergeWith(batchDetails.batching),
+          });
         },
       });
     };
   },
-
 };
-
 
 /**
  * @internal
  */
-function defaultZBatcherProvider(target: ZPackage, planner: ZBatchPlanner, batching: ZBatching): ZBatcher | undefined {
+function defaultZBatcherProvider(
+  target: ZPackage,
+  planner: ZBatchPlanner,
+  batching: ZBatching,
+): ZBatcher | undefined {
   return namedZBatches(target, planner.taskName, batching.rule(NamedZBatches), true).length
-      ? ZBatcher.batchNamed
-      : undefined;
+    ? ZBatcher.batchNamed
+    : undefined;
 }
 
 /**
  * @internal
  */
 async function batchInZTarget(
-    provider: ZBatcher.Provider,
-    planner: ZBatchPlanner,
-    batching: ZBatching,
-    target: ZPackage,
+  provider: ZBatcher.Provider,
+  planner: ZBatchPlanner,
+  batching: ZBatching,
+  target: ZPackage,
 ): Promise<boolean> {
-
   const { parent } = target;
 
   // Try parent package first.
-  if (parent && await batchInZTarget(provider, planner, batching, parent)) {
+  if (parent && (await batchInZTarget(provider, planner, batching, parent))) {
     // Batched in parent.
     return true;
   }
@@ -182,16 +171,12 @@ async function batchInZTarget(
     taskName: planner.taskName,
     isAnnex: planner.isAnnex,
     batch(task, details) {
-
       const batchDetails = ZBatchDetails.by(details);
 
-      return planner.batch(
-          task,
-          {
-            ...batchDetails,
-            batching: ZBatching.unprocessedBatching(batcher).mergeWith(batchDetails.batching),
-          },
-      );
+      return planner.batch(task, {
+        ...batchDetails,
+        batching: ZBatching.unprocessedBatching(batcher).mergeWith(batchDetails.batching),
+      });
     },
   };
 

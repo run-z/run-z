@@ -9,7 +9,6 @@ import type { ZPackageResolver } from './package-resolver';
 import { UnknownZPackageError } from './unknown-package-error';
 
 describe('ZPackageResolver', () => {
-
   let rootURL: URL;
   let resolver: ZPackageResolver;
 
@@ -27,10 +26,11 @@ describe('ZPackageResolver', () => {
 
   describe('get', () => {
     it('throws when package not found', async () => {
-      expect(await resolver.get(packageLocation('non-existing')).catch(asis)).toBeInstanceOf(UnknownZPackageError);
+      expect(await resolver.get(packageLocation('non-existing')).catch(asis)).toBeInstanceOf(
+        UnknownZPackageError,
+      );
     });
     it('caches resolved package', async () => {
-
       const pkg = await resolver.get(packageLocation('anonymous'));
 
       expect(await resolver.get(packageLocation('anonymous'))).toBe(pkg);
@@ -38,7 +38,6 @@ describe('ZPackageResolver', () => {
   });
 
   describe('anonymous package', () => {
-
     let pkg: ZPackage;
 
     beforeEach(async () => {
@@ -87,7 +86,6 @@ describe('ZPackageResolver', () => {
   });
 
   describe('nested', () => {
-
     let nested: ZPackage;
     let deeplyNested: ZPackage;
 
@@ -105,7 +103,6 @@ describe('ZPackageResolver', () => {
 
     describe('multiple versions', () => {
       it('available under the same name', async () => {
-
         const nested$v1 = await resolver.get(packageLocation('nesting/nested-v1'));
 
         expect(nested$v1.name).toBe('named-nested');
@@ -161,7 +158,6 @@ describe('ZPackageResolver', () => {
   });
 
   describe('scoped', () => {
-
     let pkg: ZPackage;
     let nested: ZPackage;
     let deeplyNested: ZPackage;
@@ -223,7 +219,6 @@ describe('ZPackageResolver', () => {
   });
 
   describe('illegally scoped', () => {
-
     let pkg: ZPackage;
 
     beforeEach(async () => {

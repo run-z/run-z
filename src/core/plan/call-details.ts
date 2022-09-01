@@ -8,7 +8,6 @@ import { ZTaskParams } from './task-params';
  * @typeparam TAction  Task action type.
  */
 export interface ZCallDetails<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
-
   /**
    * Evaluates parameters of the call.
    *
@@ -29,18 +28,15 @@ export interface ZCallDetails<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
    * instructions recorded asynchronously.
    */
   plan?(planner: ZCallPlanner<TAction>): void | PromiseLike<unknown>;
-
 }
 
 export namespace ZCallDetails {
-
   /**
    * Full details of the {@link ZCallPlanner.call task call}.
    *
    * @typeparam TAction  Task action type.
    */
   export interface Full<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
-
     /**
      * Evaluates parameters of the call.
      *
@@ -60,13 +56,10 @@ export namespace ZCallDetails {
      * @returns A promise resolved when instructions recorded.
      */
     plan(this: void, planner: ZCallPlanner<TAction>): Promise<void>;
-
   }
-
 }
 
 export const ZCallDetails = {
-
   /**
    * Reconstructs full details of the task call by partial ones.
    *
@@ -76,19 +69,13 @@ export const ZCallDetails = {
    * @returns Full task call details.
    */
   by<TAction extends ZTaskSpec.Action>(
-      details: ZCallDetails<TAction> = {},
+    details: ZCallDetails<TAction> = {},
   ): ZCallDetails.Full<TAction> {
     return {
-      params: evaluator => new ZTaskParams(
-          ZTaskParams.update(
-              ZTaskParams.newMutable(),
-              details.params?.(evaluator),
-          ),
-      ),
+      params: evaluator => new ZTaskParams(ZTaskParams.update(ZTaskParams.newMutable(), details.params?.(evaluator))),
       plan: async planner => {
         await details.plan?.(planner);
       },
     };
   },
-
 };

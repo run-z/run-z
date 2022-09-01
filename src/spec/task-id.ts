@@ -7,7 +7,6 @@ export interface TaskId {
 }
 
 export function taskId(value: ZTask | ZCall): TaskId {
-
   const task = isCall(value) ? value.task : value;
 
   return { target: task.target.name, task: task.name };
@@ -18,8 +17,9 @@ function isCall(value: ZTask | ZCall): value is ZCall {
 }
 
 export function taskIds(...values: (ZTask | ZCall)[]): readonly TaskId[];
-export function taskIds(...values: [Iterable<ZTask | ZCall>] | (ZTask | ZCall)[]): readonly TaskId[] {
-
+export function taskIds(
+  ...values: [Iterable<ZTask | ZCall>] | (ZTask | ZCall)[]
+): readonly TaskId[] {
   let items: Iterable<ZTask | ZCall>;
 
   if (values.length === 1 && isIterable(values[0])) {

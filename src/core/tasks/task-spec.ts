@@ -4,7 +4,6 @@
  * Built by {@link ZTaskParser parsing command line}.
  */
 export interface ZTaskSpec<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
-
   /**
    * Task prerequisites.
    *
@@ -26,11 +25,9 @@ export interface ZTaskSpec<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
    * Task action.
    */
   readonly action: TAction;
-
 }
 
 export namespace ZTaskSpec {
-
   /**
    * Target packages to apply a task to.
    *
@@ -38,7 +35,6 @@ export namespace ZTaskSpec {
    * in each of the selected packages containing further package selectors to resolve.
    */
   export interface Target {
-
     /**
      * Relative package selector.
      */
@@ -48,7 +44,6 @@ export namespace ZTaskSpec {
      * A name of the task in selected package containing package selectors to reuse.
      */
     readonly task?: string | undefined;
-
   }
 
   /**
@@ -57,7 +52,6 @@ export namespace ZTaskSpec {
    * I.e. another task to call before the task.
    */
   export interface Pre {
-
     /**
      * Prerequisite targets.
      *
@@ -93,14 +87,12 @@ export namespace ZTaskSpec {
      * Command line arguments.
      */
     readonly args: readonly string[];
-
   }
 
   /**
    * Task attributes specifier.
    */
   export interface Attrs {
-
     /**
      * The task is not executed when this {@link ZTaskParams.flag flag} is set.
      */
@@ -118,7 +110,6 @@ export namespace ZTaskSpec {
      * A `null` value means the attribute has been {@link ZTaskModifier.removeAttr removed}.
      */
     readonly [name: string]: readonly [string, ...string[]] | null | undefined;
-
   }
 
   /**
@@ -130,7 +121,6 @@ export namespace ZTaskSpec {
    * Command execution action of the task.
    */
   export interface Command {
-
     readonly type: 'command';
 
     /**
@@ -147,27 +137,23 @@ export namespace ZTaskSpec {
      * Command line arguments.
      */
     readonly args: readonly string[];
-
   }
 
   /**
    * NPM script execution action.
    */
   export interface Script {
-
     readonly type: 'script';
 
     readonly command?: string | undefined;
 
     readonly args: readonly string[];
-
   }
 
   /**
    * Task grouping action.
    */
   export interface Group {
-
     readonly type: 'group';
 
     readonly command?: undefined;
@@ -178,20 +164,16 @@ export namespace ZTaskSpec {
      * When empty sub-tasks are searched and applied to the target of dependent task.
      */
     readonly targets: readonly Target[];
-
   }
 
   /**
    * Unknown action.
    */
   export interface Unknown {
-
     readonly type: 'unknown';
 
     readonly command?: undefined;
-
   }
-
 }
 
 /**
@@ -202,12 +184,10 @@ const unknownZTaskAction: ZTaskSpec.Unknown = {
 };
 
 export const ZTaskSpec = {
-
   /**
    * Unknown task action specifier.
    */
   get unknownAction(): ZTaskSpec.Unknown {
     return unknownZTaskAction;
   },
-
 };

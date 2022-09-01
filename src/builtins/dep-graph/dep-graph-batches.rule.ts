@@ -5,7 +5,6 @@ import type { ZBatching, ZBatchRule, ZPackage, ZTaskParams } from '../../core';
  * Dependency graph batches control.
  */
 export interface ZDepGraphBatches {
-
   /**
    * The part of dependency graph included into task batching.
    *
@@ -37,7 +36,6 @@ export interface ZDepGraphBatches {
    * @returns Updated batching policy.
    */
   disable(): ZBatching;
-
 }
 
 /**
@@ -46,11 +44,10 @@ export interface ZDepGraphBatches {
 class ZDepGraphBatches$ implements ZDepGraphBatches {
 
   static newBatchRule(
-      context: ZBatchRule.Context<ZDepGraphBatches>,
-      included: 'dependencies' | 'dependants' = 'dependencies',
-      includeSelf = true,
+    context: ZBatchRule.Context<ZDepGraphBatches>,
+    included: 'dependencies' | 'dependants' = 'dependencies',
+    includeSelf = true,
   ): ZBatchRule.Instance<ZDepGraphBatches> {
-
     const dependants = included === 'dependants';
     const reason = (includeSelf ? 'with-' : 'only-') + included;
     const control = new ZDepGraphBatches$(context, included, includeSelf);
@@ -61,37 +58,33 @@ class ZDepGraphBatches$ implements ZDepGraphBatches {
         return ZDepGraphBatches$.newBatchRule(context, control.included, control.isSelfIncluded);
       },
       async processBatch({ dependent, taskName, batched }) {
-
         const original = dependent.plannedCall.task.target;
         const included = (): ReadonlySet<ZPackage> => {
-
           const depGraph = original.depGraph();
 
           return dependants ? depGraph.dependants() : depGraph.dependencies();
         };
 
-        await Promise.all(batched.map(async ({ task }) => dependent.call(
-            task,
-            {
+        await Promise.all(
+          batched.map(async ({ task }) => dependent.call(task, {
               params(): ZTaskParams.Partial {
                 return task.name !== taskName // Apply only to same-named tasks.
-                || (includeSelf && task.target === original) // Include original task?
-                || included().has(task.target) // Included in requested part of dep graph?
-                    ? {}
-                    : { attrs: { skip: [reason] } };
+                  || (includeSelf && task.target === original) // Include original task?
+                  || included().has(task.target) // Included in requested part of dep graph?
+                  ? {}
+                  : { attrs: { skip: [reason] } };
               },
-            },
-        )));
+            })),
+        );
       },
     };
   }
 
   constructor(
-      private readonly _context: ZBatchRule.Context<ZDepGraphBatches>,
-      private readonly _included: 'dependencies' | 'dependants',
-      private readonly _isSelfIncluded: boolean,
-  ) {
-  }
+    private readonly _context: ZBatchRule.Context<ZDepGraphBatches>,
+    private readonly _included: 'dependencies' | 'dependants',
+    private readonly _isSelfIncluded: boolean,
+  ) {}
 
   get included(): 'dependencies' | 'dependants' {
     return this._included;
@@ -102,9 +95,7 @@ class ZDepGraphBatches$ implements ZDepGraphBatches {
   }
 
   include(included?: 'dependencies' | 'dependants', includeSelf?: boolean): ZBatching {
-    return this._context.updateInstance(
-        context => ZDepGraphBatches$.newBatchRule(context, included, includeSelf),
-    );
+    return this._context.updateInstance(context => ZDepGraphBatches$.newBatchRule(context, included, includeSelf));
   }
 
   disable(): ZBatching {

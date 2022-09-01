@@ -8,7 +8,6 @@ import { ZJobRow, ZJobRows } from './job-rows';
 import { RichJobZLogRecorder } from './rich-job.log';
 
 describe('RichJobZLogRecorder', () => {
-
   let logger: ZLogger;
   let output: ZJobOutput;
   let lines: string[];
@@ -24,33 +23,31 @@ describe('RichJobZLogRecorder', () => {
       },
     });
 
-    logger = logZBy(new RichJobZLogRecorder(
+    logger = logZBy(
+      new RichJobZLogRecorder(
         new ZJobRows(),
         output,
-        logZToStream(
-            writer,
-            {
-              format: {
-                fields: [
-                  levelZLogField(),
-                  ' ',
-                  messageZLogField(),
-                  ' ',
-                  (writer: ZLogWriter): void => {
+        logZToStream(writer, {
+          format: {
+            fields: [
+              levelZLogField(),
+              ' ',
+              messageZLogField(),
+              ' ',
+              (writer: ZLogWriter): void => {
+                const row = writer.message.details.row as ZJobRow | undefined;
 
-                    const row = writer.message.details.row as ZJobRow | undefined;
-
-                    if (row) {
-                      writer.write(`row: ${row.up()}`);
-                      row.done();
-                    }
-                  },
-                ],
+                if (row) {
+                  writer.write(`row: ${row.up()}`);
+                  row.done();
+                }
               },
-              eol: '',
-            },
-        ),
-    ));
+            ],
+          },
+          eol: '',
+        }),
+      ),
+    );
   });
 
   it('collects output', async () => {
@@ -59,10 +56,7 @@ describe('RichJobZLogRecorder', () => {
     await logger.whenLogged();
     await logger.end();
 
-    expect(lines).toEqual([
-      '[INFO ] Message 1 row: 0',
-      '[INFO ] Message 2 row: 1',
-    ]);
+    expect(lines).toEqual(['[INFO ] Message 1 row: 0', '[INFO ] Message 2 row: 1']);
     expect(output.lines()).toEqual([
       ['Message 1', 0],
       ['Message 2', 1],
@@ -74,22 +68,15 @@ describe('RichJobZLogRecorder', () => {
     await logger.whenLogged();
     await logger.end();
 
-    expect(lines).toEqual([
-      '[INFO ] Message 1 row: 0',
-      '[INFO ] Message 1 row: 1',
-    ]);
-    expect(output.lines()).toEqual([
-      ['Message 1', 0],
-    ]);
+    expect(lines).toEqual(['[INFO ] Message 1 row: 0', '[INFO ] Message 1 row: 1']);
+    expect(output.lines()).toEqual([['Message 1', 0]]);
   });
   it('reports success without last status', async () => {
     logger.info('Success\n', zlogDetails({ success: 1 }));
     await logger.whenLogged();
     await logger.end();
 
-    expect(lines).toEqual([
-      '[INFO ] Ok row: 0',
-    ]);
+    expect(lines).toEqual(['[INFO ] Ok row: 0']);
     expect(output.lines()).toHaveLength(0);
   });
   it('reports error and prints full output', async () => {
@@ -104,9 +91,7 @@ describe('RichJobZLogRecorder', () => {
       '[INFO ] Message 1',
       '[ERROR] Error!',
     ]);
-    expect(output.lines()).toEqual([
-      ['Message 1', 0],
-    ]);
+    expect(output.lines()).toEqual([['Message 1', 0]]);
   });
   it('reports string error and prints full output', async () => {
     logger.info('Message 1\n');
@@ -120,8 +105,6 @@ describe('RichJobZLogRecorder', () => {
       '[INFO ] Message 1',
       '[ERROR] Error!',
     ]);
-    expect(output.lines()).toEqual([
-      ['Message 1', 0],
-    ]);
+    expect(output.lines()).toEqual([['Message 1', 0]]);
   });
 });

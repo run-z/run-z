@@ -21,7 +21,6 @@ export class ZJobOutput {
 
   get lastLine(): string | undefined {
     for (let i = this._lines.length - 1; i >= 0; --i) {
-
       const line = stripControlChars(this._lines[i][0]);
 
       if (line.trim()) {
@@ -33,15 +32,13 @@ export class ZJobOutput {
   }
 
   setStatus(statusMessage: ZLogMessage): ZLogMessage {
-    return this._statusMessage = statusMessage;
+    return (this._statusMessage = statusMessage);
   }
 
   add(chunk: string, fd: 0 | 1 = 0): void {
-
     const lines = chunk.split('\n');
 
     for (let i = 0; i < lines.length; ++i) {
-
       const line = lines[i];
       const append = !i && !this._lastNL;
 
@@ -63,7 +60,7 @@ export class ZJobOutput {
     }
   }
 
-  lines(): readonly ([string, 0 | 1])[] {
+  lines(): readonly [string, 0 | 1][] {
     return this._lines;
   }
 

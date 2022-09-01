@@ -8,7 +8,6 @@ import type { ZBatching } from './batching';
  * Dependencies-first batched tasks execution control.
  */
 export interface ZDepsFirstBatches {
-
   /**
    * Whether batched tasks executed in dependencies-first order to each other.
    */
@@ -23,7 +22,6 @@ export interface ZDepsFirstBatches {
    * @returns Updated batching policy.
    */
   depsFirst(depsFirst?: boolean): ZBatching;
-
 }
 
 /**
@@ -32,10 +30,9 @@ export interface ZDepsFirstBatches {
 class ZDepsFirstBatches$ implements ZDepsFirstBatches {
 
   static newBatchRule(
-      context: ZBatchRule.Context<ZDepsFirstBatches>,
-      parallel = false,
+    context: ZBatchRule.Context<ZDepsFirstBatches>,
+    parallel = false,
   ): ZBatchRule.Instance<ZDepsFirstBatches> {
-
     const control = new ZDepsFirstBatches$(context, parallel);
 
     return {
@@ -60,7 +57,6 @@ class ZDepsFirstBatches$ implements ZDepsFirstBatches {
             const { task } = call;
 
             for (const dep of task.target.depGraph().dependencies()) {
-
               const depCalls = callsByTarget.get(dep);
 
               if (depCalls) {
@@ -83,10 +79,9 @@ class ZDepsFirstBatches$ implements ZDepsFirstBatches {
   }
 
   private constructor(
-      private readonly _context: ZBatchRule.Context<ZDepsFirstBatches>,
-      private readonly _depsFirst: boolean,
-  ) {
-  }
+    private readonly _context: ZBatchRule.Context<ZDepsFirstBatches>,
+    private readonly _depsFirst: boolean,
+  ) {}
 
   get isDepsFirst(): boolean {
     return this._depsFirst;
@@ -94,7 +89,15 @@ class ZDepsFirstBatches$ implements ZDepsFirstBatches {
 
   depsFirst(depsFirst = true): ZBatching {
     return this._context.updateInstance(
-        context => depsFirst ? ZDepsFirstBatches$.newBatchRule(context, depsFirst) : undefined,
+      (
+        context: ZBatchRule.Context<ZDepsFirstBatches>,
+      ): ZBatchRule.Instance<ZDepsFirstBatches> | undefined => {
+        if (depsFirst) {
+          return ZDepsFirstBatches$.newBatchRule(context, depsFirst);
+        }
+
+        return;
+      },
     );
   }
 
@@ -122,11 +125,9 @@ function isZTaskInIndependentPackage({ target: second }: ZTask, { target: first 
  * @internal
  */
 function zCallsByTarget(batched: Iterable<ZCall>): Map<ZPackage, readonly ZCall[]> {
-
   const result = new Map<ZPackage, ZCall[]>();
 
   for (const call of batched) {
-
     const { target } = call.task;
     const calls = result.get(target);
 

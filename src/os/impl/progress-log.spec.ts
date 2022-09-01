@@ -10,7 +10,6 @@ import { ZJobRows } from './rich/job-rows';
 import { richProgressZLogFormatter } from './rich/rich-log-format';
 
 describe('ProgressZLogRecorder', () => {
-
   let prefix: ProgressZLogPrefix;
   let rows: ZJobRows;
   let logger: ZLogger;
@@ -28,21 +27,19 @@ describe('ProgressZLogRecorder', () => {
       },
     });
 
-    logger = logZBy(new ProgressZLogRecorder(
+    logger = logZBy(
+      new ProgressZLogRecorder(
         prefix,
-        logZToStream(
-            writer,
-            {
-              format: richProgressZLogFormatter(prefix),
-              eol: '',
-            },
-        ),
+        logZToStream(writer, {
+          format: richProgressZLogFormatter(prefix),
+          eol: '',
+        }),
         {},
-    ));
+      ),
+    );
   });
 
   it('positions at proper row', async () => {
-
     const row1 = rows.add(noop);
     const row2 = rows.add(noop);
 
@@ -54,16 +51,29 @@ describe('ProgressZLogRecorder', () => {
 
     expect(lines).toEqual([
       expect.stringContaining(
-          prefix.text(zlogMessage(ZLogLevel.Info, zlogDetails({ target: 'package', task: 'task1' })))
-          + ' Message 1' + ansiEscapes.eraseEndLine + '\n',
+        prefix.text(
+          zlogMessage(ZLogLevel.Info, zlogDetails({ target: 'package', task: 'task1' })),
+        )
+          + ' Message 1'
+          + ansiEscapes.eraseEndLine
+          + '\n',
       ),
       expect.stringContaining(
-          prefix.text(zlogMessage(ZLogLevel.Info, zlogDetails({ target: 'package', task: 'task2' })))
-          + ' Message 2' + ansiEscapes.eraseEndLine + '\n',
+        prefix.text(
+          zlogMessage(ZLogLevel.Info, zlogDetails({ target: 'package', task: 'task2' })),
+        )
+          + ' Message 2'
+          + ansiEscapes.eraseEndLine
+          + '\n',
       ),
       expect.stringContaining(
-          prefix.text(zlogMessage(ZLogLevel.Info, zlogDetails({ target: 'package', task: 'task1' })))
-          + ' Message 3' + ansiEscapes.eraseEndLine + '\n' + ansiEscapes.cursorDown(1),
+        prefix.text(
+          zlogMessage(ZLogLevel.Info, zlogDetails({ target: 'package', task: 'task1' })),
+        )
+          + ' Message 3'
+          + ansiEscapes.eraseEndLine
+          + '\n'
+          + ansiEscapes.cursorDown(1),
       ),
     ]);
 
@@ -81,11 +91,11 @@ describe('ProgressZLogRecorder', () => {
     await logger.whenLogged();
     expect(lines).toEqual([
       prefix.text(zlogMessage(ZLogLevel.Info, zlogDetails({ target: 'package', task: 'task1' })))
-      + ' Message 1\n',
+        + ' Message 1\n',
       prefix.text(zlogMessage(ZLogLevel.Info, zlogDetails({ target: 'package', task: 'task2' })))
-      + ' Message 2\n',
+        + ' Message 2\n',
       prefix.text(zlogMessage(ZLogLevel.Info, zlogDetails({ target: 'package', task: 'task1' })))
-      + ' Message 3\n',
+        + ' Message 3\n',
     ]);
   });
 
@@ -98,5 +108,4 @@ describe('ProgressZLogRecorder', () => {
       expect(lines).toHaveLength(0);
     });
   });
-
 });

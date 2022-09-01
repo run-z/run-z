@@ -12,8 +12,8 @@ import type { ZTaskSpec } from './task-spec';
  *
  * @typeparam TAction  Task action type the builder produces.
  */
-export interface ZTaskBuilder<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> extends ZTaskModifier {
-
+export interface ZTaskBuilder<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
+  extends ZTaskModifier {
   readonly action: TAction | undefined;
 
   /**
@@ -72,9 +72,9 @@ export interface ZTaskBuilder<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
    * @returns A promise resolved to `this` instance when command line options applied.
    */
   applyArgv(
-      taskName: string | undefined,
-      argv: readonly string[],
-      opts?: ZOptionsParser.Opts<ZTaskOption>,
+    taskName: string | undefined,
+    argv: readonly string[],
+    opts?: ZOptionsParser.Opts<ZTaskOption>,
   ): Promise<this>;
 
   /**
@@ -90,5 +90,4 @@ export interface ZTaskBuilder<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
    * @returns New task.
    */
   task(): ZTask<TAction>;
-
 }

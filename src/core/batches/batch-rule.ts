@@ -10,7 +10,6 @@ import type { ZBatching } from './batching';
  * @typeparam TControl  A type of batch processing rule control.
  */
 export interface ZBatchRule<TControl> {
-
   /**
    * Create batch processing rule instance.
    *
@@ -19,11 +18,9 @@ export interface ZBatchRule<TControl> {
    * @returns New batch processing rule instance.
    */
   newBatchRule(context: ZBatchRule.Context<TControl>): ZBatchRule.Instance<TControl>;
-
 }
 
 export namespace ZBatchRule {
-
   /**
    * Batch processing rule context.
    *
@@ -32,7 +29,6 @@ export namespace ZBatchRule {
    * @typeparam TControl  A type of batch processing rule control.
    */
   export interface Context<TControl> {
-
     /**
      * Updates batch processing policy by replacing the rule processing instance with new one.
      *
@@ -42,9 +38,8 @@ export namespace ZBatchRule {
      * @returns Updated batch processing policy.
      */
     updateInstance(
-        update: (this: void, context: Context<TControl>) => Instance<TControl> | null | undefined,
+      update: (this: void, context: Context<TControl>) => Instance<TControl> | null | undefined,
     ): ZBatching;
-
   }
 
   /**
@@ -58,7 +53,6 @@ export namespace ZBatchRule {
    * @typeparam TControl  A type of batch processing rule control.
    */
   export interface Instance<TControl> {
-
     /**
      * Batch processing rule control.
      */
@@ -73,7 +67,10 @@ export namespace ZBatchRule {
      * @returns Batch processing rule instance bound to new context, or `false` or nothing nothing if the instance
      * is not applicable to new context.
      */
-    moveTo(context: Context<TControl>, transiently: boolean): Instance<TControl> | false | null | undefined;
+    moveTo(
+      context: Context<TControl>,
+      transiently: boolean,
+    ): Instance<TControl> | false | null | undefined;
 
     /**
      * Processes the batch.
@@ -84,7 +81,5 @@ export namespace ZBatchRule {
      * the batch processed asynchronously.
      */
     processBatch(batch: ZBatch): void | PromiseLike<unknown>;
-
   }
-
 }

@@ -10,43 +10,46 @@ export class RichJobZLogRecorder implements ZLogRecorder {
   private _row: ZJobRow | null = null;
 
   constructor(
-      private readonly _rows: ZJobRows,
-      private readonly _output: ZJobOutput,
-      private readonly _by: ZLogRecorder,
-  ) {
-  }
+    private readonly _rows: ZJobRows,
+    private readonly _output: ZJobOutput,
+    private readonly _by: ZLogRecorder,
+  ) {}
 
   record(message: ZLogMessage): void {
-
-    const { details: { error, success } } = message;
+    const {
+      details: { error, success },
+    } = message;
 
     if (error != null) {
-
       const line: unknown[] = error instanceof Error ? [error.message] : [String(error)];
 
       // Error report.
       // Update status and log collected error.
-      this._by.record(this._output.setStatus({
-        ...message,
-        level: ZLogLevel.Info,
-        line,
-        details: { ...message.details, row: this._useRow() },
-      }));
+      this._by.record(
+        this._output.setStatus({
+          ...message,
+          level: ZLogLevel.Info,
+          line,
+          details: { ...message.details, row: this._useRow() },
+        }),
+      );
 
-      this._output.lines().forEach(([message, err]) => this._by.record(
-          zlogMessage(err ? ZLogLevel.Error : ZLogLevel.Info, message),
-      ));
+      this._output
+        .lines()
+        .forEach(([message, err]) => this._by.record(zlogMessage(err ? ZLogLevel.Error : ZLogLevel.Info, message)));
 
       this._by.record({ ...message, line });
     } else if (success) {
       // Final success
       // Update status.
-      this._by.record(this._output.setStatus({
-        ...message,
-        level: ZLogLevel.Info,
-        line: [this._output.lastLine || 'Ok'],
-        details: { ...message.details, row: this._useRow() },
-      }));
+      this._by.record(
+        this._output.setStatus({
+          ...message,
+          level: ZLogLevel.Info,
+          line: [this._output.lastLine || 'Ok'],
+          details: { ...message.details, row: this._useRow() },
+        }),
+      );
     } else {
       // Regular message.
       // Update status and record output.
@@ -73,7 +76,7 @@ export class RichJobZLogRecorder implements ZLogRecorder {
       return this._row;
     }
 
-    return this._row = this._rows.add(() => this.record(this._output.statusMessage));
+    return (this._row = this._rows.add(() => this.record(this._output.statusMessage)));
   }
 
 }

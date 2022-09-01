@@ -11,11 +11,9 @@ export class ZDepGraph$ implements ZDepGraph {
   private _dependencies?: Set<ZPackage$> | undefined;
   private _dependants?: Set<ZPackage$> | undefined;
 
-  constructor(readonly target: ZPackage$) {
-  }
+  constructor(readonly target: ZPackage$) {}
 
   _init(): void {
-
     const collected = new Set<ZPackage$>();
 
     zPackageDeps(collected, this.target, false);
@@ -35,7 +33,7 @@ export class ZDepGraph$ implements ZDepGraph {
     zPackageDeps(collected, this.target);
     collected.delete(this.target);
 
-    return this._dependencies = collected;
+    return (this._dependencies = collected);
   }
 
   dependants(): Set<ZPackage$> {
@@ -68,11 +66,10 @@ export class ZDepGraph$ implements ZDepGraph {
       collected.add(dependant);
     }
 
-    return this._dependants = collected;
+    return (this._dependants = collected);
   }
 
   private _allDependants(): Set<ZPackage$> {
-
     const result = new Set<ZPackage$>();
 
     zPackageDependants(result, this.target);
@@ -87,11 +84,7 @@ export class ZDepGraph$ implements ZDepGraph {
 /**
  * @internal
  */
-function zPackageDeps(
-    collected: Set<ZPackage$>,
-    target: ZPackage$,
-    deep = true,
-): void {
+function zPackageDeps(collected: Set<ZPackage$>, target: ZPackage$, deep = true): void {
   collected.add(target);
 
   const { _resolver: resolver } = target;
@@ -101,11 +94,11 @@ function zPackageDeps(
   zPackageDepsOfKind(resolver, collected, packageJson.dependencies, deep);
   if (devDependencies) {
     zPackageDepsOfKind(
-        resolver,
-        collected,
-        packageJson.peerDependencies,
-        deep,
-        depName => devDependencies[depName] != null,
+      resolver,
+      collected,
+      packageJson.peerDependencies,
+      deep,
+      depName => devDependencies[depName] != null,
     );
     zPackageDepsOfKind(resolver, collected, devDependencies, deep);
   }
@@ -116,11 +109,11 @@ function zPackageDeps(
  * @internal
  */
 function zPackageDepsOfKind(
-    resolver: ZPackageResolver$,
-    collected: Set<ZPackage$>,
-    deps: Readonly<Record<string, string>> | undefined,
-    deep: boolean,
-    filter: (depName: string) => boolean = valueProvider(true),
+  resolver: ZPackageResolver$,
+  collected: Set<ZPackage$>,
+  deps: Readonly<Record<string, string>> | undefined,
+  deep: boolean,
+  filter: (depName: string) => boolean = valueProvider(true),
 ): void {
   if (!deps) {
     return;
@@ -138,7 +131,6 @@ function zPackageDepsOfKind(
       }
 
       if (range) {
-
         const version = semver.parse(dep.packageJson.version, true);
 
         if (version && !semver.satisfies(version, range, true)) {

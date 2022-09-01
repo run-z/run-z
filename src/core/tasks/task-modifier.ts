@@ -9,7 +9,6 @@ import type { ZTaskSpec } from './task-spec';
  * Implemented by both {@link ZTaskBuilder} and {@link ZTaskOption}.
  */
 export interface ZTaskModifier {
-
   /**
    * Target package the task is applied to.
    */
@@ -117,5 +116,4 @@ export interface ZTaskModifier {
    * @returns `this` instance.
    */
   executeBy(executor: ZTaskExecutor): ZTaskModifier;
-
 }

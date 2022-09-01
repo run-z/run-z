@@ -4,7 +4,6 @@ import { ZTaskParams } from '../../core';
 import { TestPlan } from '../../spec';
 
 describe('ZDepGraphBatches', () => {
-
   let testPlan: TestPlan;
 
   beforeEach(() => {
@@ -107,62 +106,49 @@ describe('ZDepGraphBatches', () => {
   });
 
   async function init(): Promise<void> {
-
-    const mainLocation = testPlan.addPackage(
-        'main',
-        {
-          packageJson: {
-            name: 'main',
-            scripts: {
-              'all/*': 'run-z group=all ./nested//',
-            },
-          },
+    const mainLocation = testPlan.addPackage('main', {
+      packageJson: {
+        name: 'main',
+        scripts: {
+          'all/*': 'run-z group=all ./nested//',
         },
-    );
+      },
+    });
 
-    testPlan.addPackage(
-        'main/nested/1',
-        {
-          packageJson: {
-            name: 'nested1',
-            scripts: {
-              test: 'exec nested1',
-            },
-          },
+    testPlan.addPackage('main/nested/1', {
+      packageJson: {
+        name: 'nested1',
+        scripts: {
+          test: 'exec nested1',
         },
-    );
+      },
+    });
     nested1 = await testPlan.target();
 
-    testPlan.addPackage(
-        'main/nested/2',
-        {
-          packageJson: {
-            name: 'nested2',
-            dependencies: {
-              nested1: '*',
-            },
-            scripts: {
-              test: 'exec nested2',
-            },
-          },
+    testPlan.addPackage('main/nested/2', {
+      packageJson: {
+        name: 'nested2',
+        dependencies: {
+          nested1: '*',
         },
-    );
+        scripts: {
+          test: 'exec nested2',
+        },
+      },
+    });
     nested2 = await testPlan.target();
 
-    testPlan.addPackage(
-        'main/nested/3',
-        {
-          packageJson: {
-            name: 'nested3',
-            dependencies: {
-              nested2: '*',
-            },
-            scripts: {
-              test: 'exec nested3',
-            },
-          },
+    testPlan.addPackage('main/nested/3', {
+      packageJson: {
+        name: 'nested3',
+        dependencies: {
+          nested2: '*',
         },
-    );
+        scripts: {
+          test: 'exec nested3',
+        },
+      },
+    });
     nested3 = await testPlan.target();
 
     main = await testPlan.target(mainLocation);

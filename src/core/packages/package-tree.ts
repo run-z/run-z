@@ -24,14 +24,14 @@ export class ZPackageTree extends ZPackageLocation {
    * or {@link ZShell.noop no-op shell} if there is no `parent`.
    */
   constructor(
-      readonly baseName: string,
-      {
-        packageJson,
-        parent,
-      }: {
-        packageJson?: PromiseLike<ZPackageJson | undefined> | ZPackageJson | undefined;
-        parent?: ZPackageTree | undefined;
-      } = {},
+    readonly baseName: string,
+    {
+      packageJson,
+      parent,
+    }: {
+      packageJson?: PromiseLike<ZPackageJson | undefined> | ZPackageJson | undefined;
+      parent?: ZPackageTree | undefined;
+    } = {},
   ) {
     super();
     this.parent = parent;
@@ -44,7 +44,6 @@ export class ZPackageTree extends ZPackageLocation {
   }
 
   relative(path: string): ZPackageTree | undefined {
-
     const [name, restPath] = pathNameAndRest(path);
     let nested: ZPackageTree | undefined;
 
@@ -69,7 +68,6 @@ export class ZPackageTree extends ZPackageLocation {
   }
 
   deeplyNested(): readonly ZPackageTree[] {
-
     const result: ZPackageTree[] = [];
 
     for (const nested of this._nested.values()) {
@@ -92,18 +90,16 @@ export class ZPackageTree extends ZPackageLocation {
    * @returns New nested package tree.
    */
   put(
-      path: string,
-      {
-        packageJson,
-      }: {
-        packageJson?: PromiseLike<ZPackageJson | undefined> | ZPackageJson | undefined;
-      } = {},
+    path: string,
+    {
+      packageJson,
+    }: {
+      packageJson?: PromiseLike<ZPackageJson | undefined> | ZPackageJson | undefined;
+    } = {},
   ): ZPackageTree {
-
     const [name, restPath] = pathNameAndRest(path);
 
     if (!restPath) {
-
       const nested = new ZPackageTree(name, { packageJson, parent: this });
 
       this._nested.set(name, nested);
@@ -126,7 +122,6 @@ export class ZPackageTree extends ZPackageLocation {
  * @internal
  */
 function pathNameAndRest(path: string): [string, string?] {
-
   const slashIdx = path.indexOf('/');
 
   return slashIdx < 0 ? [path] : [path.substr(0, slashIdx), path.substr(slashIdx + 1)];

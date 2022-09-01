@@ -6,7 +6,6 @@ import { ZBatcher } from './batcher';
 import { ZDepsFirstBatches } from './deps-first-batches.rule';
 
 describe('ZDepsFirstBatches', () => {
-
   let testPlan: TestPlan;
   let main: ZPackageTree;
   let nested1: ZPackage;
@@ -67,29 +66,26 @@ describe('ZDepsFirstBatches', () => {
     expect(other2.hasPrerequisite(other1.task)).toBe(true);
   });
   it('establishes dependencies-first order between multi-batched tasks', async () => {
-    testPlan = new TestPlan(
-        'root',
-        {
-          setup: new StandardZSetup({
-            extensions: {
-              options: {
-                '--test-multi-batch'(option) {
-                  option.values(0);
-                  option.setBatching(
-                      option.batching.batchBy(async planner => {
-                        await ZBatcher.batchTask(planner);
-                        if (planner.taskName === 'test') {
-                          // Batch `other` task along with `test` one
-                          await ZBatcher.batchTask({ ...planner, taskName: 'other' });
-                        }
-                      }),
-                  );
-                },
-              },
+    testPlan = new TestPlan('root', {
+      setup: new StandardZSetup({
+        extensions: {
+          options: {
+            '--test-multi-batch'(option) {
+              option.values(0);
+              option.setBatching(
+                option.batching.batchBy(async planner => {
+                  await ZBatcher.batchTask(planner);
+                  if (planner.taskName === 'test') {
+                    // Batch `other` task along with `test` one
+                    await ZBatcher.batchTask({ ...planner, taskName: 'other' });
+                  }
+                }),
+              );
             },
-          }),
+          },
         },
-    );
+      }),
+    });
 
     await init();
     await testPlan.parse('run-z --test-multi-batch ./nested// test');
@@ -126,23 +122,18 @@ describe('ZDepsFirstBatches', () => {
     expect(test2.hasPrerequisite(test1.task)).toBe(false);
   });
   it('does not establish dependencies-first order when disabled', async () => {
-    testPlan = new TestPlan(
-        'root',
-        {
-          setup: new StandardZSetup({
-            extensions: {
-              options: {
-                '--test-no-deps-first'(option) {
-                  option.values(0);
-                  option.setBatching(
-                      option.batching.rule(ZDepsFirstBatches).depsFirst(false),
-                  );
-                },
-              },
+    testPlan = new TestPlan('root', {
+      setup: new StandardZSetup({
+        extensions: {
+          options: {
+            '--test-no-deps-first'(option) {
+              option.values(0);
+              option.setBatching(option.batching.rule(ZDepsFirstBatches).depsFirst(false));
             },
-          }),
+          },
         },
-    );
+      }),
+    });
 
     await init();
     await testPlan.parse('run-z --test-no-deps-first ./nested// test');
@@ -155,44 +146,35 @@ describe('ZDepsFirstBatches', () => {
   });
 
   async function init(): Promise<void> {
-    main = testPlan.addPackage(
-        'main',
-        {
-          packageJson: {
-            name: 'main',
-          },
-        },
-    );
+    main = testPlan.addPackage('main', {
+      packageJson: {
+        name: 'main',
+      },
+    });
 
-    testPlan.addPackage(
-        'main/nested/1',
-        {
-          packageJson: {
-            name: 'nested1',
-            scripts: {
-              test: 'exec nested1',
-              other: 'exec other1',
-            },
-          },
+    testPlan.addPackage('main/nested/1', {
+      packageJson: {
+        name: 'nested1',
+        scripts: {
+          test: 'exec nested1',
+          other: 'exec other1',
         },
-    );
+      },
+    });
     nested1 = await testPlan.target();
 
-    testPlan.addPackage(
-        'main/nested/2',
-        {
-          packageJson: {
-            name: 'nested2',
-            dependencies: {
-              nested1: '*',
-            },
-            scripts: {
-              test: 'exec nested1',
-              other: 'exec other2',
-            },
-          },
+    testPlan.addPackage('main/nested/2', {
+      packageJson: {
+        name: 'nested2',
+        dependencies: {
+          nested1: '*',
         },
-    );
+        scripts: {
+          test: 'exec nested1',
+          other: 'exec other2',
+        },
+      },
+    });
     nested2 = await testPlan.target();
 
     await testPlan.target(main);

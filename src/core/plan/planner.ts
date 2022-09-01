@@ -14,8 +14,7 @@ export class ZPlanner {
    *
    * @param setup - Task execution setup.
    */
-  constructor(readonly setup: ZSetup) {
-  }
+  constructor(readonly setup: ZSetup) {}
 
   /**
    * Plans a top-level task execution.
@@ -29,10 +28,9 @@ export class ZPlanner {
    * @returns A promise resolved to top-level task execution call.
    */
   async call<TAction extends ZTaskSpec.Action>(
-      task: ZTask<TAction>,
-      details?: ZCallDetails<TAction>,
+    task: ZTask<TAction>,
+    details?: ZCallDetails<TAction>,
   ): Promise<ZCall<TAction>> {
-
     const records = new ZInstructionRecords(this.setup);
 
     await records.call(task, details);

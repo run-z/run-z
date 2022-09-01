@@ -14,8 +14,10 @@ export class ZExecutor {
   readonly jobs = new Map<ZTask, ZExecutionJob>();
   readonly evaluator = ZCallRecord.newEvaluator();
 
-  exec<TAction extends ZTaskSpec.Action>(call: ZCallRecord<TAction>, shell: ZShell): ZExecutionJob<TAction> {
-
+  exec<TAction extends ZTaskSpec.Action>(
+    call: ZCallRecord<TAction>,
+    shell: ZShell,
+  ): ZExecutionJob<TAction> {
     const { task } = call;
     const running = this.jobs.get(task);
 
@@ -35,18 +37,18 @@ export class ZExecutor {
 /**
  * @internal
  */
-export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> implements ZJob<TAction> {
+export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
+  implements ZJob<TAction> {
 
   private _params?: ZTaskParams | undefined;
   private _exec!: ZExecution;
   private _execAndPre!: ZExecution;
 
   constructor(
-      private readonly _executor: ZExecutor,
-      readonly shell: ZShell,
-      readonly call: ZCallRecord<TAction>,
-  ) {
-  }
+    private readonly _executor: ZExecutor,
+    readonly shell: ZShell,
+    readonly call: ZCallRecord<TAction>,
+  ) {}
 
   get params(): ZTaskParams {
     return this._params || (this._params = this.call.params(this._executor.evaluator));
@@ -82,13 +84,12 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
 
   private _execPre(): ZExecution {
     return execZAll(
-        this.call.prerequisites().map(pre => pre.exec(this.shell)),
-        noop,
+      this.call.prerequisites().map(pre => pre.exec(this.shell)),
+      noop,
     );
   }
 
   private _whenReady(): ZExecution {
-
     const whenReady: ZExecution[] = [];
 
     for (const job of this._executor.jobs.values()) {
@@ -109,11 +110,11 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> 
       // Await for job to finish.
       // Transitive prerequisites are handled individually.
       whenReady.push(
-          execZ(() => ({
-            whenStarted: job.whenStarted.bind(job),
-            whenDone: job.whenFinished.bind(job),
-            abort: job.abort.bind(job),
-          })),
+        execZ(() => ({
+          whenStarted: job.whenStarted.bind(job),
+          whenDone: job.whenFinished.bind(job),
+          abort: job.abort.bind(job),
+        })),
       );
     }
 

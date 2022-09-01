@@ -7,14 +7,12 @@ import { ZTaskParams } from './task-params';
 describe('ZCallDetails', () => {
   describe('by', () => {
     it('reconstructs parameters', () => {
-
       const params = ZCallDetails.by().params(ZTaskParams.newEvaluator());
 
       expect(params.attrs).toEqual({});
       expect(params.args).toEqual([]);
     });
     it('respects parameters', () => {
-
       const params = ZCallDetails.by({
         params: valueProvider({
           attrs: { attr: ['1'] },
@@ -29,7 +27,6 @@ describe('ZCallDetails', () => {
       expect(await (ZCallDetails.by() as any).plan()).toBeUndefined();
     });
     it('respects plan', async () => {
-
       const planner = { name: 'planner' } as unknown as ZCallPlanner;
       const plan = jest.fn<() => void>();
 

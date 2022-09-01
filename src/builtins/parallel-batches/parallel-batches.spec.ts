@@ -6,7 +6,6 @@ import { ZAllBatchBuiltin } from '../all-batch.builtin';
 import { ZParallelBatches } from './parallel-batches.rule';
 
 describe('ZParallelBatches', () => {
-
   let testPlan: TestPlan;
 
   beforeEach(() => {
@@ -110,7 +109,6 @@ describe('ZParallelBatches', () => {
   });
 
   it('may be set by custom option', async () => {
-
     const setup = new ZSetup({
       extensions: [
         ZAllBatchBuiltin,
@@ -138,51 +136,41 @@ describe('ZParallelBatches', () => {
   });
 
   async function init(script = 'run-z ./nested//'): Promise<void> {
-    main = testPlan.addPackage(
-        'main',
-        {
-          packageJson: {
-            scripts: {
-              'group/*': script,
-              each: 'run-z ./nested//',
-              'each:p': 'run-z ./nested// --batch-parallel',
-            },
-          },
+    main = testPlan.addPackage('main', {
+      packageJson: {
+        scripts: {
+          'group/*': script,
+          each: 'run-z ./nested//',
+          'each:p': 'run-z ./nested// --batch-parallel',
         },
-    );
+      },
+    });
 
-    testPlan.addPackage(
-        'main/nested/1',
-        {
-          packageJson: {
-            name: 'nested1',
-            scripts: {
-              all: 'run-z test',
-              test: 'exec nested1',
-            },
-          },
+    testPlan.addPackage('main/nested/1', {
+      packageJson: {
+        name: 'nested1',
+        scripts: {
+          all: 'run-z test',
+          test: 'exec nested1',
         },
-    );
+      },
+    });
     nested1 = await testPlan.target();
 
-    testPlan.addPackage(
-        'main/nested/2',
-        {
-          packageJson: {
-            name: 'nested2',
-            dependencies: {
-              nested1: '*',
-            },
-            scripts: {
-              all: 'run-z test',
-              test: 'exec nested2',
-            },
-          },
+    testPlan.addPackage('main/nested/2', {
+      packageJson: {
+        name: 'nested2',
+        dependencies: {
+          nested1: '*',
         },
-    );
+        scripts: {
+          all: 'run-z test',
+          test: 'exec nested2',
+        },
+      },
+    });
     nested2 = await testPlan.target();
 
     await testPlan.target(main);
   }
-
 });

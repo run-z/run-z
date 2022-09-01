@@ -13,24 +13,19 @@ import { zTaskSpecSyntax } from './task-spec-syntax';
  * @internal
  */
 export function zTaskSpecParser(
-    setup: ZSetup,
-    { options }: ZTaskParser.Config,
+  setup: ZSetup,
+  { options }: ZTaskParser.Config,
 ): (
-    this: void,
-    builder: ZTaskBuilder,
-    entries: readonly string[],
-    opts?: ZOptionsParser.Opts<ZTaskOption, DraftZTask>,
+  this: void,
+  builder: ZTaskBuilder,
+  entries: readonly string[],
+  opts?: ZOptionsParser.Opts<ZTaskOption, DraftZTask>,
 ) => Promise<ZTaskBuilder> {
-
   const parser: ZOptionsParser<ZTaskOption, DraftZTask> = customZOptionsParser({
     options: zTaskSpecOptions(setup, options),
     syntax: zTaskSpecSyntax(setup),
     optionClass: zTaskSpecOptionClass,
   });
 
-  return (builder, entries, opts) => parser(
-      new DraftZTask(builder),
-      entries,
-      opts,
-  ).then(builder => builder.done());
+  return (builder, entries, opts) => parser(new DraftZTask(builder), entries, opts).then(builder => builder.done());
 }

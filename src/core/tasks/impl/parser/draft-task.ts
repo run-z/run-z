@@ -15,7 +15,6 @@ export class DraftZTask {
   preParallel = false;
 
   constructor(readonly builder: ZTaskBuilder) {
-
     const { action: prevAction } = builder.spec();
 
     this._nextTargets = prevAction.type === 'group' ? [...prevAction.targets] : [];
@@ -28,11 +27,9 @@ export class DraftZTask {
   }
 
   done(): ZTaskBuilder {
-
     const lastSpec = this.pre.conclude();
 
     if (!this.builder.action) {
-
       let targets: readonly ZTaskSpec.Target[] = this._nextTargets;
 
       if (!targets.length && lastSpec) {
@@ -53,10 +50,7 @@ export class DraftZTask {
 /**
  * @internal
  */
-function draftZTaskPre(
-    draft: DraftZTask,
-): ZTaskOption.Pre {
-
+function draftZTaskPre(draft: DraftZTask): ZTaskOption.Pre {
   let preTargets: readonly ZTaskSpec.Target[] = [];
   let parallelPre = false;
   let preTaskName: string | undefined;
@@ -146,7 +140,6 @@ function draftZTaskPre(
     },
     conclude(): ZTaskSpec.Pre | undefined {
       if (this.taskName != null) {
-
         const pre: ZTaskSpec.Pre = {
           targets: preTargets,
           task: this.taskName,
@@ -170,8 +163,8 @@ function draftZTaskPre(
 
       if (preOptionAt >= 0) {
         throw new ZOptionError(
-            draft._option.optionLocation({ index: preOptionAt }),
-            'Prerequisite arguments specified, but not the task',
+          draft._option.optionLocation({ index: preOptionAt }),
+          'Prerequisite arguments specified, but not the task',
         );
       }
 

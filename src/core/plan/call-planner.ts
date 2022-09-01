@@ -11,7 +11,6 @@ import type { ZCallDetails } from './call-details';
  * @typeparam TAction  Task action type.
  */
 export interface ZCallPlanner<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
-
   /**
    * Task execution setup instance.
    */
@@ -46,9 +45,9 @@ export interface ZCallPlanner<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
    * @returns A promise resolved to the task call when it is recorded.
    */
   call<TAction extends ZTaskSpec.Action>(
-      this: void,
-      task: ZTask<TAction>,
-      details?: ZCallDetails<TAction>,
+    this: void,
+    task: ZTask<TAction>,
+    details?: ZCallDetails<TAction>,
   ): Promise<ZCall<TAction>>;
 
   /**
@@ -94,9 +93,8 @@ export interface ZCallPlanner<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
    * original task as the second one, and returning `true` when parallel execution is allowed for them.
    */
   makeParallelWhen(
-      this: void,
-      task: ZTaskQualifier,
-      condition: (this: void, other: ZTask, task: ZTask) => boolean,
+    this: void,
+    task: ZTaskQualifier,
+    condition: (this: void, other: ZTask, task: ZTask) => boolean,
   ): void;
-
 }

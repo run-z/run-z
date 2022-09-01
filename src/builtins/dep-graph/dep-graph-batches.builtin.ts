@@ -41,9 +41,7 @@ export const ZDepGraphBatchesBuiltin: ZExtension = {
     },
     '--all'(option) {
       option.defer(() => {
-        option.setBatching(
-            option.batching.rule(ZDepGraphBatches).disable(),
-        );
+        option.setBatching(option.batching.rule(ZDepGraphBatches).disable());
       });
     },
   },
@@ -53,14 +51,15 @@ export const ZDepGraphBatchesBuiltin: ZExtension = {
  * @internal
  */
 function readZDepGraphBatches(
-    included: 'dependencies' | 'dependants',
-    includeSelf: boolean,
-    option: ZTaskOption,
+  included: 'dependencies' | 'dependants',
+  includeSelf: boolean,
+  option: ZTaskOption,
 ): void {
   option.setBatching(
-      option.batching
-          .batchByDefault(ZBatcher.topmost())
-          .rule(ZDepGraphBatches).include(included, includeSelf),
+    option.batching
+      .batchByDefault(ZBatcher.topmost())
+      .rule(ZDepGraphBatches)
+      .include(included, includeSelf),
   );
   option.values(0);
 }
