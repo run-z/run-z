@@ -40,8 +40,8 @@ export function namedZBatches(
       continue; // The batch is explicitly excluded.
     }
 
-    const include: -1 | 0 | 1 // Batch set is limited?
-      = (
+    const include: -1 | 0 | 1 = // Batch set is limited?
+      (
         namedBatches.only
           ? /* Explicit match. */ namedBatches.only.has(batchName)
           : /* Match any except additional. */ !additionalBatch

@@ -177,8 +177,8 @@ By default ${clz.usage('text')} format is used.
    * @returns `this` instance.
    */
   setProgressFormat(name: 'rich' | 'text' | 'auto'): this {
-    this._format
-      = name === 'rich'
+    this._format =
+      name === 'rich'
         ? lazyValue(zProgressFormats.rich)
         : name === 'auto'
         ? lazyValue(zProgressFormats.auto)

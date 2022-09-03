@@ -137,14 +137,14 @@ function zTaskPreArgsSyntax(args: readonly [string, ...string[]]): readonly ZOpt
 
       const restValues = args.slice(1, i);
       const lastValues = closingIdx ? [arg.substr(0, closingIdx)] : [];
-      const values
-        = contentIdx < first.length
+      const values =
+        contentIdx < first.length
           ? [first.substr(contentIdx), ...restValues, ...lastValues, '//']
           : [...restValues, ...lastValues, '//'];
       const afterPreArgsIdx = closingIdx + delimiter.length;
       const restArgs = args.slice(i + 1);
-      const tail
-        = afterPreArgsIdx < arg.length ? [arg.substr(afterPreArgsIdx), ...restArgs] : [...restArgs];
+      const tail =
+        afterPreArgsIdx < arg.length ? [arg.substr(afterPreArgsIdx), ...restArgs] : [...restArgs];
 
       return [
         {
