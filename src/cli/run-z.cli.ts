@@ -1,5 +1,6 @@
 import { AbortedZExecutionError, FailedZExecutionError } from '@run-z/exec-z';
 import { ZOptionError } from '@run-z/optionz';
+import process from 'node:process';
 import { StandardZSetup } from '../builtins';
 import { UnknownZTaskError, ZPackageLocation, ZSetup, ZShell } from '../core';
 import { SystemZShell, ZPackageDirectory } from '../os';
@@ -83,8 +84,13 @@ async function doRunZ(
   });
   const task = builder.task();
   const call = await task.call();
+  const job = call.exec(shell);
 
-  return call.exec(shell).whenDone();
+  process.on('SIGINT', () => {
+    job.abort();
+  });
+
+  return job.whenDone();
 }
 
 /**
