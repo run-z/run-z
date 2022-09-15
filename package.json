@@ -78,7 +78,7 @@
     "rollup-plugin-flat-dts": "^1.7.0",
     "rollup-plugin-sourcemaps": "^0.6.3",
     "rollup-plugin-typescript2": "^0.34.0",
-    "run-z": "=1.10.1-bootstrap",
+    "run-z": "1.10.1-bootstrap",
     "shx": "^0.3.4",
     "ts-jest": "^29.0.1",
     "tslib": "^2.4.0",
