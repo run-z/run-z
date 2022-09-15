@@ -60,7 +60,7 @@
     "@run-z/prettier-config": "^2.0.0",
     "@run-z/rollup-helpers": "^2.0.0",
     "@types/cross-spawn": "^6.0.2",
-    "@types/node": "^16.11.58",
+    "@types/node": "^16.11.59",
     "@types/semver": "^7.3.12",
     "@types/shell-quote": "^1.7.1",
     "@types/wrap-ansi": "^8.0.1",
@@ -80,7 +80,7 @@
     "rollup-plugin-typescript2": "^0.34.0",
     "run-z": "=1.10.0-bootstrap",
     "shx": "^0.3.4",
-    "ts-jest": "^29.0.0",
+    "ts-jest": "^29.0.1",
     "tslib": "^2.4.0",
     "typedoc": "^0.23.14",
     "typescript": "^4.8.3"
