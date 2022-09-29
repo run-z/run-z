@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals
 import { asis, noop } from '@proc7ts/primitives';
 import { AbortedZExecutionError, FailedZExecutionError } from '@run-z/exec-z';
 import chalk, { ColorSupportLevel } from 'chalk';
-import type { SpyInstance } from 'jest-mock';
+import type { Mock } from 'jest-mock';
 import logSymbols from 'log-symbols';
 import * as os from 'node:os';
 import process from 'node:process';
@@ -278,10 +278,10 @@ describe('SystemZShell', () => {
   });
 
   describe('options', () => {
-    let writeSpy: SpyInstance<(chunk: Uint8Array | string, cb?: any) => boolean>;
+    let writeSpy: Mock<(chunk: Uint8Array | string, cb?: any) => boolean>;
 
     beforeEach(() => {
-      writeSpy = jest.spyOn(process.stdout, 'write');
+      writeSpy = jest.spyOn(process.stdout, 'write') as typeof writeSpy;
       writeSpy.mockImplementation((_chunk, cb) => {
         cb();
 
@@ -293,10 +293,10 @@ describe('SystemZShell', () => {
     });
 
     describe('--help', () => {
-      let logSpy: SpyInstance<(...args: unknown[]) => void>;
+      let logSpy: Mock<(...args: unknown[]) => void>;
 
       beforeEach(() => {
-        logSpy = jest.spyOn(console, 'log');
+        logSpy = jest.spyOn(console, 'log') as typeof logSpy;
         logSpy.mockImplementation(noop);
       });
       afterEach(() => {
@@ -332,7 +332,7 @@ describe('SystemZShell', () => {
         await call.exec(shell).whenDone();
 
         expect(writeSpy).not.toHaveBeenCalledWith(
-          expect.stringContaining(logSymbols.success),
+          expect.stringContaining(logSymbols.success) as unknown as string,
           expect.any(Function),
         );
       });
@@ -347,7 +347,7 @@ describe('SystemZShell', () => {
         await call.exec(shell).whenDone();
 
         expect(writeSpy).not.toHaveBeenCalledWith(
-          expect.stringContaining(logSymbols.success),
+          expect.stringContaining(logSymbols.success) as unknown as string,
           expect.any(Function),
         );
       });
@@ -365,7 +365,7 @@ describe('SystemZShell', () => {
         await call.exec(shell).whenDone();
 
         expect(writeSpy).not.toHaveBeenCalledWith(
-          expect.stringContaining(logSymbols.success),
+          expect.stringContaining(logSymbols.success) as unknown as string,
           expect.any(Function),
         );
       });
@@ -384,7 +384,7 @@ describe('SystemZShell', () => {
         await job.whenDone();
 
         expect(writeSpy).toHaveBeenCalledWith(
-          expect.stringContaining(logSymbols.success),
+          expect.stringContaining(logSymbols.success) as unknown as string,
           expect.any(Function),
         );
       });
@@ -403,7 +403,7 @@ describe('SystemZShell', () => {
         await job.whenDone();
 
         expect(writeSpy).toHaveBeenCalledWith(
-          expect.stringContaining(logSymbols.success),
+          expect.stringContaining(logSymbols.success) as unknown as string,
           expect.any(Function),
         );
       });
@@ -424,7 +424,7 @@ describe('SystemZShell', () => {
         await job.whenDone();
 
         expect(writeSpy).not.toHaveBeenCalledWith(
-          expect.stringContaining(logSymbols.success),
+          expect.stringContaining(logSymbols.success) as unknown as string,
           expect.any(Function),
         );
       });
@@ -443,7 +443,7 @@ describe('SystemZShell', () => {
         await job.whenDone();
 
         expect(writeSpy).not.toHaveBeenCalledWith(
-          expect.stringContaining(logSymbols.success),
+          expect.stringContaining(logSymbols.success) as unknown as string,
           expect.any(Function),
         );
       });
@@ -464,7 +464,7 @@ describe('SystemZShell', () => {
         await job.whenDone();
 
         expect(writeSpy).toHaveBeenCalledWith(
-          expect.stringContaining(logSymbols.success),
+          expect.stringContaining(logSymbols.success) as unknown as string,
           expect.any(Function),
         );
       });
@@ -483,7 +483,7 @@ describe('SystemZShell', () => {
         await job.whenDone();
 
         expect(writeSpy).toHaveBeenCalledWith(
-          expect.stringContaining(logSymbols.success),
+          expect.stringContaining(logSymbols.success) as unknown as string,
           expect.any(Function),
         );
       });
@@ -504,7 +504,7 @@ describe('SystemZShell', () => {
         await job.whenDone();
 
         expect(writeSpy).not.toHaveBeenCalledWith(
-          expect.stringContaining(logSymbols.success),
+          expect.stringContaining(logSymbols.success) as unknown as string,
           expect.any(Function),
         );
       });
@@ -523,7 +523,7 @@ describe('SystemZShell', () => {
         await job.whenDone();
 
         expect(writeSpy).not.toHaveBeenCalledWith(
-          expect.stringContaining(logSymbols.success),
+          expect.stringContaining(logSymbols.success) as unknown as string,
           expect.any(Function),
         );
       });
@@ -544,7 +544,7 @@ describe('SystemZShell', () => {
         await job.whenDone();
 
         expect(writeSpy).toHaveBeenCalledWith(
-          expect.stringContaining(logSymbols.success),
+          expect.stringContaining(logSymbols.success) as unknown as string,
           expect.any(Function),
         );
       });
@@ -560,7 +560,7 @@ describe('SystemZShell', () => {
         await job.whenDone();
 
         expect(writeSpy).toHaveBeenCalledWith(
-          expect.stringContaining(logSymbols.success),
+          expect.stringContaining(logSymbols.success) as unknown as string,
           expect.any(Function),
         );
       });
@@ -578,7 +578,7 @@ describe('SystemZShell', () => {
         await job.whenDone();
 
         expect(writeSpy).toHaveBeenCalledWith(
-          expect.stringContaining(logSymbols.success),
+          expect.stringContaining(logSymbols.success) as unknown as string,
           expect.any(Function),
         );
       });
@@ -596,7 +596,7 @@ describe('SystemZShell', () => {
         expect(error.failure).toBe(13);
 
         expect(writeSpy).toHaveBeenCalledWith(
-          expect.stringContaining(logSymbols.error),
+          expect.stringContaining(logSymbols.error) as unknown as string,
           expect.any(Function),
         );
       });
@@ -611,15 +611,18 @@ describe('SystemZShell', () => {
 
         await job.whenDone();
 
-        expect(writeSpy).toHaveBeenCalledWith(expect.stringContaining(' Ok'), expect.any(Function));
+        expect(writeSpy).toHaveBeenCalledWith(
+          expect.stringContaining(' Ok') as unknown as string,
+          expect.any(Function),
+        );
       });
     });
 
     describe('--max-jobs', () => {
-      let setMaxJobs: SpyInstance<SystemZShell['setMaxJobs']>;
+      let setMaxJobs: Mock<SystemZShell['setMaxJobs']>;
 
       beforeEach(() => {
-        setMaxJobs = jest.spyOn(shell, 'setMaxJobs');
+        setMaxJobs = jest.spyOn(shell, 'setMaxJobs') as typeof setMaxJobs;
       });
       afterEach(() => {
         setMaxJobs.mockRestore();

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { execZNoOp } from '@run-z/exec-z';
 import { TestPlan } from '../../../spec';
-import type { ZShell } from '../../jobs';
+import type { ZJob, ZShell } from '../../jobs';
 import { ZTaskParams } from '../../plan';
 import { ScriptZTask } from './script.task';
 
@@ -51,7 +51,9 @@ describe('ScriptZTask', () => {
       await call.exec(shell as Partial<ZShell> as ZShell).whenDone();
 
       expect(shell.execScript).toHaveBeenCalledWith(
-        expect.objectContaining({ call: await testPlan.callOf(call.task.target, 'exec') }),
+        expect.objectContaining({
+          call: await testPlan.callOf(call.task.target, 'exec'),
+        }) as unknown as ZJob,
         'exec',
       );
 
@@ -79,7 +81,9 @@ describe('ScriptZTask', () => {
       await call.exec(shell as Partial<ZShell> as ZShell).whenDone();
 
       expect(shell.execScript).toHaveBeenCalledWith(
-        expect.objectContaining({ call: await testPlan.callOf(call.task.target, 'exec') }),
+        expect.objectContaining({
+          call: await testPlan.callOf(call.task.target, 'exec'),
+        }) as unknown as ZJob,
         'exec',
       );
 
@@ -110,7 +114,9 @@ describe('ScriptZTask', () => {
       await call.exec(shell as Partial<ZShell> as ZShell).whenDone();
 
       expect(shell.execScript).toHaveBeenCalledWith(
-        expect.objectContaining({ call: await testPlan.callOf(call.task.target, 'exec') }),
+        expect.objectContaining({
+          call: await testPlan.callOf(call.task.target, 'exec'),
+        }) as unknown as ZJob,
         'exec',
       );
 

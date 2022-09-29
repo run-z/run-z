@@ -3,7 +3,7 @@ import { valueProvider } from '@proc7ts/primitives';
 import { execZNoOp } from '@run-z/exec-z';
 import { StandardZSetup } from '../../../builtins';
 import { prerequisitesOf, taskIds, TestPlan } from '../../../spec';
-import type { ZShell } from '../../jobs';
+import type { ZJob, ZShell } from '../../jobs';
 import { ZTaskParams } from '../../plan';
 import { CommandZTask } from './command.task';
 
@@ -158,7 +158,9 @@ describe('CommandZTask', () => {
       await call.exec(shell as Partial<ZShell> as ZShell).whenDone();
 
       expect(shell.execCommand).toHaveBeenCalledWith(
-        expect.objectContaining({ call: await testPlan.callOf(call.task.target, 'exec') }),
+        expect.objectContaining({
+          call: await testPlan.callOf(call.task.target, 'exec'),
+        }) as unknown as ZJob,
         'start',
       );
 
@@ -186,7 +188,9 @@ describe('CommandZTask', () => {
       await call.exec(shell as Partial<ZShell> as ZShell).whenDone();
 
       expect(shell.execCommand).toHaveBeenCalledWith(
-        expect.objectContaining({ call: await testPlan.callOf(call.task.target, 'exec') }),
+        expect.objectContaining({
+          call: await testPlan.callOf(call.task.target, 'exec'),
+        }) as unknown as ZJob,
         'start',
       );
 
