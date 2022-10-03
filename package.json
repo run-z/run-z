@@ -60,7 +60,7 @@
     "@run-z/prettier-config": "^2.0.0",
     "@run-z/rollup-helpers": "^2.0.0",
     "@types/cross-spawn": "^6.0.2",
-    "@types/node": "^16.11.62",
+    "@types/node": "^16.11.63",
     "@types/semver": "^7.3.12",
     "@types/shell-quote": "^1.7.1",
     "@types/wrap-ansi": "^8.0.1",
