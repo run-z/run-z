@@ -2,7 +2,6 @@ import { externalModules } from '@run-z/rollup-helpers';
 import path from 'node:path';
 import { defineConfig } from 'rollup';
 import flatDts from 'rollup-plugin-flat-dts';
-import sourcemaps from 'rollup-plugin-sourcemaps';
 import ts from 'rollup-plugin-typescript2';
 import typescript from 'typescript';
 
@@ -21,31 +20,30 @@ export default defineConfig({
       cacheRoot: 'target/.rts2_cache',
       useTsconfigDeclarationDir: true,
     }),
-    sourcemaps(),
   ],
   external: externalModules(),
-  manualChunks(id) {
-    if (id.startsWith(path.resolve('src', 'builtins') + path.sep)) {
-      return 'run-z.builtins';
-    }
-    if (id.startsWith(path.resolve('src', 'cli') + path.sep)) {
-      return 'run-z.cli';
-    }
-    if (id.startsWith(path.resolve('src', 'core') + path.sep)) {
-      return 'run-z.core';
-    }
-    if (id.startsWith(path.resolve('src', 'os') + path.sep)) {
-      return 'run-z.os';
-    }
-
-    return 'run-z';
-  },
   output: {
     format: 'esm',
     sourcemap: true,
     dir: '.',
     entryFileNames: 'dist/[name].js',
     chunkFileNames: 'dist/_[name].js',
+    manualChunks(id) {
+      if (id.startsWith(path.resolve('src', 'builtins') + path.sep)) {
+        return 'run-z.builtins';
+      }
+      if (id.startsWith(path.resolve('src', 'cli') + path.sep)) {
+        return 'run-z.cli';
+      }
+      if (id.startsWith(path.resolve('src', 'core') + path.sep)) {
+        return 'run-z.core';
+      }
+      if (id.startsWith(path.resolve('src', 'os') + path.sep)) {
+        return 'run-z.os';
+      }
+
+      return 'run-z';
+    },
     hoistTransitiveImports: false,
     plugins: [
       flatDts({
