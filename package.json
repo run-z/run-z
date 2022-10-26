@@ -56,7 +56,7 @@
   },
   "devDependencies": {
     "@jest/globals": "^29.2.2",
-    "@run-z/eslint-config": "^3.2.2",
+    "@run-z/eslint-config": "^3.3.0",
     "@run-z/prettier-config": "^2.0.0",
     "@run-z/rollup-helpers": "^2.1.0",
     "@types/cross-spawn": "^6.0.2",
