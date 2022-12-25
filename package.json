@@ -74,7 +74,7 @@
     "jest-mock": "^29.3.1",
     "prettier": "^2.8.1",
     "prettier-eslint-cli": "^7.1.0",
-    "rollup": "^3.7.5",
+    "rollup": "^3.8.1",
     "rollup-plugin-flat-dts": "^2.0.0",
     "rollup-plugin-typescript2": "^0.34.1",
     "run-z": "1.10.1-bootstrap",
