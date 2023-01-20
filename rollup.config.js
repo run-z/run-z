@@ -1,8 +1,9 @@
-import { externalModules } from '@run-z/rollup-helpers';
+import nodeResolve from '@rollup/plugin-node-resolve';
 import path from 'node:path';
 import { defineConfig } from 'rollup';
 import flatDts from 'rollup-plugin-flat-dts';
 import ts from 'rollup-plugin-typescript2';
+import unbundle from 'rollup-plugin-unbundle';
 import typescript from 'typescript';
 
 export default defineConfig({
@@ -14,14 +15,15 @@ export default defineConfig({
     'run-z.os': './src/os/index.ts',
   },
   plugins: [
+    nodeResolve(),
     ts({
       typescript,
       tsconfig: 'tsconfig.main.json',
       cacheRoot: 'target/.rts2_cache',
       useTsconfigDeclarationDir: true,
     }),
+    unbundle(),
   ],
-  external: externalModules(),
   output: {
     format: 'esm',
     sourcemap: true,
