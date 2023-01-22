@@ -1,10 +1,12 @@
 import nodeResolve from '@rollup/plugin-node-resolve';
-import path from 'node:path';
 import { defineConfig } from 'rollup';
 import flatDts from 'rollup-plugin-flat-dts';
-import ts from 'rollup-plugin-typescript2';
+import ts from '@rollup/plugin-typescript';
 import unbundle from 'rollup-plugin-unbundle';
+import { resolveRootPackage } from 'rollup-plugin-unbundle/api';
 import typescript from 'typescript';
+
+const resolutionRoot = resolveRootPackage();
 
 export default defineConfig({
   input: {
@@ -19,10 +21,11 @@ export default defineConfig({
     ts({
       typescript,
       tsconfig: 'tsconfig.main.json',
-      cacheRoot: 'target/.rts2_cache',
-      useTsconfigDeclarationDir: true,
+      cacheDir: 'target/.rts_cache',
     }),
-    unbundle(),
+    unbundle({
+      resolutionRoot,
+    }),
   ],
   output: {
     format: 'esm',
@@ -31,22 +34,37 @@ export default defineConfig({
     entryFileNames: 'dist/[name].js',
     chunkFileNames: 'dist/_[name].js',
     manualChunks(id) {
-      if (id.startsWith(path.resolve('src', 'builtins') + path.sep)) {
-        return 'run-z.builtins';
-      }
-      if (id.startsWith(path.resolve('src', 'cli') + path.sep)) {
-        return 'run-z.cli';
-      }
-      if (id.startsWith(path.resolve('src', 'core') + path.sep)) {
-        return 'run-z.core';
-      }
-      if (id.startsWith(path.resolve('src', 'os') + path.sep)) {
-        return 'run-z.os';
+      const module = resolutionRoot.resolveImport(id);
+      const host = module.host;
+
+      if (host) {
+        const { scope, name } = host;
+
+        if (scope) {
+          return `dep/${name.slice(1)}`;
+        }
+        if (name === 'run-z') {
+          const path = module.uri.slice(host.uri.length + 1);
+
+          if (path.startsWith('src/builtins/')) {
+            return 'run-z.builtins';
+          }
+          if (path.startsWith('src/cli/')) {
+            return 'run-z.cli';
+          }
+          if (path.startsWith('src/core/')) {
+            return 'run-z.core';
+          }
+          if (path.startsWith('src/os/')) {
+            return 'run-z.os';
+          }
+        } else {
+          return `dep/${name}`;
+        }
       }
 
-      return 'run-z';
+      return 'run-z.common';
     },
-    hoistTransitiveImports: false,
     plugins: [
       flatDts({
         tsconfig: 'tsconfig.main.json',
