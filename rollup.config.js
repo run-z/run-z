@@ -1,7 +1,7 @@
 import nodeResolve from '@rollup/plugin-node-resolve';
+import ts from '@rollup/plugin-typescript';
 import { defineConfig } from 'rollup';
 import flatDts from 'rollup-plugin-flat-dts';
-import ts from '@rollup/plugin-typescript';
 import unbundle from 'rollup-plugin-unbundle';
 import { resolveRootPackage } from 'rollup-plugin-unbundle/api';
 import typescript from 'typescript';
@@ -69,11 +69,14 @@ export default defineConfig({
       flatDts({
         tsconfig: 'tsconfig.main.json',
         lib: true,
+        file: './dist/run-z.d.ts',
         compilerOptions: {
           declarationMap: true,
         },
         entries: {
-          builtins: {},
+          builtins: {
+            file: './dist/run-z.builtins.d.ts',
+          },
         },
         internal: ['**/impl/**', '**/*.impl.ts'],
       }),
