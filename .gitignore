@@ -27,7 +27,3 @@ pnpm-lock.yaml
 
 # Distribution directory
 /dist
-
-# Type definitions
-*.d.ts
-*.d.ts.map

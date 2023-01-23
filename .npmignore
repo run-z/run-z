@@ -31,7 +31,3 @@ node_modules
 
 # Include distribution dir
 !/dist
-
-# Include type definitions
-!*.d.ts
-!*.d.ts.map
