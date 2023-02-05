@@ -72,7 +72,7 @@
     "@run-z/optionz": "^2.4.1",
     "@run-z/prettier-config": "^2.0.0",
     "@types/cross-spawn": "^6.0.2",
-    "@types/node": "^18.11.18",
+    "@types/node": "^18.11.19",
     "@types/semver": "^7.3.13",
     "@types/shell-quote": "^1.7.1",
     "@typescript-eslint/eslint-plugin": "^5.50.0",
