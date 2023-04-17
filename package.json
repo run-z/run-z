@@ -86,14 +86,14 @@
     "path-key": "^4.0.0",
     "prettier": "^2.8.7",
     "prettier-eslint-cli": "^7.1.0",
-    "rollup": "^3.20.2",
+    "rollup": "^3.20.3",
     "rollup-plugin-flat-dts": "^2.1.0",
     "rollup-plugin-unbundle": "^1.0.0",
     "run-z": "1.11.0-bootstrap",
     "shx": "^0.3.4",
     "ts-jest": "^29.1.0",
     "tslib": "^2.5.0",
-    "typedoc": "^0.24.1",
+    "typedoc": "^0.24.4",
     "typescript": "~5.0.4"
   },
   "scripts": {
