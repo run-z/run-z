@@ -1,9 +1,9 @@
 import nodeResolve from '@rollup/plugin-node-resolve';
 import ts from '@rollup/plugin-typescript';
+import { resolveRootPackage } from '@run-z/npk';
 import { defineConfig } from 'rollup';
 import flatDts from 'rollup-plugin-flat-dts';
 import unbundle from 'rollup-plugin-unbundle';
-import { resolveRootPackage } from 'rollup-plugin-unbundle/api';
 import typescript from 'typescript';
 
 const resolutionRoot = resolveRootPackage();
