@@ -20,23 +20,35 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        id: pnpm-install
+        with:
+          version: '8'
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
 
       - name: Cache
         uses: actions/cache@v3
         env:
           cache-name: cache-node-modules-v3
         with:
-          path: ~/.local/share/pnpm/store
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('package.json') }}
 
-      - name: Use Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      - name: Install pnpm
-        run: npm i -g pnpm
       - name: Install dependencies
         run: pnpm install
 
