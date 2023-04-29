@@ -1,9 +1,13 @@
 # Run That
 
-[![NPM][npm-image]][npm-url] [![Build Status][build-status-img]][build-status-link]
-[![Build@Windows][build-windows-img]][build-windows-link] [![Build@MacOS][build-macos-img]][build-macos-link]
-[![Code Quality][quality-img]][quality-link] [![Coverage][coverage-img]][coverage-link]
-[![GitHub Project][github-image]][github-url] [![API Documentation][api-docs-image]][api documentation]
+[![NPM][npm-image]][npm-url]
+[![Build Status][build-status-img]][build-status-link]
+[![Build@Windows][build-windows-img]][build-windows-link]
+[![Build@MacOS][build-macos-img]][build-macos-link]
+[![Code Quality][quality-img]][quality-link]
+[![Coverage][coverage-img]][coverage-link]
+[![GitHub Project][github-image]][github-url]
+[![API Documentation][api-docs-image]][api documentation]
 
 `run-z` is a command line utility able to run multiple [npm-scripts] at once.
 
