@@ -69,6 +69,7 @@
     "@run-z/eslint-config": "^3.3.1",
     "@run-z/exec-z": "^1.4.2",
     "@run-z/log-z": "^2.2.1",
+    "@run-z/npk": "^0.2.0",
     "@run-z/optionz": "^2.4.1",
     "@run-z/prettier-config": "^2.0.0",
     "@types/cross-spawn": "^6.0.2",
