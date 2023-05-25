@@ -40,6 +40,7 @@
       "default": "./dist/run-z.builtins.js"
     }
   },
+  "sideEffects": false,
   "bin": {
     "run-z": "bin/run-z.js"
   },
@@ -69,15 +70,15 @@
     "@run-z/eslint-config": "^3.3.1",
     "@run-z/exec-z": "^1.4.2",
     "@run-z/log-z": "^2.2.1",
-    "@run-z/npk": "^0.2.0",
+    "@run-z/npk": "^0.3.0",
     "@run-z/optionz": "^2.4.1",
     "@run-z/prettier-config": "^2.0.0",
     "@types/cross-spawn": "^6.0.2",
     "@types/node": "^18.16.14",
     "@types/semver": "^7.5.0",
     "@types/shell-quote": "^1.7.1",
-    "@typescript-eslint/eslint-plugin": "^5.59.6",
-    "@typescript-eslint/parser": "^5.59.6",
+    "@typescript-eslint/eslint-plugin": "^5.59.7",
+    "@typescript-eslint/parser": "^5.59.7",
     "eslint": "^8.41.0",
     "eslint-plugin-jest": "^27.2.1",
     "gh-pages": "^5.0.0",
@@ -87,9 +88,9 @@
     "path-key": "^4.0.0",
     "prettier": "^2.8.8",
     "prettier-eslint-cli": "^7.1.0",
-    "rollup": "^3.22.1",
+    "rollup": "^3.23.0",
     "rollup-plugin-flat-dts": "^2.1.0",
-    "rollup-plugin-unbundle": "^2.0.1",
+    "rollup-plugin-unbundle": "^3.0.0-dev.0",
     "run-z": "1.11.0-bootstrap",
     "shx": "^0.3.4",
     "ts-jest": "^29.1.0",
