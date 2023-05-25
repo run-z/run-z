@@ -17,14 +17,14 @@ export default defineConfig({
     'run-z.os': './src/os/index.ts',
   },
   plugins: [
+    unbundle({
+      resolutionRoot,
+    }),
     nodeResolve(),
     ts({
       typescript,
       tsconfig: 'tsconfig.main.json',
       cacheDir: 'target/.rts_cache',
-    }),
-    unbundle({
-      resolutionRoot,
     }),
   ],
   output: {
@@ -38,7 +38,7 @@ export default defineConfig({
       const host = module.host;
 
       if (host) {
-        const { scope, name } = host;
+        const { scope, name } = host.packageInfo;
 
         if (scope) {
           return `dep/${name.slice(1)}`;
