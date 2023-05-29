@@ -1,3 +1,4 @@
+import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import ts from '@rollup/plugin-typescript';
 import { resolveRootPackage } from '@run-z/npk';
@@ -5,8 +6,6 @@ import { defineConfig } from 'rollup';
 import flatDts from 'rollup-plugin-flat-dts';
 import unbundle from 'rollup-plugin-unbundle';
 import typescript from 'typescript';
-
-const resolutionRoot = resolveRootPackage();
 
 export default defineConfig({
   input: {
@@ -17,9 +16,17 @@ export default defineConfig({
     'run-z.os': './src/os/index.ts',
   },
   plugins: [
+    {
+      name: 'run-z.custom',
+      closeBundle() {
+        console.debug('!!!');
+        resolutionRoot = undefined;
+      },
+    },
     unbundle({
-      resolutionRoot,
+      resolutionRoot: getResolutionRoot,
     }),
+    commonjs(),
     nodeResolve(),
     ts({
       typescript,
@@ -33,38 +40,39 @@ export default defineConfig({
     dir: '.',
     entryFileNames: 'dist/[name].js',
     chunkFileNames: 'dist/_[name].js',
-    manualChunks(id) {
-      const module = resolutionRoot.resolveImport(id);
-      const host = module.host;
+    // FIXME: `manualChunks` causes errors
+    // manualChunks(id) {
+    //   const module = resolutionRoot.resolveImport(id);
+    //   const host = module.host;
 
-      if (host) {
-        const { scope, name } = host.packageInfo;
+    //   if (host) {
+    //     const { scope, name } = host.packageInfo;
 
-        if (scope) {
-          return `dep/${name.slice(1)}`;
-        }
-        if (name === 'run-z') {
-          const path = module.uri.slice(host.uri.length + 1);
+    //     if (scope) {
+    //       return `dep/${name.slice(1)}`;
+    //     }
+    //     if (name === 'run-z') {
+    //       const path = module.uri.slice(host.uri.length + 1);
 
-          if (path.startsWith('src/builtins/')) {
-            return 'run-z.builtins';
-          }
-          if (path.startsWith('src/cli/')) {
-            return 'run-z.cli';
-          }
-          if (path.startsWith('src/core/')) {
-            return 'run-z.core';
-          }
-          if (path.startsWith('src/os/')) {
-            return 'run-z.os';
-          }
-        } else {
-          return `dep/${name}`;
-        }
-      }
+    //       if (path.startsWith('src/builtins/')) {
+    //         return 'run-z.builtins';
+    //       }
+    //       if (path.startsWith('src/cli/')) {
+    //         return 'run-z.cli';
+    //       }
+    //       if (path.startsWith('src/core/')) {
+    //         return 'run-z.core';
+    //       }
+    //       if (path.startsWith('src/os/')) {
+    //         return 'run-z.os';
+    //       }
+    //     } else {
+    //       return `dep/${name}`;
+    //     }
+    //   }
 
-      return 'run-z.common';
-    },
+    //   return 'run-z.common';
+    // },
     plugins: [
       flatDts({
         tsconfig: 'tsconfig.main.json',
@@ -83,3 +91,9 @@ export default defineConfig({
     ],
   },
 });
+
+let resolutionRoot;
+
+async function getResolutionRoot() {
+  return (resolutionRoot ??= await resolveRootPackage());
+}
