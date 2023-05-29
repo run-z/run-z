@@ -19,7 +19,6 @@ export default defineConfig({
     {
       name: 'run-z.custom',
       closeBundle() {
-        console.debug('!!!');
         resolutionRoot = undefined;
       },
     },
