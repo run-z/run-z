@@ -1,5 +1,4 @@
 import commonjs from '@rollup/plugin-commonjs';
-import nodeResolve from '@rollup/plugin-node-resolve';
 import ts from '@rollup/plugin-typescript';
 import { resolveRootPackage } from '@run-z/npk';
 import { defineConfig } from 'rollup';
@@ -26,7 +25,6 @@ export default defineConfig({
       resolutionRoot: getResolutionRoot,
     }),
     commonjs(),
-    nodeResolve(),
     ts({
       typescript,
       tsconfig: 'tsconfig.main.json',
