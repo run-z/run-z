@@ -89,14 +89,14 @@
     "prettier": "^2.8.8",
     "prettier-eslint-cli": "^7.1.0",
     "rollup": "^3.23.0",
-    "rollup-plugin-flat-dts": "^2.1.0",
+    "rollup-plugin-flat-dts": "^2.2.0",
     "rollup-plugin-unbundle": "^3.1.0",
     "run-z": "1.11.0-bootstrap",
     "shx": "^0.3.4",
     "ts-jest": "^29.1.0",
-    "tslib": "2.5.0",
+    "tslib": "^2.5.2",
     "typedoc": "^0.24.7",
-    "typescript": "~5.0.4"
+    "typescript": "~5.1.3"
   },
   "scripts": {
     "all": "run-z build,lint,test",
