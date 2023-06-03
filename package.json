@@ -94,7 +94,7 @@
     "run-z": "1.11.0-bootstrap",
     "shx": "^0.3.4",
     "ts-jest": "^29.1.0",
-    "tslib": "^2.5.2",
+    "tslib": "^2.5.3",
     "typedoc": "^0.24.7",
     "typescript": "~5.1.3"
   },
