@@ -67,7 +67,7 @@
     "@proc7ts/primitives": "^3.0.2",
     "@rollup/plugin-commonjs": "^25.0.0",
     "@rollup/plugin-typescript": "^11.1.1",
-    "@run-z/eslint-config": "^3.3.1",
+    "@run-z/eslint-config": "^3.4.0",
     "@run-z/exec-z": "^1.4.2",
     "@run-z/log-z": "^2.2.1",
     "@run-z/npk": "^0.6.0",
