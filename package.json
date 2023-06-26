@@ -88,7 +88,7 @@
     "path-key": "^4.0.0",
     "prettier": "^2.8.8",
     "prettier-eslint-cli": "^7.1.0",
-    "rollup": "^3.25.1",
+    "rollup": "^3.25.2",
     "rollup-plugin-flat-dts": "^2.2.0",
     "rollup-plugin-unbundle": "^3.1.0",
     "run-z": "1.11.0-bootstrap",
