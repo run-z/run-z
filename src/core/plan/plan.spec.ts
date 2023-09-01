@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
-import { prerequisitesOf, taskIds, TestPlan } from '../../spec';
+import { TestPlan, prerequisitesOf, taskIds } from '../../spec';
 import type { ZCall } from './call';
 import type { ZPlan } from './plan';
 import { ZTaskParams } from './task-params';
@@ -134,7 +134,7 @@ describe('ZPlan', () => {
     const dep2 = plan.callOf(await target.task('dep2'));
     const dep3 = plan.callOf(await target.task('dep3'));
 
-    expect(prerequisitesOf(call)).toEqual(taskIds(dep1));
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep3, dep1));
     expect(call.hasPrerequisite(dep1.task)).toBe(true);
     expect(call.hasPrerequisite(dep2.task)).toBe(true);
     expect(call.hasPrerequisite(dep3.task)).toBe(true);
@@ -170,7 +170,7 @@ describe('ZPlan', () => {
     const dep1 = plan.callOf(await target.task('dep1'));
     const dep2 = plan.callOf(await target.task('dep2'));
 
-    expect(prerequisitesOf(call)).toEqual(taskIds(dep2));
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep1, dep2));
     expect(call.hasPrerequisite(dep1.task)).toBe(true);
     expect(call.hasPrerequisite(dep2.task)).toBe(true);
 

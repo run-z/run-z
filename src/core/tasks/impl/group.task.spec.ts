@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
 import { asis } from '@proc7ts/primitives';
 import { ZOptionError } from '@run-z/optionz';
-import { prerequisitesOf, taskId, taskIds, TestPlan } from '../../../spec';
+import { TestPlan, prerequisitesOf, taskId, taskIds } from '../../../spec';
 import { ZShell } from '../../jobs';
 import { ZTaskParams } from '../../plan';
 import { UnknownZTaskError } from '../../unknown-task-error';
@@ -163,7 +163,7 @@ describe('GroupZTask', () => {
     const dep21 = await testPlan.callOf(nested2, 'dep1');
     const dep22 = await testPlan.callOf(nested2, 'dep2');
 
-    expect(prerequisitesOf(call)).toEqual(taskIds(dep12, dep22));
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep11, dep21, dep12, dep22));
     expect(call.params(ZTaskParams.newEvaluator()).attrs).toEqual({ test: ['on'] });
 
     expect(prerequisitesOf(dep11)).toHaveLength(0);
@@ -233,7 +233,7 @@ describe('GroupZTask', () => {
     const dep1 = plan.callOf(await nested1.task('dep'));
     const dep2 = plan.callOf(await nested2.task('dep'));
 
-    expect(prerequisitesOf(call)).toEqual(taskIds(dep1, dep2));
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep0, dep1, dep2));
 
     expect(prerequisitesOf(dep1)).toEqual(taskIds(dep0));
     expect(dep1.isParallelTo(dep0.task)).toBe(true);
@@ -391,6 +391,7 @@ describe('GroupZTask', () => {
     });
 
     expect(prerequisitesOf(dep)).toEqual([
+      { target: 'root/test', task: 'dep2' },
       { target: 'root/test/nested/nested1', task: 'dep3' },
       { target: 'root/test/nested/nested2', task: 'dep3' },
     ]);

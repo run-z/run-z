@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { valueProvider } from '@proc7ts/primitives';
 import { execZNoOp } from '@run-z/exec-z';
 import { StandardZSetup } from '../../../builtins';
-import { prerequisitesOf, taskIds, TestPlan } from '../../../spec';
+import { TestPlan, prerequisitesOf, taskIds } from '../../../spec';
 import type { ZJob, ZShell } from '../../jobs';
 import { ZTaskParams } from '../../plan';
 import { CommandZTask } from './command.task';
@@ -64,7 +64,7 @@ describe('CommandZTask', () => {
     const dep1 = plan.callOf(await target.task('dep1'));
     const dep2 = plan.callOf(await target.task('dep2'));
 
-    expect(prerequisitesOf(call)).toEqual(taskIds(dep2));
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep1, dep2));
     expect(call.isParallelTo(dep1.task)).toBe(false);
 
     expect(prerequisitesOf(dep1)).toHaveLength(0);
@@ -91,7 +91,7 @@ describe('CommandZTask', () => {
     const dep1 = plan.callOf(await target.task('dep1'));
     const dep2 = plan.callOf(await target.task('dep2'));
 
-    expect(prerequisitesOf(call)).toEqual(taskIds(dep2));
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep1, dep2));
     expect(call.isParallelTo(dep1.task)).toBe(false);
 
     expect(prerequisitesOf(dep1)).toHaveLength(0);
@@ -120,7 +120,7 @@ describe('CommandZTask', () => {
     const dep2 = plan.callOf(await target.task('dep2'));
     const dep3 = plan.callOf(await target.task('dep3'));
 
-    expect(prerequisitesOf(call)).toEqual(taskIds(dep3));
+    expect(prerequisitesOf(call)).toEqual(taskIds(dep1, dep2, dep3));
     expect(call.isParallelTo(dep1.task)).toBe(false);
     expect(call.isParallelTo(dep2.task)).toBe(true);
     expect(call.isParallelTo(dep3.task)).toBe(true);
@@ -133,7 +133,7 @@ describe('CommandZTask', () => {
     expect(dep2.isParallelTo(dep3.task)).toBe(true);
     expect(dep2.isParallelTo(call.task)).toBe(true);
 
-    expect(prerequisitesOf(dep3)).toEqual(taskIds(dep2));
+    expect(prerequisitesOf(dep3)).toEqual(taskIds(dep1, dep2));
     expect(dep3.isParallelTo(dep2.task)).toBe(true);
     expect(dep3.isParallelTo(call.task)).toBe(true);
   });

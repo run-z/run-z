@@ -112,7 +112,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   protected async _planCall(planner: ZCallPlanner<TAction>): Promise<void> {
     const batching = this._builder.batching;
     let parallel: ZTaskQualifier[] = [];
-    let prevTasks: ZTask[] = [];
+    const prevTasks: ZTask[] = [];
 
     for (const pre of this.spec.pre) {
       if (!pre.parallel) {
@@ -188,7 +188,7 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
       }
 
       if (!pre.annex) {
-        prevTasks = preTasks;
+        prevTasks.push(...preTasks);
       }
     }
 
