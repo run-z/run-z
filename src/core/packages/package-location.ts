@@ -1,4 +1,4 @@
-import type { ZPackageJson } from './package.json';
+import type { ZPackageJson } from './package.json.js';
 
 /**
  * Potential NPM packages location.

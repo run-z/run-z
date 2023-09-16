@@ -1,6 +1,6 @@
 import { valueProvider } from '@proc7ts/primitives';
-import { ZPackageLocation } from './package-location';
-import type { ZPackageJson } from './package.json';
+import { ZPackageLocation } from './package-location.js';
+import type { ZPackageJson } from './package.json.js';
 
 /**
  * Virtual package tree.
@@ -112,7 +112,7 @@ export class ZPackageTree extends ZPackageLocation {
     return nested.put(restPath, { packageJson });
   }
 
-  toString(): string {
+  override toString(): string {
     return this.path;
   }
 

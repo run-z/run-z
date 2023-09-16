@@ -1,9 +1,9 @@
 import type { ZLogRecorder } from '@run-z/log-z';
-import type { ZJob } from '../../../core';
-import { ZJobProgress } from '../job-progress';
-import { ZProgressFormat } from '../progress-format';
-import { ProgressZLogRecorder } from '../progress-log';
-import { textProgressZLogFormatter } from './text-log-format';
+import { ZJob } from '../../../core/jobs/job.js';
+import { ZJobProgress } from '../job-progress.js';
+import { ZProgressFormat } from '../progress-format.js';
+import { ProgressZLogRecorder } from '../progress-log.js';
+import { textProgressZLogFormatter } from './text-log-format.js';
 
 /**
  * @internal

@@ -1,14 +1,18 @@
 import { noop } from '@proc7ts/primitives';
 import type { ZExecution } from '@run-z/exec-z';
-import { ZBatchDetails } from '../../batches';
-import type { ZJob } from '../../jobs';
-import type { ZPackage, ZPackageSet } from '../../packages';
-import type { ZCall, ZCallPlanner, ZPrePlanner } from '../../plan';
-import { ZCallDetails, ZTaskParams } from '../../plan';
-import { UnknownZTaskError } from '../../unknown-task-error';
-import type { ZTask, ZTaskQualifier } from '../task';
-import type { ZTaskBuilder$ } from '../task-builder.impl';
-import type { ZTaskSpec } from '../task-spec';
+import { ZBatchDetails } from '../../batches/batch-details.js';
+import { ZJob } from '../../jobs/job.js';
+import { ZPackageSet } from '../../packages/package-set.js';
+import { ZPackage } from '../../packages/package.js';
+import { ZCallDetails } from '../../plan/call-details.js';
+import { ZCallPlanner } from '../../plan/call-planner.js';
+import { ZCall } from '../../plan/call.js';
+import { ZPrePlanner } from '../../plan/pre-planner.js';
+import { ZTaskParams } from '../../plan/task-params.js';
+import { UnknownZTaskError } from '../../unknown-task-error.js';
+import { ZTaskBuilder$ } from '../task-builder.impl.js';
+import { ZTaskSpec } from '../task-spec.js';
+import { ZTask, ZTaskQualifier } from '../task.js';
 
 /**
  * @internal

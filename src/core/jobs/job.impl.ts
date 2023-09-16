@@ -1,10 +1,11 @@
 import { noop } from '@proc7ts/primitives';
 import { execZ, execZAfter, execZAll, execZNoOp, ZExecution } from '@run-z/exec-z';
-import type { ZTaskParams } from '../plan';
-import { ZCallRecord } from '../plan/call.impl';
-import type { ZTask, ZTaskSpec } from '../tasks';
-import type { ZJob } from './job';
-import type { ZShell } from './shell';
+import { ZTask } from '../tasks/task.js';
+import { ZCallRecord } from '../plan/call.impl.js';
+import { ZTaskSpec } from '../tasks/task-spec.js';
+import { ZShell } from './shell.js';
+import { ZJob } from './job.js';
+import { ZTaskParams } from '../plan/task-params.js';
 
 /**
  * @internal

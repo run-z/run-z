@@ -1,5 +1,5 @@
 import { chalkZColorOptions } from '@run-z/optionz/colors.js';
-import type { ZExtension } from '../core';
+import { ZExtension } from '../core/extension.js';
 
 /**
  * Builtin extension to control terminal color support.

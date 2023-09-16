@@ -1,8 +1,8 @@
-import type { ZPackage } from '../packages';
-import type { ZCall } from '../plan';
-import type { ZTask } from '../tasks';
-import type { ZBatchRule } from './batch-rule';
-import type { ZBatching } from './batching';
+import { ZPackage } from '../packages/package.js';
+import { ZCall } from '../plan/call.js';
+import { ZTask } from '../tasks/task.js';
+import { ZBatchRule } from './batch-rule.js';
+import { ZBatching } from './batching.js';
 
 /**
  * Dependencies-first batched tasks execution control.

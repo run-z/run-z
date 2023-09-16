@@ -1,6 +1,6 @@
 import type { ZOption, ZOptionReader } from '@run-z/optionz';
-import type { ZTaskModifier } from './task-modifier';
-import type { ZTaskSpec } from './task-spec';
+import type { ZTaskModifier } from './task-modifier.js';
+import type { ZTaskSpec } from './task-spec.js';
 
 /**
  * An option of the command line containing a task specifier.

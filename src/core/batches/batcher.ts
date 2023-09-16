@@ -1,49 +1,50 @@
-import type { ZPackage } from '../packages';
-import type { ZCall } from '../plan';
-import type { ZTask, ZTaskSpec } from '../tasks';
-import { ZBatchDetails } from './batch-details';
-import type { ZBatchPlanner } from './batch-planner';
-import { batchZTask } from './batcher.impl';
-import { ZBatching } from './batching';
-import { batchNamedZBatches, namedZBatches } from './named-batches.impl';
-import { NamedZBatches } from './named-batches.rule';
+import { ZPackage } from '../packages/package.js';
+import { ZCall } from '../plan/call.js';
+import { ZTaskSpec } from '../tasks/task-spec.js';
+import { ZTask } from '../tasks/task.js';
+import { ZBatchDetails } from './batch-details.js';
+import { ZBatchPlanner } from './batch-planner.js';
+import { batchZTask } from './batcher.impl.js';
+import { ZBatching } from './batching.js';
+import { batchNamedZBatches, namedZBatches } from './named-batches.impl.js';
+import { NamedZBatches } from './named-batches.rule.js';
 
 /**
  * A batcher of tasks to execute.
  *
  * Records tasks to be executed in batch.
+ *
+ * @param planner - Batch execution planner to record batched task calls to.
+ * @param batching - Task batching policy.
+ *
+ * @returns Either nothing if batch execution planned synchronously, or a promise-like instance resolved when batch
+ * execution planned asynchronously.
  */
-export type ZBatcher =
-  /**
-   * @param planner - Batch execution planner to record batched task calls to.
-   * @param batching - Task batching policy.
-   *
-   * @returns Either nothing if batch execution planned synchronously, or a promise-like instance resolved when batch
-   * execution planned asynchronously.
-   */
-  (this: void, planner: ZBatchPlanner, batching: ZBatching) => void | PromiseLike<unknown>;
+export type ZBatcher = (
+  this: void,
+  planner: ZBatchPlanner,
+  batching: ZBatching,
+) => void | PromiseLike<unknown>;
 
 export namespace ZBatcher {
   /**
    * Task batcher provider signature.
    *
    * Tries to create a batcher for the given batch execution planner in the given package.
+   *
+   * @param target - Target package.
+   * @param planner - Target batch execution planner.
+   * @param batching - Task batching policy.
+   *
+   * @returns Either nothing if batch planning is impossible, a batcher instance to plan batch execution by, or
+   * a promise resolving to one of the above.
    */
-  export type Provider =
-    /**
-     * @param target - Target package.
-     * @param planner - Target batch execution planner.
-     * @param batching - Task batching policy.
-     *
-     * @returns Either nothing if batch planning is impossible, a batcher instance to plan batch execution by, or
-     * a promise resolving to one of the above.
-     */
-    (
-      this: void,
-      target: ZPackage,
-      planner: ZBatchPlanner,
-      batching: ZBatching,
-    ) => undefined | ZBatcher | Promise<undefined | ZBatcher>;
+  export type Provider = (
+    this: void,
+    target: ZPackage,
+    planner: ZBatchPlanner,
+    batching: ZBatching,
+  ) => undefined | ZBatcher | Promise<undefined | ZBatcher>;
 }
 
 export const ZBatcher = {

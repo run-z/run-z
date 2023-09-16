@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "moduleResolution": "node",
-    "module": "es2015",
-    "target": "es2019",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "target": "ES2022",
     "strict": true,
     "allowSyntheticDefaultImports": true,
     "noFallthroughCasesInSwitch": true,
@@ -12,10 +12,12 @@
     "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
     "noEmitHelpers": true,
-    "lib": ["ES2019"],
+    "noImplicitOverride": true,
+    "lib": ["ES2022"],
     "types": ["cross-spawn", "node"],
     "skipLibCheck": true,
     "outDir": "target/js",
+    "rootDir": "./src",
     "sourceMap": true,
     "newLine": "LF"
   },

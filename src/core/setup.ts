@@ -1,9 +1,10 @@
 import { asArray, valueByRecipe } from '@proc7ts/primitives';
-import type { ZConfig } from './config';
-import type { ZExtension } from './extension';
-import { ZPackageResolver } from './packages';
-import { ZPlanner } from './plan';
-import { ZTaskFactory, ZTaskParser } from './tasks';
+import type { ZConfig } from './config.js';
+import type { ZExtension } from './extension.js';
+import { ZTaskParser } from './tasks/task-parser.js';
+import { ZPlanner } from './plan/planner.js';
+import { ZPackageResolver } from './packages/package-resolver.js';
+import { ZTaskFactory } from './tasks/task-factory.js';
 
 /**
  * Task execution setup.

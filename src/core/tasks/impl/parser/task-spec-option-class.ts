@@ -1,11 +1,11 @@
 import type { ZOption } from '@run-z/optionz';
 import { ZOptionError } from '@run-z/optionz';
-import type { ZBatching } from '../../../batches';
-import type { ZTaskExecutor } from '../../../jobs';
-import type { ZPackage } from '../../../packages';
-import type { ZTaskOption } from '../../task-option';
-import type { ZTaskSpec } from '../../task-spec';
-import type { DraftZTask } from './draft-task';
+import { ZTaskSpec } from '../../task-spec.js';
+import { ZTaskOption } from '../../task-option.js';
+import { DraftZTask } from './draft-task.js';
+import { ZPackage } from '../../../packages/package.js';
+import { ZBatching } from '../../../batches/batching.js';
+import { ZTaskExecutor } from '../../../jobs/task-executor.js';
 
 /**
  * @internal

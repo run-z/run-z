@@ -2,20 +2,22 @@ import { noop } from '@proc7ts/primitives';
 import type { ZExecution } from '@run-z/exec-z';
 import { execZNoOp } from '@run-z/exec-z';
 import { ZOptionError, ZOptionInput } from '@run-z/optionz';
-import { ZBatchDetails } from '../../batches';
-import type { ZJob } from '../../jobs';
-import type { ZCall, ZCallDetails, ZPrePlanner } from '../../plan';
-import { ZTaskParams } from '../../plan';
-import type { ZTask } from '../task';
-import type { ZTaskSpec } from '../task-spec';
-import { AbstractZTask } from './abstract.task';
+import { AbstractZTask } from './abstract.task.js';
+import { ZTaskSpec } from '../task-spec.js';
+import { ZPrePlanner } from '../../plan/pre-planner.js';
+import { ZCallDetails } from '../../plan/call-details.js';
+import { ZCall } from '../../plan/call.js';
+import { ZTask } from '../task.js';
+import { ZTaskParams } from '../../plan/task-params.js';
+import { ZBatchDetails } from '../../batches/batch-details.js';
+import { ZJob } from '../../jobs/job.js';
 
 /**
  * @internal
  */
 export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
 
-  async callAsPre(
+  override async callAsPre(
     planner: ZPrePlanner,
     pre: ZTaskSpec.Pre,
     details: ZCallDetails.Full,

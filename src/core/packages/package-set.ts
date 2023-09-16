@@ -1,4 +1,4 @@
-import type { ZPackage } from './package';
+import { ZPackage } from './package.js';
 
 /**
  * A set of {@link ZPackage NPM packages} known under the same name.
@@ -38,11 +38,11 @@ class CombinedZPackageSet extends ZPackageSet {
     return (await Promise.all(this.sets.map(set => set.packages()))).flat();
   }
 
-  andPackages(other: ZPackageSet): ZPackageSet {
+  override andPackages(other: ZPackageSet): ZPackageSet {
     return new CombinedZPackageSet([...this.sets, other]);
   }
 
-  toString(): string {
+  override toString(): string {
     return this.sets.join(' ');
   }
 

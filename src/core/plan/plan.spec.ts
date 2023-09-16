@@ -1,8 +1,9 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
-import { TestPlan, prerequisitesOf, taskIds } from '../../spec';
-import type { ZCall } from './call';
-import type { ZPlan } from './plan';
-import { ZTaskParams } from './task-params';
+import { TestPlan } from '../../spec/test-plan.js';
+import { ZCall } from './call.js';
+import { ZPlan } from './plan.js';
+import { ZTaskParams } from './task-params.js';
+import { prerequisitesOf, taskIds } from '../../spec/task-id.js';
 
 describe('ZPlan', () => {
   let testPlan: TestPlan;

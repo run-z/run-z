@@ -1,13 +1,13 @@
 import { ZLogLevel, zlogMessage, ZLogMessage, ZLogRecorder } from '@run-z/log-z';
-import type { ZJobOutput } from './job-output';
-import type { ZJobRow, ZJobRows } from './job-rows';
+import type { ZJobOutput } from './job-output.js';
+import type { ZJobRow, ZJobRows } from './job-rows.js';
 
 /**
  * @internal
  */
 export class RichJobZLogRecorder implements ZLogRecorder {
 
-  private _row: ZJobRow | null = null;
+  #row: ZJobRow | null = null;
 
   constructor(
     private readonly _rows: ZJobRows,
@@ -72,11 +72,11 @@ export class RichJobZLogRecorder implements ZLogRecorder {
   }
 
   private _useRow(): ZJobRow {
-    if (this._row != null) {
-      return this._row;
+    if (this.#row != null) {
+      return this.#row;
     }
 
-    return (this._row = this._rows.add(() => this.record(this._output.statusMessage)));
+    return (this.#row = this._rows.add(() => this.record(this._output.statusMessage)));
   }
 
 }

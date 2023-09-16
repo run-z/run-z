@@ -1,5 +1,6 @@
-import type { ZExtension, ZTaskOption } from '../../core';
-import { ZParallelBatches } from './parallel-batches.rule';
+import { ZExtension } from '../../core/extension.js';
+import { ZTaskOption } from '../../core/tasks/task-option.js';
+import { ZParallelBatches } from './parallel-batches.rule.js';
 
 /**
  * Parallel batch execution built-in extension.

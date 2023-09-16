@@ -1,7 +1,7 @@
 import { valueProvider } from '@proc7ts/primitives';
 import semver from 'semver';
-import type { ZDepGraph } from './dep-graph';
-import type { ZPackage$, ZPackageResolver$ } from './package.impl';
+import type { ZDepGraph } from './dep-graph.js';
+import type { ZPackage$, ZPackageResolver$ } from './package.impl.js';
 
 /**
  * @internal

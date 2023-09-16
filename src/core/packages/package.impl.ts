@@ -1,12 +1,12 @@
 import { isPresent } from '@proc7ts/primitives';
-import type { ZSetup } from '../setup';
-import type { ZTask } from '../tasks';
-import { ZTaskSpec } from '../tasks';
-import { ZDepGraph$ } from './dep-graph.impl';
-import type { ZPackage } from './package';
-import type { ZPackageLocation } from './package-location';
-import { ZPackageSet } from './package-set';
-import type { ZPackageJson } from './package.json';
+import type { ZSetup } from '../setup.js';
+import { ZTaskSpec } from '../tasks/task-spec.js';
+import type { ZTask } from '../tasks/task.js';
+import { ZDepGraph$ } from './dep-graph.impl.js';
+import type { ZPackageLocation } from './package-location.js';
+import { ZPackageSet } from './package-set.js';
+import type { ZPackage } from './package.js';
+import type { ZPackageJson } from './package.json.js';
 
 /**
  * @internal
@@ -171,7 +171,7 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
     return Object.keys(scripts);
   }
 
-  toString(): string {
+  override toString(): string {
     return this.name;
   }
 
@@ -199,7 +199,7 @@ class SelectedZPackages extends ZPackageSet {
     return found.filter(isPresent);
   }
 
-  toString(): string {
+  override toString(): string {
     return this.selector;
   }
 

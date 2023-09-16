@@ -1,4 +1,5 @@
-import type { ZBatching, ZBatchRule } from '../../core';
+import { ZBatchRule } from '../../core/batches/batch-rule.js';
+import { ZBatching } from '../../core/batches/batching.js';
 
 /**
  * Parallel batched tasks execution control.

@@ -1,7 +1,9 @@
-import type { ZPackageSet } from '../packages';
-import type { ZCall, ZCallPlanner } from '../plan';
-import type { ZTask, ZTaskSpec } from '../tasks';
-import type { ZBatchDetails } from './batch-details';
+import { ZPackageSet } from '../packages/package-set.js';
+import { ZCallPlanner } from '../plan/call-planner.js';
+import { ZCall } from '../plan/call.js';
+import { ZTaskSpec } from '../tasks/task-spec.js';
+import { ZTask } from '../tasks/task.js';
+import { ZBatchDetails } from './batch-details.js';
 
 /**
  * Batch execution planner.
@@ -32,7 +34,7 @@ export interface ZBatchPlanner {
   /**
    * Records task to call in batch.
    *
-   * @typeparam TAction  Batched task action type.
+   * @typeParam TAction  Batched task action type.
    * @param task - The task to batch.
    * @param details - Call details for each of the batched tasks.
    *

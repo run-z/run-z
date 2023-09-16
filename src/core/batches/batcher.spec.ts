@@ -1,9 +1,10 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
 import { asis } from '@proc7ts/primitives';
-import { TestPlan } from '../../spec';
-import type { ZPackage, ZPackageTree } from '../packages';
-import { ZTaskParams } from '../plan';
-import { UnknownZTaskError } from '../unknown-task-error';
+import { TestPlan } from '../../spec/test-plan.js';
+import { ZPackageTree } from '../packages/package-tree.js';
+import { ZPackage } from '../packages/package.js';
+import { ZTaskParams } from '../plan/task-params.js';
+import { UnknownZTaskError } from '../unknown-task-error.js';
 
 describe('ZBatcher', () => {
   let testPlan: TestPlan;

@@ -1,13 +1,13 @@
 import type { ZOptionsParser } from '@run-z/optionz';
 import { customZOptionsParser } from '@run-z/optionz';
-import type { ZSetup } from '../../../setup';
-import type { ZTaskBuilder } from '../../task-builder';
-import type { ZTaskOption } from '../../task-option';
-import type { ZTaskParser } from '../../task-parser';
-import { DraftZTask } from './draft-task';
-import { zTaskSpecOptionClass } from './task-spec-option-class';
-import { zTaskSpecOptions } from './task-spec-options';
-import { zTaskSpecSyntax } from './task-spec-syntax';
+import { ZTaskParser } from '../../task-parser.js';
+import { ZSetup } from '../../../setup.js';
+import { ZTaskBuilder } from '../../task-builder.js';
+import { ZTaskOption } from '../../task-option.js';
+import { DraftZTask } from './draft-task.js';
+import { zTaskSpecOptions } from './task-spec-options.js';
+import { zTaskSpecSyntax } from './task-spec-syntax.js';
+import { zTaskSpecOptionClass } from './task-spec-option-class.js';
 
 /**
  * @internal

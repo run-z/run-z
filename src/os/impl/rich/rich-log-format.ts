@@ -1,12 +1,12 @@
 import { textZLogFormatter, ZLogField, ZLogFormatter, ZLogWriter } from '@run-z/log-z';
 import ansiEscapes from 'ansi-escapes';
 import cliTruncate from 'cli-truncate';
-import type { ProgressZLogPrefix } from '../progress-log';
-import { stripControlChars } from '../strip-control-chars';
-import { textProgressZLogFormatter } from '../text';
-import { ttyColumns } from '../tty-columns';
-import { ZJobRow, zjobRowOf } from './job-rows';
-import { zjobStatusIndicatorZLogField } from './job-status-indicator';
+import type { ProgressZLogPrefix } from '../progress-log.js';
+import { stripControlChars } from '../strip-control-chars.js';
+import { textProgressZLogFormatter } from '../text/text-log-format.js';
+import { ttyColumns } from '../tty-columns.js';
+import { ZJobRow, zJobRowOf } from './job-rows.js';
+import { zJobStatusIndicatorZLogField } from './job-status-indicator.js';
 
 /**
  * @internal
@@ -15,11 +15,11 @@ export function richProgressZLogFormatter(prefix: ProgressZLogPrefix): ZLogForma
   const rich = textZLogFormatter({
     fields: [
       richStartZLogField,
-      zjobStatusIndicatorZLogField,
+      zJobStatusIndicatorZLogField,
       ' ',
       prefix.field(),
       ' ',
-      zjobStatusZLogField(prefix),
+      zJobStatusZLogField(prefix),
       richEndZLogField,
     ],
   });
@@ -44,7 +44,7 @@ export function richProgressZLogFormatter(prefix: ProgressZLogPrefix): ZLogForma
  * @internal
  */
 function richStartZLogField(writer: ZLogWriter): void {
-  const up = zjobRowOf(writer.message).up();
+  const up = zJobRowOf(writer.message).up();
   let out = '';
 
   if (up > 0) {
@@ -60,7 +60,7 @@ function richStartZLogField(writer: ZLogWriter): void {
  * @internal
  */
 function richEndZLogField(writer: ZLogWriter): void {
-  const row = zjobRowOf(writer.message);
+  const row = zJobRowOf(writer.message);
   const down = row.up() - 1;
 
   if (down > 0) {
@@ -75,7 +75,7 @@ function richEndZLogField(writer: ZLogWriter): void {
 /**
  * @internal
  */
-function zjobStatusZLogField(prefix: ProgressZLogPrefix): ZLogField {
+function zJobStatusZLogField(prefix: ProgressZLogPrefix): ZLogField {
   return writer => {
     const { line } = writer.message;
     const prefixCols = prefix.targetCols + prefix.taskCols + 6;

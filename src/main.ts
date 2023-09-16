@@ -1,4 +1,4 @@
-import { runZ } from './cli';
+import { runZ } from './cli/mod.js';
 
 runZ()
   .then(() => process.exit(0))

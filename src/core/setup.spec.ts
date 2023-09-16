@@ -1,9 +1,10 @@
 import { describe, expect, it } from '@jest/globals';
 import { valueProvider } from '@proc7ts/primitives';
-import { ZPackageResolver } from './packages';
-import { ZPlanner } from './plan';
-import { ZSetup } from './setup';
-import { ZTaskFactory, ZTaskParser } from './tasks';
+import { ZSetup } from './setup.js';
+import { ZTaskParser } from './tasks/task-parser.js';
+import { ZTaskFactory } from './tasks/task-factory.js';
+import { ZPackageResolver } from './packages/package-resolver.js';
+import { ZPlanner } from './plan/planner.js';
 
 describe('ZSetup', () => {
   describe('taskParser', () => {

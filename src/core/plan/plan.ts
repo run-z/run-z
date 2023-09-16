@@ -1,6 +1,7 @@
-import type { ZPackage } from '../packages';
-import type { ZTask, ZTaskSpec } from '../tasks';
-import type { ZCall } from './call';
+import { ZPackage } from '../packages/package.js';
+import { ZTaskSpec } from '../tasks/task-spec.js';
+import { ZTask } from '../tasks/task.js';
+import { ZCall } from './call.js';
 
 /**
  * Task execution plan.
@@ -16,7 +17,7 @@ export interface ZPlan {
   /**
    * Returns a call of the given task.
    *
-   * @typeparam TAction  Task action type.
+   * @typeParam TAction  Task action type.
    * @param task - Target task.
    *
    * @returns A call to the given task.

@@ -1,10 +1,10 @@
 import { asArray, valueByRecipe } from '@proc7ts/primitives';
 import type { SupportedZOptions } from '@run-z/optionz';
 import { clz } from '@run-z/optionz/colors.js';
-import type { ZSetup } from '../../../setup';
-import type { ZTaskOption } from '../../task-option';
-import type { ZTaskParser } from '../../task-parser';
-import type { DraftZTask } from './draft-task';
+import { ZSetup } from '../../../setup.js';
+import { ZTaskOption } from '../../task-option.js';
+import { ZTaskParser } from '../../task-parser.js';
+import { DraftZTask } from './draft-task.js';
 
 /**
  * @internal

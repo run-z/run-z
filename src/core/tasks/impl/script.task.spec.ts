@@ -1,9 +1,10 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { execZNoOp } from '@run-z/exec-z';
-import { TestPlan } from '../../../spec';
-import type { ZJob, ZShell } from '../../jobs';
-import { ZTaskParams } from '../../plan';
-import { ScriptZTask } from './script.task';
+import { TestPlan } from '../../../spec/test-plan.js';
+import { ZJob } from '../../jobs/job.js';
+import { ZShell } from '../../jobs/shell.js';
+import { ZTaskParams } from '../../plan/task-params.js';
+import { ScriptZTask } from './script.task.js';
 
 describe('ScriptZTask', () => {
   let testPlan: TestPlan;

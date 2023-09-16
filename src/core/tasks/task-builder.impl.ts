@@ -1,13 +1,16 @@
 import type { ZOptionsParser } from '@run-z/optionz';
-import { ZBatching } from '../batches';
-import type { ZTaskExecutor } from '../jobs';
-import type { ZPackage } from '../packages';
-import type { AbstractZTask } from './impl';
-import { CommandZTask, GroupZTask, ScriptZTask, UnknownZTask } from './impl';
-import type { ZTaskBuilder } from './task-builder';
-import type { ZTaskOption } from './task-option';
-import type { ZTaskSpec } from './task-spec';
-import { addZTaskAttr, addZTaskAttrs, removeZTaskAttr } from './task-spec.impl';
+import { ZBatching } from '../batches/batching.js';
+import { ZTaskExecutor } from '../jobs/task-executor.js';
+import { ZPackage } from '../packages/package.js';
+import { AbstractZTask } from './impl/abstract.task.js';
+import { CommandZTask } from './impl/command.task.js';
+import { GroupZTask } from './impl/group.task.js';
+import { ScriptZTask } from './impl/script.task.js';
+import { UnknownZTask } from './impl/unknown.task.js';
+import { ZTaskBuilder } from './task-builder.js';
+import { ZTaskOption } from './task-option.js';
+import { addZTaskAttr, addZTaskAttrs, removeZTaskAttr } from './task-spec.impl.js';
+import { ZTaskSpec } from './task-spec.js';
 
 /**
  * @internal

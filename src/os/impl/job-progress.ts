@@ -1,18 +1,18 @@
 import { logZAtopOf, logZBy, logZWithDetails, ZLogger, ZLogRecorder } from '@run-z/log-z';
-import type { ZJob } from '../../core';
-import type { ZProgressFormat } from './progress-format';
+import { ZJob } from '../../core/jobs/job.js';
+import { ZProgressFormat } from './progress-format.js';
 
 /**
  * @internal
  */
 export abstract class ZJobProgress {
 
-  private _log: ZLogger | null = null;
+  #log: ZLogger | null = null;
 
   constructor(protected readonly _format: ZProgressFormat, readonly job: ZJob) {}
 
   get log(): ZLogger {
-    return this._log || (this._log = logZBy(this._createLog()));
+    return this.#log || (this.#log = logZBy(this._createLog()));
   }
 
   start(): void {

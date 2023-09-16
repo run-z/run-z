@@ -16,6 +16,7 @@ export class UnknownZTaskError extends Error {
     message = `Task "${taskName}" is not known in <${packageName}>`,
   ) {
     super(message);
+    this.name = 'UnknownZTaskError';
   }
 
 }

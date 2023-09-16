@@ -1,11 +1,12 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
 import { asis } from '@proc7ts/primitives';
 import { ZOptionError } from '@run-z/optionz';
-import { TestPlan, prerequisitesOf, taskId, taskIds } from '../../../spec';
-import { ZShell } from '../../jobs';
-import { ZTaskParams } from '../../plan';
-import { UnknownZTaskError } from '../../unknown-task-error';
-import { GroupZTask } from './group.task';
+import { prerequisitesOf, taskId, taskIds } from '../../../spec/task-id.js';
+import { TestPlan } from '../../../spec/test-plan.js';
+import { ZShell } from '../../jobs/shell.js';
+import { ZTaskParams } from '../../plan/task-params.js';
+import { UnknownZTaskError } from '../../unknown-task-error.js';
+import { GroupZTask } from './group.task.js';
 
 describe('GroupZTask', () => {
   let testPlan: TestPlan;

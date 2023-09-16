@@ -1,7 +1,9 @@
-import type { ZJob, ZShell } from '../jobs';
-import type { ZTask, ZTaskSpec } from '../tasks';
-import type { ZPlan } from './plan';
-import type { ZTaskParams } from './task-params';
+import { ZJob } from '../jobs/job.js';
+import { ZShell } from '../jobs/shell.js';
+import { ZTaskSpec } from '../tasks/task-spec.js';
+import { ZTask } from '../tasks/task.js';
+import { ZPlan } from './plan.js';
+import { ZTaskParams } from './task-params.js';
 
 /**
  * A call for task execution.
@@ -9,7 +11,7 @@ import type { ZTaskParams } from './task-params';
  * There is at most one call instance per task exists. Subsequent calls just {@link ZTaskParams.update update} its
  * parameters.
  *
- * @typeparam TAction  Task action type.
+ * @typeParam TAction  Task action type.
  */
 export interface ZCall<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
   /**

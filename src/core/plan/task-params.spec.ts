@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
-import { ZTaskParams } from './task-params';
+import { ZTaskParams } from './task-params.js';
 
 describe('ZTaskParams', () => {
   let initial: ZTaskParams.Values;

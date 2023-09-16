@@ -1,10 +1,10 @@
 import type { ZExecution } from '@run-z/exec-z';
 import { execZNoOp, failZ } from '@run-z/exec-z';
-import type { ZJob } from '../../jobs';
-import { UnknownZTaskError } from '../../unknown-task-error';
-import type { ZTaskBuilder$ } from '../task-builder.impl';
-import { ZTaskSpec } from '../task-spec';
-import { AbstractZTask } from './abstract.task';
+import { ZJob } from '../../jobs/job.js';
+import { UnknownZTaskError } from '../../unknown-task-error.js';
+import { ZTaskBuilder$ } from '../task-builder.impl.js';
+import { ZTaskSpec } from '../task-spec.js';
+import { AbstractZTask } from './abstract.task.js';
 
 /**
  * @internal

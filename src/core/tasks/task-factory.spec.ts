@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
-import { TestPlan } from '../../spec';
-import { GroupZTask, UnknownZTask } from './impl';
-import { ZTaskSpec } from './task-spec';
+import { TestPlan } from '../../spec/test-plan.js';
+import { GroupZTask } from './impl/group.task.js';
+import { UnknownZTask } from './impl/unknown.task.js';
+import { ZTaskSpec } from './task-spec.js';
 
 describe('ZTaskFactory', () => {
   let testPlan: TestPlan;

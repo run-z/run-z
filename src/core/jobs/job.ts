@@ -1,12 +1,13 @@
 import type { ZExecution } from '@run-z/exec-z';
-import type { ZCall, ZTaskParams } from '../plan';
-import type { ZTaskSpec } from '../tasks';
-import type { ZShell } from './shell';
+import { ZTaskSpec } from '../tasks/task-spec.js';
+import { ZShell } from './shell.js';
+import { ZCall } from '../plan/call.js';
+import { ZTaskParams } from '../plan/task-params.js';
 
 /**
  * Task execution job.
  *
- * @typeparam TAction  Task action type.
+ * @typeParam TAction  Task action type.
  */
 export interface ZJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> extends ZExecution {
   /**

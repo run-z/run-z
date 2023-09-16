@@ -1,5 +1,8 @@
 import { noop } from '@proc7ts/primitives';
-import type { ZBatching, ZBatchRule, ZPackage, ZTaskParams } from '../../core';
+import { ZBatchRule } from '../../core/batches/batch-rule.js';
+import { ZBatching } from '../../core/batches/batching.js';
+import { ZPackage } from '../../core/packages/package.js';
+import { ZTaskParams } from '../../core/plan/task-params.js';
 
 /**
  * Dependency graph batches control.

@@ -1,7 +1,14 @@
 import type { ZOptionsParser } from '@run-z/optionz';
-import { StandardZSetup } from '../builtins';
-import type { ZCall, ZCallDetails, ZPackageLocation, ZPlan, ZSetup } from '../core';
-import { ZPackage, ZPackageJson, ZPackageTree, ZTaskOption } from '../core';
+import { ZSetup } from '../core/setup.js';
+import { ZPackageTree } from '../core/packages/package-tree.js';
+import { ZCall } from '../core/plan/call.js';
+import { ZPackageLocation } from '../core/packages/package-location.js';
+import { StandardZSetup } from '../builtins/standard-setup.js';
+import { ZPackageJson } from '../core/packages/package.json.js';
+import { ZPackage } from '../core/packages/package.js';
+import { ZPlan } from '../core/plan/plan.js';
+import { ZTaskOption } from '../core/tasks/task-option.js';
+import { ZCallDetails } from '../core/plan/call-details.js';
 
 export class TestPlan {
 

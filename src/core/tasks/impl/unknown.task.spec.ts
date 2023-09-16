@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
 import { asis } from '@proc7ts/primitives';
-import { TestPlan } from '../../../spec';
-import { ZShell } from '../../jobs';
-import { UnknownZTaskError } from '../../unknown-task-error';
-import { UnknownZTask } from './unknown.task';
+import { TestPlan } from '../../../spec/test-plan.js';
+import { UnknownZTask } from './unknown.task.js';
+import { ZShell } from '../../jobs/shell.js';
+import { UnknownZTaskError } from '../../unknown-task-error.js';
 
 describe('UnknownZTask', () => {
   let testPlan: TestPlan;

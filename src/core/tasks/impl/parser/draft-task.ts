@@ -1,8 +1,8 @@
 import { ZOptionError } from '@run-z/optionz';
-import type { ZTaskBuilder } from '../../task-builder';
-import type { ZTaskOption } from '../../task-option';
-import type { ZTaskSpec } from '../../task-spec';
-import { addZTaskAttr, addZTaskAttrs, removeZTaskAttr } from '../../task-spec.impl';
+import { ZTaskBuilder } from '../../task-builder.js';
+import { ZTaskOption } from '../../task-option.js';
+import { addZTaskAttr, addZTaskAttrs, removeZTaskAttr } from '../../task-spec.impl.js';
+import { ZTaskSpec } from '../../task-spec.js';
 
 /**
  * @internal

@@ -1,7 +1,7 @@
-import type { ZBatching } from '../batches';
-import type { ZTaskExecutor } from '../jobs';
-import type { ZPackage } from '../packages';
-import type { ZTaskSpec } from './task-spec';
+import { ZBatching } from '../batches/batching.js';
+import { ZTaskExecutor } from '../jobs/task-executor.js';
+import { ZPackage } from '../packages/package.js';
+import { ZTaskSpec } from './task-spec.js';
 
 /**
  * Task modifier interface.
@@ -99,7 +99,7 @@ export interface ZTaskModifier {
    *
    * The task action defaults to {@link Group grouping task} unless reassigned by this call.
    *
-   * @typeparam TNewAction  New task action type.
+   * @typeParam TNewAction  New task action type.
    * @param action - Action to assign to the task.
    *
    * @returns `this` instance.

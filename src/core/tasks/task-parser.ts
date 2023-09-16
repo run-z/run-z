@@ -2,10 +2,10 @@ import { noop } from '@proc7ts/primitives';
 import type { ZOptionsParser } from '@run-z/optionz';
 import { SupportedZOptions, ZOptionInput } from '@run-z/optionz';
 import shellQuote from 'shell-quote';
-import { zTaskSpecParser } from './impl/parser';
-import type { ZTaskBuilder } from './task-builder';
-import type { ZTaskOption } from './task-option';
-import type { ZTaskSpec } from './task-spec';
+import { zTaskSpecParser } from './impl/parser/task-spec-parser.js';
+import { ZTaskBuilder } from './task-builder.js';
+import { ZTaskOption } from './task-option.js';
+import { ZTaskSpec } from './task-spec.js';
 
 /**
  * A parser of command line containing {@link ZTaskSpec task specifier}.
@@ -44,7 +44,7 @@ export class ZTaskParser {
       return { selector: value };
     }
     if (value.startsWith('...')) {
-      return { selector: '.', task: value.substr(3) };
+      return { selector: '.', task: value.slice(3) };
     }
     if (!value.startsWith('./') && !value.startsWith('../')) {
       return;
@@ -56,7 +56,7 @@ export class ZTaskParser {
       return { selector: value };
     }
 
-    return { selector: value.substr(0, taskSepIdx), task: value.substr(taskSepIdx + 3) };
+    return { selector: value.slice(0, taskSepIdx), task: value.slice(taskSepIdx + 3) };
   }
 
   /**

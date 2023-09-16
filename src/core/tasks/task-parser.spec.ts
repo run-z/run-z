@@ -1,13 +1,14 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
 import { asis } from '@proc7ts/primitives';
 import { ZOptionError } from '@run-z/optionz';
-import { StandardZSetup } from '../../builtins';
-import { ZPackage, ZPackageTree } from '../packages';
-import { ZTaskParams } from '../plan';
-import { ZSetup } from '../setup';
-import type { ZTaskBuilder } from './task-builder';
-import { ZTaskParser } from './task-parser';
-import type { ZTaskSpec } from './task-spec';
+import { StandardZSetup } from '../../builtins/standard-setup.js';
+import { ZPackageTree } from '../packages/package-tree.js';
+import { ZPackage } from '../packages/package.js';
+import { ZTaskParams } from '../plan/task-params.js';
+import { ZSetup } from '../setup.js';
+import { ZTaskBuilder } from './task-builder.js';
+import { ZTaskSpec } from './task-spec.js';
+import { ZTaskParser } from './task-parser.js';
 
 describe('ZTaskParser', () => {
   let setup: ZSetup;

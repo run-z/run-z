@@ -1,12 +1,14 @@
 import { asArray } from '@proc7ts/primitives';
-import { ZConfig, ZExtension, ZSetup } from '../core';
-import { ZAllBatchBuiltin } from './all-batch.builtin';
-import { ZColorsBuiltin } from './colors.builtin';
-import { ZCommandExecutionBuiltin } from './command-execution.builtin';
-import { ZDepGraphBatchesBuiltin } from './dep-graph';
-import { ZHelpBuiltin } from './help.builtin';
-import { NamedZBatchesBuiltin } from './named-batches.builtin';
-import { ZParallelBatchesBuiltin } from './parallel-batches';
+import { ZConfig } from '../core/config.js';
+import { ZExtension } from '../core/extension.js';
+import { ZSetup } from '../core/setup.js';
+import { ZAllBatchBuiltin } from './all-batch.builtin.js';
+import { ZColorsBuiltin } from './colors.builtin.js';
+import { ZCommandExecutionBuiltin } from './command-execution.builtin.js';
+import { ZDepGraphBatchesBuiltin } from './dep-graph/dep-graph-batches.builtin.js';
+import { ZHelpBuiltin } from './help.builtin.js';
+import { NamedZBatchesBuiltin } from './named-batches.builtin.js';
+import { ZParallelBatchesBuiltin } from './parallel-batches/parallel-batches.builtin.js';
 
 const builtinZExtensions: readonly ZExtension[] = [
   NamedZBatchesBuiltin,

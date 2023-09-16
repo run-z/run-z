@@ -1,12 +1,13 @@
 import { valueProvider } from '@proc7ts/primitives';
-import type { ZShell } from '../jobs';
-import type { ZExecutionJob } from '../jobs/job.impl';
-import type { ZTask, ZTaskSpec } from '../tasks';
-import type { ZCall } from './call';
-import type { ZCallDetails } from './call-details';
-import type { ZPlan } from './plan';
-import type { ZInstructionRecords } from './planner.impl';
-import { ZTaskParams } from './task-params';
+import { ZExecutionJob } from '../jobs/job.impl.js';
+import { ZShell } from '../jobs/shell.js';
+import { ZTaskSpec } from '../tasks/task-spec.js';
+import { ZTask } from '../tasks/task.js';
+import { ZCallDetails } from './call-details.js';
+import { ZCall } from './call.js';
+import { ZPlan } from './plan.js';
+import { ZInstructionRecords } from './planner.impl.js';
+import { ZTaskParams } from './task-params.js';
 
 /**
  * Task execution parameters evaluator signature.

@@ -1,12 +1,13 @@
-import type { ZCall } from '../plan';
-import type { ZTask, ZTaskSpec } from '../tasks';
-import type { ZBatch } from './batch';
-import type { ZBatchDetails } from './batch-details';
-import type { ZBatchPlanner } from './batch-planner';
-import type { ZBatchRule } from './batch-rule';
-import type { ZBatcher } from './batcher';
-import { batchZTask } from './batcher.impl';
-import { ZDepsFirstBatches } from './deps-first-batches.rule';
+import { ZCall } from '../plan/call.js';
+import { ZTaskSpec } from '../tasks/task-spec.js';
+import { ZTask } from '../tasks/task.js';
+import { ZBatchDetails } from './batch-details.js';
+import { ZBatchPlanner } from './batch-planner.js';
+import { ZBatchRule } from './batch-rule.js';
+import { ZBatch } from './batch.js';
+import { batchZTask } from './batcher.impl.js';
+import { ZBatcher } from './batcher.js';
+import { ZDepsFirstBatches } from './deps-first-batches.rule.js';
 
 /**
  * Task batching policy.
@@ -73,7 +74,7 @@ export class ZBatching {
   /**
    * Retrieves control instance for batch processing rule.
    *
-   * @typeparam TControl  A type of batch processing rule control.
+   * @typeParam TControl  A type of batch processing rule control.
    * @param rule - Batch processing rule to retrieve control of.
    *
    * @returns A control instance for target batch processing rule.

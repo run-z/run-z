@@ -1,6 +1,6 @@
 import { noop } from '@proc7ts/primitives';
-import type { ZBatchRule } from './batch-rule';
-import type { ZBatching } from './batching';
+import type { ZBatchRule } from './batch-rule.js';
+import type { ZBatching } from './batching.js';
 
 /**
  * Named batches selection control.

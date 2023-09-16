@@ -1,8 +1,9 @@
-import type { ZExtension } from './extension';
-import type { ZPackageResolver } from './packages';
-import type { ZPlanner } from './plan';
-import type { ZSetup } from './setup';
-import type { ZTaskFactory, ZTaskParser } from './tasks';
+import type { ZExtension } from './extension.js';
+import { ZPackageResolver } from './packages/package-resolver.js';
+import { ZPlanner } from './plan/planner.js';
+import type { ZSetup } from './setup.js';
+import { ZTaskFactory } from './tasks/task-factory.js';
+import { ZTaskParser } from './tasks/task-parser.js';
 
 /**
  * Task execution configuration.

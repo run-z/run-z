@@ -1,11 +1,13 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { valueProvider } from '@proc7ts/primitives';
 import { execZNoOp } from '@run-z/exec-z';
-import { StandardZSetup } from '../../../builtins';
-import { TestPlan, prerequisitesOf, taskIds } from '../../../spec';
-import type { ZJob, ZShell } from '../../jobs';
-import { ZTaskParams } from '../../plan';
-import { CommandZTask } from './command.task';
+import { TestPlan } from '../../../spec/test-plan.js';
+import { ZTaskParams } from '../../plan/task-params.js';
+import { CommandZTask } from './command.task.js';
+import { prerequisitesOf, taskIds } from '../../../spec/task-id.js';
+import { ZShell } from '../../jobs/shell.js';
+import { ZJob } from '../../jobs/job.js';
+import { StandardZSetup } from '../../../builtins/standard-setup.js';
 
 describe('CommandZTask', () => {
   let testPlan: TestPlan;

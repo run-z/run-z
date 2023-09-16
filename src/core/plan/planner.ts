@@ -1,8 +1,9 @@
-import type { ZSetup } from '../setup';
-import type { ZTask, ZTaskSpec } from '../tasks';
-import type { ZCall } from './call';
-import type { ZCallDetails } from './call-details';
-import { ZInstructionRecords } from './planner.impl';
+import { ZSetup } from '../setup.js';
+import { ZTaskSpec } from '../tasks/task-spec.js';
+import { ZTask } from '../tasks/task.js';
+import { ZCallDetails } from './call-details.js';
+import { ZCall } from './call.js';
+import { ZInstructionRecords } from './planner.impl.js';
 
 /**
  * Task execution planner.
@@ -21,7 +22,7 @@ export class ZPlanner {
    *
    * The plan would execute the task after executing all of its prerequisites.
    *
-   * @typeparam TAction  Task action type.
+   * @typeParam TAction  Task action type.
    * @param task - Top-level task to call.
    * @param details - Task call details.
    *

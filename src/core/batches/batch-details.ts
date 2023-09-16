@@ -1,11 +1,11 @@
-import { ZCallDetails } from '../plan';
-import type { ZTaskSpec } from '../tasks';
-import { ZBatching } from './batching';
+import { ZCallDetails } from '../plan/call-details.js';
+import { ZTaskSpec } from '../tasks/task-spec.js';
+import { ZBatching } from './batching.js';
 
 /**
  * Details of the {@link ZBatchPlanner.batch task batching}.
  *
- * @typeparam TAction  Task action type.
+ * @typeParam TAction  Task action type.
  */
 export interface ZBatchDetails<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
   extends ZCallDetails<TAction> {
@@ -20,7 +20,7 @@ export interface ZBatchDetails<TAction extends ZTaskSpec.Action = ZTaskSpec.Acti
 /**
  * Full details of the {@link ZBatchPlanner.batch task batching}.
  *
- * @typeparam TAction  Task action type.
+ * @typeParam TAction  Task action type.
  */
 export namespace ZBatchDetails {
   export interface Full<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
@@ -36,7 +36,7 @@ export const ZBatchDetails = {
   /**
    * Reconstructs full details of the task batching by partial ones.
    *
-   * @typeparam TAction  Task action type.
+   * @typeParam TAction  Task action type.
    * @param details - Partial task call details.
    *
    * @returns Full task batching details.

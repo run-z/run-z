@@ -8,11 +8,11 @@ import typescript from 'typescript';
 
 export default defineConfig({
   input: {
-    'run-z': './src/index.ts',
-    'run-z.builtins': './src/builtins/index.ts',
-    'run-z.cli': './src/cli/index.ts',
-    'run-z.core': './src/core/index.ts',
-    'run-z.os': './src/os/index.ts',
+    'run-z': './src/mod.ts',
+    'run-z.builtins': './src/builtins/mod.ts',
+    'run-z.cli': './src/cli/mod.ts',
+    'run-z.core': './src/core/mod.ts',
+    'run-z.os': './src/os/mod.ts',
   },
   plugins: [
     {

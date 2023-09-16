@@ -1,6 +1,6 @@
 import { AbortedZExecutionError, FailedZExecutionError } from '@run-z/exec-z';
-import { messageZLogField, textZLogFormatter, ZLogFormatter, ZLogWriter } from '@run-z/log-z';
-import type { ProgressZLogPrefix } from '../progress-log';
+import { ZLogFormatter, ZLogWriter, messageZLogField, textZLogFormatter } from '@run-z/log-z';
+import type { ProgressZLogPrefix } from '../progress-log.js';
 
 /**
  * @internal

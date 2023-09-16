@@ -1,5 +1,5 @@
-import type { ZExtension } from '../core';
-import { ZBatcher } from '../core';
+import { ZBatcher } from '../core/batches/batcher.js';
+import { ZExtension } from '../core/extension.js';
 
 /**
  * All named batches execution built-in extension.

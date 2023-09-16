@@ -1,12 +1,13 @@
 import { isPresent } from '@proc7ts/primitives';
-import { ZExecutor } from '../jobs/job.impl';
-import type { ZPackage } from '../packages';
-import type { ZSetup } from '../setup';
-import type { ZTask, ZTaskQualifier, ZTaskSpec } from '../tasks';
-import type { ZCall } from './call';
-import type { ZCallDetails } from './call-details';
-import { ZCallRecord } from './call.impl';
-import type { ZPlan } from './plan';
+import { ZPlan } from './plan.js';
+import { ZExecutor } from '../jobs/job.impl.js';
+import { ZTask, ZTaskQualifier } from '../tasks/task.js';
+import { ZCallRecord } from './call.impl.js';
+import { ZPackage } from '../packages/package.js';
+import { ZCall } from './call.js';
+import { ZSetup } from '../setup.js';
+import { ZTaskSpec } from '../tasks/task-spec.js';
+import { ZCallDetails } from './call-details.js';
 
 /**
  * @internal

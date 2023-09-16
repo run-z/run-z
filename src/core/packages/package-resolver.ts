@@ -1,8 +1,8 @@
-import type { ZSetup } from '../setup';
-import type { ZPackage } from './package';
-import type { ZPackageLocation } from './package-location';
-import { ZPackage$, ZPackageResolver$ } from './package.impl';
-import { UnknownZPackageError } from './unknown-package-error';
+import type { ZSetup } from '../setup.js';
+import type { ZPackage } from './package.js';
+import type { ZPackageLocation } from './package-location.js';
+import { ZPackage$, ZPackageResolver$ } from './package.impl.js';
+import { UnknownZPackageError } from './unknown-package-error.js';
 
 /**
  * A resolver of all discovered {@link ZPackage NPM packages}.

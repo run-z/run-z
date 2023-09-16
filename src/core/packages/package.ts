@@ -1,9 +1,9 @@
-import type { ZSetup } from '../setup';
-import type { ZTask } from '../tasks';
-import type { ZDepGraph } from './dep-graph';
-import type { ZPackageLocation } from './package-location';
-import type { ZPackageSet } from './package-set';
-import type { ZPackageJson } from './package.json';
+import { ZSetup } from '../setup.js';
+import { ZTask } from '../tasks/task.js';
+import { ZDepGraph } from './dep-graph.js';
+import { ZPackageLocation } from './package-location.js';
+import { ZPackageSet } from './package-set.js';
+import { ZPackageJson } from './package.json.js';
 
 /**
  * NPM package containing tasks and rules.

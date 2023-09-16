@@ -1,5 +1,5 @@
-import type { ZTaskSpec } from '../tasks';
-import type { ZCall } from './call';
+import { ZTaskSpec } from '../tasks/task-spec.js';
+import { ZCall } from './call.js';
 
 /**
  * @internal
@@ -255,7 +255,7 @@ export namespace ZTaskParams {
     /**
      * Evaluates a value for the given task call.
      *
-     * @typeparam TValue  Value type.
+     * @typeParam TValue  Value type.
      * @param key - Value key.
      * @param source - The task call the value evaluated for.
      * @param evaluate - The value evaluation function. It is called unless a recursion detected.
@@ -268,7 +268,7 @@ export namespace ZTaskParams {
   /**
    * A key of the value evaluated per the task call.
    *
-   * @typeparam TValue  Value type.
+   * @typeParam TValue  Value type.
    */
   export interface ValueKey<TValue> {
     /**
