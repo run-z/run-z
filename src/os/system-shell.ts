@@ -1,9 +1,9 @@
-import { arrayOfElements, lazyValue } from '@proc7ts/primitives';
+import { asArray, lazyValue } from '@proc7ts/primitives';
 import type { ZExecution, ZExecutionStarter } from '@run-z/exec-z';
 import { poolZExecutions, spawnZ } from '@run-z/exec-z';
 import { zlogDetails } from '@run-z/log-z';
 import type { ZOption } from '@run-z/optionz';
-import { clz } from '@run-z/optionz/colors';
+import { clz } from '@run-z/optionz/colors.js';
 import spawn from 'cross-spawn';
 import type { ChildProcessByStdio } from 'node:child_process';
 import * as path from 'node:path';
@@ -13,7 +13,7 @@ import pathKey from 'path-key';
 import kill from 'tree-kill';
 import type { ZJob } from '../core';
 import { ZShell, ZTaskParser } from '../core';
-import { ttyColorLevel, ttyColumns, ZProgressFormat } from './impl';
+import { ZProgressFormat, ttyColorLevel, ttyColumns } from './impl';
 import { RichZProgressFormat } from './impl/rich';
 import { TextZProgressFormat } from './impl/text';
 import ProcessEnv = NodeJS.ProcessEnv;
@@ -51,7 +51,7 @@ export class SystemZShell extends ZShell {
    */
   options(): ZTaskParser.SupportedOptions {
     return [
-      ...arrayOfElements(super.options()),
+      ...asArray(super.options()),
       {
         '--max-jobs': {
           read: SystemZShell$readMaxJobs.bind(this),

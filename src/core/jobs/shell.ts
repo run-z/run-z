@@ -1,4 +1,4 @@
-import { arrayOfElements } from '@proc7ts/primitives';
+import { asArray } from '@proc7ts/primitives';
 import type { ZExecution } from '@run-z/exec-z';
 import { execZNoOp } from '@run-z/exec-z';
 import type { ZSetup } from '../setup';
@@ -56,7 +56,7 @@ export abstract class ZShell {
    * Includes options supported by {@link ZExtension.shellOptions extensions}.
    */
   options(): ZTaskParser.SupportedOptions {
-    return this.setup.extensions.flatMap(({ shellOptions }) => arrayOfElements(shellOptions));
+    return this.setup.extensions.flatMap(({ shellOptions }) => asArray(shellOptions));
   }
 
 }

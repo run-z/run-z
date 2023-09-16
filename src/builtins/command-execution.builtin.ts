@@ -1,4 +1,4 @@
-import { clz } from '@run-z/optionz/colors';
+import { clz } from '@run-z/optionz/colors.js';
 import type { ZExtension, ZTaskOption } from '../core';
 
 /**

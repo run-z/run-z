@@ -3,5 +3,6 @@
   "name": "API docs | run-z",
   "out": "./target/typedoc",
   "readme": "./README.md",
+  "sort": ["static-first", "visibility", "enum-value-ascending", "alphabetical", "kind"],
   "tsconfig": "tsconfig.main.json"
 }

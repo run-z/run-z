@@ -1,4 +1,4 @@
-import { chalkZColorOptions } from '@run-z/optionz/colors';
+import { chalkZColorOptions } from '@run-z/optionz/colors.js';
 import type { ZExtension } from '../core';
 
 /**

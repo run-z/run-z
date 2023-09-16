@@ -8,7 +8,7 @@ import {
   ZLogMessage,
   ZLogRecorder,
 } from '@run-z/log-z';
-import { logZToStream } from '@run-z/log-z/node';
+import { logZToStream } from '@run-z/log-z/node.js';
 import chalk from 'chalk';
 import stringWidth from 'string-width';
 

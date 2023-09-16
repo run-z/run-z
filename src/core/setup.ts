@@ -1,4 +1,4 @@
-import { arrayOfElements, valueByRecipe } from '@proc7ts/primitives';
+import { asArray, valueByRecipe } from '@proc7ts/primitives';
 import type { ZConfig } from './config';
 import type { ZExtension } from './extension';
 import { ZPackageResolver } from './packages';
@@ -55,7 +55,7 @@ export class ZSetup {
       || (this._taskParser = this._config.taskParser
         ? valueByRecipe(this._config.taskParser, this)
         : new ZTaskParser({
-            options: this.extensions.flatMap(extension => arrayOfElements(extension.options)),
+            options: this.extensions.flatMap(extension => asArray(extension.options)),
           }))
     );
   }
@@ -100,7 +100,7 @@ export class ZSetup {
    * Task execution functionality extensions.
    */
   get extensions(): readonly ZExtension[] {
-    return arrayOfElements(this._config.extensions);
+    return asArray(this._config.extensions);
   }
 
 }

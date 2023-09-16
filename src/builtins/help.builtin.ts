@@ -1,7 +1,7 @@
 import { noop } from '@proc7ts/primitives';
 import { execZ } from '@run-z/exec-z';
 import type { ZOptionMeta, ZOptionReader } from '@run-z/optionz';
-import { helpZOptionReader, ZHelpFormatter } from '@run-z/optionz/help';
+import { ZHelpFormatter, helpZOptionReader } from '@run-z/optionz/help.js';
 import type { ZExtension, ZTaskOption } from '../core';
 
 /**

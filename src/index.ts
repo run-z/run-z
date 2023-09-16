@@ -1,5 +1,4 @@
 /**
- * @packageDocumentation
  * @module run-z
  */
 export { StandardZSetup } from './builtins';

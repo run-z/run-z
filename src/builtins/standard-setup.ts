@@ -1,4 +1,4 @@
-import { arrayOfElements } from '@proc7ts/primitives';
+import { asArray } from '@proc7ts/primitives';
 import { ZConfig, ZExtension, ZSetup } from '../core';
 import { ZAllBatchBuiltin } from './all-batch.builtin';
 import { ZColorsBuiltin } from './colors.builtin';
@@ -40,7 +40,7 @@ export class StandardZSetup extends ZSetup {
   constructor(config: ZConfig = {}) {
     super({
       ...config,
-      extensions: StandardZSetup.builtins.concat(arrayOfElements(config.extensions)),
+      extensions: StandardZSetup.builtins.concat(asArray(config.extensions)),
     });
   }
 

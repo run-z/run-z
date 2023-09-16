@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
 import { noop } from '@proc7ts/primitives';
 import type { ZLogger } from '@run-z/log-z';
-import { logZBy, zlogDetails, ZLogLevel, zlogMessage } from '@run-z/log-z';
-import { logZToStream } from '@run-z/log-z/node';
+import { ZLogLevel, logZBy, zlogDetails, zlogMessage } from '@run-z/log-z';
+import { logZToStream } from '@run-z/log-z/node.js';
 import ansiEscapes from 'ansi-escapes';
 import { Writable } from 'node:stream';
 import { ProgressZLogPrefix, ProgressZLogRecorder } from './progress-log';
