@@ -191,7 +191,7 @@ By default ${clz.usage('text')} format is used.
   }
 
   execCommand(job: ZJob, command: string): ZExecution {
-    return this._run(job, this.commandExecutable(job, command));
+    return this.#run(job, this.commandExecutable(job, command));
   }
 
   /**
@@ -214,7 +214,7 @@ By default ${clz.usage('text')} format is used.
       env?: ProcessEnv | undefined;
     } = {},
   ): SystemZExecutable {
-    return this._buildExecutable(job, {
+    return this.#buildExecutable(job, {
       command,
       args: job.params.args,
       env,
@@ -222,7 +222,7 @@ By default ${clz.usage('text')} format is used.
   }
 
   execScript(job: ZJob, name: string): ZExecution {
-    return this._run(job, this.scriptExecutable(job, name));
+    return this.#run(job, this.scriptExecutable(job, name));
   }
 
   /**
@@ -267,10 +267,10 @@ By default ${clz.usage('text')} format is used.
 
     args.push(name, ...job.params.args);
 
-    return this._buildExecutable(job, { command, args, env });
+    return this.#buildExecutable(job, { command, args, env });
   }
 
-  private _buildExecutable(
+  #buildExecutable(
     job: ZJob,
     {
       command,
@@ -298,7 +298,7 @@ By default ${clz.usage('text')} format is used.
     };
   }
 
-  private _run(job: ZJob, { command, args, cwd, env }: SystemZExecutable): ZExecution {
+  #run(job: ZJob, { command, args, cwd, env }: SystemZExecutable): ZExecution {
     const progress = this.#format().jobProgress(job);
 
     return this.#exec(() => {

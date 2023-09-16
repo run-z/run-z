@@ -1,21 +1,21 @@
 import type { ZOptionsParser } from '@run-z/optionz';
-import { ZSetup } from '../core/setup.js';
-import { ZPackageTree } from '../core/packages/package-tree.js';
-import { ZCall } from '../core/plan/call.js';
-import { ZPackageLocation } from '../core/packages/package-location.js';
 import { StandardZSetup } from '../builtins/standard-setup.js';
-import { ZPackageJson } from '../core/packages/package.json.js';
+import { ZPackageLocation } from '../core/packages/package-location.js';
+import { ZPackageTree } from '../core/packages/package-tree.js';
 import { ZPackage } from '../core/packages/package.js';
-import { ZPlan } from '../core/plan/plan.js';
-import { ZTaskOption } from '../core/tasks/task-option.js';
+import { ZPackageJson } from '../core/packages/package.json.js';
 import { ZCallDetails } from '../core/plan/call-details.js';
+import { ZCall } from '../core/plan/call.js';
+import { ZPlan } from '../core/plan/plan.js';
+import { ZSetup } from '../core/setup.js';
+import { ZTaskOption } from '../core/tasks/task-option.js';
 
 export class TestPlan {
 
   readonly setup: ZSetup;
   readonly root: ZPackageTree;
   lastCall!: ZCall;
-  private _target: ZPackageLocation;
+  #target: ZPackageLocation;
 
   constructor(
     name = 'root',
@@ -28,17 +28,17 @@ export class TestPlan {
     } = {},
   ) {
     this.setup = setup;
-    this._target = this.root = new ZPackageTree(name, { packageJson });
+    this.#target = this.root = new ZPackageTree(name, { packageJson });
   }
 
   get lastPlan(): ZPlan {
     return this.lastCall.plan;
   }
 
-  target(location: ZPackageLocation = this._target): Promise<ZPackage> {
+  target(location: ZPackageLocation = this.#target): Promise<ZPackage> {
     const target = this.setup.packageResolver.get(location);
 
-    this._target = location;
+    this.#target = location;
 
     return target;
   }
@@ -51,7 +51,7 @@ export class TestPlan {
       packageJson?: ZPackageJson | undefined;
     } = {},
   ): ZPackageTree {
-    return (this._target = this.root.put(name, { packageJson }));
+    return (this.#target = this.root.put(name, { packageJson }));
   }
 
   async parse(commandLine: string, opts?: ZOptionsParser.Opts<ZTaskOption>): Promise<ZCall> {

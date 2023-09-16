@@ -1,11 +1,11 @@
 import type { ZOption } from '@run-z/optionz';
 import { ZOptionError } from '@run-z/optionz';
-import { ZTaskSpec } from '../../task-spec.js';
-import { ZTaskOption } from '../../task-option.js';
-import { DraftZTask } from './draft-task.js';
-import { ZPackage } from '../../../packages/package.js';
 import { ZBatching } from '../../../batches/batching.js';
 import { ZTaskExecutor } from '../../../jobs/task-executor.js';
+import { ZPackage } from '../../../packages/package.js';
+import { ZTaskOption } from '../../task-option.js';
+import { ZTaskSpec } from '../../task-spec.js';
+import { DraftZTask } from './draft-task.js';
 
 /**
  * @internal
@@ -25,26 +25,28 @@ export function zTaskSpecOptionClass<TArgs extends any[]>(
 ): ZOption.ImplClass<ZTaskOption, DraftZTask, TArgs> {
   class TaskOption extends base implements ZTaskOption {
 
+    readonly #draft: DraftZTask;
     readonly taskTarget: ZPackage;
     readonly taskName: string;
 
-    constructor(private readonly _draft: DraftZTask, ...args: TArgs) {
+    constructor(draft: DraftZTask, ...args: TArgs) {
       super(...args);
-      this.taskTarget = _draft.builder.taskTarget;
-      this.taskName = _draft.builder.taskName;
-      _draft.moveTo(this);
+      this.#draft = draft;
+      this.taskTarget = draft.builder.taskTarget;
+      this.taskName = draft.builder.taskName;
+      draft.moveTo(this);
     }
 
     get action(): ZTaskSpec.Action | undefined {
-      return this._draft.builder.action;
+      return this.#draft.builder.action;
     }
 
     get batching(): ZBatching {
-      return this._draft.builder.batching;
+      return this.#draft.builder.batching;
     }
 
     get pre(): ZTaskOption.Pre {
-      return this._draft.pre;
+      return this.#draft.pre;
     }
 
     get acceptsArgs(): boolean {
@@ -59,28 +61,28 @@ export function zTaskSpecOptionClass<TArgs extends any[]>(
 
     addPre(pre: ZTaskSpec.Pre): this {
       this.pre.conclude();
-      this._draft.builder.addPre(pre);
+      this.#draft.builder.addPre(pre);
 
       return this;
     }
 
     addAttr(name: string, value: string): this {
       this.pre.conclude();
-      this._draft.builder.addAttr(name, value);
+      this.#draft.builder.addAttr(name, value);
 
       return this;
     }
 
     addAttrs(attrs: ZTaskSpec.Attrs): this {
       this.pre.conclude();
-      this._draft.builder.addAttrs(attrs);
+      this.#draft.builder.addAttrs(attrs);
 
       return this;
     }
 
     removeAttr(name: string): this {
       this.pre.conclude();
-      this._draft.builder.removeAttr(name);
+      this.#draft.builder.removeAttr(name);
 
       return this;
     }
@@ -94,26 +96,26 @@ export function zTaskSpecOptionClass<TArgs extends any[]>(
       }
 
       this.pre.conclude();
-      this._draft.builder.addArg(...args);
+      this.#draft.builder.addArg(...args);
 
       return this;
     }
 
     setBatching(batching: ZBatching): this {
-      this._draft.builder.setBatching(batching);
+      this.#draft.builder.setBatching(batching);
 
       return this;
     }
 
     setAction(action: ZTaskSpec.Action): this {
       this.pre.conclude();
-      this._draft.builder.setAction(action);
+      this.#draft.builder.setAction(action);
 
       return this;
     }
 
     executeBy(executor: ZTaskExecutor): this {
-      this._draft.builder.executeBy(executor);
+      this.#draft.builder.executeBy(executor);
 
       return this;
     }

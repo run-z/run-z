@@ -7,13 +7,16 @@ import type { ZJobRow, ZJobRows } from './job-rows.js';
  */
 export class RichJobZLogRecorder implements ZLogRecorder {
 
+  readonly #rows: ZJobRows;
+  readonly #output: ZJobOutput;
+  readonly #by: ZLogRecorder;
   #row: ZJobRow | null = null;
 
-  constructor(
-    private readonly _rows: ZJobRows,
-    private readonly _output: ZJobOutput,
-    private readonly _by: ZLogRecorder,
-  ) {}
+  constructor(rows: ZJobRows, output: ZJobOutput, by: ZLogRecorder) {
+    this.#rows = rows;
+    this.#output = output;
+    this.#by = by;
+  }
 
   record(message: ZLogMessage): void {
     const {
@@ -25,58 +28,58 @@ export class RichJobZLogRecorder implements ZLogRecorder {
 
       // Error report.
       // Update status and log collected error.
-      this._by.record(
-        this._output.setStatus({
+      this.#by.record(
+        this.#output.setStatus({
           ...message,
           level: ZLogLevel.Info,
           line,
-          details: { ...message.details, row: this._useRow() },
+          details: { ...message.details, row: this.#useRow() },
         }),
       );
 
-      this._output
+      this.#output
         .lines()
-        .forEach(([message, err]) => this._by.record(zlogMessage(err ? ZLogLevel.Error : ZLogLevel.Info, message)));
+        .forEach(([message, err]) => this.#by.record(zlogMessage(err ? ZLogLevel.Error : ZLogLevel.Info, message)));
 
-      this._by.record({ ...message, line });
+      this.#by.record({ ...message, line });
     } else if (success) {
       // Final success
       // Update status.
-      this._by.record(
-        this._output.setStatus({
+      this.#by.record(
+        this.#output.setStatus({
           ...message,
           level: ZLogLevel.Info,
-          line: [this._output.lastLine || 'Ok'],
-          details: { ...message.details, row: this._useRow() },
+          line: [this.#output.lastLine || 'Ok'],
+          details: { ...message.details, row: this.#useRow() },
         }),
       );
     } else {
       // Regular message.
       // Update status and record output.
-      this._output.add(message.line.join(' '), message.level >= ZLogLevel.Error ? 1 : 0);
-      this._by.record({
+      this.#output.add(message.line.join(' '), message.level >= ZLogLevel.Error ? 1 : 0);
+      this.#by.record({
         ...message,
         level: ZLogLevel.Info,
-        line: [this._output.status],
-        details: { ...message.details, row: this._useRow() },
+        line: [this.#output.status],
+        details: { ...message.details, row: this.#useRow() },
       });
     }
   }
 
   whenLogged(which?: 'all' | 'last'): Promise<boolean> {
-    return this._by.whenLogged(which);
+    return this.#by.whenLogged(which);
   }
 
   end(): Promise<void> {
-    return this._by.end();
+    return this.#by.end();
   }
 
-  private _useRow(): ZJobRow {
+  #useRow(): ZJobRow {
     if (this.#row != null) {
       return this.#row;
     }
 
-    return (this.#row = this._rows.add(() => this.record(this._output.statusMessage)));
+    return (this.#row = this.#rows.add(() => this.record(this.#output.statusMessage)));
   }
 
 }

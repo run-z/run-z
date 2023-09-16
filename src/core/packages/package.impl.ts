@@ -26,15 +26,15 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
 
   readonly isAnonymous: boolean;
   readonly name: string;
-  private _scopeName: string | null | undefined = null;
-  private _unscopedName?: string | undefined;
-  private _hostPackage?: ZPackage | undefined;
-  private _subPackageName: string | null | undefined = null;
+  #scopeName: string | null | undefined = null;
+  #unscopedName?: string | undefined;
+  #hostPackage?: ZPackage | undefined;
+  #subPackageName: string | null | undefined = null;
 
   readonly _dependants: ZPackage$[] = [];
-  private _depGraph: [number, ZDepGraph$];
+  #depGraph: [number, ZDepGraph$];
 
-  private readonly _tasks = new Map<string, Promise<ZTask>>();
+  readonly #tasks = new Map<string, Promise<ZTask>>();
 
   constructor(
     readonly _resolver: ZPackageResolver$,
@@ -59,7 +59,7 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
       this.isAnonymous = true;
     }
 
-    this._depGraph = [_resolver.rev, new ZDepGraph$(this)];
+    this.#depGraph = [_resolver.rev, new ZDepGraph$(this)];
   }
 
   get setup(): ZSetup {
@@ -67,8 +67,8 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
   }
 
   get scopeName(): string | undefined {
-    if (this._scopeName !== null) {
-      return this._scopeName;
+    if (this.#scopeName !== null) {
+      return this.#scopeName;
     }
 
     const { name } = this;
@@ -77,40 +77,40 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
       const slashIdx = name.indexOf('/');
 
       if (slashIdx >= 0) {
-        return (this._scopeName = name.substr(0, slashIdx));
+        return (this.#scopeName = name.substr(0, slashIdx));
       }
     }
 
-    return (this._scopeName = undefined);
+    return (this.#scopeName = undefined);
   }
 
   get unscopedName(): string {
-    if (this._unscopedName != null) {
-      return this._unscopedName;
+    if (this.#unscopedName != null) {
+      return this.#unscopedName;
     }
 
     const { scopeName, name } = this;
 
-    return (this._unscopedName = scopeName == null ? name : name.substr(scopeName.length + 1));
+    return (this.#unscopedName = scopeName == null ? name : name.substr(scopeName.length + 1));
   }
 
   get hostPackage(): ZPackage {
-    if (this._hostPackage) {
-      return this._hostPackage;
+    if (this.#hostPackage) {
+      return this.#hostPackage;
     }
 
-    return (this._hostPackage = this.subPackageName == null ? this : this.parent!.hostPackage);
+    return (this.#hostPackage = this.subPackageName == null ? this : this.parent!.hostPackage);
   }
 
   get subPackageName(): string | undefined {
-    if (this._subPackageName !== null) {
-      return this._subPackageName;
+    if (this.#subPackageName !== null) {
+      return this.#subPackageName;
     }
 
     const { unscopedName } = this;
     const slashIdx = unscopedName.indexOf('/');
 
-    return (this._subPackageName = slashIdx < 0 ? undefined : unscopedName.substr(slashIdx + 1));
+    return (this.#subPackageName = slashIdx < 0 ? undefined : unscopedName.substr(slashIdx + 1));
   }
 
   packages(): readonly [this] {
@@ -118,7 +118,7 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
   }
 
   depGraph(): ZDepGraph$ {
-    const [rev, deps] = this._depGraph;
+    const [rev, deps] = this.#depGraph;
     const newRev = this._resolver.rev;
 
     if (rev === newRev) {
@@ -127,7 +127,7 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
 
     const newDeps = new ZDepGraph$(this);
 
-    this._depGraph = [newRev, newDeps];
+    this.#depGraph = [newRev, newDeps];
 
     return newDeps;
   }
@@ -137,7 +137,7 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
   }
 
   task(name: string): Promise<ZTask> {
-    const existing = this._tasks.get(name);
+    const existing = this.#tasks.get(name);
 
     if (existing) {
       return existing;
@@ -151,7 +151,7 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
         .parse(script)
         .then(builder => builder.task());
 
-      this._tasks.set(name, parsed);
+      this.#tasks.set(name, parsed);
 
       return parsed;
     }
@@ -160,7 +160,7 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
       this.setup.taskFactory.newTask(this, name).setAction(ZTaskSpec.unknownAction).task(),
     );
 
-    this._tasks.set(name, absent);
+    this.#tasks.set(name, absent);
 
     return absent;
   }

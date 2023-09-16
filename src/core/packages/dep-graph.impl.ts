@@ -8,8 +8,8 @@ import type { ZPackage$, ZPackageResolver$ } from './package.impl.js';
  */
 export class ZDepGraph$ implements ZDepGraph {
 
-  private _dependencies?: Set<ZPackage$> | undefined;
-  private _dependants?: Set<ZPackage$> | undefined;
+  #dependencies?: Set<ZPackage$> | undefined;
+  #dependants?: Set<ZPackage$> | undefined;
 
   constructor(readonly target: ZPackage$) {}
 
@@ -24,8 +24,8 @@ export class ZDepGraph$ implements ZDepGraph {
   }
 
   dependencies(): ReadonlySet<ZPackage$> {
-    if (this._dependencies) {
-      return this._dependencies;
+    if (this.#dependencies) {
+      return this.#dependencies;
     }
 
     const collected = new Set<ZPackage$>();
@@ -33,12 +33,12 @@ export class ZDepGraph$ implements ZDepGraph {
     zPackageDeps(collected, this.target);
     collected.delete(this.target);
 
-    return (this._dependencies = collected);
+    return (this.#dependencies = collected);
   }
 
   dependants(): Set<ZPackage$> {
-    if (this._dependants) {
-      return this._dependants;
+    if (this.#dependants) {
+      return this.#dependants;
     }
 
     this.target._resolver.buildDepGraph();
@@ -66,7 +66,7 @@ export class ZDepGraph$ implements ZDepGraph {
       collected.add(dependant);
     }
 
-    return (this._dependants = collected);
+    return (this.#dependants = collected);
   }
 
   private _allDependants(): Set<ZPackage$> {

@@ -15,12 +15,12 @@ export class ZTaskParser {
   /**
    * @internal
    */
-  private _specParser?: ReturnType<typeof zTaskSpecParser> | undefined;
+  #specParser?: ReturnType<typeof zTaskSpecParser> | undefined;
 
   /**
    * @internal
    */
-  private readonly _config: ZTaskParser.Config;
+  readonly #config: ZTaskParser.Config;
 
   /**
    * Constructs task parser.
@@ -28,7 +28,7 @@ export class ZTaskParser {
    * @param config - Task parser configuration.
    */
   constructor(config: ZTaskParser.Config = {}) {
-    this._config = config;
+    this.#config = config;
   }
 
   /**
@@ -140,11 +140,11 @@ export class ZTaskParser {
     args: readonly string[],
     opts?: ZOptionsParser.Opts<ZTaskOption>,
   ): Promise<ZTaskBuilder> {
-    if (!this._specParser) {
-      this._specParser = zTaskSpecParser(builder.taskTarget.setup, this._config);
+    if (!this.#specParser) {
+      this.#specParser = zTaskSpecParser(builder.taskTarget.setup, this.#config);
     }
 
-    return this._specParser(builder, args, opts);
+    return this.#specParser(builder, args, opts);
   }
 
 }

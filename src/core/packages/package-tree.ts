@@ -12,7 +12,7 @@ export class ZPackageTree extends ZPackageLocation {
   readonly parent: ZPackageTree | undefined;
   readonly path: string;
   readonly load: () => Promise<ZPackageJson | undefined>;
-  private readonly _nested = new Map<string, ZPackageTree>();
+  readonly #nested = new Map<string, ZPackageTree>();
 
   /**
    * Constructs package tree.
@@ -53,7 +53,7 @@ export class ZPackageTree extends ZPackageLocation {
       if (name === '..') {
         nested = this.parent;
       } else {
-        nested = this._nested.get(name);
+        nested = this.#nested.get(name);
       }
       if (!nested) {
         return;
@@ -64,13 +64,13 @@ export class ZPackageTree extends ZPackageLocation {
   }
 
   nested(): readonly ZPackageTree[] {
-    return [...this._nested.values()];
+    return [...this.#nested.values()];
   }
 
   deeplyNested(): readonly ZPackageTree[] {
     const result: ZPackageTree[] = [];
 
-    for (const nested of this._nested.values()) {
+    for (const nested of this.#nested.values()) {
       result.push(nested);
       result.push(...nested.deeplyNested());
     }
@@ -102,12 +102,12 @@ export class ZPackageTree extends ZPackageLocation {
     if (!restPath) {
       const nested = new ZPackageTree(name, { packageJson, parent: this });
 
-      this._nested.set(name, nested);
+      this.#nested.set(name, nested);
 
       return nested;
     }
 
-    const nested = this._nested.get(name) || this.put(name);
+    const nested = this.#nested.get(name) || this.put(name);
 
     return nested.put(restPath, { packageJson });
   }

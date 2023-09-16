@@ -1,11 +1,11 @@
 import { noop } from '@proc7ts/primitives';
 import { execZ, execZAfter, execZAll, execZNoOp, ZExecution } from '@run-z/exec-z';
-import { ZTask } from '../tasks/task.js';
 import { ZCallRecord } from '../plan/call.impl.js';
-import { ZTaskSpec } from '../tasks/task-spec.js';
-import { ZShell } from './shell.js';
-import { ZJob } from './job.js';
 import { ZTaskParams } from '../plan/task-params.js';
+import { ZTaskSpec } from '../tasks/task-spec.js';
+import { ZTask } from '../tasks/task.js';
+import { ZJob } from './job.js';
+import { ZShell } from './shell.js';
 
 /**
  * @internal
@@ -41,59 +41,58 @@ export class ZExecutor {
 export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
   implements ZJob<TAction> {
 
-  private _params?: ZTaskParams | undefined;
-  private _exec!: ZExecution;
-  private _execAndPre!: ZExecution;
+  readonly #executor: ZExecutor;
+  #params?: ZTaskParams | undefined;
+  #exec!: ZExecution;
+  #execAndPre!: ZExecution;
 
-  constructor(
-    private readonly _executor: ZExecutor,
-    readonly shell: ZShell,
-    readonly call: ZCallRecord<TAction>,
-  ) {}
+  constructor(executor: ZExecutor, readonly shell: ZShell, readonly call: ZCallRecord<TAction>) {
+    this.#executor = executor;
+  }
 
   get params(): ZTaskParams {
-    return this._params || (this._params = this.call.params(this._executor.evaluator));
+    return this.#params || (this.#params = this.call.params(this.#executor.evaluator));
   }
 
   get started(): boolean {
-    return this._exec != null;
+    return this.#exec != null;
   }
 
   whenStarted(): Promise<void> {
-    return this._exec.whenStarted();
+    return this.#exec.whenStarted();
   }
 
   start(): this {
     if (this.params.flag('skip')) {
-      this._exec = this._execAndPre = execZNoOp();
+      this.#exec = this.#execAndPre = execZNoOp();
 
       return this;
     }
 
-    const whenPre = this._execPre();
-    const whenReady = this._whenReady();
+    const whenPre = this.#execPre();
+    const whenReady = this.#whenReady();
 
-    this._exec = execZAfter(whenReady, () => this.call.task.exec(this));
-    this._execAndPre = execZAll([whenPre, this._exec], noop);
+    this.#exec = execZAfter(whenReady, () => this.call.task.exec(this));
+    this.#execAndPre = execZAll([whenPre, this.#exec], noop);
 
     return this;
   }
 
   abort(): void {
-    this._execAndPre.abort();
+    this.#execAndPre.abort();
   }
 
-  private _execPre(): ZExecution {
+  #execPre(): ZExecution {
     return execZAll(
       this.call.prerequisites().map(pre => pre.exec(this.shell)),
       noop,
     );
   }
 
-  private _whenReady(): ZExecution {
+  #whenReady(): ZExecution {
     const whenReady: ZExecution[] = [];
 
-    for (const job of this._executor.jobs.values()) {
+    for (const job of this.#executor.jobs.values()) {
       if (job.call.task.spec.action.type === 'group') {
         // No need to wait for group as its prerequisites are handled individually.
         continue;
@@ -123,11 +122,11 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
   }
 
   whenFinished(): Promise<void> {
-    return this._exec.whenDone();
+    return this.#exec.whenDone();
   }
 
   whenDone(): Promise<void> {
-    return this._execAndPre.whenDone();
+    return this.#execAndPre.whenDone();
   }
 
 }

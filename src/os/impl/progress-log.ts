@@ -80,38 +80,42 @@ export class ProgressZLogRecorder implements ZLogRecorder {
     return new ProgressZLogRecorder(prefix, by, { onPrefixUpdate });
   }
 
-  private readonly _onPrefixUpdate: () => void;
+  readonly #prefix: ProgressZLogPrefix;
+  readonly #by: ZLogRecorder;
+  readonly #onPrefixUpdate: () => void;
 
   constructor(
-    private readonly _prefix: ProgressZLogPrefix,
-    private readonly _by: ZLogRecorder,
+    prefix: ProgressZLogPrefix,
+    by: ZLogRecorder,
     {
       onPrefixUpdate = noop,
     }: {
       onPrefixUpdate?: ((this: void) => void) | undefined;
     },
   ) {
-    this._onPrefixUpdate = onPrefixUpdate;
+    this.#prefix = prefix;
+    this.#by = by;
+    this.#onPrefixUpdate = onPrefixUpdate;
   }
 
   record(message: ZLogMessage): void {
     const {
       details: { target, task },
     } = message;
-    const prefixUpdated = this._prefix.update(target as string, task as string);
+    const prefixUpdated = this.#prefix.update(target as string, task as string);
 
-    this._by.record(message);
+    this.#by.record(message);
     if (prefixUpdated) {
-      this._onPrefixUpdate();
+      this.#onPrefixUpdate();
     }
   }
 
   whenLogged(which?: 'all' | 'last'): Promise<boolean> {
-    return this._by.whenLogged(which);
+    return this.#by.whenLogged(which);
   }
 
   end(): Promise<void> {
-    return this._by.end();
+    return this.#by.end();
   }
 
 }

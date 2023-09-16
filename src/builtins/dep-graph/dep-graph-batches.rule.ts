@@ -83,26 +83,34 @@ class ZDepGraphBatches$ implements ZDepGraphBatches {
     };
   }
 
+  readonly #context: ZBatchRule.Context<ZDepGraphBatches>;
+  readonly #included: 'dependencies' | 'dependants';
+  readonly #isSelfIncluded: boolean;
+
   constructor(
-    private readonly _context: ZBatchRule.Context<ZDepGraphBatches>,
-    private readonly _included: 'dependencies' | 'dependants',
-    private readonly _isSelfIncluded: boolean,
-  ) {}
+    context: ZBatchRule.Context<ZDepGraphBatches>,
+    included: 'dependencies' | 'dependants',
+    isSelfIncluded: boolean,
+  ) {
+    this.#context = context;
+    this.#included = included;
+    this.#isSelfIncluded = isSelfIncluded;
+  }
 
   get included(): 'dependencies' | 'dependants' {
-    return this._included;
+    return this.#included;
   }
 
   get isSelfIncluded(): boolean {
-    return this._isSelfIncluded;
+    return this.#isSelfIncluded;
   }
 
   include(included?: 'dependencies' | 'dependants', includeSelf?: boolean): ZBatching {
-    return this._context.updateInstance(context => ZDepGraphBatches$.newBatchRule(context, included, includeSelf));
+    return this.#context.updateInstance(context => ZDepGraphBatches$.newBatchRule(context, included, includeSelf));
   }
 
   disable(): ZBatching {
-    return this._context.updateInstance(noop);
+    return this.#context.updateInstance(noop);
   }
 
 }

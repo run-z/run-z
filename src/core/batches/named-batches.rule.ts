@@ -100,21 +100,23 @@ class NamedZBatches$ implements NamedZBatches {
     };
   }
 
+  readonly #context: ZBatchRule.Context<NamedZBatches>;
   readonly only: ReadonlySet<string> | undefined;
   readonly with: ReadonlySet<string>;
   readonly except: ReadonlySet<string>;
 
   constructor(
-    private readonly _context: ZBatchRule.Context<NamedZBatches>,
+    context: ZBatchRule.Context<NamedZBatches>,
     { only, with: w = new Set(), except = new Set() }: Partial<NamedZBatchesConfig> = {},
   ) {
+    this.#context = context;
     this.only = only;
     this.with = w;
     this.except = except;
   }
 
   setOnly(batchNames?: Iterable<string>): ZBatching {
-    return this._context.updateInstance(context => NamedZBatches$.newBatchRule(context, {
+    return this.#context.updateInstance(context => NamedZBatches$.newBatchRule(context, {
         only: batchNames && new Set(batchNames),
         with: this.with,
         except: this.except,
@@ -122,7 +124,7 @@ class NamedZBatches$ implements NamedZBatches {
   }
 
   addWith(batchNames: Iterable<string>): ZBatching {
-    return this._context.updateInstance(context => {
+    return this.#context.updateInstance(context => {
       const withBatches = new Set(this.with);
 
       for (const batchName of batchNames) {
@@ -138,7 +140,7 @@ class NamedZBatches$ implements NamedZBatches {
   }
 
   addExcept(batchNames: Iterable<string>): ZBatching {
-    return this._context.updateInstance(context => {
+    return this.#context.updateInstance(context => {
       const except = new Set(this.except);
 
       for (const batchName of batchNames) {
@@ -154,7 +156,7 @@ class NamedZBatches$ implements NamedZBatches {
   }
 
   reset(): ZBatching {
-    return this._context.updateInstance(noop);
+    return this.#context.updateInstance(noop);
   }
 
 }

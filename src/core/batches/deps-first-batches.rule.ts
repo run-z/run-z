@@ -78,17 +78,20 @@ class ZDepsFirstBatches$ implements ZDepsFirstBatches {
     };
   }
 
-  private constructor(
-    private readonly _context: ZBatchRule.Context<ZDepsFirstBatches>,
-    private readonly _depsFirst: boolean,
-  ) {}
+  readonly #context: ZBatchRule.Context<ZDepsFirstBatches>;
+  readonly #depsFirst: boolean;
+
+  private constructor(context: ZBatchRule.Context<ZDepsFirstBatches>, depsFirst: boolean) {
+    this.#context = context;
+    this.#depsFirst = depsFirst;
+  }
 
   get isDepsFirst(): boolean {
-    return this._depsFirst;
+    return this.#depsFirst;
   }
 
   depsFirst(depsFirst = true): ZBatching {
-    return this._context.updateInstance(
+    return this.#context.updateInstance(
       (
         context: ZBatchRule.Context<ZDepsFirstBatches>,
       ): ZBatchRule.Instance<ZDepsFirstBatches> | undefined => {
