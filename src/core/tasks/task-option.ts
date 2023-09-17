@@ -24,7 +24,7 @@ export interface ZTaskOption extends ZOption, ZTaskModifier {
   /**
    * Assigns a task action.
    *
-   * The task action defaults to {@link Group grouping task} unless reassigned by this call.
+   * The task action defaults to {@link ZTaskSpec.Group grouping task} unless reassigned by this call.
    *
    * @param action - The action to assign to the task.
    *

@@ -86,7 +86,7 @@ export interface ZTaskModifier {
    * Each prerequisite task name represents a batch of tasks to execute. The batch execution will be planned with the
    * given `batching` policy.
    *
-   * A single task call will be planned {@link ZBatcher.batchTask by default}.
+   * A single task call will be planned {@link ZBatcher:var#batchTask by default}.
    *
    * @param batching - New batching policy.
    *
@@ -97,7 +97,7 @@ export interface ZTaskModifier {
   /**
    * Assigns a task action.
    *
-   * The task action defaults to {@link Group grouping task} unless reassigned by this call.
+   * The task action defaults to {@link ZTaskSpec.Group grouping task} unless reassigned by this call.
    *
    * @typeParam TNewAction  New task action type.
    * @param action - Action to assign to the task.

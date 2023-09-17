@@ -1,5 +1,7 @@
 {
-  "entryPoints": ["src/index.ts", "src/builtins/index.ts"],
+  "entryPoints": ["src/mod.ts", "src/builtins/mod.ts"],
+  "excludePrivate": true,
+  "excludeInternal": true,
   "name": "API docs | run-z",
   "out": "./target/typedoc",
   "readme": "./README.md",

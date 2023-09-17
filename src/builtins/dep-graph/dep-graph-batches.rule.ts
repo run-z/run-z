@@ -13,8 +13,8 @@ export interface ZDepGraphBatches {
    *
    * May be one of:
    *
-   * - `'dependencies'` for {@link ZDepGraph.dependencies dependencies} of original package, or
-   * - `'dependants'` for {@link ZDepGraph.dependants dependants} of original package.
+   * - `'dependencies'` for {@link run-z!ZDepGraph#dependencies dependencies} of original package, or
+   * - `'dependants'` for {@link run-z!ZDepGraph#dependants dependants} of original package.
    */
   readonly included: 'dependencies' | 'dependants';
 

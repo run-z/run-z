@@ -164,6 +164,6 @@ class NamedZBatches$ implements NamedZBatches {
 /**
  * Named batches selection rule.
  *
- * Configures {@link ZBatcher.batchNamed named batches} processing.
+ * Configures {@link ZBatcher:var#batchNamed named batches} processing.
  */
 export const NamedZBatches: ZBatchRule<NamedZBatches> = NamedZBatches$;
