@@ -21,15 +21,18 @@ export default defineConfig({
         resolutionRoot = undefined;
       },
     },
-    unbundle({
-      resolutionRoot: getResolutionRoot,
-    }),
-    commonjs(),
     ts({
       typescript,
       tsconfig: 'tsconfig.main.json',
       cacheDir: 'target/.rts_cache',
+      compilerOptions: {
+        module: typescript.ModuleKind.Node16,
+      },
     }),
+    unbundle({
+      resolutionRoot: getResolutionRoot,
+    }),
+    commonjs(),
   ],
   output: {
     format: 'esm',
