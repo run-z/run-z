@@ -45,7 +45,7 @@
     "run-z": "bin/run-z.js"
   },
   "engines": {
-    "node": ">=12"
+    "node": ">=18"
   },
   "dependencies": {
     "ansi-escapes": "^6.2.0",
