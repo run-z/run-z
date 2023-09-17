@@ -71,7 +71,7 @@
     "@run-z/exec-z": "^2.0.0",
     "@run-z/log-z": "^3.0.0",
     "@run-z/npk": "^0.6.0",
-    "@run-z/optionz": "^3.0.0-pre.0",
+    "@run-z/optionz": "^3.0.0",
     "@run-z/prettier-config": "^2.0.0",
     "@types/cross-spawn": "^6.0.3",
     "@types/node": "^18.17.16",
