@@ -1,9 +1,10 @@
-import type { ZBatching } from '../batches';
-import type { ZPackageSet } from '../packages';
-import type { ZTask, ZTaskSpec } from '../tasks';
-import type { ZCall } from './call';
-import type { ZCallDetails } from './call-details';
-import type { ZCallPlanner } from './call-planner';
+import { ZBatching } from '../batches/batching.js';
+import { ZPackageSet } from '../packages/package-set.js';
+import { ZTaskSpec } from '../tasks/task-spec.js';
+import { ZTask } from '../tasks/task.js';
+import { ZCallDetails } from './call-details.js';
+import { ZCallPlanner } from './call-planner.js';
+import { ZCall } from './call.js';
 
 /**
  * A planner of prerequisite call.
@@ -35,7 +36,7 @@ export interface ZPrePlanner {
    *
    * Updates already recorded call to the same task.
    *
-   * @typeparam TAction  Task action type.
+   * @typeParam TAction  Task action type.
    * @param task - The task to call.
    * @param details - The details of the call.
    *

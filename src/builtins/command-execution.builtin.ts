@@ -1,5 +1,6 @@
-import { clz } from '@run-z/optionz/colors';
-import type { ZExtension, ZTaskOption } from '../core';
+import { clz } from '@run-z/optionz/colors.js';
+import { ZExtension } from '../core/extension.js';
+import { ZTaskOption } from '../core/tasks/task-option.js';
 
 /**
  * Command execution built-in extension.

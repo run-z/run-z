@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
 import { valueProvider } from '@proc7ts/primitives';
-import { ZPackageTree } from '../packages';
-import { ZSetup } from '../setup';
-import type { ZTask } from '../tasks';
-import type { ZCall } from './call';
-import { ZTaskParams } from './task-params';
+import { ZTaskParams } from './task-params.js';
+import { ZSetup } from '../setup.js';
+import { ZTask } from '../tasks/task.js';
+import { ZPackageTree } from '../packages/package-tree.js';
+import { ZCall } from './call.js';
 
 describe('ZCall', () => {
   let setup: ZSetup;

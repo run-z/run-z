@@ -1,8 +1,8 @@
 import type { ZOptionsParser } from '@run-z/optionz';
-import type { ZTask } from './task';
-import type { ZTaskModifier } from './task-modifier';
-import type { ZTaskOption } from './task-option';
-import type { ZTaskSpec } from './task-spec';
+import type { ZTaskModifier } from './task-modifier.js';
+import type { ZTaskOption } from './task-option.js';
+import type { ZTaskSpec } from './task-spec.js';
+import type { ZTask } from './task.js';
 
 /**
  * Task builder.
@@ -10,7 +10,7 @@ import type { ZTaskSpec } from './task-spec';
  * Can be created by {@link ZTaskFactory.newTask task factory}, filled with task data, and the used to
  * {@link task build a task}.
  *
- * @typeparam TAction  Task action type the builder produces.
+ * @typeParam TAction  Task action type the builder produces.
  */
 export interface ZTaskBuilder<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
   extends ZTaskModifier {
@@ -19,9 +19,9 @@ export interface ZTaskBuilder<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
   /**
    * Assigns a task action.
    *
-   * The task action defaults to {@link Group grouping task} unless reassigned by this call.
+   * The task action defaults to {@link ZTaskSpec.Group grouping task} unless reassigned by this call.
    *
-   * @typeparam TNewAction  New task action type.
+   * @typeParam TNewAction  New task action type.
    * @param action - Action to assign to the task.
    *
    * @returns `this` instance producing a task with new action type.

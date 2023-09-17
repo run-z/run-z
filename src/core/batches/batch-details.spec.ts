@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
-import { ZBatchDetails } from './batch-details';
-import { ZBatcher } from './batcher';
-import { ZBatching } from './batching';
+import { ZBatchDetails } from './batch-details.js';
+import { ZBatching } from './batching.js';
+import { ZBatcher } from './batcher.js';
 
 describe('ZBatchDetails', () => {
   describe('by', () => {

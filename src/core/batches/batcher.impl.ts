@@ -1,4 +1,4 @@
-import type { ZBatchPlanner } from './batch-planner';
+import type { ZBatchPlanner } from './batch-planner.js';
 
 /**
  * @internal

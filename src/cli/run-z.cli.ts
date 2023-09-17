@@ -1,10 +1,14 @@
 import { AbortedZExecutionError, FailedZExecutionError } from '@run-z/exec-z';
 import { ZOptionError } from '@run-z/optionz';
 import process from 'node:process';
-import { StandardZSetup } from '../builtins';
-import { UnknownZTaskError, ZPackageLocation, ZSetup, ZShell } from '../core';
-import { SystemZShell, ZPackageDirectory } from '../os';
-import { formatZOptionError } from './impl';
+import { StandardZSetup } from '../builtins/standard-setup.js';
+import { ZShell } from '../core/jobs/shell.js';
+import { ZPackageLocation } from '../core/packages/package-location.js';
+import { ZSetup } from '../core/setup.js';
+import { UnknownZTaskError } from '../core/unknown-task-error.js';
+import { ZPackageDirectory } from '../os/package-directory.js';
+import { SystemZShell } from '../os/system-shell.js';
+import { formatZOptionError } from './impl/format-option-error.js';
 
 /**
  * `run-z` execution options.

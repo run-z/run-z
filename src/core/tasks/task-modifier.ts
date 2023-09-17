@@ -1,7 +1,7 @@
-import type { ZBatching } from '../batches';
-import type { ZTaskExecutor } from '../jobs';
-import type { ZPackage } from '../packages';
-import type { ZTaskSpec } from './task-spec';
+import { ZBatching } from '../batches/batching.js';
+import { ZTaskExecutor } from '../jobs/task-executor.js';
+import { ZPackage } from '../packages/package.js';
+import { ZTaskSpec } from './task-spec.js';
 
 /**
  * Task modifier interface.
@@ -86,7 +86,7 @@ export interface ZTaskModifier {
    * Each prerequisite task name represents a batch of tasks to execute. The batch execution will be planned with the
    * given `batching` policy.
    *
-   * A single task call will be planned {@link ZBatcher.batchTask by default}.
+   * A single task call will be planned {@link ZBatcher:var#batchTask by default}.
    *
    * @param batching - New batching policy.
    *
@@ -97,9 +97,9 @@ export interface ZTaskModifier {
   /**
    * Assigns a task action.
    *
-   * The task action defaults to {@link Group grouping task} unless reassigned by this call.
+   * The task action defaults to {@link ZTaskSpec.Group grouping task} unless reassigned by this call.
    *
-   * @typeparam TNewAction  New task action type.
+   * @typeParam TNewAction  New task action type.
    * @param action - Action to assign to the task.
    *
    * @returns `this` instance.

@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 import { URL } from 'node:url';
-import { isRootURL, urlBaseName, urlOfFile } from './url';
+import { isRootURL, urlBaseName, urlOfFile } from './url.js';
 
 describe('urlOfFile', () => {
   it('removes trailing slash', () => {

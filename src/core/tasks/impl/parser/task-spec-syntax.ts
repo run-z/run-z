@@ -1,5 +1,5 @@
 import { ZOptionInput, ZOptionSyntax } from '@run-z/optionz';
-import type { ZSetup } from '../../../setup';
+import { ZSetup } from '../../../setup.js';
 
 /**
  * @internal

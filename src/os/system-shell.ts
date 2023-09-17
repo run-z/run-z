@@ -1,9 +1,9 @@
-import { arrayOfElements, lazyValue } from '@proc7ts/primitives';
+import { asArray, lazyValue } from '@proc7ts/primitives';
 import type { ZExecution, ZExecutionStarter } from '@run-z/exec-z';
 import { poolZExecutions, spawnZ } from '@run-z/exec-z';
 import { zlogDetails } from '@run-z/log-z';
 import type { ZOption } from '@run-z/optionz';
-import { clz } from '@run-z/optionz/colors';
+import { clz } from '@run-z/optionz/colors.js';
 import spawn from 'cross-spawn';
 import type { ChildProcessByStdio } from 'node:child_process';
 import * as path from 'node:path';
@@ -11,12 +11,15 @@ import type { Readable } from 'node:stream';
 import { npmRunPath } from 'npm-run-path';
 import pathKey from 'path-key';
 import kill from 'tree-kill';
-import type { ZJob } from '../core';
-import { ZShell, ZTaskParser } from '../core';
-import { ttyColorLevel, ttyColumns, ZProgressFormat } from './impl';
-import { RichZProgressFormat } from './impl/rich';
-import { TextZProgressFormat } from './impl/text';
+import { ZJob } from '../core/jobs/job.js';
+import { ZShell } from '../core/jobs/shell.js';
+import { ZTaskParser } from '../core/tasks/task-parser.js';
+import { ZProgressFormat } from './impl/progress-format.js';
+import { RichZProgressFormat } from './impl/rich/rich-progress-format.js';
+import { TextZProgressFormat } from './impl/text/text-progress-format.js';
+import { ttyColorLevel } from './impl/tty-color-level.js';
 import ProcessEnv = NodeJS.ProcessEnv;
+import { ttyColumns } from './impl/tty-columns.js';
 
 /**
  * @internal
@@ -38,8 +41,8 @@ const zProgressFormats = {
  */
 export class SystemZShell extends ZShell {
 
-  private _exec: (this: void, starter: ZExecutionStarter) => ZExecution = poolZExecutions();
-  private _format: (this: void) => ZProgressFormat = lazyValue(zProgressFormats.text);
+  #exec: (this: void, starter: ZExecutionStarter) => ZExecution = poolZExecutions();
+  #format: (this: void) => ZProgressFormat = lazyValue(zProgressFormats.text);
 
   /**
    * Constructs command line options supported by system shell.
@@ -49,9 +52,9 @@ export class SystemZShell extends ZShell {
    * `--progress` - configures the {@link setProgressFormat progress reporting format},
    * `--max-jobs` (`-j`) - configures the {@link setMaxJobs maximum number of simultaneously running jobs}.
    */
-  options(): ZTaskParser.SupportedOptions {
+  override options(): ZTaskParser.SupportedOptions {
     return [
-      ...arrayOfElements(super.options()),
+      ...asArray(super.options()),
       {
         '--max-jobs': {
           read: SystemZShell$readMaxJobs.bind(this),
@@ -156,7 +159,7 @@ By default ${clz.usage('text')} format is used.
    * @returns `this` instance.
    */
   setMaxJobs(limit: number | undefined): this {
-    this._exec = poolZExecutions(limit);
+    this.#exec = poolZExecutions(limit);
 
     return this;
   }
@@ -177,7 +180,7 @@ By default ${clz.usage('text')} format is used.
    * @returns `this` instance.
    */
   setProgressFormat(name: 'rich' | 'text' | 'auto'): this {
-    this._format =
+    this.#format =
       name === 'rich'
         ? lazyValue(zProgressFormats.rich)
         : name === 'auto'
@@ -188,7 +191,7 @@ By default ${clz.usage('text')} format is used.
   }
 
   execCommand(job: ZJob, command: string): ZExecution {
-    return this._run(job, this.commandExecutable(job, command));
+    return this.#run(job, this.commandExecutable(job, command));
   }
 
   /**
@@ -211,7 +214,7 @@ By default ${clz.usage('text')} format is used.
       env?: ProcessEnv | undefined;
     } = {},
   ): SystemZExecutable {
-    return this._buildExecutable(job, {
+    return this.#buildExecutable(job, {
       command,
       args: job.params.args,
       env,
@@ -219,7 +222,7 @@ By default ${clz.usage('text')} format is used.
   }
 
   execScript(job: ZJob, name: string): ZExecution {
-    return this._run(job, this.scriptExecutable(job, name));
+    return this.#run(job, this.scriptExecutable(job, name));
   }
 
   /**
@@ -264,10 +267,10 @@ By default ${clz.usage('text')} format is used.
 
     args.push(name, ...job.params.args);
 
-    return this._buildExecutable(job, { command, args, env });
+    return this.#buildExecutable(job, { command, args, env });
   }
 
-  private _buildExecutable(
+  #buildExecutable(
     job: ZJob,
     {
       command,
@@ -295,10 +298,10 @@ By default ${clz.usage('text')} format is used.
     };
   }
 
-  private _run(job: ZJob, { command, args, cwd, env }: SystemZExecutable): ZExecution {
-    const progress = this._format().jobProgress(job);
+  #run(job: ZJob, { command, args, cwd, env }: SystemZExecutable): ZExecution {
+    const progress = this.#format().jobProgress(job);
 
-    return this._exec(() => {
+    return this.#exec(() => {
       const spawned = spawnZ(
         () => {
           const childProcess = spawn(command, args, {

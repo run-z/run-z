@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import { UnknownZTaskError } from './unknown-task-error';
+import { UnknownZTaskError } from './unknown-task-error.js';
 
 describe('UnknownZTaskError', () => {
   describe('message', () => {

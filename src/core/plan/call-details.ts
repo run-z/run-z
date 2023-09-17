@@ -1,11 +1,11 @@
-import type { ZTaskSpec } from '../tasks';
-import type { ZCallPlanner } from './call-planner';
-import { ZTaskParams } from './task-params';
+import { ZTaskSpec } from '../tasks/task-spec.js';
+import { ZCallPlanner } from './call-planner.js';
+import { ZTaskParams } from './task-params.js';
 
 /**
  * Details of the {@link ZCallPlanner.call task call}.
  *
- * @typeparam TAction  Task action type.
+ * @typeParam TAction  Task action type.
  */
 export interface ZCallDetails<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
   /**
@@ -34,7 +34,7 @@ export namespace ZCallDetails {
   /**
    * Full details of the {@link ZCallPlanner.call task call}.
    *
-   * @typeparam TAction  Task action type.
+   * @typeParam TAction  Task action type.
    */
   export interface Full<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
     /**
@@ -63,7 +63,7 @@ export const ZCallDetails = {
   /**
    * Reconstructs full details of the task call by partial ones.
    *
-   * @typeparam TAction  Task action type.
+   * @typeParam TAction  Task action type.
    * @param details - Partial task call details.
    *
    * @returns Full task call details.

@@ -10,11 +10,13 @@ import process from 'node:process';
 import { pathToFileURL } from 'node:url';
 import { npmRunPath } from 'npm-run-path';
 import pathKey from 'path-key';
-import { StandardZSetup } from '../builtins';
-import type { ZPackage, ZSetup } from '../core';
-import { ttyColorLevel, ttyColumns } from './impl';
-import { ZPackageDirectory } from './package-directory';
-import { SystemZShell } from './system-shell';
+import { StandardZSetup } from '../builtins/standard-setup.js';
+import { ZPackage } from '../core/packages/package.js';
+import { ZSetup } from '../core/setup.js';
+import { ttyColorLevel } from './impl/tty-color-level.js';
+import { ttyColumns } from './impl/tty-columns.js';
+import { ZPackageDirectory } from './package-directory.js';
+import { SystemZShell } from './system-shell.js';
 
 describe('SystemZShell', () => {
   let setup: ZSetup;

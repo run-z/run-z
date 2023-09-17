@@ -1,9 +1,9 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { valueProvider } from '@proc7ts/primitives';
 import { Mock } from 'jest-mock';
-import { ZCallDetails } from './call-details';
-import type { ZCallPlanner } from './call-planner';
-import { ZTaskParams } from './task-params';
+import { ZTaskParams } from './task-params.js';
+import { ZCallDetails } from './call-details.js';
+import { ZCallPlanner } from './call-planner.js';
 
 describe('ZCallDetails', () => {
   describe('by', () => {

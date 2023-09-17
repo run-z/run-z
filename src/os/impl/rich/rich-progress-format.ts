@@ -1,13 +1,13 @@
 import type { ZLogRecorder } from '@run-z/log-z';
-import type { ZJob } from '../../../core';
-import { ZJobProgress } from '../job-progress';
-import { ZProgressFormat } from '../progress-format';
-import { ProgressZLogRecorder } from '../progress-log';
-import { ZJobOutput } from './job-output';
-import { ZJobRows } from './job-rows';
-import { zjobSpinner } from './job-status-indicator';
-import { RichJobZLogRecorder } from './rich-job.log';
-import { richProgressZLogFormatter } from './rich-log-format';
+import { ZJob } from '../../../core/jobs/job.js';
+import { ZJobProgress } from '../job-progress.js';
+import { ZProgressFormat } from '../progress-format.js';
+import { ProgressZLogRecorder } from '../progress-log.js';
+import { ZJobOutput } from './job-output.js';
+import { ZJobRows } from './job-rows.js';
+import { zJobSpinner } from './job-status-indicator.js';
+import { RichJobZLogRecorder } from './rich-job.log.js';
+import { richProgressZLogFormatter } from './rich-log-format.js';
 
 /**
  * @internal
@@ -38,21 +38,21 @@ export class RichZProgressFormat extends ZProgressFormat<RichZJobProgress> {
  */
 class RichZJobProgress extends ZJobProgress {
 
-  private _interval!: NodeJS.Timeout;
-  private readonly _output = new ZJobOutput();
+  #interval!: NodeJS.Timeout;
+  readonly #output = new ZJobOutput();
 
-  start(): void {
-    this._interval = setInterval(() => this.log.info(), zjobSpinner.interval);
+  override start(): void {
+    this.#interval = setInterval(() => this.log.info(), zJobSpinner.interval);
   }
 
-  stop(): void {
-    clearInterval(this._interval);
+  override stop(): void {
+    clearInterval(this.#interval);
   }
 
-  protected _createLog(): ZLogRecorder {
+  protected override _createLog(): ZLogRecorder {
     return new RichJobZLogRecorder(
       (this._format as RichZProgressFormat).rows,
-      this._output,
+      this.#output,
       super._createLog(),
     );
   }

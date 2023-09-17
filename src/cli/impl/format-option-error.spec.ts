@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
 import { ZOptionError, ZOptionLocation } from '@run-z/optionz';
-import { formatZOptionError } from './format-option-error';
+import { formatZOptionError } from './format-option-error.js';
 
 describe('formatZOptionError', () => {
   let args: readonly string[];

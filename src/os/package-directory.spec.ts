@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
 import * as path from 'node:path';
 import { fileURLToPath, pathToFileURL, URL } from 'node:url';
-import { ZPackageDirectory } from './package-directory';
+import { ZPackageDirectory } from './package-directory.js';
 
 describe('ZPackageDirectory', () => {
   let rootURL: URL;

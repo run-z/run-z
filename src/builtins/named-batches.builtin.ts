@@ -1,6 +1,8 @@
-import { clz } from '@run-z/optionz/colors';
-import type { ZExtension, ZTaskOption } from '../core';
-import { NamedZBatches, ZBatcher } from '../core';
+import { clz } from '@run-z/optionz/colors.js';
+import { ZBatcher } from '../core/batches/batcher.js';
+import { NamedZBatches } from '../core/batches/named-batches.rule.js';
+import { ZExtension } from '../core/extension.js';
+import { ZTaskOption } from '../core/tasks/task-option.js';
 
 /**
  * Built-in extension supporting named batches selection.

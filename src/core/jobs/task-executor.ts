@@ -1,16 +1,16 @@
 import type { ZExecution } from '@run-z/exec-z';
-import type { ZTaskSpec } from '../tasks';
-import type { ZJob } from './job';
+import { ZTaskSpec } from '../tasks/task-spec.js';
+import { ZJob } from './job.js';
 
 /**
  * Custom task executor signature.
  *
- * @typeparam TAction  Task action type.
+ * @typeParam TAction  Task action type.
+ * @param job - Task execution job.
+ *
+ * @returns Task execution instance.
  */
-export type ZTaskExecutor<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> =
-  /**
-   * @param job - Task execution job.
-   *
-   * @returns Task execution instance.
-   */
-  (this: void, job: ZJob<TAction>) => ZExecution;
+export type ZTaskExecutor<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> = (
+  this: void,
+  job: ZJob<TAction>,
+) => ZExecution;

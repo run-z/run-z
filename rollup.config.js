@@ -8,11 +8,11 @@ import typescript from 'typescript';
 
 export default defineConfig({
   input: {
-    'run-z': './src/index.ts',
-    'run-z.builtins': './src/builtins/index.ts',
-    'run-z.cli': './src/cli/index.ts',
-    'run-z.core': './src/core/index.ts',
-    'run-z.os': './src/os/index.ts',
+    'run-z': './src/mod.ts',
+    'run-z.builtins': './src/builtins/mod.ts',
+    'run-z.cli': './src/cli/mod.ts',
+    'run-z.core': './src/core/mod.ts',
+    'run-z.os': './src/os/mod.ts',
   },
   plugins: [
     {
@@ -21,15 +21,18 @@ export default defineConfig({
         resolutionRoot = undefined;
       },
     },
-    unbundle({
-      resolutionRoot: getResolutionRoot,
-    }),
-    commonjs(),
     ts({
       typescript,
       tsconfig: 'tsconfig.main.json',
       cacheDir: 'target/.rts_cache',
+      compilerOptions: {
+        module: typescript.ModuleKind.Node16,
+      },
     }),
+    unbundle({
+      resolutionRoot: getResolutionRoot,
+    }),
+    commonjs(),
   ],
   output: {
     format: 'esm',

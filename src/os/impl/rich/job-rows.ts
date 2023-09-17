@@ -6,19 +6,19 @@ import type { ZLogMessage } from '@run-z/log-z';
  */
 export class ZJobRows {
 
-  private readonly _renders: (() => void)[] = [];
-  private _numRows = 0;
+  readonly #renders: (() => void)[] = [];
+  #numRows = 0;
 
   add(render: () => void): ZJobRow {
-    this._renders.push(render);
+    this.#renders.push(render);
 
     let up: () => number = valueProvider(0);
     let done = (): void => {
       done = noop;
 
-      const row = this._numRows++;
+      const row = this.#numRows++;
 
-      up = () => this._numRows - row;
+      up = () => this.#numRows - row;
     };
 
     return {
@@ -28,7 +28,7 @@ export class ZJobRows {
   }
 
   renderAll(): void {
-    this._renders.forEach(render => render());
+    this.#renders.forEach(render => render());
   }
 
 }
@@ -45,6 +45,6 @@ export interface ZJobRow {
 /**
  * @internal
  */
-export function zjobRowOf(message: ZLogMessage): ZJobRow {
+export function zJobRowOf(message: ZLogMessage): ZJobRow {
   return message.details.row as ZJobRow;
 }

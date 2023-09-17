@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
-import { StandardZSetup } from '../../builtins';
-import type { ZPackage } from './package';
-import type { ZPackageResolver } from './package-resolver';
-import type { ZPackageSet } from './package-set';
-import { ZPackageTree } from './package-tree';
+import type { ZPackage } from './package.js';
+import type { ZPackageResolver } from './package-resolver.js';
+import type { ZPackageSet } from './package-set.js';
+import { ZPackageTree } from './package-tree.js';
+import { StandardZSetup } from '../../builtins/standard-setup.js';
 
 describe('ZPackage', () => {
   let resolver: ZPackageResolver;

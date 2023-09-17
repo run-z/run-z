@@ -1,9 +1,10 @@
-import { arrayOfElements, valueByRecipe } from '@proc7ts/primitives';
-import type { ZConfig } from './config';
-import type { ZExtension } from './extension';
-import { ZPackageResolver } from './packages';
-import { ZPlanner } from './plan';
-import { ZTaskFactory, ZTaskParser } from './tasks';
+import { asArray, valueByRecipe } from '@proc7ts/primitives';
+import type { ZConfig } from './config.js';
+import type { ZExtension } from './extension.js';
+import { ZPackageResolver } from './packages/package-resolver.js';
+import { ZPlanner } from './plan/planner.js';
+import { ZTaskFactory } from './tasks/task-factory.js';
+import { ZTaskParser } from './tasks/task-parser.js';
 
 /**
  * Task execution setup.
@@ -15,27 +16,27 @@ export class ZSetup {
   /**
    * @internal
    */
-  private readonly _config: ZConfig;
+  readonly #config: ZConfig;
 
   /**
    * @internal
    */
-  private _taskParser?: ZTaskParser | undefined;
+  #taskParser?: ZTaskParser | undefined;
 
   /**
    * @internal
    */
-  private _taskFactory?: ZTaskFactory | undefined;
+  #taskFactory?: ZTaskFactory | undefined;
 
   /**
    * @internal
    */
-  private _packageResolver?: ZPackageResolver | undefined;
+  #packageResolver?: ZPackageResolver | undefined;
 
   /**
    * @internal
    */
-  private _planner?: ZPlanner | undefined;
+  #planner?: ZPlanner | undefined;
 
   /**
    * Constructs setup instance.
@@ -43,7 +44,7 @@ export class ZSetup {
    * @param config - Task execution configuration.
    */
   constructor(config: ZConfig = {}) {
-    this._config = config;
+    this.#config = config;
   }
 
   /**
@@ -51,11 +52,11 @@ export class ZSetup {
    */
   get taskParser(): ZTaskParser {
     return (
-      this._taskParser
-      || (this._taskParser = this._config.taskParser
-        ? valueByRecipe(this._config.taskParser, this)
+      this.#taskParser
+      || (this.#taskParser = this.#config.taskParser
+        ? valueByRecipe(this.#config.taskParser, this)
         : new ZTaskParser({
-            options: this.extensions.flatMap(extension => arrayOfElements(extension.options)),
+            options: this.extensions.flatMap(extension => asArray(extension.options)),
           }))
     );
   }
@@ -65,9 +66,9 @@ export class ZSetup {
    */
   get taskFactory(): ZTaskFactory {
     return (
-      this._taskFactory
-      || (this._taskFactory = this._config.taskFactory
-        ? valueByRecipe(this._config.taskFactory, this)
+      this.#taskFactory
+      || (this.#taskFactory = this.#config.taskFactory
+        ? valueByRecipe(this.#config.taskFactory, this)
         : new ZTaskFactory())
     );
   }
@@ -77,9 +78,9 @@ export class ZSetup {
    */
   get packageResolver(): ZPackageResolver {
     return (
-      this._packageResolver
-      || (this._packageResolver = this._config.packageResolver
-        ? valueByRecipe(this._config.packageResolver, this)
+      this.#packageResolver
+      || (this.#packageResolver = this.#config.packageResolver
+        ? valueByRecipe(this.#config.packageResolver, this)
         : new ZPackageResolver(this))
     );
   }
@@ -89,9 +90,9 @@ export class ZSetup {
    */
   get planner(): ZPlanner {
     return (
-      this._planner
-      || (this._planner = this._config.planner
-        ? valueByRecipe(this._config.planner, this)
+      this.#planner
+      || (this.#planner = this.#config.planner
+        ? valueByRecipe(this.#config.planner, this)
         : new ZPlanner(this))
     );
   }
@@ -100,7 +101,7 @@ export class ZSetup {
    * Task execution functionality extensions.
    */
   get extensions(): readonly ZExtension[] {
-    return arrayOfElements(this._config.extensions);
+    return asArray(this.#config.extensions);
   }
 
 }

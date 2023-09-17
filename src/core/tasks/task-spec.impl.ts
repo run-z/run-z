@@ -1,4 +1,4 @@
-import type { ZTaskSpec } from './task-spec';
+import type { ZTaskSpec } from './task-spec.js';
 
 export function addZTaskAttr(
   target: Record<string, string[] | null>,

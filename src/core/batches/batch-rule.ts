@@ -1,5 +1,5 @@
-import type { ZBatch } from './batch';
-import type { ZBatching } from './batching';
+import { ZBatch } from './batch.js';
+import { ZBatching } from './batching.js';
 
 /**
  * Batch processing rule.
@@ -7,7 +7,7 @@ import type { ZBatching } from './batching';
  * When rule {@link ZBatching.rule applied} to batching policy, a rule control instance is created for it.
  * Control instance interface contains methods updating batching policy.
  *
- * @typeparam TControl  A type of batch processing rule control.
+ * @typeParam TControl  A type of batch processing rule control.
  */
 export interface ZBatchRule<TControl> {
   /**
@@ -26,7 +26,7 @@ export namespace ZBatchRule {
    *
    * Rule instance can use is to update the rule processing policy.
    *
-   * @typeparam TControl  A type of batch processing rule control.
+   * @typeParam TControl  A type of batch processing rule control.
    */
   export interface Context<TControl> {
     /**
@@ -50,7 +50,7 @@ export namespace ZBatchRule {
    * Instances {@link ZBatchRule.newBatchRule created} by rules. They should be {@link Context.updateInstance applied}
    * to the policy in order to have effect.
    *
-   * @typeparam TControl  A type of batch processing rule control.
+   * @typeParam TControl  A type of batch processing rule control.
    */
   export interface Instance<TControl> {
     /**

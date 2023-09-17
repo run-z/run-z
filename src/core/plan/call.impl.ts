@@ -1,12 +1,13 @@
 import { valueProvider } from '@proc7ts/primitives';
-import type { ZShell } from '../jobs';
-import type { ZExecutionJob } from '../jobs/job.impl';
-import type { ZTask, ZTaskSpec } from '../tasks';
-import type { ZCall } from './call';
-import type { ZCallDetails } from './call-details';
-import type { ZPlan } from './plan';
-import type { ZInstructionRecords } from './planner.impl';
-import { ZTaskParams } from './task-params';
+import { ZExecutionJob } from '../jobs/job.impl.js';
+import { ZShell } from '../jobs/shell.js';
+import { ZTaskSpec } from '../tasks/task-spec.js';
+import { ZTask } from '../tasks/task.js';
+import { ZCallDetails } from './call-details.js';
+import { ZCall } from './call.js';
+import { ZPlan } from './plan.js';
+import { ZInstructionRecords } from './planner.impl.js';
+import { ZTaskParams } from './task-params.js';
 
 /**
  * Task execution parameters evaluator signature.
@@ -53,26 +54,30 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
     return ZTaskParams.newEvaluator();
   }
 
-  private _currDepth: ZCallDepth;
-  private readonly _params: (readonly [params: ZCallParams, depth: ZCallDepth])[] = [];
-  private readonly _entries = new Set<ZTask>();
+  readonly #records: ZInstructionRecords;
+  readonly #parent: ZCallRecord | undefined;
+  #currDepth: ZCallDepth;
+  readonly #params: (readonly [params: ZCallParams, depth: ZCallDepth])[] = [];
+  readonly #entries = new Set<ZTask>();
 
   constructor(
-    private readonly _records: ZInstructionRecords,
-    private readonly _parent: ZCallRecord | undefined,
+    records: ZInstructionRecords,
+    parent: ZCallRecord | undefined,
     readonly task: ZTask<TAction>,
     details: ZCallDetails<TAction>,
   ) {
-    this._currDepth = _parent ? evaluator => _parent._depth(evaluator) + 1 : valueProvider(0);
-    this._addParams(details, this._depth.bind(this));
+    this.#records = records;
+    this.#parent = parent;
+    this.#currDepth = parent ? evaluator => parent.#depth(evaluator) + 1 : valueProvider(0);
+    this.#addParams(details, this.#depth.bind(this));
   }
 
   get plan(): ZPlan {
-    return this._records.plan;
+    return this.#records.plan;
   }
 
   entries(): readonly ZTask[] {
-    const entries = this._entries.size ? this._entries : [this.task];
+    const entries = this.#entries.size ? this.#entries : [this.task];
     const result: ZTask[] = [];
 
     for (const entry of entries) {
@@ -86,31 +91,31 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
   }
 
   by(task: ZTask): boolean {
-    return this.task === task || (!!this._parent && this._parent.by(task));
+    return this.task === task || (!!this.#parent && this.#parent.by(task));
   }
 
-  private _depth(evaluator: ZTaskParams.Evaluator): number {
-    return evaluator.valueOf(ZCallDepth__key, this, () => this._currDepth(evaluator));
+  #depth(evaluator: ZTaskParams.Evaluator): number {
+    return evaluator.valueOf(ZCallDepth__key, this, () => this.#currDepth(evaluator));
   }
 
   _call(details: ZCallDetails<TAction>, by: ZCallRecord): this {
-    const paramDepth: ZCallDepth = evaluator => by._depth(evaluator) + 1;
+    const paramDepth: ZCallDepth = evaluator => by.#depth(evaluator) + 1;
 
     if (!by.by(this.task)) {
-      const prevDepth = this._currDepth;
+      const prevDepth = this.#currDepth;
 
-      this._currDepth = evaluator => Math.min(prevDepth(evaluator), paramDepth(evaluator));
+      this.#currDepth = evaluator => Math.min(prevDepth(evaluator), paramDepth(evaluator));
     }
 
-    this._addParams(details, paramDepth);
+    this.#addParams(details, paramDepth);
 
     return this;
   }
 
-  private _addParams(details: ZCallDetails<TAction>, depth: ZCallDepth): void {
+  #addParams(details: ZCallDetails<TAction>, depth: ZCallDepth): void {
     const params = details.params ? details.params.bind(details) : valueProvider({});
 
-    this._params.push([params, depth]);
+    this.#params.push([params, depth]);
   }
 
   async _plan(details: ZCallDetails<TAction>): Promise<void> {
@@ -119,21 +124,21 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
     }
 
     await details.plan({
-      setup: this._records.setup,
+      setup: this.#records.setup,
       plannedCall: this,
-      qualify: this._records.qualify.bind(this._records),
-      call: (task, details) => this._records.call(task, details, this),
-      order: this._records.order.bind(this._records),
-      addEntry: (entry: ZTask) => this._entries.add(entry),
-      makeParallel: this._records.makeParallel.bind(this._records),
-      makeParallelWhen: this._records.makeParallelWhen.bind(this._records),
+      qualify: this.#records.qualify.bind(this.#records),
+      call: (task, details) => this.#records.call(task, details, this),
+      order: this.#records.order.bind(this.#records),
+      addEntry: (entry: ZTask) => this.#entries.add(entry),
+      makeParallel: this.#records.makeParallel.bind(this.#records),
+      makeParallelWhen: this.#records.makeParallelWhen.bind(this.#records),
     });
   }
 
   params(evaluator: ZTaskParams.Evaluator): ZTaskParams {
     return evaluator.paramsOf(this, () => {
       // Sort the calls from deepest to closest.
-      const allParams = this._params
+      const allParams = this.#params
         .map(([params, depth]): readonly [number, ZCallParams] => [depth(evaluator), params])
         .sort(([firstDepth], [secondDepth]) => secondDepth - firstDepth);
 
@@ -150,19 +155,19 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
   }
 
   prerequisites(): readonly ZCall[] {
-    return this._records.prerequisitesOf(this.task);
+    return this.#records.prerequisitesOf(this.task);
   }
 
   hasPrerequisite(task: ZTask): boolean {
-    return this._records.isPrerequisiteOf(this.task, task, new Set());
+    return this.#records.isPrerequisiteOf(this.task, task, new Set());
   }
 
   isParallelTo(other: ZTask): boolean {
-    return this._records.areParallel(this.task, other);
+    return this.#records.areParallel(this.task, other);
   }
 
   exec(shell: ZShell): ZExecutionJob<TAction> {
-    return this._records.executor.exec(this, shell);
+    return this.#records.executor.exec(this, shell);
   }
 
 }

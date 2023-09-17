@@ -5,14 +5,14 @@ import logSymbols from 'log-symbols';
 /**
  * @internal
  */
-export const zjobSpinner = cliSpinners.dots;
+export const zJobSpinner = cliSpinners.dots;
 
 /**
  * @internal
  */
-export const zjobStatusIndicator = {
+export const zJobStatusIndicator = {
   progress(): string {
-    const { interval, frames } = zjobSpinner;
+    const { interval, frames } = zJobSpinner;
     const now = Date.now();
     const period = interval * frames.length;
     const sinceStart = now % period;
@@ -33,8 +33,8 @@ export const zjobStatusIndicator = {
 /**
  * @internal
  */
-export function zjobStatusIndicatorZLogField(writer: ZLogWriter): void {
-  let status: keyof typeof zjobStatusIndicator = 'progress';
+export function zJobStatusIndicatorZLogField(writer: ZLogWriter): void {
+  let status: keyof typeof zJobStatusIndicator = 'progress';
   const {
     details: { error, success },
   } = writer.message;
@@ -45,5 +45,5 @@ export function zjobStatusIndicatorZLogField(writer: ZLogWriter): void {
     status = 'ok';
   }
 
-  writer.write(zjobStatusIndicator[status]());
+  writer.write(zJobStatusIndicator[status]());
 }

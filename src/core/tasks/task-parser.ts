@@ -2,10 +2,10 @@ import { noop } from '@proc7ts/primitives';
 import type { ZOptionsParser } from '@run-z/optionz';
 import { SupportedZOptions, ZOptionInput } from '@run-z/optionz';
 import shellQuote from 'shell-quote';
-import { zTaskSpecParser } from './impl/parser';
-import type { ZTaskBuilder } from './task-builder';
-import type { ZTaskOption } from './task-option';
-import type { ZTaskSpec } from './task-spec';
+import { zTaskSpecParser } from './impl/parser/task-spec-parser.js';
+import { ZTaskBuilder } from './task-builder.js';
+import { ZTaskOption } from './task-option.js';
+import { ZTaskSpec } from './task-spec.js';
 
 /**
  * A parser of command line containing {@link ZTaskSpec task specifier}.
@@ -15,12 +15,12 @@ export class ZTaskParser {
   /**
    * @internal
    */
-  private _specParser?: ReturnType<typeof zTaskSpecParser> | undefined;
+  #specParser?: ReturnType<typeof zTaskSpecParser> | undefined;
 
   /**
    * @internal
    */
-  private readonly _config: ZTaskParser.Config;
+  readonly #config: ZTaskParser.Config;
 
   /**
    * Constructs task parser.
@@ -28,7 +28,7 @@ export class ZTaskParser {
    * @param config - Task parser configuration.
    */
   constructor(config: ZTaskParser.Config = {}) {
-    this._config = config;
+    this.#config = config;
   }
 
   /**
@@ -44,7 +44,7 @@ export class ZTaskParser {
       return { selector: value };
     }
     if (value.startsWith('...')) {
-      return { selector: '.', task: value.substr(3) };
+      return { selector: '.', task: value.slice(3) };
     }
     if (!value.startsWith('./') && !value.startsWith('../')) {
       return;
@@ -56,7 +56,7 @@ export class ZTaskParser {
       return { selector: value };
     }
 
-    return { selector: value.substr(0, taskSepIdx), task: value.substr(taskSepIdx + 3) };
+    return { selector: value.slice(0, taskSepIdx), task: value.slice(taskSepIdx + 3) };
   }
 
   /**
@@ -140,11 +140,11 @@ export class ZTaskParser {
     args: readonly string[],
     opts?: ZOptionsParser.Opts<ZTaskOption>,
   ): Promise<ZTaskBuilder> {
-    if (!this._specParser) {
-      this._specParser = zTaskSpecParser(builder.taskTarget.setup, this._config);
+    if (!this.#specParser) {
+      this.#specParser = zTaskSpecParser(builder.taskTarget.setup, this.#config);
     }
 
-    return this._specParser(builder, args, opts);
+    return this.#specParser(builder, args, opts);
   }
 
 }

@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
 import { asis } from '@proc7ts/primitives';
 import * as path from 'node:path';
-import { pathToFileURL, URL } from 'node:url';
-import { ZPackageDirectory } from '../../os';
-import { ZSetup } from '../setup';
-import type { ZPackage } from './package';
-import type { ZPackageResolver } from './package-resolver';
-import { UnknownZPackageError } from './unknown-package-error';
+import { URL, pathToFileURL } from 'node:url';
+import { ZPackageDirectory } from '../../os/package-directory.js';
+import { ZSetup } from '../setup.js';
+import { ZPackageResolver } from './package-resolver.js';
+import { ZPackage } from './package.js';
+import { UnknownZPackageError } from './unknown-package-error.js';
 
 describe('ZPackageResolver', () => {
   let rootURL: URL;

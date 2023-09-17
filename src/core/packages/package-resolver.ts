@@ -1,16 +1,16 @@
-import type { ZSetup } from '../setup';
-import type { ZPackage } from './package';
-import type { ZPackageLocation } from './package-location';
-import { ZPackage$, ZPackageResolver$ } from './package.impl';
-import { UnknownZPackageError } from './unknown-package-error';
+import type { ZSetup } from '../setup.js';
+import type { ZPackageLocation } from './package-location.js';
+import { ZPackage$, ZPackageResolver$ } from './package.impl.js';
+import type { ZPackage } from './package.js';
+import { UnknownZPackageError } from './unknown-package-error.js';
 
 /**
  * A resolver of all discovered {@link ZPackage NPM packages}.
  */
 export class ZPackageResolver {
 
-  private readonly _byPath = new Map<string, Promise<ZPackage$ | undefined>>();
-  private readonly _impl: ZPackageResolver$;
+  readonly #byPath = new Map<string, Promise<ZPackage$ | undefined>>();
+  readonly #impl: ZPackageResolver$;
 
   /**
    * Constructs NPM package resolver.
@@ -21,7 +21,7 @@ export class ZPackageResolver {
     const byName = new Map<string, Set<ZPackage$>>();
     let depGraphRev = 0;
 
-    this._impl = {
+    this.#impl = {
       setup,
       rev: 0,
       addPackage(pkg: ZPackage$): void {
@@ -75,7 +75,7 @@ export class ZPackageResolver {
    * @returns A promise resolved to package or `undefined` if there is no such package.
    */
   find(location: ZPackageLocation): Promise<ZPackage | undefined> {
-    const existing = this._byPath.get(location.path);
+    const existing = this.#byPath.get(location.path);
 
     if (existing) {
       return existing;
@@ -98,20 +98,20 @@ export class ZPackageResolver {
         return;
       }
 
-      ++this._impl.rev;
+      ++this.#impl.rev;
 
-      return new ZPackage$(this._impl, location, packageJson, parent);
+      return new ZPackage$(this.#impl, location, packageJson, parent);
     };
 
     const discovered = discoverPackage().then(pkg => {
       if (pkg) {
-        this._impl.addPackage(pkg);
+        this.#impl.addPackage(pkg);
       }
 
       return pkg;
     });
 
-    this._byPath.set(location.path, discovered);
+    this.#byPath.set(location.path, discovered);
 
     return discovered;
   }
@@ -124,7 +124,7 @@ export class ZPackageResolver {
    * @returns An iterable of packages with requested name.
    */
   byName(name: string): readonly ZPackage[] {
-    return this._impl.byName(name);
+    return this.#impl.byName(name);
   }
 
 }

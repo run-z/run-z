@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
-import type { ZPackage } from '../../core';
-import { ZTaskParams } from '../../core';
-import { TestPlan } from '../../spec';
+import { ZPackage } from '../../core/packages/package.js';
+import { ZTaskParams } from '../../core/plan/task-params.js';
+import { TestPlan } from '../../spec/test-plan.js';
 
 describe('ZDepGraphBatches', () => {
   let testPlan: TestPlan;

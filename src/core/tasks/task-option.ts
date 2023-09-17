@@ -1,6 +1,6 @@
 import type { ZOption, ZOptionReader } from '@run-z/optionz';
-import type { ZTaskModifier } from './task-modifier';
-import type { ZTaskSpec } from './task-spec';
+import type { ZTaskModifier } from './task-modifier.js';
+import type { ZTaskSpec } from './task-spec.js';
 
 /**
  * An option of the command line containing a task specifier.
@@ -24,7 +24,7 @@ export interface ZTaskOption extends ZOption, ZTaskModifier {
   /**
    * Assigns a task action.
    *
-   * The task action defaults to {@link Group grouping task} unless reassigned by this call.
+   * The task action defaults to {@link ZTaskSpec.Group grouping task} unless reassigned by this call.
    *
    * @param action - The action to assign to the task.
    *

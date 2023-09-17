@@ -1,9 +1,9 @@
-import { arrayOfElements } from '@proc7ts/primitives';
+import { asArray } from '@proc7ts/primitives';
 import type { ZExecution } from '@run-z/exec-z';
 import { execZNoOp } from '@run-z/exec-z';
-import type { ZSetup } from '../setup';
-import type { ZTaskParser } from '../tasks';
-import type { ZJob } from './job';
+import { ZSetup } from '../setup.js';
+import { ZTaskParser } from '../tasks/task-parser.js';
+import { ZJob } from './job.js';
 
 /**
  * Task execution shell.
@@ -56,7 +56,7 @@ export abstract class ZShell {
    * Includes options supported by {@link ZExtension.shellOptions extensions}.
    */
   options(): ZTaskParser.SupportedOptions {
-    return this.setup.extensions.flatMap(({ shellOptions }) => arrayOfElements(shellOptions));
+    return this.setup.extensions.flatMap(({ shellOptions }) => asArray(shellOptions));
   }
 
 }

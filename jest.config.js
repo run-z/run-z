@@ -7,7 +7,7 @@ export default {
     '!src/**/*.cli.ts', // Exclude CLI-specific functionality
     '!src/**/*.d.ts', // Exclude type definitions
     '!src/**/*.spec.ts', // Exclude tests
-    '!src/**/index.ts',
+    '!src/**/mod.ts',
     '!src/**/main.ts',
     '!**/node_modules/**',
   ],
@@ -21,6 +21,9 @@ export default {
     },
   },
   extensionsToTreatAsEsm: ['.ts'],
+  moduleNameMapper: {
+    '^(\\.{1,2}/.*)\\.js$': '$1',
+  },
   reporters: [
     'default',
     [

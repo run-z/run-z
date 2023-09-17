@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
-import { ttyColumns } from './tty-columns';
+import { ttyColumns } from './tty-columns.js';
 
 describe('ttyColumns', () => {
   let prevColumns: number;

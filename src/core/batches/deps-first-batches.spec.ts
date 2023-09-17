@@ -1,9 +1,10 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
-import { StandardZSetup } from '../../builtins';
-import { TestPlan } from '../../spec';
-import type { ZPackage, ZPackageTree } from '../packages';
-import { ZBatcher } from './batcher';
-import { ZDepsFirstBatches } from './deps-first-batches.rule';
+import { StandardZSetup } from '../../builtins/standard-setup.js';
+import { TestPlan } from '../../spec/test-plan.js';
+import { ZPackageTree } from '../packages/package-tree.js';
+import { ZPackage } from '../packages/package.js';
+import { ZBatcher } from './batcher.js';
+import { ZDepsFirstBatches } from './deps-first-batches.rule.js';
 
 describe('ZDepsFirstBatches', () => {
   let testPlan: TestPlan;

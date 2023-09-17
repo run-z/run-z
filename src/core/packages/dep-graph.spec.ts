@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
-import { ZSetup } from '../setup';
-import type { ZPackage } from './package';
-import type { ZPackageResolver } from './package-resolver';
-import { ZPackageTree } from './package-tree';
-import type { ZPackageJson } from './package.json';
+import { ZSetup } from '../setup.js';
+import type { ZPackageResolver } from './package-resolver.js';
+import { ZPackageTree } from './package-tree.js';
+import type { ZPackage } from './package.js';
+import type { ZPackageJson } from './package.json.js';
 
 describe('ZDepGraph', () => {
   let root: ZPackageTree;

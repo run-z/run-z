@@ -1,12 +1,15 @@
-import type { ZPackage, ZPackageSet } from '../packages';
-import type { ZCall, ZPrePlanner } from '../plan';
-import { ZCallDetails } from '../plan';
-import type { ZTask, ZTaskSpec } from '../tasks';
-import { UnknownZTaskError } from '../unknown-task-error';
-import type { ZBatchPlanner } from './batch-planner';
-import { batchZTask } from './batcher.impl';
-import { ZBatching } from './batching';
-import { NamedZBatches } from './named-batches.rule';
+import { ZPackageSet } from '../packages/package-set.js';
+import { ZPackage } from '../packages/package.js';
+import { ZCallDetails } from '../plan/call-details.js';
+import { ZCall } from '../plan/call.js';
+import { ZPrePlanner } from '../plan/pre-planner.js';
+import { ZTaskSpec } from '../tasks/task-spec.js';
+import { ZTask } from '../tasks/task.js';
+import { UnknownZTaskError } from '../unknown-task-error.js';
+import { ZBatchPlanner } from './batch-planner.js';
+import { batchZTask } from './batcher.impl.js';
+import { ZBatching } from './batching.js';
+import { NamedZBatches } from './named-batches.rule.js';
 
 /**
  * @internal
@@ -70,7 +73,7 @@ export function namedZBatches(
       softInclusions.add(batchId);
     }
 
-    const batchTaskName = script.substr(slashIdx + 1);
+    const batchTaskName = script.slice(slashIdx + 1);
 
     if (batchTaskName === taskName || (batchTaskName === '*' && !batchTaskNames.has(batchName))) {
       batchTaskNames.set(batchId, script);

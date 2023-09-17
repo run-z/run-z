@@ -1,14 +1,15 @@
-import type { ZSetup } from '../setup';
-import type { ZTask, ZTaskQualifier, ZTaskSpec } from '../tasks';
-import type { ZCall } from './call';
-import type { ZCallDetails } from './call-details';
+import { ZSetup } from '../setup.js';
+import { ZTaskSpec } from '../tasks/task-spec.js';
+import { ZTask, ZTaskQualifier } from '../tasks/task.js';
+import { ZCallDetails } from './call-details.js';
+import { ZCall } from './call.js';
 
 /**
  * Task execution planner.
  *
  * It is used to record task execution instructions.
  *
- * @typeparam TAction  Task action type.
+ * @typeParam TAction  Task action type.
  */
 export interface ZCallPlanner<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> {
   /**
@@ -38,7 +39,7 @@ export interface ZCallPlanner<TAction extends ZTaskSpec.Action = ZTaskSpec.Actio
    *
    * Updates already recorded call to the same task.
    *
-   * @typeparam TAction  Task action type.
+   * @typeParam TAction  Task action type.
    * @param task - The task to call.
    * @param details - The details of the call.
    *

@@ -1,15 +1,15 @@
 import type { ZExecution } from '@run-z/exec-z';
-import type { ZJob } from '../../jobs';
-import type { ZTaskParams } from '../../plan';
-import type { ZTaskSpec } from '../task-spec';
-import { AbstractZTask } from './abstract.task';
+import { ZJob } from '../../jobs/job.js';
+import { ZTaskParams } from '../../plan/task-params.js';
+import { ZTaskSpec } from '../task-spec.js';
+import { AbstractZTask } from './abstract.task.js';
 
 /**
  * @internal
  */
 export class CommandZTask extends AbstractZTask<ZTaskSpec.Command> {
 
-  get alike(): Iterable<string> {
+  override get alike(): Iterable<string> {
     const {
       spec: {
         action: { command },
@@ -19,7 +19,7 @@ export class CommandZTask extends AbstractZTask<ZTaskSpec.Command> {
     return [`cmd:${command}`];
   }
 
-  protected _callParams(): ZTaskParams.Partial {
+  protected override _callParams(): ZTaskParams.Partial {
     const {
       spec: {
         attrs,
@@ -31,7 +31,7 @@ export class CommandZTask extends AbstractZTask<ZTaskSpec.Command> {
     return { attrs, args: [...commandArgs, ...args] };
   }
 
-  protected _isParallel(): boolean {
+  protected override _isParallel(): boolean {
     return this.spec.action.parallel;
   }
 

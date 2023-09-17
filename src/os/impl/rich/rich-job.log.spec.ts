@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
 import type { ZLogger } from '@run-z/log-z';
-import { levelZLogField, logZBy, messageZLogField, zlogDetails, ZLogWriter } from '@run-z/log-z';
-import { logZToStream } from '@run-z/log-z/node';
+import { ZLogWriter, levelZLogField, logZBy, messageZLogField, zlogDetails } from '@run-z/log-z';
+import { logZToStream } from '@run-z/log-z/node.js';
 import { Writable } from 'node:stream';
-import { ZJobOutput } from './job-output';
-import { ZJobRow, ZJobRows } from './job-rows';
-import { RichJobZLogRecorder } from './rich-job.log';
+import { ZJobOutput } from './job-output.js';
+import { ZJobRow, ZJobRows } from './job-rows.js';
+import { RichJobZLogRecorder } from './rich-job.log.js';
 
 describe('RichJobZLogRecorder', () => {
   let logger: ZLogger;

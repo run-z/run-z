@@ -1,13 +1,16 @@
 import type { ZOptionsParser } from '@run-z/optionz';
-import { ZBatching } from '../batches';
-import type { ZTaskExecutor } from '../jobs';
-import type { ZPackage } from '../packages';
-import type { AbstractZTask } from './impl';
-import { CommandZTask, GroupZTask, ScriptZTask, UnknownZTask } from './impl';
-import type { ZTaskBuilder } from './task-builder';
-import type { ZTaskOption } from './task-option';
-import type { ZTaskSpec } from './task-spec';
-import { addZTaskAttr, addZTaskAttrs, removeZTaskAttr } from './task-spec.impl';
+import { ZBatching } from '../batches/batching.js';
+import { ZTaskExecutor } from '../jobs/task-executor.js';
+import { ZPackage } from '../packages/package.js';
+import { AbstractZTask } from './impl/abstract.task.js';
+import { CommandZTask } from './impl/command.task.js';
+import { GroupZTask } from './impl/group.task.js';
+import { ScriptZTask } from './impl/script.task.js';
+import { UnknownZTask } from './impl/unknown.task.js';
+import { ZTaskBuilder } from './task-builder.js';
+import { ZTaskOption } from './task-option.js';
+import { addZTaskAttr, addZTaskAttrs, removeZTaskAttr } from './task-spec.impl.js';
+import { ZTaskSpec } from './task-spec.js';
 
 /**
  * @internal
@@ -16,49 +19,49 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
   implements ZTaskBuilder<TAction> {
 
   batching: ZBatching = ZBatching.newBatching();
-  private _executor?: ZTaskExecutor | undefined;
-  private readonly _commandLine: string[] = [];
-  private readonly _pre: ZTaskSpec.Pre[] = [];
-  private readonly _attrs: Record<string, [string, ...string[]] | null> = {};
-  private readonly _args: string[] = [];
-  private _action?: ZTaskSpec.Action | undefined;
+  #executor?: ZTaskExecutor | undefined;
+  readonly #commandLine: string[] = [];
+  readonly #pre: ZTaskSpec.Pre[] = [];
+  readonly #attrs: Record<string, [string, ...string[]] | null> = {};
+  readonly #args: string[] = [];
+  #action?: ZTaskSpec.Action | undefined;
 
   constructor(readonly taskTarget: ZPackage, readonly taskName: string) {}
 
   get action(): TAction | undefined {
-    return this._action as TAction;
+    return this.#action as TAction;
   }
 
   get executor(): ZTaskExecutor | undefined {
-    return this._executor;
+    return this.#executor;
   }
 
   addPre(pre: ZTaskSpec.Pre): this {
-    this._pre.push(pre);
+    this.#pre.push(pre);
 
     return this;
   }
 
   addAttr(name: string, value: string): this {
-    addZTaskAttr(this._attrs, name, value);
+    addZTaskAttr(this.#attrs, name, value);
 
     return this;
   }
 
   addAttrs(attrs: ZTaskSpec.Attrs): this {
-    addZTaskAttrs(this._attrs, attrs);
+    addZTaskAttrs(this.#attrs, attrs);
 
     return this;
   }
 
   removeAttr(name: string): this {
-    removeZTaskAttr(this._attrs, name);
+    removeZTaskAttr(this.#attrs, name);
 
     return this;
   }
 
   addArg(...args: string[]): this {
-    this._args.push(...args);
+    this.#args.push(...args);
 
     return this;
   }
@@ -70,13 +73,13 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
   }
 
   setAction<TNewAction extends ZTaskSpec.Action>(action: TNewAction): ZTaskBuilder$<TNewAction> {
-    this._action = action;
+    this.#action = action;
 
     return this as ZTaskBuilder$<any>;
   }
 
   executeBy(executor: ZTaskExecutor): this {
-    this._executor = executor;
+    this.#executor = executor;
 
     return this;
   }
@@ -106,11 +109,11 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
     args: readonly string[],
     { fromIndex = 0, ...opts }: ZOptionsParser.Opts<ZTaskOption> = {},
   ): Promise<this> {
-    const prevLength = this._commandLine.length;
+    const prevLength = this.#commandLine.length;
 
-    this._commandLine.push(...args);
+    this.#commandLine.push(...args);
 
-    await this.taskTarget.setup.taskParser.applyOptions(this, this._commandLine, {
+    await this.taskTarget.setup.taskParser.applyOptions(this, this.#commandLine, {
       ...opts,
       fromIndex: prevLength + fromIndex,
     });
@@ -159,10 +162,10 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
 
   spec(): ZTaskSpec<TAction> {
     return {
-      pre: this._pre,
-      attrs: this._attrs,
-      args: this._args,
-      action: this._action || { type: 'group', targets: [] },
+      pre: this.#pre,
+      attrs: this.#attrs,
+      args: this.#args,
+      action: this.#action || { type: 'group', targets: [] },
     } as ZTaskSpec<any>;
   }
 

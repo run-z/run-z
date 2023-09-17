@@ -1,10 +1,10 @@
-import { arrayOfElements, valueByRecipe } from '@proc7ts/primitives';
+import { asArray, valueByRecipe } from '@proc7ts/primitives';
 import type { SupportedZOptions } from '@run-z/optionz';
-import { clz } from '@run-z/optionz/colors';
-import type { ZSetup } from '../../../setup';
-import type { ZTaskOption } from '../../task-option';
-import type { ZTaskParser } from '../../task-parser';
-import type { DraftZTask } from './draft-task';
+import { clz } from '@run-z/optionz/colors.js';
+import { ZSetup } from '../../../setup.js';
+import { ZTaskOption } from '../../task-option.js';
+import { ZTaskParser } from '../../task-parser.js';
+import { DraftZTask } from './draft-task.js';
 
 /**
  * @internal
@@ -200,9 +200,7 @@ export function zTaskSpecOptions(
   setup: ZSetup,
   options?: ZTaskParser.SupportedOptions,
 ): SupportedZOptions<ZTaskOption, DraftZTask> {
-  const providers: SupportedZOptions.Provider<ZTaskOption, DraftZTask>[] = arrayOfElements(
-    options,
-  ).map(
+  const providers: SupportedZOptions.Provider<ZTaskOption, DraftZTask>[] = asArray(options).map(
     o => ({ builder }) => valueByRecipe(o, builder),
   );
 

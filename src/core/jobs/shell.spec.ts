@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
 import { execZNoOp } from '@run-z/exec-z';
-import { ZSetup } from '../setup';
-import { ZShell } from './shell';
+import { ZSetup } from '../setup.js';
+import { ZShell } from './shell.js';
 
 describe('ZShell', () => {
   describe('noop', () => {

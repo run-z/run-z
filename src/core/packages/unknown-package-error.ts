@@ -11,6 +11,7 @@ export class UnknownZPackageError extends Error {
    */
   constructor(readonly packageName: string, message = `Unknown package: <${packageName}>`) {
     super(message);
+    this.name = 'UnknownZPackageError';
   }
 
 }

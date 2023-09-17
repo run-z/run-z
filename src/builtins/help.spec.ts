@@ -3,10 +3,11 @@ import { asis, noop } from '@proc7ts/primitives';
 import { execZNoOp } from '@run-z/exec-z';
 import { ZOptionError } from '@run-z/optionz';
 import type { Mock } from 'jest-mock';
-import { ZSetup, ZShell } from '../core';
-import { SystemZShell } from '../os';
-import { TestPlan } from '../spec';
-import { ZHelpBuiltin } from './help.builtin';
+import { ZShell } from '../core/jobs/shell.js';
+import { ZSetup } from '../core/setup.js';
+import { SystemZShell } from '../os/system-shell.js';
+import { TestPlan } from '../spec/test-plan.js';
+import { ZHelpBuiltin } from './help.builtin.js';
 
 describe('ZHelpBuiltin', () => {
   let testPlan: TestPlan;

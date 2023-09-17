@@ -1,4 +1,4 @@
-import type { ZPackage } from './package';
+import { ZPackage } from './package.js';
 
 /**
  * Package dependency graph.

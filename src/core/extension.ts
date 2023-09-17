@@ -1,4 +1,4 @@
-import type { ZTaskParser } from './tasks';
+import { ZTaskParser } from './tasks/task-parser.js';
 
 /**
  * Task execution functionality extension.

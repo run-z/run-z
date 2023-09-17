@@ -1,4 +1,5 @@
-import type { ZCall, ZCallPlanner } from '../plan';
+import { ZCallPlanner } from '../plan/call-planner.js';
+import { ZCall } from '../plan/call.js';
 
 /**
  * A batch of task calls.

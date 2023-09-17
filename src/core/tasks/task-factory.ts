@@ -1,6 +1,6 @@
-import type { ZPackage } from '../packages';
-import type { ZTaskBuilder } from './task-builder';
-import { ZTaskBuilder$ } from './task-builder.impl';
+import type { ZPackage } from '../packages/package.js';
+import { ZTaskBuilder$ } from './task-builder.impl.js';
+import type { ZTaskBuilder } from './task-builder.js';
 
 /**
  * Task factory.

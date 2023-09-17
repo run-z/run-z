@@ -1,13 +1,15 @@
 import type { ZExecution } from '@run-z/exec-z';
-import type { ZJob } from '../jobs';
-import type { ZPackage } from '../packages';
-import type { ZCall, ZCallDetails, ZPrePlanner } from '../plan';
-import type { ZTaskSpec } from './task-spec';
+import { ZTaskSpec } from './task-spec.js';
+import { ZPackage } from '../packages/package.js';
+import { ZCallDetails } from '../plan/call-details.js';
+import { ZPrePlanner } from '../plan/pre-planner.js';
+import { ZCall } from '../plan/call.js';
+import { ZJob } from '../jobs/job.js';
 
 /**
  * Execution task.
  *
- * @typeparam TAction  Task action type.
+ * @typeParam TAction  Task action type.
  */
 export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> extends ZTaskQualifier {
   /**
@@ -48,7 +50,7 @@ export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> exte
    * By default a {@link ZTaskSpec.Group grouping task} treats the first argument as a sub-task name and the rest of
    * arguments as arguments to this sub-task. A task of any other type calls to itself.
    *
-   * @typeparam TAction  Task action type.
+   * @typeParam TAction  Task action type.
    * @param planner - A planner to record prerequisite call(s) to.
    * @param pre - Prerequisite specifier.
    * @param details - Task call details.
@@ -66,7 +68,7 @@ export interface ZTask<TAction extends ZTaskSpec.Action = ZTaskSpec.Action> exte
    *
    * The plan would execute the task after executing all of its prerequisites.
    *
-   * @typeparam TAction  Task action type.
+   * @typeParam TAction  Task action type.
    * @param details - Task call details.
    *
    * @returns A promise resolved to execution call of this task.

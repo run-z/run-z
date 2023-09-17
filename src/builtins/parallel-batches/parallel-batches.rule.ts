@@ -1,4 +1,5 @@
-import type { ZBatching, ZBatchRule } from '../../core';
+import { ZBatchRule } from '../../core/batches/batch-rule.js';
+import { ZBatching } from '../../core/batches/batching.js';
 
 /**
  * Parallel batched tasks execution control.
@@ -42,17 +43,20 @@ class ZParallelBatches$ implements ZParallelBatches {
     };
   }
 
-  private constructor(
-    private readonly _context: ZBatchRule.Context<ZParallelBatches>,
-    private readonly _parallel: boolean,
-  ) {}
+  readonly #context: ZBatchRule.Context<ZParallelBatches>;
+  readonly #parallel: boolean;
+
+  private constructor(context: ZBatchRule.Context<ZParallelBatches>, parallel: boolean) {
+    this.#context = context;
+    this.#parallel = parallel;
+  }
 
   get isParallel(): boolean {
-    return this._parallel;
+    return this.#parallel;
   }
 
   makeParallel(parallel = true): ZBatching {
-    return this._context.updateInstance(
+    return this.#context.updateInstance(
       (
         context: ZBatchRule.Context<ZParallelBatches>,
       ): ZBatchRule.Instance<ZParallelBatches> | undefined => {

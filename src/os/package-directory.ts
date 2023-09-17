@@ -1,9 +1,10 @@
 import { isPresent, valueProvider } from '@proc7ts/primitives';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { fileURLToPath, pathToFileURL, URL } from 'node:url';
-import { ZPackageJson, ZPackageLocation } from '../core';
-import { fsRoot, isRootURL, urlBaseName, urlOfFile } from './impl';
+import { URL, fileURLToPath, pathToFileURL } from 'node:url';
+import { ZPackageLocation } from '../core/packages/package-location.js';
+import { ZPackageJson } from '../core/packages/package.json.js';
+import { fsRoot, isRootURL, urlBaseName, urlOfFile } from './impl/url.js';
 
 /**
  * A file system directory potentially containing NPM package.
@@ -49,7 +50,7 @@ export class ZPackageDirectory extends ZPackageLocation {
    */
   readonly rootURL: URL;
 
-  private _parent?: ZPackageDirectory | null | undefined = null;
+  #parent?: ZPackageDirectory | null | undefined = null;
 
   private constructor(url: URL, rootURL: URL) {
     super();
@@ -67,17 +68,17 @@ export class ZPackageDirectory extends ZPackageLocation {
   }
 
   get parent(): ZPackageDirectory | undefined {
-    if (this._parent !== null) {
-      return this._parent;
+    if (this.#parent !== null) {
+      return this.#parent;
     }
 
     const parentURL = new URL('..', this.dirURL);
 
     if (parentURL.pathname === this.url.pathname || !isRootURL(this.rootURL, parentURL)) {
-      return (this._parent = undefined);
+      return (this.#parent = undefined);
     }
 
-    return (this._parent = new ZPackageDirectory(parentURL, this.rootURL));
+    return (this.#parent = new ZPackageDirectory(parentURL, this.rootURL));
   }
 
   get baseName(): string {
@@ -116,7 +117,7 @@ export class ZPackageDirectory extends ZPackageLocation {
     return packageJsonPath && JSON.parse((await fs.promises.readFile(packageJsonPath)).toString());
   }
 
-  toString(): string {
+  override toString(): string {
     return this.url.toString();
   }
 
