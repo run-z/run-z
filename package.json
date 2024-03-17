@@ -64,7 +64,7 @@
   "devDependencies": {
     "@jest/globals": "^29.7.0",
     "@proc7ts/logger": "^2.0.0",
-    "@proc7ts/primitives": "workspace:@proc7ts/primitives@^4.0.0",
+    "@proc7ts/primitives": "@proc7ts/primitives@^4.0.0",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-typescript": "^11.1.6",
     "@run-z/eslint-config": "^3.5.0",
