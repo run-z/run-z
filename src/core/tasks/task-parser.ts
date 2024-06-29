@@ -120,7 +120,7 @@ export class ZTaskParser {
       return; // Environment variable substitution supported in NPM scripts only.
     }
     if (entries.every(entry => typeof entry === 'string')) {
-      return entries as string[];
+      return entries;
     }
 
     return; // Special shell command present.
