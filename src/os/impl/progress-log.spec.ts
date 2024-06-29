@@ -3,7 +3,7 @@ import { noop } from '@proc7ts/primitives';
 import type { ZLogger } from '@run-z/log-z';
 import { ZLogLevel, logZBy, zlogDetails, zlogMessage } from '@run-z/log-z';
 import { logZToStream } from '@run-z/log-z/node.js';
-import ansiEscapes from 'ansi-escapes';
+import { cursorDown, cursorLeft, cursorUp, eraseEndLine } from 'ansi-escapes';
 import { Writable } from 'node:stream';
 import { ProgressZLogPrefix, ProgressZLogRecorder } from './progress-log.js';
 import { ZJobRows } from './rich/job-rows.js';
@@ -55,7 +55,7 @@ describe('ProgressZLogRecorder', () => {
           zlogMessage(ZLogLevel.Info, zlogDetails({ target: 'package', task: 'task1' })),
         )
           + ' Message 1'
-          + ansiEscapes.eraseEndLine
+          + eraseEndLine
           + '\n',
       ),
       expect.stringContaining(
@@ -63,7 +63,7 @@ describe('ProgressZLogRecorder', () => {
           zlogMessage(ZLogLevel.Info, zlogDetails({ target: 'package', task: 'task2' })),
         )
           + ' Message 2'
-          + ansiEscapes.eraseEndLine
+          + eraseEndLine
           + '\n',
       ),
       expect.stringContaining(
@@ -71,16 +71,16 @@ describe('ProgressZLogRecorder', () => {
           zlogMessage(ZLogLevel.Info, zlogDetails({ target: 'package', task: 'task1' })),
         )
           + ' Message 3'
-          + ansiEscapes.eraseEndLine
+          + eraseEndLine
           + '\n'
-          + ansiEscapes.cursorDown(1),
+          + cursorDown(1),
       ),
     ]);
 
     expect(lines).toEqual([
-      expect.stringContaining(ansiEscapes.cursorLeft),
-      expect.stringContaining(ansiEscapes.cursorLeft),
-      expect.stringContaining(ansiEscapes.cursorUp(2) + ansiEscapes.cursorLeft),
+      expect.stringContaining(cursorLeft),
+      expect.stringContaining(cursorLeft),
+      expect.stringContaining(cursorUp(2) + cursorLeft),
     ]);
   });
   it('prints verbatim without row specified', async () => {
