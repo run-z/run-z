@@ -1,4 +1,3 @@
-import commonjs from '@rollup/plugin-commonjs';
 import ts from '@rollup/plugin-typescript';
 import { resolveRootPackage } from '@run-z/npk';
 import { defineConfig } from 'rollup';
@@ -32,7 +31,6 @@ export default defineConfig({
     unbundle({
       resolutionRoot: getResolutionRoot,
     }),
-    commonjs(),
   ],
   output: {
     format: 'esm',
