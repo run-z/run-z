@@ -12,7 +12,6 @@ import { ZTaskParser } from './tasks/task-parser.js';
  * Provides access to all task execution services.
  */
 export class ZSetup {
-
   /**
    * @internal
    */
@@ -52,8 +51,8 @@ export class ZSetup {
    */
   get taskParser(): ZTaskParser {
     return (
-      this.#taskParser
-      || (this.#taskParser = this.#config.taskParser
+      this.#taskParser ||
+      (this.#taskParser = this.#config.taskParser
         ? valueByRecipe(this.#config.taskParser, this)
         : new ZTaskParser({
             options: this.extensions.flatMap(extension => asArray(extension.options)),
@@ -66,8 +65,8 @@ export class ZSetup {
    */
   get taskFactory(): ZTaskFactory {
     return (
-      this.#taskFactory
-      || (this.#taskFactory = this.#config.taskFactory
+      this.#taskFactory ||
+      (this.#taskFactory = this.#config.taskFactory
         ? valueByRecipe(this.#config.taskFactory, this)
         : new ZTaskFactory())
     );
@@ -78,8 +77,8 @@ export class ZSetup {
    */
   get packageResolver(): ZPackageResolver {
     return (
-      this.#packageResolver
-      || (this.#packageResolver = this.#config.packageResolver
+      this.#packageResolver ||
+      (this.#packageResolver = this.#config.packageResolver
         ? valueByRecipe(this.#config.packageResolver, this)
         : new ZPackageResolver(this))
     );
@@ -90,8 +89,8 @@ export class ZSetup {
    */
   get planner(): ZPlanner {
     return (
-      this.#planner
-      || (this.#planner = this.#config.planner
+      this.#planner ||
+      (this.#planner = this.#config.planner
         ? valueByRecipe(this.#config.planner, this)
         : new ZPlanner(this))
     );
@@ -103,5 +102,4 @@ export class ZSetup {
   get extensions(): readonly ZExtension[] {
     return asArray(this.#config.extensions);
   }
-
 }

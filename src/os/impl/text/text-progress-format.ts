@@ -9,7 +9,6 @@ import { textProgressZLogFormatter } from './text-log-format.js';
  * @internal
  */
 export class TextZProgressFormat extends ZProgressFormat {
-
   jobProgress(job: ZJob): ZJobProgress {
     return new TextZJobProgress(this, job);
   }
@@ -21,7 +20,6 @@ export class TextZProgressFormat extends ZProgressFormat {
       eol: '',
     });
   }
-
 }
 
 /**

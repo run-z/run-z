@@ -6,7 +6,6 @@ import type { ZPackageJson } from './package.json.js';
  * E.g. a directory containing `package.json` file.
  */
 export abstract class ZPackageLocation {
-
   /**
    * Parent package location or `undefined` if there is no parent location.
    */
@@ -103,5 +102,4 @@ export abstract class ZPackageLocation {
 
     return deep ? [[root], allNested].flat() : allNested;
   }
-
 }

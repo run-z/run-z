@@ -56,8 +56,8 @@ export const NamedZBatchesBuiltin: ZExtension = {
           )}`;
         },
         description:
-          'Enable additional named batches selection. '
-          + 'I.e. those with `+`-prefixed names disabled by default.',
+          'Enable additional named batches selection. ' +
+          'I.e. those with `+`-prefixed names disabled by default.',
       },
     },
     '-w*': {

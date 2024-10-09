@@ -23,7 +23,6 @@ export interface ZPackageResolver$ {
  * @internal
  */
 export class ZPackage$ extends ZPackageSet implements ZPackage {
-
   readonly isAnonymous: boolean;
   readonly name: string;
   #scopeName: string | null | undefined = null;
@@ -178,15 +177,16 @@ export class ZPackage$ extends ZPackageSet implements ZPackage {
   _addDependant(dependant: ZPackage$): void {
     this._dependants.push(dependant);
   }
-
 }
 
 /**
  * @internal
  */
 class SelectedZPackages extends ZPackageSet {
-
-  constructor(readonly pkg: ZPackage, readonly selector: string) {
+  constructor(
+    readonly pkg: ZPackage,
+    readonly selector: string,
+  ) {
     super();
   }
 
@@ -202,5 +202,4 @@ class SelectedZPackages extends ZPackageSet {
   override toString(): string {
     return this.selector;
   }
-
 }

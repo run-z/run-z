@@ -7,7 +7,6 @@ import { ProgressZLogPrefix } from './progress-log.js';
  * @internal
  */
 export abstract class ZProgressFormat<TProgress extends ZJobProgress = ZJobProgress> {
-
   readonly prefix: ProgressZLogPrefix;
   #log: ZLogRecorder | null = null;
 
@@ -22,5 +21,4 @@ export abstract class ZProgressFormat<TProgress extends ZJobProgress = ZJobProgr
   abstract jobProgress(job: ZJob): TProgress;
 
   protected abstract _createLog(): ZLogRecorder;
-
 }

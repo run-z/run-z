@@ -3,7 +3,6 @@ import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals
 import { asis, noop } from '@proc7ts/primitives';
 import { AbortedZExecutionError, FailedZExecutionError } from '@run-z/exec-z';
 import chalk, { ColorSupportLevel } from 'chalk';
-import type { Mock } from 'jest-mock';
 import logSymbols from 'log-symbols';
 import * as os from 'node:os';
 import process from 'node:process';
@@ -280,7 +279,7 @@ describe('SystemZShell', () => {
   });
 
   describe('options', () => {
-    let writeSpy: Mock<(chunk: Uint8Array | string, cb?: any) => boolean>;
+    let writeSpy: jest.Mock<(chunk: Uint8Array | string, cb?: any) => boolean>;
 
     beforeEach(() => {
       writeSpy = jest.spyOn(process.stdout, 'write') as typeof writeSpy;
@@ -295,7 +294,7 @@ describe('SystemZShell', () => {
     });
 
     describe('--help', () => {
-      let logSpy: Mock<(...args: unknown[]) => void>;
+      let logSpy: jest.Mock<(...args: unknown[]) => void>;
 
       beforeEach(() => {
         logSpy = jest.spyOn(console, 'log') as typeof logSpy;
@@ -621,7 +620,7 @@ describe('SystemZShell', () => {
     });
 
     describe('--max-jobs', () => {
-      let setMaxJobs: Mock<SystemZShell['setMaxJobs']>;
+      let setMaxJobs: jest.Mock<SystemZShell['setMaxJobs']>;
 
       beforeEach(() => {
         setMaxJobs = jest.spyOn(shell, 'setMaxJobs') as typeof setMaxJobs;

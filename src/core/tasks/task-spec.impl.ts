@@ -28,5 +28,7 @@ export function addZTaskAttrs(
   target: Record<string, string[] | null>,
   attrs: ZTaskSpec.Attrs,
 ): void {
-  Object.entries(attrs).forEach(([name, values]) => values?.forEach(value => addZTaskAttr(target, name, value)));
+  Object.entries(attrs).forEach(([name, values]) =>
+    values?.forEach(value => addZTaskAttr(target, name, value)),
+  );
 }

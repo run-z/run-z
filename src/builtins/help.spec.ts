@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals
 import { asis, noop } from '@proc7ts/primitives';
 import { execZNoOp } from '@run-z/exec-z';
 import { ZOptionError } from '@run-z/optionz';
-import type { Mock } from 'jest-mock';
 import { ZShell } from '../core/jobs/shell.js';
 import { ZSetup } from '../core/setup.js';
 import { SystemZShell } from '../os/system-shell.js';
@@ -18,7 +17,7 @@ describe('ZHelpBuiltin', () => {
     shell = new SystemZShell(testPlan.setup);
   });
 
-  let logSpy: Mock<(...args: unknown[]) => void>;
+  let logSpy: jest.Mock<(...args: unknown[]) => void>;
 
   beforeEach(() => {
     logSpy = jest.spyOn(console, 'log') as typeof logSpy;

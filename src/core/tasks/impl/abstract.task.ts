@@ -18,12 +18,14 @@ import { ZTask, ZTaskQualifier } from '../task.js';
  * @internal
  */
 export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements ZTask<TAction> {
-
   readonly target: ZPackage;
   readonly name: string;
   readonly taskQN: string;
 
-  constructor(protected readonly _builder: ZTaskBuilder$, readonly spec: ZTaskSpec<TAction>) {
+  constructor(
+    protected readonly _builder: ZTaskBuilder$,
+    readonly spec: ZTaskSpec<TAction>,
+  ) {
     this.target = _builder.taskTarget;
     this.taskQN = this.name = _builder.taskName;
   }
@@ -61,7 +63,8 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   ): Promise<ZCall> {
     return planner.callPre(this, {
       ...details,
-      params: evaluator => ZTaskParams.update(
+      params: evaluator =>
+        ZTaskParams.update(
           ZTaskParams.update(
             ZTaskParams.update(
               ZTaskParams.newMutable(),
@@ -283,7 +286,6 @@ export abstract class AbstractZTask<TAction extends ZTaskSpec.Action> implements
   }
 
   protected abstract _execTask(job: ZJob<TAction>): ZExecution;
-
 }
 
 /**

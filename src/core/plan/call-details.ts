@@ -72,7 +72,8 @@ export const ZCallDetails = {
     details: ZCallDetails<TAction> = {},
   ): ZCallDetails.Full<TAction> {
     return {
-      params: evaluator => new ZTaskParams(ZTaskParams.update(ZTaskParams.newMutable(), details.params?.(evaluator))),
+      params: evaluator =>
+        new ZTaskParams(ZTaskParams.update(ZTaskParams.newMutable(), details.params?.(evaluator))),
       plan: async planner => {
         await details.plan?.(planner);
       },

@@ -13,7 +13,6 @@ import { richProgressZLogFormatter } from './rich-log-format.js';
  * @internal
  */
 export class RichZProgressFormat extends ZProgressFormat<RichZJobProgress> {
-
   readonly rows = new ZJobRows();
 
   jobProgress(job: ZJob): RichZJobProgress {
@@ -30,14 +29,12 @@ export class RichZProgressFormat extends ZProgressFormat<RichZJobProgress> {
       },
     });
   }
-
 }
 
 /**
  * @internal
  */
 class RichZJobProgress extends ZJobProgress {
-
   #interval!: NodeJS.Timeout;
   readonly #output = new ZJobOutput();
 
@@ -56,5 +53,4 @@ class RichZJobProgress extends ZJobProgress {
       super._createLog(),
     );
   }
-
 }

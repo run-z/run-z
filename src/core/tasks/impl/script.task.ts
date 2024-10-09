@@ -7,7 +7,6 @@ import { ZJob } from '../../jobs/job.js';
  * @internal
  */
 export class ScriptZTask extends AbstractZTask<ZTaskSpec.Script> {
-
   override get alike(): Iterable<string> {
     const {
       spec: {
@@ -21,5 +20,4 @@ export class ScriptZTask extends AbstractZTask<ZTaskSpec.Script> {
   protected _execTask(job: ZJob<ZTaskSpec.Script>): ZExecution {
     return job.shell.execScript(job, this.name);
   }
-
 }

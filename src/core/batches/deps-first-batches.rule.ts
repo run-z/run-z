@@ -28,7 +28,6 @@ export interface ZDepsFirstBatches {
  * @internal
  */
 class ZDepsFirstBatches$ implements ZDepsFirstBatches {
-
   static newBatchRule(
     context: ZBatchRule.Context<ZDepsFirstBatches>,
     parallel = false,
@@ -103,7 +102,6 @@ class ZDepsFirstBatches$ implements ZDepsFirstBatches {
       },
     );
   }
-
 }
 
 /**

@@ -45,7 +45,6 @@ export interface ZDepGraphBatches {
  * @internal
  */
 class ZDepGraphBatches$ implements ZDepGraphBatches {
-
   static newBatchRule(
     context: ZBatchRule.Context<ZDepGraphBatches>,
     included: 'dependencies' | 'dependants' = 'dependencies',
@@ -69,15 +68,17 @@ class ZDepGraphBatches$ implements ZDepGraphBatches {
         };
 
         await Promise.all(
-          batched.map(async ({ task }) => dependent.call(task, {
+          batched.map(async ({ task }) =>
+            dependent.call(task, {
               params(): ZTaskParams.Partial {
-                return task.name !== taskName // Apply only to same-named tasks.
-                  || (includeSelf && task.target === original) // Include original task?
-                  || included().has(task.target) // Included in requested part of dep graph?
+                return task.name !== taskName || // Apply only to same-named tasks.
+                  (includeSelf && task.target === original) || // Include original task?
+                  included().has(task.target) // Included in requested part of dep graph?
                   ? {}
                   : { attrs: { skip: [reason] } };
               },
-            })),
+            }),
+          ),
         );
       },
     };
@@ -106,13 +107,14 @@ class ZDepGraphBatches$ implements ZDepGraphBatches {
   }
 
   include(included?: 'dependencies' | 'dependants', includeSelf?: boolean): ZBatching {
-    return this.#context.updateInstance(context => ZDepGraphBatches$.newBatchRule(context, included, includeSelf));
+    return this.#context.updateInstance(context =>
+      ZDepGraphBatches$.newBatchRule(context, included, includeSelf),
+    );
   }
 
   disable(): ZBatching {
     return this.#context.updateInstance(noop);
   }
-
 }
 
 /**

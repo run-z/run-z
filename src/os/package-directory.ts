@@ -10,7 +10,6 @@ import { fsRoot, isRootURL, urlBaseName, urlOfFile } from './impl/url.js';
  * A file system directory potentially containing NPM package.
  */
 export class ZPackageDirectory extends ZPackageLocation {
-
   /**
    * Opens NPM package directory.
    *
@@ -120,7 +119,6 @@ export class ZPackageDirectory extends ZPackageLocation {
   override toString(): string {
     return this.url.toString();
   }
-
 }
 
 /**

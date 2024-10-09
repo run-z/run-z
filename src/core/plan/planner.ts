@@ -9,7 +9,6 @@ import { ZInstructionRecords } from './planner.impl.js';
  * Task execution planner.
  */
 export class ZPlanner {
-
   /**
    * Constructs execution planner.
    *
@@ -38,5 +37,4 @@ export class ZPlanner {
 
     return records.plan.callOf(task);
   }
-
 }

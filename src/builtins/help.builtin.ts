@@ -17,7 +17,8 @@ function readZHelp(mode?: 'brief' | 'detailed'): ZOptionReader.Fn<ZTaskOption> {
   return helpZOptionReader<ZTaskOption>({
     mode,
     display(options, option) {
-      option.executeBy(() => execZ(() => {
+      option.executeBy(() =>
+        execZ(() => {
           const whenDone = printHelp(options);
 
           return {
@@ -26,7 +27,8 @@ function readZHelp(mode?: 'brief' | 'detailed'): ZOptionReader.Fn<ZTaskOption> {
             },
             abort: noop,
           };
-        }));
+        }),
+      );
     },
   });
 }

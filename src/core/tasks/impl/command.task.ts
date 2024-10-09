@@ -8,7 +8,6 @@ import { AbstractZTask } from './abstract.task.js';
  * @internal
  */
 export class CommandZTask extends AbstractZTask<ZTaskSpec.Command> {
-
   override get alike(): Iterable<string> {
     const {
       spec: {
@@ -38,5 +37,4 @@ export class CommandZTask extends AbstractZTask<ZTaskSpec.Command> {
   protected _execTask(job: ZJob<ZTaskSpec.Command>): ZExecution {
     return job.shell.execCommand(job, this.spec.action.command);
   }
-
 }

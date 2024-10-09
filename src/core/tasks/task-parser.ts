@@ -11,7 +11,6 @@ import { ZTaskSpec } from './task-spec.js';
  * A parser of command line containing {@link ZTaskSpec task specifier}.
  */
 export class ZTaskParser {
-
   /**
    * @internal
    */
@@ -146,7 +145,6 @@ export class ZTaskParser {
 
     return this.#specParser(builder, args, opts);
   }
-
 }
 
 export namespace ZTaskParser {

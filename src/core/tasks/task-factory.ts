@@ -8,7 +8,6 @@ import type { ZTaskBuilder } from './task-builder.js';
  * Constructs {@link ZTaskBuilder task builders} that can be used to create new tasks.
  */
 export class ZTaskFactory {
-
   /**
    * Creates new task builder.
    *
@@ -20,5 +19,4 @@ export class ZTaskFactory {
   newTask(target: ZPackage, name: string): ZTaskBuilder {
     return new ZTaskBuilder$(target, name);
   }
-
 }

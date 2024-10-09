@@ -40,7 +40,6 @@ const zProgressFormats = {
  * Operating system-specific task execution shell.
  */
 export class SystemZShell extends ZShell {
-
   #exec: (this: void, starter: ZExecutionStarter) => ZExecution = poolZExecutions();
   #format: (this: void) => ZProgressFormat = lazyValue(zProgressFormats.text);
 
@@ -184,8 +183,8 @@ By default ${clz.usage('text')} format is used.
       name === 'rich'
         ? lazyValue(zProgressFormats.rich)
         : name === 'auto'
-        ? lazyValue(zProgressFormats.auto)
-        : lazyValue(zProgressFormats.text);
+          ? lazyValue(zProgressFormats.auto)
+          : lazyValue(zProgressFormats.text);
 
     return this;
   }
@@ -311,8 +310,12 @@ By default ${clz.usage('text')} format is used.
             windowsHide: true,
           }) as ChildProcessByStdio<null, Readable, Readable>;
 
-          childProcess.stdout.on('data', (chunk: string | Buffer) => progress.log.info(chunk.toString()));
-          childProcess.stderr.on('data', (chunk: string | Buffer) => progress.log.error(chunk.toString()));
+          childProcess.stdout.on('data', (chunk: string | Buffer) =>
+            progress.log.info(chunk.toString()),
+          );
+          childProcess.stderr.on('data', (chunk: string | Buffer) =>
+            progress.log.error(chunk.toString()),
+          );
 
           progress.start();
 
@@ -345,7 +348,6 @@ By default ${clz.usage('text')} format is used.
       };
     });
   }
-
 }
 
 /**

@@ -6,7 +6,6 @@ import { stripControlChars } from '../strip-control-chars.js';
  * @internal
  */
 export class ZJobOutput {
-
   #statusMessage: ZLogMessage | null = null;
   readonly #lines: [string, 0 | 1][] = [];
   #lastNL = true;
@@ -68,5 +67,4 @@ export class ZJobOutput {
     this.#lines.length = 0;
     this.#lastNL = true;
   }
-
 }

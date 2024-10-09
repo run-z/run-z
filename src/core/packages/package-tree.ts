@@ -8,7 +8,6 @@ import type { ZPackageJson } from './package.json.js';
  * This is a package location implementation that can be filled with package and sub-package data.
  */
 export class ZPackageTree extends ZPackageLocation {
-
   readonly parent: ZPackageTree | undefined;
   readonly path: string;
   readonly load: () => Promise<ZPackageJson | undefined>;
@@ -115,7 +114,6 @@ export class ZPackageTree extends ZPackageLocation {
   override toString(): string {
     return this.path;
   }
-
 }
 
 /**

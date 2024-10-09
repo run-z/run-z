@@ -13,7 +13,6 @@ import { ZPlan } from './plan.js';
  * @internal
  */
 export class ZInstructionRecords {
-
   rev = 0;
   readonly plan: ZPlan;
   readonly executor: ZExecutor = new ZExecutor();
@@ -205,5 +204,4 @@ export class ZInstructionRecords {
 
     return false;
   }
-
 }

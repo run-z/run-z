@@ -7,7 +7,6 @@ import type { ZPackage$, ZPackageResolver$ } from './package.impl.js';
  * @internal
  */
 export class ZDepGraph$ implements ZDepGraph {
-
   #dependencies?: Set<ZPackage$> | undefined;
   #dependants?: Set<ZPackage$> | undefined;
 
@@ -78,7 +77,6 @@ export class ZDepGraph$ implements ZDepGraph {
 
     return result;
   }
-
 }
 
 /**

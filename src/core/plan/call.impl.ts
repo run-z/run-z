@@ -47,8 +47,8 @@ const ZCallDepth__key: ZTaskParams.ValueKey<number> = {
  * @internal
  */
 export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
-  implements ZCall<TAction> {
-
+  implements ZCall<TAction>
+{
   // Duplicated here to avoid circular dependency
   static newEvaluator(): ZTaskParams.Evaluator {
     return ZTaskParams.newEvaluator();
@@ -169,5 +169,4 @@ export class ZCallRecord<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
   exec(shell: ZShell): ZExecutionJob<TAction> {
     return this.#records.executor.exec(this, shell);
   }
-
 }

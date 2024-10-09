@@ -51,8 +51,8 @@ export function namedZBatches(
       )
         ? 1
         : /* Additional match? */ namedBatches.with.has(batchName)
-        ? -1
-        : 0;
+          ? -1
+          : 0;
 
     if (include) {
       if (include > 0 && !hardLimit) {
@@ -103,9 +103,7 @@ async function doBatchNamedZBatches(
   let recurrentTargets: ZPackageSet | undefined;
 
   await Promise.all(
-    (
-      await planner.targets.packages()
-    ).map(async target => {
+    (await planner.targets.packages()).map(async target => {
       if (processed.has(target)) {
         return;
       }
@@ -123,7 +121,8 @@ async function doBatchNamedZBatches(
         batchNames.map(async batchName => {
           let hasTargets = false;
 
-          await target.task(batchName).then(batchTask => batchTask.callAsPre(
+          await target.task(batchName).then(batchTask =>
+            batchTask.callAsPre(
               {
                 dependent: planner.dependent,
                 batching: ZBatching.unprocessedBatching(),
@@ -150,7 +149,8 @@ async function doBatchNamedZBatches(
                 args: [],
               },
               ZCallDetails.by(),
-            ));
+            ),
+          );
 
           if (!hasTargets) {
             throw new UnknownZTaskError(

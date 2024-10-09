@@ -84,7 +84,6 @@ interface NamedZBatchesConfig {
  * @internal
  */
 class NamedZBatches$ implements NamedZBatches {
-
   static newBatchRule(
     context: ZBatchRule.Context<NamedZBatches>,
     config?: NamedZBatchesConfig,
@@ -116,11 +115,13 @@ class NamedZBatches$ implements NamedZBatches {
   }
 
   setOnly(batchNames?: Iterable<string>): ZBatching {
-    return this.#context.updateInstance(context => NamedZBatches$.newBatchRule(context, {
+    return this.#context.updateInstance(context =>
+      NamedZBatches$.newBatchRule(context, {
         only: batchNames && new Set(batchNames),
         with: this.with,
         except: this.except,
-      }));
+      }),
+    );
   }
 
   addWith(batchNames: Iterable<string>): ZBatching {
@@ -158,7 +159,6 @@ class NamedZBatches$ implements NamedZBatches {
   reset(): ZBatching {
     return this.#context.updateInstance(noop);
   }
-
 }
 
 /**

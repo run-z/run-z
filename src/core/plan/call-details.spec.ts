@@ -1,9 +1,8 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { valueProvider } from '@proc7ts/primitives';
-import { Mock } from 'jest-mock';
-import { ZTaskParams } from './task-params.js';
 import { ZCallDetails } from './call-details.js';
 import { ZCallPlanner } from './call-planner.js';
+import { ZTaskParams } from './task-params.js';
 
 describe('ZCallDetails', () => {
   describe('by', () => {
@@ -29,9 +28,7 @@ describe('ZCallDetails', () => {
     });
     it('respects plan', async () => {
       const planner = { name: 'planner' } as unknown as ZCallPlanner;
-      const plan = jest.fn<(planner: ZCallPlanner) => void>() as Mock<
-        (planner: ZCallPlanner) => void
-      >;
+      const plan = jest.fn<(planner: ZCallPlanner) => void>();
 
       await ZCallDetails.by({ plan }).plan(planner);
 

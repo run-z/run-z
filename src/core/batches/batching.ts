@@ -15,7 +15,6 @@ import { ZDepsFirstBatches } from './deps-first-batches.rule.js';
  * This class instances are immutable.
  */
 export class ZBatching {
-
   /**
    * Creates new task batching policy with default batch processing rules enabled.
    *
@@ -188,5 +187,4 @@ export class ZBatching {
       await ruleInstance.processBatch(batch);
     }
   }
-
 }

@@ -27,5 +27,6 @@ export function zTaskSpecParser(
     optionClass: zTaskSpecOptionClass,
   });
 
-  return (builder, entries, opts) => parser(new DraftZTask(builder), entries, opts).then(builder => builder.done());
+  return (builder, entries, opts) =>
+    parser(new DraftZTask(builder), entries, opts).then(builder => builder.done());
 }

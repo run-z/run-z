@@ -201,7 +201,9 @@ export function zTaskSpecOptions(
   options?: ZTaskParser.SupportedOptions,
 ): SupportedZOptions<ZTaskOption, DraftZTask> {
   const providers: SupportedZOptions.Provider<ZTaskOption, DraftZTask>[] = asArray(options).map(
-    o => ({ builder }) => valueByRecipe(o, builder),
+    o =>
+      ({ builder }) =>
+        valueByRecipe(o, builder),
   );
 
   return [fallbackZTaskSpecOptions(setup), ...providers];

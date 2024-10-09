@@ -10,7 +10,6 @@ import { AbstractZTask } from './abstract.task.js';
  * @internal
  */
 export class UnknownZTask extends AbstractZTask<ZTaskSpec.Unknown> {
-
   constructor(builder: ZTaskBuilder$, spec: ZTaskSpec) {
     super(builder, { ...spec, action: ZTaskSpec.unknownAction });
   }
@@ -22,5 +21,4 @@ export class UnknownZTask extends AbstractZTask<ZTaskSpec.Unknown> {
 
     return failZ(new UnknownZTaskError(this.target.name, this.name));
   }
-
 }

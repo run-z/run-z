@@ -26,7 +26,6 @@ const builtinZExtensions: readonly ZExtension[] = [
  * Enables {@link StandardZSetup.builtins built-in extensions}
  */
 export class StandardZSetup extends ZSetup {
-
   /**
    * Built-in execution functionality extensions.
    */
@@ -45,5 +44,4 @@ export class StandardZSetup extends ZSetup {
       extensions: StandardZSetup.builtins.concat(asArray(config.extensions)),
     });
   }
-
 }

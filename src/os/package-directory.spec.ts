@@ -12,10 +12,12 @@ describe('ZPackageDirectory', () => {
 
   describe('open', () => {
     it('throws when not inside root URL', () => {
-      expect(() => ZPackageDirectory.open({
+      expect(() =>
+        ZPackageDirectory.open({
           url: pathToFileURL('/other'),
           rootURL,
-        })).toThrow(TypeError as any);
+        }),
+      ).toThrow(TypeError as any);
     });
   });
 

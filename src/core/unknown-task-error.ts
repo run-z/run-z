@@ -2,7 +2,6 @@
  * An error thrown when unknown task executed.
  */
 export class UnknownZTaskError extends Error {
-
   /**
    * Constructs unknown task error.
    *
@@ -18,5 +17,4 @@ export class UnknownZTaskError extends Error {
     super(message);
     this.name = 'UnknownZTaskError';
   }
-
 }

@@ -24,7 +24,6 @@ export function zTaskSpecOptionClass<TArgs extends any[]>(
   base: ZOption.BaseClass<TArgs>,
 ): ZOption.ImplClass<ZTaskOption, DraftZTask, TArgs> {
   class TaskOption extends base implements ZTaskOption {
-
     readonly #draft: DraftZTask;
     readonly taskTarget: ZPackage;
     readonly taskName: string;
@@ -119,8 +118,7 @@ export function zTaskSpecOptionClass<TArgs extends any[]>(
 
       return this;
     }
-
-}
+  }
 
   return TaskOption;
 }

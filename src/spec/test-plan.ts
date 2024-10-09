@@ -11,7 +11,6 @@ import { ZSetup } from '../core/setup.js';
 import { ZTaskOption } from '../core/tasks/task-option.js';
 
 export class TestPlan {
-
   readonly setup: ZSetup;
   readonly root: ZPackageTree;
   lastCall!: ZCall;
@@ -77,5 +76,4 @@ export class TestPlan {
   findCallOf(target: ZPackage, taskName: string): ZCall | undefined {
     return this.lastPlan.findCallOf(target, taskName);
   }
-
 }

@@ -16,8 +16,8 @@ import { ZTaskSpec } from './task-spec.js';
  * @internal
  */
 export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
-  implements ZTaskBuilder<TAction> {
-
+  implements ZTaskBuilder<TAction>
+{
   batching: ZBatching = ZBatching.newBatching();
   #executor?: ZTaskExecutor | undefined;
   readonly #commandLine: string[] = [];
@@ -26,7 +26,10 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
   readonly #args: string[] = [];
   #action?: ZTaskSpec.Action | undefined;
 
-  constructor(readonly taskTarget: ZPackage, readonly taskName: string) {}
+  constructor(
+    readonly taskTarget: ZPackage,
+    readonly taskName: string,
+  ) {}
 
   get action(): TAction | undefined {
     return this.#action as TAction;
@@ -184,5 +187,4 @@ export class ZTaskBuilder$<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
         return new UnknownZTask(this, spec) as AbstractZTask<any>;
     }
   }
-
 }

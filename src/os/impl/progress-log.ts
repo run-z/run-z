@@ -16,7 +16,6 @@ import stringWidth from 'string-width';
  * @internal
  */
 export class ProgressZLogPrefix {
-
   targetCols = 0;
   taskCols = 0;
 
@@ -52,14 +51,12 @@ export class ProgressZLogPrefix {
   field(): ZLogField {
     return writer => writer.write(this.text(writer.message));
   }
-
 }
 
 /**
  * @internal
  */
 export class ProgressZLogRecorder implements ZLogRecorder {
-
   static create({
     prefix,
     format,
@@ -117,5 +114,4 @@ export class ProgressZLogRecorder implements ZLogRecorder {
   end(): Promise<void> {
     return this.#by.end();
   }
-
 }

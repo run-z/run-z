@@ -6,10 +6,12 @@ import { ZProgressFormat } from './progress-format.js';
  * @internal
  */
 export abstract class ZJobProgress {
-
   #log: ZLogger | null = null;
 
-  constructor(protected readonly _format: ZProgressFormat, readonly job: ZJob) {}
+  constructor(
+    protected readonly _format: ZProgressFormat,
+    readonly job: ZJob,
+  ) {}
 
   get log(): ZLogger {
     return this.#log || (this.#log = logZBy(this._createLog()));
@@ -32,5 +34,4 @@ export abstract class ZJobProgress {
       logZAtopOf(this._format.log),
     );
   }
-
 }

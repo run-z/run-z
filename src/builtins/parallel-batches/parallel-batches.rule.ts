@@ -25,7 +25,6 @@ export interface ZParallelBatches {
  * @internal
  */
 class ZParallelBatches$ implements ZParallelBatches {
-
   static newBatchRule(
     context: ZBatchRule.Context<ZParallelBatches>,
     parallel = false,
@@ -68,7 +67,6 @@ class ZParallelBatches$ implements ZParallelBatches {
       },
     );
   }
-
 }
 
 /**

@@ -6,7 +6,6 @@ import type { ZJobRow, ZJobRows } from './job-rows.js';
  * @internal
  */
 export class RichJobZLogRecorder implements ZLogRecorder {
-
   readonly #rows: ZJobRows;
   readonly #output: ZJobOutput;
   readonly #by: ZLogRecorder;
@@ -39,7 +38,9 @@ export class RichJobZLogRecorder implements ZLogRecorder {
 
       this.#output
         .lines()
-        .forEach(([message, err]) => this.#by.record(zlogMessage(err ? ZLogLevel.Error : ZLogLevel.Info, message)));
+        .forEach(([message, err]) =>
+          this.#by.record(zlogMessage(err ? ZLogLevel.Error : ZLogLevel.Info, message)),
+        );
 
       this.#by.record({ ...message, line });
     } else if (success) {
@@ -81,5 +82,4 @@ export class RichJobZLogRecorder implements ZLogRecorder {
 
     return (this.#row = this.#rows.add(() => this.record(this.#output.statusMessage)));
   }
-
 }

@@ -8,7 +8,6 @@ import { ZTaskSpec } from '../../task-spec.js';
  * @internal
  */
 export class DraftZTask {
-
   _option!: ZTaskOption;
   _nextTargets: ZTaskSpec.Target[];
   readonly pre: ZTaskOption.Pre;
@@ -44,7 +43,6 @@ export class DraftZTask {
 
     return this.builder;
   }
-
 }
 
 /**

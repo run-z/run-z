@@ -16,7 +16,6 @@ import { ZJob } from '../../jobs/job.js';
  * @internal
  */
 export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
-
   override async callAsPre(
     planner: ZPrePlanner,
     pre: ZTaskSpec.Pre,
@@ -49,7 +48,8 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
     // Call prerequisite. Pass prerequisite parameters to sub-task(s) rather then to this prerequisite.
     const groupCall = await dependent.call(this, {
       ...details,
-      params: evaluator => ZTaskParams.update(
+      params: evaluator =>
+        ZTaskParams.update(
           ZTaskParams.update(
             ZTaskParams.newMutable(),
             { attrs: dependent.plannedCall.task.spec.attrs }, // Dependent task attrs
@@ -119,5 +119,4 @@ export class GroupZTask extends AbstractZTask<ZTaskSpec.Group> {
 
     return execZNoOp();
   }
-
 }

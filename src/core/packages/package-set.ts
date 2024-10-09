@@ -4,7 +4,6 @@ import { ZPackage } from './package.js';
  * A set of {@link ZPackage NPM packages} known under the same name.
  */
 export abstract class ZPackageSet {
-
   /**
    * Lists packages of this set.
    *
@@ -22,14 +21,12 @@ export abstract class ZPackageSet {
   andPackages(other: ZPackageSet): ZPackageSet {
     return new CombinedZPackageSet([this, other]);
   }
-
 }
 
 /**
  * @internal
  */
 class CombinedZPackageSet extends ZPackageSet {
-
   constructor(readonly sets: readonly ZPackageSet[]) {
     super();
   }
@@ -45,5 +42,4 @@ class CombinedZPackageSet extends ZPackageSet {
   override toString(): string {
     return this.sets.join(' ');
   }
-
 }

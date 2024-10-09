@@ -19,7 +19,6 @@ let emptyZTaskParams: ZTaskParams | undefined;
  * Task execution parameters.
  */
 export class ZTaskParams {
-
   /**
    * Empty task parameters.
    */
@@ -186,7 +185,6 @@ export class ZTaskParams {
 
     return attr != null && !falseZTaskFlagValues[attr.toLowerCase()];
   }
-
 }
 
 export namespace ZTaskParams {

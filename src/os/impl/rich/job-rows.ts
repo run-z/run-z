@@ -5,7 +5,6 @@ import type { ZLogMessage } from '@run-z/log-z';
  * @internal
  */
 export class ZJobRows {
-
   readonly #renders: (() => void)[] = [];
   #numRows = 0;
 
@@ -30,7 +29,6 @@ export class ZJobRows {
   renderAll(): void {
     this.#renders.forEach(render => render());
   }
-
 }
 
 /**

@@ -11,7 +11,6 @@ import { ZShell } from './shell.js';
  * @internal
  */
 export class ZExecutor {
-
   readonly jobs = new Map<ZTask, ZExecutionJob>();
   readonly evaluator = ZCallRecord.newEvaluator();
 
@@ -32,21 +31,24 @@ export class ZExecutor {
 
     return starting.start();
   }
-
 }
 
 /**
  * @internal
  */
 export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
-  implements ZJob<TAction> {
-
+  implements ZJob<TAction>
+{
   readonly #executor: ZExecutor;
   #params?: ZTaskParams | undefined;
   #exec!: ZExecution;
   #execAndPre!: ZExecution;
 
-  constructor(executor: ZExecutor, readonly shell: ZShell, readonly call: ZCallRecord<TAction>) {
+  constructor(
+    executor: ZExecutor,
+    readonly shell: ZShell,
+    readonly call: ZCallRecord<TAction>,
+  ) {
     this.#executor = executor;
   }
 
@@ -128,5 +130,4 @@ export class ZExecutionJob<TAction extends ZTaskSpec.Action = ZTaskSpec.Action>
   whenDone(): Promise<void> {
     return this.#execAndPre.whenDone();
   }
-
 }

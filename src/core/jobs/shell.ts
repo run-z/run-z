@@ -11,7 +11,6 @@ import { ZJob } from './job.js';
  * It is provided is used by {@link ZCall.exec task execution jobs} to execute commands.
  */
 export abstract class ZShell {
-
   /**
    * Creates task execution shell that does nothing.
    *
@@ -58,14 +57,12 @@ export abstract class ZShell {
   options(): ZTaskParser.SupportedOptions {
     return this.setup.extensions.flatMap(({ shellOptions }) => asArray(shellOptions));
   }
-
 }
 
 /**
  * @internal
  */
 class NoOpZShell extends ZShell {
-
   execCommand(): ZExecution {
     return execZNoOp();
   }
@@ -73,5 +70,4 @@ class NoOpZShell extends ZShell {
   execScript(): ZExecution {
     return execZNoOp();
   }
-
 }

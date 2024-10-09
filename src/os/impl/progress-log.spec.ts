@@ -53,27 +53,27 @@ describe('ProgressZLogRecorder', () => {
       expect.stringContaining(
         prefix.text(
           zlogMessage(ZLogLevel.Info, zlogDetails({ target: 'package', task: 'task1' })),
-        )
-          + ' Message 1'
-          + eraseEndLine
-          + '\n',
+        ) +
+          ' Message 1' +
+          eraseEndLine +
+          '\n',
       ),
       expect.stringContaining(
         prefix.text(
           zlogMessage(ZLogLevel.Info, zlogDetails({ target: 'package', task: 'task2' })),
-        )
-          + ' Message 2'
-          + eraseEndLine
-          + '\n',
+        ) +
+          ' Message 2' +
+          eraseEndLine +
+          '\n',
       ),
       expect.stringContaining(
         prefix.text(
           zlogMessage(ZLogLevel.Info, zlogDetails({ target: 'package', task: 'task1' })),
-        )
-          + ' Message 3'
-          + eraseEndLine
-          + '\n'
-          + cursorDown(1),
+        ) +
+          ' Message 3' +
+          eraseEndLine +
+          '\n' +
+          cursorDown(1),
       ),
     ]);
 
@@ -90,12 +90,12 @@ describe('ProgressZLogRecorder', () => {
 
     await logger.whenLogged();
     expect(lines).toEqual([
-      prefix.text(zlogMessage(ZLogLevel.Info, zlogDetails({ target: 'package', task: 'task1' })))
-        + ' Message 1\n',
-      prefix.text(zlogMessage(ZLogLevel.Info, zlogDetails({ target: 'package', task: 'task2' })))
-        + ' Message 2\n',
-      prefix.text(zlogMessage(ZLogLevel.Info, zlogDetails({ target: 'package', task: 'task1' })))
-        + ' Message 3\n',
+      prefix.text(zlogMessage(ZLogLevel.Info, zlogDetails({ target: 'package', task: 'task1' }))) +
+        ' Message 1\n',
+      prefix.text(zlogMessage(ZLogLevel.Info, zlogDetails({ target: 'package', task: 'task2' }))) +
+        ' Message 2\n',
+      prefix.text(zlogMessage(ZLogLevel.Info, zlogDetails({ target: 'package', task: 'task1' }))) +
+        ' Message 3\n',
     ]);
   });
 

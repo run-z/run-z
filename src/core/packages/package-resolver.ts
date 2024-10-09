@@ -8,7 +8,6 @@ import { UnknownZPackageError } from './unknown-package-error.js';
  * A resolver of all discovered {@link ZPackage NPM packages}.
  */
 export class ZPackageResolver {
-
   readonly #byPath = new Map<string, Promise<ZPackage$ | undefined>>();
   readonly #impl: ZPackageResolver$;
 
@@ -126,5 +125,4 @@ export class ZPackageResolver {
   byName(name: string): readonly ZPackage[] {
     return this.#impl.byName(name);
   }
-
 }

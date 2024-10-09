@@ -15,8 +15,8 @@ export const ZCommandExecutionBuiltin: ZExtension = {
         group: '!builtin:exec',
         get usage() {
           return (
-            `${clz.usage('--then')} ${clz.param('COMMAND')} `
-            + clz.optional(clz.param('ARG') + clz.sign(' ...'))
+            `${clz.usage('--then')} ${clz.param('COMMAND')} ` +
+            clz.optional(clz.param('ARG') + clz.sign(' ...'))
           );
         },
         get help() {
@@ -35,8 +35,8 @@ ${clz.usage('--and')} executes the ${clz.param('COMMAND')} in parallel to the la
         aliasOf: '--then',
         get usage() {
           return (
-            `${clz.usage('--and')} ${clz.param('COMMAND')} `
-            + clz.optional(clz.param('ARG') + clz.sign(' ...'))
+            `${clz.usage('--and')} ${clz.param('COMMAND')} ` +
+            clz.optional(clz.param('ARG') + clz.sign(' ...'))
           );
         },
       },
