@@ -74,7 +74,7 @@
     "@run-z/optionz": "^3.0.0",
     "@run-z/prettier-config": "^3.0.0",
     "@types/cross-spawn": "^6.0.6",
-    "@types/node": "^20.17.8",
+    "@types/node": "^22.10.0",
     "@types/semver": "^7.5.8",
     "@types/shell-quote": "^1.7.5",
     "eslint": "^9.15.0",
@@ -84,14 +84,14 @@
     "path-key": "^4.0.0",
     "prettier": "^3.3.3",
     "rollup": "^4.27.4",
-    "rollup-plugin-flat-dts": "^2.8.0",
+    "rollup-plugin-flat-dts": "^2.9.0",
     "rollup-plugin-unbundle": "^3.2.0",
     "run-z": "2.1.0-bootstrap",
     "shx": "^0.3.4",
     "ts-jest": "^29.2.5",
     "tslib": "^2.8.1",
     "typedoc": "^0.26.11",
-    "typescript": "~5.6.3"
+    "typescript": "~5.7.2"
   },
   "scripts": {
     "all": "run-z build,lint,test",
